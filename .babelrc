@@ -1,0 +1,39 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "modules": false
+      }
+    ],
+    "es2015"
+  ],
+  "plugins": [
+    "transform-runtime",
+    "transform-class-properties",
+    [
+      "component",
+      [
+//        {
+//          "libraryName": "element-ui",
+//          "styleLibraryName": "~theme"
+//        }
+      ]
+    ]
+  ],
+  "comments": false,
+  "env": {
+    "production": {
+      "presets": ["minify"]
+    },
+    "test": {
+      "presets": [
+        "env",
+        "es2015"
+      ],
+      "plugins": [
+        "istanbul"
+      ]
+    }
+  }
+}
