@@ -7,10 +7,20 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
+import '../static/rem'
+import '@/components/commons/icon_font/iconfont.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueI18n)
+
+// Moment开始
+import Moment from 'moment'
+// 声明全局过滤器
+Vue.filter('convertDate', function (value) {
+  return Moment(value).format('HH:mm:ss')
+})
+// Moment：结束
 
 const i18n = new VueI18n({
   locale: getLanguage()
@@ -36,5 +46,5 @@ new Vue({
   store,
   i18n,
   template: '<App/>',
-  components: { App }
+  components: {App}
 })
