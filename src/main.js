@@ -7,8 +7,7 @@ import App from './App'
 import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-
-import '@/components/commons/icon_font/iconfont.css'
+import '@/assets/icon_font/iconfont.css'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI)

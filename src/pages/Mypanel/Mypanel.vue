@@ -12,7 +12,7 @@
   </div>
 </template>
 <script>
-  import MypanelContent from '@/components/Mypanel/Mypanel_content.vue'
+  import MypanelContent from '@/pages/Mypanel/Mypanel_content.vue'
 
   export default {
     data () {
