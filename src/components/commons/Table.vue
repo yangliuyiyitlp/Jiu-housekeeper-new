@@ -119,7 +119,7 @@
 </script>
 
 <style scoped>
-  .table {
-    margin-left: 500px;
-  }
+  /*.table {*/
+    /*margin-left: 500px;*/
+  /*}*/
 </style>

@@ -57,8 +57,7 @@
 </script>
 <style scoped>
   div {
-    /*margin-left: 150px;*/
-    width: 200px;
+    width: 150px;
     float: left;
   }
 </style>

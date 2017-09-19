@@ -7,7 +7,7 @@
       <el-menu-item index="4">设备管理</el-menu-item>
       <el-menu-item index="5">内容管理</el-menu-item>
       <el-menu-item index="6">状态监控</el-menu-item>
-      <el-menu-item index="7">会员管理</el-menu-item>
+      <el-menu-item index="7" @click="vipManagement">会员管理</el-menu-item>
       <el-menu-item index="8">报表统计</el-menu-item>
       <el-menu-item index="9">城市运营</el-menu-item>
       <el-menu-item index="10">客服管理</el-menu-item>
@@ -50,6 +50,11 @@
       systemSetting () {
         this.$router.push({
           name: 'system.user.management'
+        })
+      },
+      vipManagement () {
+        this.$router.push({
+          name: 'vip.management.info'
         })
       }
     }

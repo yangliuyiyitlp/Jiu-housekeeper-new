@@ -6,6 +6,7 @@ import Mypanel from '@/pages/Mypanel/Mypanel.vue'
 import NotFound from '@/components/commons/NotFound.vue'
 import Userinfo from '@/pages/Userinfo/Userinfo.vue'
 import SystemUserManagement from '@/pages/System_setting/SystemUserManagement.vue'
+import VipInfo from '@/pages/VipManagement/VipInfo.vue'
 
 Vue.use(Router)
 
@@ -16,6 +17,7 @@ export default new Router({
     {path: '/mypanel', name: 'Mypanel', component: Mypanel},
     {path: '/userinfo', name: 'Userinfo', component: Userinfo},
     {path: '/system/user/management', name: 'system.user.management', component: SystemUserManagement},
+    {path: '/vip/management/info', name: 'vip.management.info', component: VipInfo},
     {path: '*', component: NotFound}
   ]
 })
