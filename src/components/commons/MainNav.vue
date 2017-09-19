@@ -3,7 +3,7 @@
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <li data-v-01c7fadb class="img"><img class='Mainimg' src="../images/99.png" alt=""></li>
       <!--<el-menu-item index="1" @click="mypanel">我的面板</el-menu-item>-->
-      <li data-v-01c7fadb class="img">赳赳管家</li>
+      <li data-v-01c7fadb class="img">赳管家</li>
       <el-menu-item index="3" @click="mypanel">系统设置</el-menu-item>
       <el-menu-item index="4">设备管理</el-menu-item>
       <el-menu-item index="5">内容管理</el-menu-item>
@@ -40,12 +40,12 @@
       // 跳转到我的面板页面
       userinfo () {
         this.$router.push({
-          name: 'Userinfo'
+          name: 'Mypanel', query: {module: 'userinfo'}
         })
       },
       mypanel () {
         this.$router.push({
-          name: 'Mypanel'
+          name: 'Mypanel', query: {module: 'mypanel'}
         })
       }
     }
