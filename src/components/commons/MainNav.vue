@@ -3,11 +3,11 @@
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <li data-v-01c7fadb class="img"><img class='Mainimg' src="../../assets/images/99.png" alt=""></li>
       <li data-v-01c7fadb class="img">赳管家</li>
-      <el-menu-item index="3" @click="mypanel">系统设置</el-menu-item>
+      <el-menu-item index="3" @click="systemSetting">系统设置</el-menu-item>
       <el-menu-item index="4">设备管理</el-menu-item>
       <el-menu-item index="5">内容管理</el-menu-item>
       <el-menu-item index="6">状态监控</el-menu-item>
-      <el-menu-item index="7">会员管理</el-menu-item>
+      <el-menu-item index="7" @click="vipManagement">会员管理</el-menu-item>
       <el-menu-item index="8">报表统计</el-menu-item>
       <el-menu-item index="9">城市运营</el-menu-item>
       <el-menu-item index="10">客服管理</el-menu-item>
@@ -16,7 +16,9 @@
       <el-submenu index="13" class="right ">
         <template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>
         <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
+
         <el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>
+
       </el-submenu>
       <li data-v-01c7fadb class="time right">{{date | convertDate}}</li>
     </el-menu>
@@ -51,9 +53,21 @@
         this.$router.push({
           name: 'User', query: {module: 'userpwd'}
         })
+      },
+      systemSetting () {
+        this.$router.push({
+          name: 'system.user.management'
+        })
+      },
+      vipManagement () {
+        this.$router.push({
+          name: 'vip.management.info'
+        })
       }
+
     }
   }
+
 </script>
 <style scoped>
   .img {
