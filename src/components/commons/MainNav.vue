@@ -1,7 +1,7 @@
 <template>
   <div id="NavBar">
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-      <li data-v-01c7fadb class="img"><img class='Mainimg' src="../images/99.png" alt=""></li>
+      <li data-v-01c7fadb class="img"><img class='Mainimg' src="../../assets/images/99.png" alt=""></li>
       <!--<el-menu-item index="1" @click="mypanel">我的面板</el-menu-item>-->
       <li data-v-01c7fadb class="img">赳管家</li>
       <el-menu-item index="3" @click="mypanel">系统设置</el-menu-item>
@@ -58,7 +58,7 @@
     position: relative;
     box-sizing: border-box;
     color: #bfcbd9;
-    font-size: 0.8rem;
+    font-size: 30px;
     height: 60px;
     line-height: 60px;
   }
@@ -68,9 +68,9 @@
   }
 
   li {
-    font-size: 0.5rem;
+    font-size: 20px;
     font-family: Arial, "Microsoft YaHei";
-    padding: 0.5rem;
+    padding: 14px;
   }
 
   .icon-anonymity {
