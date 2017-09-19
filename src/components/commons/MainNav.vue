@@ -16,7 +16,7 @@
       <el-submenu index="13" class="right ">
         <template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>
         <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
-        <el-menu-item index="2-2" class="user" >修改密码</el-menu-item>
+        <el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>
       </el-submenu>
       <li data-v-01c7fadb class="time right">{{date | convertDate}}</li>
     </el-menu>
@@ -39,12 +39,17 @@
       // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
       userinfo () {
         this.$router.push({
-          name: 'Mypanel', query: {module: 'userinfo'}
+          name: 'User', query: {module: 'userinfo'}
         })
       },
       mypanel () {
         this.$router.push({
           name: 'Mypanel', query: {module: 'mypanel'}
+        })
+      },
+      userpwd () {
+        this.$router.push({
+          name: 'User', query: {module: 'userpwd'}
         })
       }
     }

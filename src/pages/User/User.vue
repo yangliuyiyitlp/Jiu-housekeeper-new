@@ -1,7 +1,6 @@
 <template>
   <div class="mypanel">
     <div class="row">
-      <sider-bar v-bind:message="parentMsg"></sider-bar>
       <div class="skillselect">
         <ul>
           <li v-for="(item,index) in items" :key="index" v-on:click="clickImg(item.icon)">{{item.name}}</li>
@@ -12,28 +11,36 @@
   </div>
 </template>
 <script>
-  import MypanelContent from '@/pages/Mypanel/Mypanel_content.vue'
+  import Userinfo from '@/pages/User/Userinfo.vue'
   import SiderBar from '@/pages/Mypanel/SiderBar.vue'
   import Userpwd from '@/pages/User/Userpwd.vue'
+
   export default {
     data () {
       return {
         parentMsg: 'skill',
         items: [
-          {name: '折线图', icon: 'MypanelContent'},
-          {name: '柱状图', icon: 'Userpwd'}
+          {name: '个人信息', icon: 'Userinfo'},
+          {name: '修改密码', icon: 'Userpwd'}
         ],
-        myicon: 'MypanelContent'
+        myicon: 'Userinfo'
       }
     },
     components: {
       SiderBar,
-      MypanelContent,
+      Userinfo,
       Userpwd
     },
     methods: {
       clickImg: function (icon) {
         this.myicon = icon
+      }
+    },
+    created () {
+      if (this.$route.query.module === 'userinfo') {
+        this.myicon = 'Userinfo'
+      } else if (this.$route.query.module === 'userpwd') {
+        this.myicon = 'Userpwd'
       }
     }
   }
@@ -42,16 +49,17 @@
   html, body {
     height: 100%;
   }
-
   .mypanel {
     height: 100%;
   }
-
-  .side {
-    width: 200px;
-    height: 100% !important;
-    float: left;
+  .skillselect {
+      width: 200px;
+      height: 100% !important;
+      /*float: left;*/
+      border:1px solid #ccc;
   }
-
+.row{
+  position: relative;
+}
 
 </style>
