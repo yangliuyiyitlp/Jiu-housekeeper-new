@@ -21,6 +21,14 @@ Vue.filter('convertDate', function (value) {
 })
 // Moment：结束
 
+// 注册全局组件 start
+import ZtrStructure from './components/commons/ZtreeStructure'
+import TableInfo from './components/commons/Table'
+
+Vue.component('ZtrStructure', ZtrStructure)
+Vue.component('TableInfo', TableInfo)
+// 注册全局组件 end
+
 const i18n = new VueI18n({
   locale: getLanguage()
 })
