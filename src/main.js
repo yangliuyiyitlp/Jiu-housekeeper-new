@@ -8,13 +8,13 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
+
 import VeeValidate from 'vee-validate'
 import ZHCN from 'vee-validate/dist/locale/zh_CN'
 // 设置中文
 VeeValidate.Validator.addLocale(ZHCN)
 Vue.config.productionTip = false
 
-Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueI18n)
 
@@ -67,6 +67,7 @@ new Vue({
   template: '<App/>',
   components: {App}
 })
+
 // config 必须配置
 const config = {
   errorBagName: 'errors', // change if property conflicts.
@@ -87,3 +88,4 @@ const config = {
   inject: true
 }
 Vue.use(VeeValidate, config)
+

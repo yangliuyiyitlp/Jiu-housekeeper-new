@@ -1,3 +1,4 @@
+
 <!--<template>-->
 <!--<div class="container">-->
 <!--<label>头像：</label>-->
@@ -145,6 +146,7 @@
       <img v-if="imageUrl" :src="imageUrl" class="avatar">
       <i v-else class="el-icon-plus avatar-uploader-icon"></i>
     </el-upload>
+
     <form @submit.prevent="validateBeforeSubmit">
       <div class="column is-12">
         <label class="label">归属公司：</label>
@@ -199,6 +201,22 @@
         </p>
       </div>
     </form>
+
+    <!--<br/>-->
+    <!--<label>归属公司：</label><span></span><br/>-->
+    <!--<label>归属部门：</label><span></span><br/>-->
+    <!--<label>姓名：</label><input type="text" id="inp5"><span></span><br/>-->
+    <!--<label>邮箱：</label><input type="text" id="inp3"><span></span><br/>-->
+    <!--<label>座机：</label><input type="text" id="inp4"><span></span><br/>-->
+    <!--<label>手机：</label><input type="text" id="inp2"><span></span><br/>-->
+    <!--&lt;!&ndash;<el-form-item label="备注">&ndash;&gt;-->
+    <!--&lt;!&ndash;<el-input type="textarea" ></el-input>&ndash;&gt;-->
+    <!--&lt;!&ndash;</el-form-item>&ndash;&gt;-->
+    <!--<label>用户类型：</label><span></span><br/>-->
+    <!--<label>用户角色：</label><span></span><br/>-->
+    <!--<label>上次登录：</label><span></span><br/>-->
+    <!--<input type="button" value="保存">-->
+
   </div>
 </template>
 <script>
@@ -223,28 +241,38 @@
           alert('Correct them errors!')
         })
       },
-      handleAvatarSuccess (res, file) {
-        this.imageUrl = URL.createObjectURL(file.raw)
-      },
-      beforeAvatarUpload (file) {
-        const isJPG = file.type === 'image/jpeg'
-        const isLt2M = file.size / 1024 / 1024 < 2
 
-        if (!isJPG) {
-          this.$message.error('上传头像图片只能是 JPG 格式!')
+      data () {
+        return {
+          imageUrl: ''
         }
-        if (!isLt2M) {
-          this.$message.error('上传头像图片大小不能超过 2MB!')
+      },
+      methods: {
+        handleAvatarSuccess (res, file) {
+          this.imageUrl = URL.createObjectURL(file.raw)
+        },
+        beforeAvatarUpload (file) {
+          const isJPG = file.type === 'image/jpeg'
+          const isLt2M = file.size / 1024 / 1024 < 2
+
+          if (!isJPG) {
+            this.$message.error('上传头像图片只能是 JPG 格式!')
+          }
+          if (!isLt2M) {
+            this.$message.error('上传头像图片大小不能超过 2MB!')
+          }
+          return isJPG && isLt2M
         }
-        return isJPG && isLt2M
       }
     }
   }
 </script>
 <style scoped>
+
   /*p {*/
     /*display: inline-block !important;*/
   /*}*/
+
 
   .container {
     width: 600px;
@@ -301,6 +329,7 @@ label{
   }
 
   /*上传头像开始*/
+  /*上传头像*/
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -309,18 +338,15 @@ label{
     overflow: hidden;
   }
 
-  .el-upload {
-    border: 1px dashed #d9d9d9 !important;
-    border-radius: 6px !important;
-    margin-left: 20px;
+  .el-upload{
+    border: 1px dashed #d9d9d9!important;
+    border-radius: 6px!important;
   }
-
   .avatar-uploader .el-upload:hover {
-    border-color: #20a0ff !important;
+    border-color: #20a0ff!important;
   }
-
   .el-upload:hover {
-    border-color: #20a0ff !important;
+    border-color: #20a0ff!important;
   }
 
   .avatar-uploader-icon {
@@ -338,6 +364,8 @@ label{
     display: block;
   }
 
+
   /*上传头像结束*/
+
 
 </style>
