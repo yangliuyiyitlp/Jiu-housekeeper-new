@@ -1,8 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/Hello'
 import Login from '@/pages/Login'
-import Mypanel from '@/pages/Mypanel/Mypanel.vue'
+import Mypanel from '@/components/Mypanel/Mypanel.vue'
 import NotFound from '@/components/commons/NotFound.vue'
 
 import Userinfo from '@/pages/User/Userinfo.vue'
@@ -12,12 +11,11 @@ import Userdfpwd from '@/pages/User/UserDfpwd.vue'
 
 import SystemUserManagement from '@/pages/System_setting/SystemUserManagement.vue'
 import VipInfo from '@/pages/VipManagement/VipInfo.vue'
-
 Vue.use(Router)
 
 export default new Router({
   routes: [
-    {path: '/', name: 'Hello', component: Hello},
+    {path: '/', name: 'Login', component: Login},
     {path: '/login', name: 'Login', component: Login},
     {path: '/mypanel', name: 'Mypanel', component: Mypanel},
     {path: '/userinfo', name: 'Userinfo', component: Userinfo},
