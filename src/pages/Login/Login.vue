@@ -1,82 +1,14 @@
 <template>
-  <div>
-    <div class="login-wrap" v-show="showLogin">
-      <h3>赳管家</h3>
-      <p v-show="showTishi">{{tishi}}</p>
-      <input type="text" placeholder="请输入用户名" v-model="username">
-      <input type="password" placeholder="请输入密码" v-model="password">
-      <button v-on:click="login">登录</button>
-      <span v-on:click="ToRegister">没有账号？马上注册</span>
-    </div>
+  <div class="login-wrap" >
+    <h3>赳管家</h3>
+    <p v-show="showTishi">{{tishi}}</p>
+    <input type="text" placeholder="请输入用户名" v-model="username">
+    <input type="password" placeholder="请输入密码" v-model="password">
+    <button v-on:click="login">登录</button>
 
-    <div class="register-wrap" v-show="showRegister">
-      <h3>赳管家</h3>
-      <p v-show="showTishi">{{tishi}}</p>
-      <input type="text" placeholder="请输入用户名" v-model="newUsername">
-      <input type="password" placeholder="请输入密码" v-model="newPassword">
-      <button v-on:click="register">注册</button>
-      <span v-on:click="ToLogin">已有账号？马上登录</span>
-    </div>
+
   </div>
 </template>
-
-<style scoped>
-  html,body{
-    background-color: #f5f5f5;
-    width: 100%;
-    text-align: center;
-  }
-  .login-wrap,.register-wrap{
-    text-align: center;
-    margin:100px  auto;
-    position: relative;
-    width: 300px;
-    padding: 25px 29px 29px;
-    background-color: #fff;
-    border: 1px solid #e5e5e5;
-  }
-  h3{
-    font-family: Helvetica, Georgia, Arial, sans-serif, 黑体;
-    font-size: 36px;
-    margin-bottom: 20px;
-    color: #0663a2;
-  }
-  input {
-    display: block;
-    width: 250px;
-    height: 40px;
-    line-height: 40px;
-    margin: 0 auto;
-    margin-bottom: 10px;
-    outline: none;
-    border: 1px solid #888;
-    padding: 10px;
-    box-sizing: border-box;
-  }
-  p {
-    color: red;
-  }
-  button {
-    display: block;
-    width: 250px;
-    height: 40px;
-    line-height: 40px;
-    margin: 0 auto;
-    border: none;
-    background-color: #20a0ff;
-    color: #fff;
-    font-size: 16px;
-    margin-bottom: 5px;
-    cursor: pointer;
-  }
-  span {
-    cursor: pointer;
-  }
-  span:hover {
-    color: #41b883;
-  }
-</style>
-
 <script>
   import { setCookie, getCookie } from '../../assets/js/cookie.js'
 
@@ -128,37 +60,62 @@
             }
           })
         }
-      },
-      ToRegister () {
-        this.showRegister = true
-        this.showLogin = false
-      },
-      ToLogin () {
-        this.showRegister = false
-        this.showLogin = true
-      },
-      register () {
-        if (this.newUsername === '' || this.newPassword === '') {
-          alert('请输入用户名或密码')
-        } else {
-          let data = {'username': this.newUsername, 'password': this.newPassword}
-          this.$http.post('http://localhost/vueapi/index.php/Home/user/register', data).then((res) => {
-            console.log(res)
-            if (res.data === 'ok') {
-              this.tishi = '注册成功'
-              this.showTishi = true
-              this.username = ''
-              this.password = ''
-              /* 注册成功之后再跳回登录页 */
-              setTimeout(function () {
-                this.showRegister = false
-                this.showLogin = true
-                this.showTishi = false
-              }.bind(this), 1000)
-            }
-          })
-        }
       }
     }
   }
 </script>
+<style scoped>
+  html,body{
+    width: 100%;
+    text-align: center;
+  }
+  .login-wrap{
+    text-align: center;
+    margin:200px  auto;
+    position: relative;
+    width: 300px;
+    padding: 25px 29px 29px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+  }
+  h3{
+    font-family: Helvetica, Georgia, Arial, sans-serif, 黑体;
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #0663a2;
+  }
+  input {
+    display: block;
+    width: 250px;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    outline: none;
+    border: 1px solid #888;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  p {
+    color: red;
+  }
+  button {
+    display: block;
+    width: 250px;
+    height: 40px;
+    line-height: 40px;
+    margin: 0 auto;
+    border: none;
+    background-color: #20a0ff;
+    color: #fff;
+    font-size: 16px;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+  span {
+    cursor: pointer;
+  }
+  span:hover {
+    color: #41b883;
+  }
+</style>
