@@ -12,7 +12,7 @@
 </template>
 <script>
   import Userinfo from '@/pages/User/Userinfo.vue'
-  import SiderBar from '@/pages/Mypanel/SiderBar.vue'
+  import SiderBar from '@/components/Mypanel/SiderBar.vue'
   import Userpwd from '@/pages/User/Userpwd.vue'
 
   export default {
