@@ -8,9 +8,10 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
-
 import VeeValidate from 'vee-validate'
 import ZHCN from 'vee-validate/dist/locale/zh_CN'
+import VueResource from 'vue-resource'
+Vue.use(VueResource)
 // 设置中文
 VeeValidate.Validator.addLocale(ZHCN)
 Vue.config.productionTip = false
