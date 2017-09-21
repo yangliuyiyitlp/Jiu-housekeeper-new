@@ -12,8 +12,8 @@
   </div>
 </template>
 <script>
-  import MypanelContent from '@/pages/Mypanel/Mypanel_content.vue'
-  import SiderBar from '@/pages/Mypanel/SiderBar.vue'
+  import MypanelContent from '@/components/Mypanel/Mypanel_content.vue'
+  import SiderBar from '@/components/Mypanel/SiderBar.vue'
   import Userpwd from '@/pages/User/Userpwd.vue'
   export default {
     data () {

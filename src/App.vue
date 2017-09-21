@@ -1,6 +1,11 @@
 <template>
   <div id="app">
-    <main-nav></main-nav>
+    <div v-if="this.$route.path === '/' || this.$route.path === '/login'">
+
+    </div>
+    <div v-else>
+      <main-nav></main-nav>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -10,6 +15,9 @@
 
   export default {
     name: 'app',
+    data: {
+      male: false
+    },
     components: {
       MainNav
     }
@@ -22,6 +30,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
+    /*width:1300px;*/
+    margin: 0 auto;
   }
 
   * {

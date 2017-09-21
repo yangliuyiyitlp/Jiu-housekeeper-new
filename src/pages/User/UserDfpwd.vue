@@ -7,6 +7,7 @@
         </ul>
       </div>
       <mycomponent :is="myicon"></mycomponent>
+
     </div>
   </div>
 </template>
@@ -23,7 +24,7 @@
           {name: '个人信息', icon: 'Userinfo'},
           {name: '修改密码', icon: 'Userpwd'}
         ],
-        myicon: 'Userinfo'
+        myicon: 'userpwd'
       }
     },
     components: {
@@ -35,14 +36,15 @@
       clickImg: function (icon) {
         this.myicon = icon
       }
-    },
-    created () {
-      if (this.$route.query.module === 'userinfo') {
-        this.myicon = 'Userinfo'
-      } else if (this.$route.query.module === 'userpwd') {
-        this.myicon = 'Userpwd'
-      }
     }
+//    ,
+//    created () {
+//      if (this.$route.query.module === 'userinfo') {
+//        this.myicon = 'userinfo'
+//      } else if (this.$route.query.module === 'userpwd') {
+//        this.myicon = 'Userpwd'
+//      }
+//    }
   }
 </script>
 <style scoped>

@@ -41,7 +41,9 @@
       // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
       userinfo () {
         this.$router.push({
-          name: 'User', query: {module: 'userinfo'}
+
+          name: 'Userdfinfo', query: {module: 'userinfo'}
+
         })
       },
       mypanel () {
@@ -51,7 +53,9 @@
       },
       userpwd () {
         this.$router.push({
-          name: 'User', query: {module: 'userpwd'}
+
+          name: 'Userdfpwd', query: {module: 'userpwd'}
+
         })
       },
       setting () {

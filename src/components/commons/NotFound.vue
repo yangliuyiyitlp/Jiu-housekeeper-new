@@ -1,7 +1,8 @@
 <template>
   <div>
 
-    您要访问的页面去旅行了！
+    <img src="../../assets/images/404-1.jpg" alt="">
+
   </div>
 </template>
 <script>
@@ -11,6 +12,11 @@
     }
   }
 </script>
-<style>
+
+<style scoped>
+img{
+  width:100%;
+  height:100%;
+}
 
 </style>
