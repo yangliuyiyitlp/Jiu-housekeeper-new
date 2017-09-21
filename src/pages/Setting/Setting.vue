@@ -1,19 +1,19 @@
 <template>
   <div>
-    <facility-bar></facility-bar>
-    <!--<table-info></table-info>-->
+    <system-bar></system-bar>
+    <table-info></table-info>
   </div>
 </template>
 
 <script>
-  import FacilityBar from '@/components/commons/Ztree/FacilityBar.vue'
+  import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
   export default {
     data () {
       return {
       }
     },
     components: {
-      FacilityBar
+      SystemBar
     }
   }
 </script>

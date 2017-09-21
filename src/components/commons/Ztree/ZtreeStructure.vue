@@ -1,8 +1,10 @@
-<template>
-  <div>
-    <el-tree :data="data" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
-  </div>
-</template>
+<el-tree
+  :data="data"
+  :props="defaultProps"
+  accordion
+  @node-click="handleNodeClick">
+</el-tree>
+
 <script>
   export default {
     data () {

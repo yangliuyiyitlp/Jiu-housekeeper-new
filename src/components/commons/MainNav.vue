@@ -3,16 +3,16 @@
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <li data-v-01c7fadb class="img"><img class='Mainimg' src="../../assets/images/99.png" alt=""></li>
       <li data-v-01c7fadb class="img">赳管家</li>
-      <el-menu-item index="3" @click="systemSetting">系统设置</el-menu-item>
-      <el-menu-item index="4">设备管理</el-menu-item>
-      <el-menu-item index="5">内容管理</el-menu-item>
-      <el-menu-item index="6">状态监控</el-menu-item>
-      <el-menu-item index="7" @click="vipManagement">会员管理</el-menu-item>
-      <el-menu-item index="8">报表统计</el-menu-item>
-      <el-menu-item index="9">城市运营</el-menu-item>
-      <el-menu-item index="10">客服管理</el-menu-item>
-      <el-menu-item index="11">红包管理</el-menu-item>
-      <el-menu-item index="12">活动中心</el-menu-item>
+      <el-menu-item index="3" @click="setting">系统设置</el-menu-item>
+      <el-menu-item index="4" @click="facility">设备管理</el-menu-item>
+      <el-menu-item index="5" @click="content">内容管理</el-menu-item>
+      <el-menu-item index="6" @click="status">状态监控</el-menu-item>
+      <el-menu-item index="7" @click="vip">会员管理</el-menu-item>
+      <el-menu-item index="8" @click="report">报表统计</el-menu-item>
+      <el-menu-item index="9" @click="city">城市运营</el-menu-item>
+      <el-menu-item index="10" @click="service">客服管理</el-menu-item>
+      <el-menu-item index="11" @click="redpacket">红包管理</el-menu-item>
+      <el-menu-item index="12" @click="activity">活动中心</el-menu-item>
       <el-submenu index="13" class="right ">
         <template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>
         <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
@@ -54,17 +54,56 @@
           name: 'User', query: {module: 'userpwd'}
         })
       },
-      systemSetting () {
+      setting () {
         this.$router.push({
-          name: 'system.user.management'
+          name: 'setting'
         })
       },
-      vipManagement () {
+      facility () {
         this.$router.push({
-          name: 'vip.management.info'
+          name: 'facility'
+        })
+      },
+      content () {
+        this.$router.push({
+          name: 'content'
+        })
+      },
+      status () {
+        this.$router.push({
+          name: 'status'
+        })
+      },
+      vip () {
+        this.$router.push({
+          name: 'vip'
+        })
+      },
+      report () {
+        this.$router.push({
+          name: 'report'
+        })
+      },
+      city () {
+        this.$router.push({
+          name: 'city'
+        })
+      },
+      service () {
+        this.$router.push({
+          name: 'service'
+        })
+      },
+      redpacket () {
+        this.$router.push({
+          name: 'redpacket'
+        })
+      },
+      activity () {
+        this.$router.push({
+          name: 'activity'
         })
       }
-
     }
   }
 
