@@ -28,13 +28,12 @@ Vue.filter('convertDate', function (value) {
 // Moment：结束
 
 // 注册全局组件 start
-import ZtrStructure from './components/commons/ZtreeStructure'
+
 import TableInfo from './components/commons/Table'
 import Paginations from './components/commons/Paginations'
 import DatePickers from './components/commons/DatePicker'
 import FormSearch from './components/commons/FormSearch'
 
-Vue.component('ZtrStructure', ZtrStructure)
 Vue.component('TableInfo', TableInfo)
 Vue.component('Paginations', Paginations)
 Vue.component('DatePickers', DatePickers)

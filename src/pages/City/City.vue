@@ -1,19 +1,19 @@
 <template>
   <div>
-    <facility-bar></facility-bar>
-    <!--<table-info></table-info>-->
+    <city-bar></city-bar>
+    <table-info></table-info>
   </div>
 </template>
 
 <script>
-  import FacilityBar from '@/components/commons/Ztree/FacilityBar.vue'
+  import CityBar from '@/components/commons/Ztree/CityBar.vue'
   export default {
     data () {
       return {
       }
     },
     components: {
-      FacilityBar
+      CityBar
     }
   }
 </script>

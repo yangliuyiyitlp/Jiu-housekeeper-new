@@ -7,8 +7,17 @@ import Userpwd from '@/pages/User/Userpwd.vue'
 import Userdfinfo from '@/pages/User/UserDfinfo.vue'
 import Userdfpwd from '@/pages/User/UserDfpwd.vue'
 import User from '@/pages/User/User.vue'
-import SystemUserManagement from '@/pages/System_setting/SystemUserManagement.vue'
-import VipInfo from '@/pages/VipManagement/VipInfo.vue'
+
+import Setting from '@/pages/Setting/Setting.vue'
+import Facility from '@/pages/Facility/Facility.vue'
+import Content from '@/pages/Content/Content.vue'
+import Status from '@/pages/Status/Status.vue'
+import Vip from '@/pages/Vip/Vip.vue'
+import Report from '@/pages/Report/Report.vue'
+import City from '@/pages/City/City.vue'
+import Service from '@/pages/Service/Service.vue'
+import RedPacket from '@/pages/RedPacket/RedPacket.vue'
+import Activity from '@/pages/Activity/Activity.vue'
 // 登录页
 import Main from '@/pages/Login/Main.vue'   // 为后台管理页
 import Home from '@/pages/Login/Home.vue'   // 为用户登录成功之后的主页
@@ -29,8 +38,16 @@ export default new Router({
     {path: '/userdfinfo', name: 'Userdfinfo', component: Userdfinfo},
     {path: '/userdfpwd', name: 'Userdfpwd', component: Userdfpwd},
     {path: '/user', name: 'User', component: User},
-    {path: '/system/user/management', name: 'system.user.management', component: SystemUserManagement},
-    {path: '/vip/management/info', name: 'vip.management.info', component: VipInfo},
+    {path: '/setting', name: 'setting', component: Setting},
+    {path: '/facility', name: 'facility', component: Facility},
+    {path: '/content', name: 'content', component: Content},
+    {path: '/status', name: 'status', component: Status},
+    {path: '/vip', name: 'vip', component: Vip},
+    {path: '/report', name: 'report', component: Report},
+    {path: '/city', name: 'city', component: City},
+    {path: '/service', name: 'service', component: Service},
+    {path: '/redpacket', name: 'redpacket', component: RedPacket},
+    {path: '/activity', name: 'activity', component: Activity},
     {path: '*', component: NotFound}
   ]
 })

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <ztr-structure></ztr-structure>
+
     <div class="right">
       <form-search></form-search>
       <table-info></table-info>
