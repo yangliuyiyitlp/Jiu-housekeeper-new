@@ -1,7 +1,6 @@
 <template>
   <div>
     <vip-bar></vip-bar>
-    <table-info></table-info>
   </div>
 </template>
 

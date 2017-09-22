@@ -36,7 +36,6 @@
       </el-select>
     </el-form-item>
 
-
     <el-form-item label="最近借车">
       <date-pickers></date-pickers>
     </el-form-item>
@@ -44,9 +43,8 @@
       <date-pickers></date-pickers>
     </el-form-item>
 
-
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">查询</el-button>
+      <el-button type="primary" @click="search">查询</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -63,8 +61,8 @@
       }
     },
     methods: {
-      onSubmit () {
-        console.log('submit!')
+      search () {
+        console.log('search!')
       }
     }
   }

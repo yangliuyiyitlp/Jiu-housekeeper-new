@@ -41,9 +41,7 @@
       // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
       userinfo () {
         this.$router.push({
-
           name: 'Userdfinfo', query: {module: 'userinfo'}
-
         })
       },
       mypanel () {
@@ -80,7 +78,7 @@
       },
       vip () {
         this.$router.push({
-          name: 'vip'
+          name: 'vip.info'
         })
       },
       report () {

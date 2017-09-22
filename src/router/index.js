@@ -7,7 +7,7 @@ import Userpwd from '@/pages/User/Userpwd.vue'
 import Userdfinfo from '@/pages/User/UserDfinfo.vue'
 import Userdfpwd from '@/pages/User/UserDfpwd.vue'
 import User from '@/pages/User/User.vue'
-
+// 十大功能路由
 import Setting from '@/pages/Setting/Setting.vue'
 import Facility from '@/pages/Facility/Facility.vue'
 import Content from '@/pages/Content/Content.vue'
