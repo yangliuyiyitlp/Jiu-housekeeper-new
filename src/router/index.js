@@ -22,6 +22,10 @@ import Activity from '@/pages/Activity/Activity.vue'
 import Main from '@/pages/Login/Main.vue'   // 为后台管理页
 import Home from '@/pages/Login/Home.vue'   // 为用户登录成功之后的主页
 import Login from '@/pages/Login/Login.vue' // 为登录注册页
+// vip相关
+import VipInfo from '@/pages/Vip/VipInfo.vue'
+import VipInviteList from '@/pages/Vip/VipInviteList.vue'
+import VipInviteTotal from '@/pages/Vip/VipInviteTotal.vue'
 
 Vue.use(Router)
 
@@ -48,6 +52,10 @@ export default new Router({
     {path: '/service', name: 'service', component: Service},
     {path: '/redpacket', name: 'redpacket', component: RedPacket},
     {path: '/activity', name: 'activity', component: Activity},
+// vip相关
+    {path: '/vip/info', name: 'vip.info', component: VipInfo},
+    {path: '/vip/invite/list', name: 'vip.invite.list', component: VipInviteList},
+    {path: '/vip/invite/total', name: 'vip.invite.total', component: VipInviteTotal},
     {path: '*', component: NotFound}
   ]
 })
