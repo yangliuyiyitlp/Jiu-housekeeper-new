@@ -1,18 +1,19 @@
 <template>
   <div>
-    <vip-bar></vip-bar>
+    <service-bar></service-bar>
+    <table-info></table-info>
   </div>
 </template>
 
 <script>
-  import VipBar from '@/components/commons/Ztree/VipBar.vue'
+  import ServiceBar from '@/components/commons/Ztree/ServiceBar.vue'
   export default {
     data () {
       return {
       }
     },
     components: {
-      VipBar
+      ServiceBar
     }
   }
 </script>

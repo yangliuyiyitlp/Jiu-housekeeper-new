@@ -51,14 +51,12 @@
       },
       userpwd () {
         this.$router.push({
-
           name: 'Userdfpwd', query: {module: 'userpwd'}
-
         })
       },
       setting () {
         this.$router.push({
-          name: 'setting'
+          name: 'setting.user'
         })
       },
       facility () {
@@ -68,12 +66,12 @@
       },
       content () {
         this.$router.push({
-          name: 'content'
+          name: 'content.release'
         })
       },
       status () {
         this.$router.push({
-          name: 'status'
+          name: 'status.bike.map'
         })
       },
       vip () {
@@ -83,27 +81,27 @@
       },
       report () {
         this.$router.push({
-          name: 'report'
+          name: 'report.vip'
         })
       },
       city () {
         this.$router.push({
-          name: 'city'
+          name: 'city.company.info'
         })
       },
       service () {
         this.$router.push({
-          name: 'service'
+          name: 'service.change.credit'
         })
       },
       redpacket () {
         this.$router.push({
-          name: 'redpacket'
+          name: 'redpacket.click'
         })
       },
       activity () {
         this.$router.push({
-          name: 'activity'
+          name: 'activity.message'
         })
       }
     }
