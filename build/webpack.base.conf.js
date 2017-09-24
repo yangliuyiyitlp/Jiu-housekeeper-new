@@ -34,6 +34,7 @@ module.exports = {
         loader: 'eslint-loader',
         enforce: 'pre',
         include: [resolve('src'), resolve('test')],
+        exclude: [/node_modules/,/js/],// 后面加的 不检查js
         options: {
           formatter: require('eslint-friendly-formatter')
         }
@@ -73,5 +74,12 @@ module.exports = {
         loader: "style-loader!css-loader!less-loader"
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.optimize.CommonsChunkPlugin('common.js'),
+    new webpack.ProvidePlugin({
+      jQuery: "jquery",
+      $: "jquery"
+    })
+  ]
 }

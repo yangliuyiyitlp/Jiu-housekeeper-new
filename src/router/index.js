@@ -22,12 +22,17 @@ import Activity from '@/pages/Activity/Activity.vue'
 import Main from '@/pages/Login/Main.vue'   // 为后台管理页
 import Home from '@/pages/Login/Home.vue'   // 为用户登录成功之后的主页
 import Login from '@/pages/Login/Login.vue' // 为登录注册页
-
+// 设备管理
+import Tabs from '@/pages/Facility/Tabs.vue'
+import FacilityInfo from '@/pages/Facility/bikessetting/FacilityInfo.vue'
+import FacilityCount from '@/pages/Facility/bikessetting/FacilityCount.vue'
+import FacilityDetailed from '@/pages/Facility/bikessetting/FacilityDetailed.vue'
+import FacilityState from '@/pages/Facility/bikessetting/FacilityState.vue'
+import FacilityRegister from '@/pages/Facility/bikessetting/FacilityRegister.vue'
 Vue.use(Router)
 
 export default new Router({
   routes: [
-
     {path: '/', name: 'Login', component: Login},
     {path: '/login', name: 'Login', component: Login},
     {path: '/main', name: 'Main', component: Main},
@@ -39,7 +44,19 @@ export default new Router({
     {path: '/userdfpwd', name: 'Userdfpwd', component: Userdfpwd},
     {path: '/user', name: 'User', component: User},
     {path: '/setting', name: 'setting', component: Setting},
-    {path: '/facility', name: 'facility', component: Facility},
+    {
+      path: '/facility',
+      name: 'facility',
+      component: Facility,
+      children: [
+        {name: 'tabs', path: '/tabs', component: Tabs},
+        {name: 'info', path: '/info', component: FacilityInfo},
+        {name: 'count', path: '/count', component: FacilityCount},
+        {name: 'detailed', path: '/detailed', component: FacilityDetailed},
+        {name: 'state', path: '/state', component: FacilityState},
+        {name: 'register', path: '/register', component: FacilityRegister}
+      ]
+    },
     {path: '/content', name: 'content', component: Content},
     {path: '/status', name: 'status', component: Status},
     {path: '/vip', name: 'vip', component: Vip},

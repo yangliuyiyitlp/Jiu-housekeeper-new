@@ -11,6 +11,12 @@ import '@/assets/icon_font/iconfont.css'
 import VeeValidate from 'vee-validate'
 import ZHCN from 'vee-validate/dist/locale/zh_CN'
 import VueResource from 'vue-resource'
+import VueMoment from 'vue-moment'
+import $ from 'jquery'
+import './assets/plugins/bootstrap/css/bootstrap.min.css'
+import './assets/plugins/bootstrap/js/bootstrap.min'
+Vue.use(VueMoment)
+global.$ = global.jQuery = $
 Vue.use(VueResource)
 // 设置中文
 VeeValidate.Validator.addLocale(ZHCN)
