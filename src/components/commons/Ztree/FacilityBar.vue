@@ -48,7 +48,7 @@
 
 <style scoped>
   div {
-    width: 150px;
+    width: 250px;
     float: left;
   }
 </style>

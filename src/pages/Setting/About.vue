@@ -1,8 +1,6 @@
 <template>
   <div>
-    <system-bar></system-bar>
     <h1>about</h1>
-    <!-- <table-info></table-info> -->
   </div>
 </template>
 

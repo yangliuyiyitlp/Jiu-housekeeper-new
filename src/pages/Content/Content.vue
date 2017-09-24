@@ -1,12 +1,12 @@
 <template>
   <div>
-    <city-bar></city-bar>
-    <router-view></router-view>
+    <content-bar></content-bar>
+    <router></router>
   </div>
 </template>
 
 <script>
-  import CityBar from '@/components/commons/Ztree/CityBar.vue'
+  import ContentBar from '@/components/commons/Ztree/ContentBar.vue'
   import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
@@ -15,10 +15,10 @@
       }
     },
     components: {
-      CityBar
+      ContentBar
     },
     mounted () {
-      bus.$on('citybar', (bar) => {
+      bus.$on('contentbar', (bar) => {
         this.bar = bar
         console.log(this.bar)
         this.$router.push({

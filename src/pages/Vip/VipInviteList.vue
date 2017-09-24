@@ -1,6 +1,5 @@
 <template>
   <div>
-    <vip-bar></vip-bar>
     <div class="right">
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="邀请者">
@@ -48,7 +47,6 @@
 </template>
 
 <script>
-  import VipBar from '@/components/commons/Ztree/VipBar.vue'
   export default {
     data () {
       return {
@@ -57,9 +55,6 @@
           region: ''
         }
       }
-    },
-    components: {
-      VipBar
     },
     methods: {
       search () {

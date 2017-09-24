@@ -1,19 +1,14 @@
 <template>
   <div>
-    <report-bar></report-bar>
-    <table-info></table-info>
+    <h1>4</h1>
   </div>
 </template>
 
 <script>
-  import ReportBar from '@/components/commons/Ztree/ReportBar.vue'
   export default {
     data () {
       return {
       }
-    },
-    components: {
-      ReportBar
     }
   }
 </script>

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <vip-bar></vip-bar>
     <div class="right">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <el-tab-pane label="会员邀请统计列表" name="first">
@@ -51,7 +50,6 @@
 </template>
 
 <script>
-  import VipBar from '@/components/commons/Ztree/VipBar.vue'
   export default {
     data () {
       return {
@@ -61,9 +59,6 @@
           region: ''
         }
       }
-    },
-    components: {
-      VipBar
     },
     methods: {
       handleClick (tab, event) {

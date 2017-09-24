@@ -1,12 +1,12 @@
 <template>
   <div>
-    <city-bar></city-bar>
+    <packet-bar></packet-bar>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import CityBar from '@/components/commons/Ztree/CityBar.vue'
+  import PacketBar from '@/components/commons/Ztree/RedPacketBar.vue'
   import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
@@ -15,10 +15,10 @@
       }
     },
     components: {
-      CityBar
+      PacketBar
     },
     mounted () {
-      bus.$on('citybar', (bar) => {
+      bus.$on('redpacketbar', (bar) => {
         this.bar = bar
         console.log(this.bar)
         this.$router.push({

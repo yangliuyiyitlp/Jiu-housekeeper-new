@@ -1,19 +1,14 @@
 <template>
   <div>
-    <status-bar></status-bar>
-    <table-info></table-info>
+    <h1>map</h1>
   </div>
 </template>
 
 <script>
-  import StatusBar from '@/components/commons/Ztree/StatusBar.vue'
   export default {
     data () {
       return {
       }
-    },
-    components: {
-      StatusBar
     }
   }
 </script>

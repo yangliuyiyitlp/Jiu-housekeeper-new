@@ -1,6 +1,5 @@
 <template>
   <div>
-    <vip-bar></vip-bar>
     <div class="right">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <el-tab-pane label="会员管理列表" name="first">
@@ -109,7 +108,7 @@
               <el-input v-model="form.name"></el-input>
             </el-form-item>
             <el-form-item label="备注">
-              <el-input v-model="form.name" type="textarea"></el-input>
+              <el-input v-model="form.name" type="textarea" class='textarea'></el-input>
             </el-form-item>
 
             <el-form-item>
@@ -125,7 +124,6 @@
 </template>
 
 <script>
-  import VipBar from '@/components/commons/Ztree/VipBar.vue'
   export default {
     data () {
       return {
@@ -147,9 +145,6 @@
         }
       }
     },
-    components: {
-      VipBar
-    },
     methods: {
       handleClick (tab, event) {
         console.log(tab, event)
@@ -167,5 +162,8 @@
 <style scoped>
   .right {
     margin-left: 270px;
+  }
+  .textarea, .el-input, .el-input__inner{
+    width: 300px;
   }
 </style>

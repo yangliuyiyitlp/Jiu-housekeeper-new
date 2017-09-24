@@ -1,12 +1,13 @@
 <template>
   <div>
-    <system-bar></system-bar>
+    <!-- <router-link :to='{name:bar}'></router-link> -->
+    <activity-bar></activity-bar>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
-import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
+import ActivityBar from '@/components/commons/Ztree/ActivityBar.vue'
 import bus from '@/assets/js/eventBus.js'
 export default {
   data () {
@@ -15,10 +16,10 @@ export default {
     }
   },
   components: {
-    SystemBar
+    ActivityBar
   },
   mounted () {
-    bus.$on('settingbar', (bar) => {
+    bus.$on('activitybar', (bar) => {
       this.bar = bar
       console.log(this.bar)
       this.$router.push({
@@ -30,7 +31,5 @@ export default {
 </script>
 
 <style scoped>
- .right {
-    margin-left: 270px;
-  }
+
 </style>
