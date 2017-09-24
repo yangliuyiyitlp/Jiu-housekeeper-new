@@ -41,9 +41,7 @@
       // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
       userinfo () {
         this.$router.push({
-
           name: 'Userdfinfo', query: {module: 'userinfo'}
-
         })
       },
       mypanel () {
@@ -53,14 +51,12 @@
       },
       userpwd () {
         this.$router.push({
-
           name: 'Userdfpwd', query: {module: 'userpwd'}
-
         })
       },
       setting () {
         this.$router.push({
-          name: 'setting'
+          name: 'setting.user'
         })
       },
       facility () {
@@ -70,42 +66,42 @@
       },
       content () {
         this.$router.push({
-          name: 'content'
+          name: 'content.release'
         })
       },
       status () {
         this.$router.push({
-          name: 'status'
+          name: 'status.bike.map'
         })
       },
       vip () {
         this.$router.push({
-          name: 'vip'
+          name: 'vip.info'
         })
       },
       report () {
         this.$router.push({
-          name: 'report'
+          name: 'report.vip'
         })
       },
       city () {
         this.$router.push({
-          name: 'city'
+          name: 'city.company.info'
         })
       },
       service () {
         this.$router.push({
-          name: 'service'
+          name: 'service.change.credit'
         })
       },
       redpacket () {
         this.$router.push({
-          name: 'redpacket'
+          name: 'redpacket.click'
         })
       },
       activity () {
         this.$router.push({
-          name: 'activity'
+          name: 'activity.message'
         })
       }
     }

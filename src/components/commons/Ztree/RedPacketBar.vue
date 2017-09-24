@@ -10,15 +10,20 @@
   </div>
 </template>
 <script>
+  import bus from '@/assets/js/eventBus.js'
+  
   export default {
     data () {
       return {
         data: [{
-          label: '红包点击记录明细'
+          label: '红包点击记录明细',
+          name: 'redpacket.click'
         }, {
-          label: '红包参数配置'
+          label: '红包参数配置',
+          name: 'redpacket.config'
         }, {
-          label: '红包提现明细'
+          label: '红包提现明细',
+          name: 'redpacket.cash'
         }],
         defaultProps: {
           children: 'children',
@@ -30,16 +35,16 @@
     methods: {
       handleNodeClick (data) {
         console.log(data)
+        bus.$emit('redpacketbar', data.name)
       }
     }
   }
 </script>
 
 
-
 <style scoped>
   div {
-    width: 150px;
+    width: 250px;
     float: left;
   }
 </style>

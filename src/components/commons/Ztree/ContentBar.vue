@@ -10,31 +10,39 @@
   </div>
 </template>
 <script>
+  import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
       return {
         data: [{
           label: '内容管理',
           children: [{
-            label: '内容发布'
+            label: '内容发布',
+            name: 'content.release'
           }, {
-            label: '评论管理'
+            label: '评论管理',
+            name: 'content.comment'
           }, {
-            label: '公共留言'
+            label: '公共留言',
+            name: 'content.public.message'
           }]
         }, {
           label: '统计分析',
           children: [{
-            label: '信息量统计'
+            label: '信息量统计',
+            name: 'content.information.total'
           }]
         }, {
           label: '栏目设置',
           children: [{
-            label: '栏目管理'
+            label: '栏目管理',
+            name: 'content.column'
           }, {
-            label: '站点设置'
+            label: '站点设置',
+            name: 'content.site.setting'
           }, {
-            label: '切换站点'
+            label: '切换站点',
+            name: 'content.site.switch'
           }]
         }],
         defaultProps: {
@@ -47,16 +55,15 @@
     methods: {
       handleNodeClick (data) {
         console.log(data)
+        bus.$emit('contentbar', data.name)
       }
     }
   }
 </script>
 
-
-
 <style scoped>
   div {
-    width: 150px;
+    width: 250px;
     float: left;
   }
 </style>

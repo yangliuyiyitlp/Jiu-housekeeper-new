@@ -1,23 +1,36 @@
 <template>
   <div>
     <system-bar></system-bar>
-    <table-info></table-info>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
-  export default {
-    data () {
-      return {
-      }
-    },
-    components: {
-      SystemBar
+import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
+import bus from '@/assets/js/eventBus.js'
+export default {
+  data () {
+    return {
+      bar: ''
     }
+  },
+  components: {
+    SystemBar
+  },
+  mounted () {
+    bus.$on('settingbar', (bar) => {
+      this.bar = bar
+      console.log(this.bar)
+      this.$router.push({
+        name: this.bar
+      })
+    })
   }
+}
 </script>
 
 <style scoped>
-
+ .right {
+    margin-left: 270px;
+  }
 </style>

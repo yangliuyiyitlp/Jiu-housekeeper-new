@@ -56,7 +56,7 @@
 
 <style scoped>
   div {
-    width: 200px;
+    width: 250px;
     float: left;
   }
 </style>

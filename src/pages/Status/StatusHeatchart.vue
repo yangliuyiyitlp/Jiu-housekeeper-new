@@ -1,11 +1,15 @@
 <template>
   <div>
-    <table-info></table-info>
+   <h1>relitu</h1>
   </div>
 </template>
 
 <script>
-
+  export default {
+    data () {
+      return {}
+    }
+  }
 </script>
 
 <style scoped>
