@@ -62,7 +62,7 @@
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime}}</span>
+          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column

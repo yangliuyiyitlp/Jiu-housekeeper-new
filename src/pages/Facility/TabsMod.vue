@@ -34,7 +34,7 @@
       style="width: 100%">
       <el-table-column
         prop="id"
-        label="ID">
+        label="序号">
       </el-table-column>
       // 返回的客户id
       <el-table-column
@@ -60,7 +60,7 @@
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime}}</span>
+          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -90,14 +90,14 @@
           </el-form-item>
           <el-form-item label="厂家名称" prop="providerName" class="elform ">
             <!--<el-input v-model="form.providerName"></el-input>-->
-            <el-select v-model="form.providerName" >
+            <el-select v-model="form.providerName" @change="chooseMedicine(form)">
               <!--动态获取锁厂登记表里面所有的厂家名称-->
-              <!--<el-option v-for='(PName,index)in form ' :value="PName.providerName" v-text="PName.providerName"></el-option>-->
+              <el-option  v-for='(value,key) in list ' :id='key' :value="value.providerName" v-text="value.providerName"></el-option>
             </el-select>
           </el-form-item>
           <!--根据客户选择的厂家名称在锁厂登记表里匹配对应的锁厂编号-->
-          <el-form-item label="锁厂家编号" prop="providerNo" class="elform" :disabled="true">
-            <el-input v-model="form.providerNo"></el-input>
+          <el-form-item label="锁厂家编号" prop="providerNo" class="elform" >
+            <el-input v-model="form.providerNo" :disabled="true"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -114,6 +114,13 @@
   export default {
     created: function () {
       this.query('condition')
+//      this.$axios.get('').then(res => {  // 向后台请求厂家列表数据下拉
+//        console.log('请求成功')
+//        this.list = res
+//      })
+//        .catch(err => {
+//          console.log(err)
+//        })
     },
     data: function () {
       return {
@@ -126,6 +133,10 @@
           providerNo: '',
           id: ''
         },
+        list: [ {'id': 2, 'account': '李四', 'providerName': '豪大大', 'providerNo': '11111111111', 'loginStatus': 'false', 'createTime': 1506347183000, 'updateTime': 1506347183000},
+        {'id': 2, 'account': '战三', 'providerName': '无大碍', 'providerNo': '22', 'loginStatus': 'false', 'createTime': 1506347183000, 'updateTime': 1506347183000},
+        {'id': 2, 'account': '王五', 'providerName': '上海下雨', 'providerNo': '3333333', 'loginStatus': 'true', 'createTime': 1506347183000, 'updateTime': 1506347183000}
+        ],
         formLabelWidth: '80px',
         requestParam: {account: '', providerName: '', providerNo: '', loginStatus: '', pageSize: 10, index: 1},
         rules: {
@@ -272,6 +283,10 @@
       handleCurrentChange: function (val) {
         this.requestParam.index = val
         this.query('condition')
+      },
+      chooseMedicine: function (rowItem) {
+        console.log(11111)
+        this.form.providerNo = rowItem.providerNo
       }
     }
   }

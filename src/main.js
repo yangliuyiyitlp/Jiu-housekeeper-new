@@ -15,6 +15,8 @@ import VueMoment from 'vue-moment'
 import $ from 'jquery'
 import './assets/plugins/bootstrap/css/bootstrap.min.css'
 import './assets/plugins/bootstrap/js/bootstrap.min'
+import Axios from 'axios'
+Vue.prototype.$axios = Axios
 Vue.use(VueMoment)
 global.$ = global.jQuery = $
 Vue.use(VueResource)
@@ -30,6 +32,10 @@ import Moment from 'moment'
 // 声明全局过滤器
 Vue.filter('convertDate', function (value) {
   return Moment(value).format('HH:mm:ss')
+})
+Vue.filter('AddDate', function (value) {
+  var nevalue = new Date(value)
+  return Moment(nevalue).format('YYYY-MM-DD HH:mm:ss')
 })
 // Moment：结束
 
