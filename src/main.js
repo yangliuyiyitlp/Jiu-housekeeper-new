@@ -35,12 +35,12 @@ Vue.filter('convertDate', function (value) {
 
 // 注册全局组件 start
 
-import TableInfo from './components/commons/Table'
+// import TableInfo from './components/commons/Table'
 import Paginations from './components/commons/Paginations'
 import DatePickers from './components/commons/DatePicker'
 import FormSearch from './components/commons/FormSearch'
 
-Vue.component('TableInfo', TableInfo)
+// Vue.component('TableInfo', TableInfo)
 Vue.component('Paginations', Paginations)
 Vue.component('DatePickers', DatePickers)
 Vue.component('FormSearch', FormSearch)
