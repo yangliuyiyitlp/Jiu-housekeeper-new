@@ -109,6 +109,9 @@
 
 </script>
 <style scoped>
+  #NavBar{
+    margin-bottom: 30px;
+  }
   .img {
     float: left;
     margin: 0;
