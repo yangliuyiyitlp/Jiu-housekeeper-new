@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tabs></tabs>
+    <!--<tabs></tabs>-->
     <el-table
       :data="tableData4"
       border
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-  import Tabs from '../Tabs.vue'
+//  import Tabs from '../FacilityTabs.vue'
   export default {
     methods: {
       updateClick () {
@@ -55,7 +55,7 @@
       }
     },
     components: {
-      Tabs
+//      Tabs
     },
     data () {
       return {

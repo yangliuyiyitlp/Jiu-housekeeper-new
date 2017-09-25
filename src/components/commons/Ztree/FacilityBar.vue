@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-  import Connector from '../../../assets/js/connector.js' // 引入连接对象
+  import Connector from '../../../assets/js/eventBus.js' // 引入连接对象
   export default {
     data () {
       return {

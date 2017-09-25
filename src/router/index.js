@@ -24,12 +24,12 @@ import Home from '@/pages/Login/Home.vue'   // 为用户登录成功之后的主
 import Login from '@/pages/Login/Login.vue' // 为登录注册页
 
 // 设备管理
-import Tabs from '@/pages/Facility/Tabs.vue'
+import TabsMod from '@/pages/Facility/TabsMod.vue'
 import FacilityInfo from '@/pages/Facility/bikessetting/FacilityInfo.vue'
 import FacilityCount from '@/pages/Facility/bikessetting/FacilityCount.vue'
 import FacilityDetailed from '@/pages/Facility/bikessetting/FacilityDetailed.vue'
 import FacilityState from '@/pages/Facility/bikessetting/FacilityState.vue'
-import FacilityRegister from '@/pages/Facility/bikessetting/FacilityRegister.vue'
+import RegisterMod from '@/pages/Facility/RegisterMod.vue'
 // setting相关
 import SettingUser from '@/pages/Setting/User/User.vue'
 import SettingMechanism from '@/pages/Setting/User/Mechanism.vue'
@@ -113,12 +113,12 @@ export default new Router({
       name: 'facility',
       component: Facility,
       children: [
-        {name: 'tabs', path: '/tabs', component: Tabs},
-        {name: 'info', path: '/info', component: FacilityInfo},
-        {name: 'count', path: '/count', component: FacilityCount},
-        {name: 'detailed', path: '/detailed', component: FacilityDetailed},
-        {name: 'state', path: '/state', component: FacilityState},
-        {name: 'register', path: '/register', component: FacilityRegister}
+        {name: 'tabs', path: '/facilitytabs', component: TabsMod},
+        {name: 'info', path: '/facilityinfo', component: FacilityInfo},
+        {name: 'count', path: '/facilitycount', component: FacilityCount},
+        {name: 'detailed', path: '/facilitydetailed', component: FacilityDetailed},
+        {name: 'state', path: '/facilitystate', component: FacilityState},
+        {name: 'register', path: '/facilityregister', component: RegisterMod}
       ]
     },
     {
@@ -137,11 +137,6 @@ export default new Router({
         {path: '/setting/connect/control', name: 'setting.connect.control', component: SettingConnectControl},
         {path: '/setting/about', name: 'setting.about', component: SettingAbout}
       ]
-    },
-    {
-      path: '/facility',
-      name: 'facility',
-      component: Facility
     },
     {
       path: '/content',
