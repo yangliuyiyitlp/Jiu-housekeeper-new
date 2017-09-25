@@ -101,10 +101,6 @@
           person_number: '',
           money_max: '',
           money_min: ''
-//          delivery: false,
-//          type: [],
-//          resource: '',
-//          desc: ''
         }
       }
     },
@@ -131,6 +127,6 @@
   }
 
   .el-input, .el-input__inner {
-    width: 300px;
+    width: 220px;
   }
 </style>

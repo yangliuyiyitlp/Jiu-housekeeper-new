@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="right">
-      <!--删选条件-->
+      <!--筛选条件-->
       <el-form :inline="true" :model="formInline" class="demo-form-inline">
         <el-form-item label="姓名:">
           <el-input v-model="formInline.user" placeholder="姓名"></el-input>
@@ -37,6 +37,7 @@
           <el-button type="primary" @click="exportData">导出</el-button>
         </el-form-item>
       </el-form>
+      
       <!--表格-->
       <el-table
         :data="tableData"
@@ -81,6 +82,7 @@
           label="添加时间">
         </el-table-column>
       </el-table>
+      
       <!--分页组件-->
       <paginations></paginations>
     </div>
