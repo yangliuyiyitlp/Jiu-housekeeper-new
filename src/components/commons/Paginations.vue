@@ -1,6 +1,5 @@
 <template>
   <div class="block">
-
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -29,3 +28,8 @@
     }
   }
 </script>
+<style>
+  .block{
+    margin-top:20px;
+  }
+</style>

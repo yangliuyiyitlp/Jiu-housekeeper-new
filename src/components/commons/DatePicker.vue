@@ -1,5 +1,5 @@
 <template>
-  <div class="block">
+  <div>
     <!--<span class="demonstration">默认</span>-->
     <el-date-picker
       v-model="value6"
