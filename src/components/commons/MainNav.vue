@@ -110,7 +110,7 @@
 </script>
 <style scoped>
   #NavBar{
-    margin-bottom: 30px;
+    margin-bottom: 10px;
   }
   .img {
     float: left;
