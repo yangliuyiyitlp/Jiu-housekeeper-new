@@ -34,7 +34,7 @@
       style="width: 100%">
       <el-table-column
         prop="id"
-        label="序号">
+        label="ID">
       </el-table-column>
       // 返回的客户id
       <el-table-column
@@ -60,7 +60,7 @@
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
+          <span style="margin-left: 10px">{{ scope.row.createTime |AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -80,30 +80,38 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-
-    <el-dialog  title="添加/修改" :visible.sync="dialogFormVisible" size='tiny' :show-close="false" :close-on-press-escape="false"
+    <!--弹出框-->
+    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" size='tiny' :show-close="false"
+               :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
-
-        <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-          <el-form-item label="账户" prop="account" class="elform">
-            <el-input v-model="form.account"></el-input>
-          </el-form-item>
-          <el-form-item label="厂家名称" prop="providerName" class="elform ">
-            <!--<el-input v-model="form.providerName"></el-input>-->
-            <el-select v-model="form.providerName" @change="chooseMedicine(form)">
-              <!--动态获取锁厂登记表里面所有的厂家名称-->
-              <el-option  v-for='(value,key) in list ' :id='key' :value="value.providerName" v-text="value.providerName"></el-option>
-            </el-select>
-          </el-form-item>
-          <!--根据客户选择的厂家名称在锁厂登记表里匹配对应的锁厂编号-->
-          <el-form-item label="锁厂家编号" prop="providerNo" class="elform" >
-            <el-input v-model="form.providerNo" :disabled="true"></el-input>
-          </el-form-item>
-        </el-form>
-        <div slot="footer" class="dialog-footer">
-          <el-button @click="cancelOperate">取 消</el-button>
-          <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
-        </div>
+      <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
+        <el-form-item label="账户" prop="account" class="elform">
+          <el-input v-model="form.account"></el-input>
+        </el-form-item>
+        <el-form-item label="厂家名称" prop="providerName" class="elform ">
+          <!--<el-input v-model="form.providerName"></el-input>-->
+          <!--<el-select v-model="form.providerName">-->
+          <!--&lt;!&ndash;动态获取锁厂登记表里面所有的厂家名称&ndash;&gt;-->
+          <!--&lt;!&ndash;<el-option v-for='(PName,index)in form ' :value="PName.providerName" v-text="PName.providerName"></el-option>&ndash;&gt;-->
+          <!--</el-select>-->
+          <el-select filterable placeholder="请选择" v-model="form.providerNo" clearable @change="onSelected">
+            <el-option
+              v-for="item in providerOptions"
+              :key="item.no"
+              :label="item.name"
+              :value="item.no">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <!--根据客户选择的厂家名称在锁厂登记表里匹配对应的锁厂编11号  -->
+        <el-form-item label="锁厂家编号" prop="providerNo" class="elform">
+          <el-input v-model="form.providerNo" :disabled="true"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelOperate">取 消</el-button>
+        <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
+      </div>
 
     </el-dialog>
 
@@ -114,13 +122,7 @@
   export default {
     created: function () {
       this.query('condition')
-//      this.$axios.get('').then(res => {  // 向后台请求厂家列表数据下拉
-//        console.log('请求成功')
-//        this.list = res
-//      })
-//        .catch(err => {
-//          console.log(err)
-//        })
+      this.getSelectOptions()
     },
     data: function () {
       return {
@@ -133,27 +135,34 @@
           providerNo: '',
           id: ''
         },
-        list: [ {'id': 2, 'account': '李四', 'providerName': '豪大大', 'providerNo': '11111111111', 'loginStatus': 'false', 'createTime': 1506347183000, 'updateTime': 1506347183000},
-        {'id': 2, 'account': '战三', 'providerName': '无大碍', 'providerNo': '22', 'loginStatus': 'false', 'createTime': 1506347183000, 'updateTime': 1506347183000},
-        {'id': 2, 'account': '王五', 'providerName': '上海下雨', 'providerNo': '3333333', 'loginStatus': 'true', 'createTime': 1506347183000, 'updateTime': 1506347183000}
-        ],
         formLabelWidth: '80px',
         requestParam: {account: '', providerName: '', providerNo: '', loginStatus: '', pageSize: 10, index: 1},
         rules: {
           account: [
             {required: true, message: '请输入账户名称', trigger: 'blur'}
-          ],
-          providerName: [
-            {required: true, message: '请输入厂家名称', trigger: 'blur'}
-          ],
-          providerNo: [
-            {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
+//          providerName: [
+//            {required: true, message: '请输入厂家名称', trigger: 'change'}
+//          ],
+//          providerNo: [
+//            {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
+//          ]
         },
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1},
+        providerOptions: []
       }
     },
     methods: {
+      getSelectOptions: function () {
+        this.$http.post('/provider/selectOptions').then(function (response) {
+          this.providerOptions = response.data
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
       query: function (condition) {
         var param = {}
         if (condition === 'condition') {
@@ -246,6 +255,7 @@
                   message: '操作成功'
                 })
                 this.$refs['formA'].resetFields()
+                this.option = ''
                 // 刷新页面
                 this.query(this.requestParam)
               } else {
@@ -274,6 +284,7 @@
           providerNo: '',
           id: ''
         }
+        this.option = ''
         this.$refs['formA'].resetFields()
       },
       handleSizeChange: function (val) {
@@ -284,9 +295,14 @@
         this.requestParam.index = val
         this.query('condition')
       },
-      chooseMedicine: function (rowItem) {
-        console.log(11111)
-        this.form.providerNo = rowItem.providerNo
+      onSelected: function (val) {
+        console.log(val)
+        var obj = this.providerOptions.find(function (item) {
+          if (item.no === val) {
+            return item.name
+          }
+        })
+        console.log(obj)
       }
     }
   }
@@ -305,23 +321,25 @@
     font-size: 20px !important;
     text-align: center;
   }
- .common{
-   -webkit-appearance: none;
-   -moz-appearance: none;
-   appearance: none;
-   background-color: #fff;
-   background-image: none;
-   border-radius: 4px;
-   border: 1px solid #bfcbd9;
-   box-sizing: border-box;
-   color: #1f2d3d;
-   font-size: inherit;
-   height: 36px;
-   line-height: 1;
-   outline: 0;
-   padding: 3px 10px;
-   transition: border-color .2s cubic-bezier(.645,.045,.355,1);
- }
+
+  .common {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #bfcbd9;
+    box-sizing: border-box;
+    color: #1f2d3d;
+    font-size: inherit;
+    height: 36px;
+    line-height: 1;
+    outline: 0;
+    padding: 3px 10px;
+    transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
+  }
+
   .module {
     height: 240px !important;
     width: 400px !important;

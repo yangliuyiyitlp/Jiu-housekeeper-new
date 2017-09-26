@@ -2,24 +2,22 @@
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" class="demo-form-inline">
       <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.account" placeholder="锁厂名称"></el-input>
+        <el-input v-model="requestParam.providerName" placeholder="锁厂名称"></el-input>
       </el-form-item>
       <!--<el-form-item label="锁厂编号">-->
-        <!--<el-input v-model="requestParam.providerName" placeholder="锁厂编号"></el-input>-->
+      <!--<el-input v-model="requestParam.providerName" placeholder="锁厂编号"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item label="锁厂编号">
         <el-input v-model="requestParam.providerNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
       <el-form-item label="添加时间">
-      <date-pickers></date-pickers>
+        <el-date-picker
+          v-model="requestParam.selectedDate"
+          type="daterange"
+          clearable
+          placeholder="选择日期范围">
+        </el-date-picker>
       </el-form-item>
-      <!--<el-form-item label="登录状态">-->
-        <!--<el-select v-model="requestParam.loginStatus" placeholder="登录状态">-->
-          <!--<el-option label="全部" value=""></el-option>-->
-          <!--<el-option label="是" value="true"></el-option>-->
-          <!--<el-option label="否" value="false"></el-option>-->
-        <!--</el-select>-->
-      <!--</el-form-item>-->
       <el-form-item>
         <el-button type="primary" @click="query('condition')">查询</el-button>
       </el-form-item>
@@ -38,11 +36,8 @@
       <el-table-column
         prop="id"
         label="序号">
-      </el-table-column> // 返回的客户id
-      <!--<el-table-column-->
-        <!--prop="account"-->
-        <!--label="账户">-->
-      <!--</el-table-column>-->
+      </el-table-column>
+      // 返回的客户id
       <el-table-column
         prop="providerName"
         label="锁厂名称">
@@ -52,25 +47,25 @@
         label="锁厂家编号	">
       </el-table-column>
       <!--<el-table-column-->
-        <!--label="登录状态">-->
-        <!--<template scope="scope">-->
-          <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
-          <!--<div v-else>否</div>-->
-        <!--</template>-->
+      <!--label="登录状态">-->
+      <!--<template scope="scope">-->
+      <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
+      <!--<div v-else>否</div>-->
+      <!--</template>-->
       <!--</el-table-column>-->
       <el-table-column
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
+          <span style="margin-left: 10px">{{ scope.row.createTime |AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="providerPerson"
+        prop="operator"
         label="操作者	"> // 后台暂无数据
       </el-table-column>
       <el-table-column
-        prop="providerInfo"
+        prop="remark"
         label="备注	"> // 后台暂无数据
       </el-table-column>
       <el-table-column
@@ -90,21 +85,18 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-    <el-dialog  title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
-                :close-on-click-modal="false" class="demo-ruleForm ">
+    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
 
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <!--<el-form-item label="账户" prop="account" class="elform">-->
-          <!--<el-input v-model="form.account"></el-input>-->
-        <!--</el-form-item>-->
         <el-form-item label="厂家名称" prop="providerName" class="elform">
           <el-input v-model="form.providerName"></el-input>
         </el-form-item>
-        <el-form-item label="锁厂家编号" prop="providerNo" class="elform">
-          <el-input v-model="form.providerNo"></el-input>
+        <el-form-item label="锁厂家编号" prop="providerNo" class="elform" >
+          <el-input v-model="form.providerNo" ></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="providerInfo" class="elform">
-          <el-input type="textarea" :row="3"  v-model="form.providerInfo"></el-input>
+        <el-form-item label="备注" prop="remark" class="elform">
+          <el-input type="textarea" :row="3" v-model="form.remark"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -127,18 +119,14 @@
         dialogFormVisible: false,  // 模态框是否显示
         addLoading: false,       // 是否显示loading
         form: {
-//          account: '',
           providerName: '',
           providerNo: '',
           id: '',
           providerInfo: ''
         },
         formLabelWidth: '80px',
-        requestParam: {account: '', providerName: '', providerNo: '', loginStatus: '', pageSize: 10, index: 1},
+        requestParam: {selectedDate: null, providerName: '', providerNo: '', pageSize: 10, index: 1},
         rules: {
-          account: [
-            {required: true, message: '请输入账户名称', trigger: 'blur'}
-          ],
           providerName: [
             {required: true, message: '请输入厂家名称', trigger: 'blur'}
           ],
@@ -158,7 +146,7 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+        this.$http.post('/provider/query', JSON.stringify(param)).then(function (response) {
           this.tableData = response.data.list
           this.pagination.total = response.data.total
         }, function (err) {
@@ -171,11 +159,11 @@
       modifyRecord: function (scope) {
         this.dialogFormVisible = true
         this.form.id = scope.row.id
-        this.form.account = scope.row.account
         this.form.providerName = scope.row.providerName
         this.form.providerNo = scope.row.providerNo
-        this.form.providerPerson = scope.row.providerPerson
-        this.form.providerInfo = scope.row.providerInfo
+        this.form.operator = scope.row.operator
+        this.form.remark = scope.row.remark
+        console.log(this.form)
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -186,7 +174,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.post('/dataGrid/delete', {'id': id}).then(function (response) {
+            this.$http.post('/provider/delete', {'id': id}).then(function (response) {
               if (response.data.code === '1') {
                 // 删除成功
                 this.$message({
@@ -220,20 +208,13 @@
         })
       },
       doModify: function (formName) {
-        if (this.form === null || this.form === '' || this.form.account === undefined) {
-          this.$message({
-            message: '请选择一条记录进行操作!',
-            type: 'error'
-          })
-          return false
-        }
         this.$refs[formName].validate((valid) => {
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = '/dataGrid/add'
+              url = '/provider/add'
             } else {
-              url = '/dataGrid/modify'
+              url = '/provider/modify'
             }
             this.dialogFormVisible = false
             this.$http.post(url, JSON.stringify(this.form)).then(function (response) {
@@ -267,10 +248,11 @@
       cancelOperate: function () {
         this.dialogFormVisible = false
         this.form = {
-          account: '',
           providerName: '',
           providerNo: '',
-          id: ''
+          id: '',
+          operator: '',
+          remark: ''
         }
         this.$refs['formA'].resetFields()
       },
