@@ -164,7 +164,6 @@
         })
       },
       query: function (condition) {
-        console.log(condition)
         var param = {}
         if (condition === 'condition') {
           param = this.requestParam
@@ -257,7 +256,6 @@
                   message: '操作成功'
                 })
                 this.$refs['formA'].resetFields()
-                this.option = ''
                 // 刷新页面
                 this.query(this.requestParam)
               } else {
@@ -285,7 +283,6 @@
           providerNo: '',
           id: ''
         }
-        this.option = ''
         this.$refs['formA'].resetFields()
       },
       handleSizeChange: function (val) {

@@ -60,6 +60,9 @@
 </template>
 <script>
   export default {
+    created: function () {
+      this.onSubmit('condition')
+    },
     data () {
       return {
         value6: '',
