@@ -239,60 +239,80 @@
       <!--赳赳乐享活动添加-->
       <el-tab-pane label="赳赳乐享活动添加" name="second" class="second">
 
-        <el-form ref="form" :model="form" label-width="120px">
+        <el-form ref="form" :model="form" label-width="150px">
 
-          <el-form-item label="推送时间:">
-            <el-date-picker
-              v-model="form.push_data"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
+          <el-form-item label="活动描述:">
+            <el-input v-model="form.activity_des" placeholder="活动简要描述"></el-input>
           </el-form-item>
 
-          <el-form-item label="推送方式:">
-            <el-checkbox-group v-model="form.checkList">
-              <el-checkbox label="推送"></el-checkbox>
-              <el-checkbox label="短信"></el-checkbox>
+          <el-form-item label="活动类型:">
+            <el-select v-model="form.activity_type" placeholder="选择活动类型" clearable>
+              <el-option label="普通活动" value="1"></el-option>
+              <el-option label="视屏活动" value="2"></el-option>
+              <el-option label="骑行活动" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="是否乐享活动:">
+            <el-select v-model="form.isEnjoy" placeholder="是否乐享活动" clearable>
+              <el-option label="是" value="1"></el-option>
+              <el-option label="否" value="2"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="限制信用分:">
+            <el-input v-model="form.min_credit" placeholder="可以参与活动的最小信用分"></el-input>
+          </el-form-item>
+
+          <el-form-item label="封面图片:">
+          </el-form-item>
+
+          <el-form-item label="展示顺序:">
+            <el-input v-model="form.show_order" placeholder="填写展示顺序"></el-input>
+          </el-form-item>
+
+          <el-form-item label="活动链接:">
+            <el-input v-model="form.activity_url" placeholder="填写活动链接"></el-input>
+          </el-form-item>
+
+          <el-form-item label="分享平台:">
+            <el-checkbox-group v-model="form.share_platform">
+              <el-checkbox label="微信好友"></el-checkbox>
+              <el-checkbox label="朋友圈"></el-checkbox>
+              <el-checkbox label="QQ好友"></el-checkbox>
+              <el-checkbox label="QQ空间"></el-checkbox>
+              <el-checkbox label="微博"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="推送组:">
-            <el-select v-model="form.push_group" placeholder="选择推送组" clearable>
-              <el-option label="测试一下" value="1"></el-option>
-              <el-option label="5月份注册用户" value="2"></el-option>
-              <el-option label="借车中用户" value="3"></el-option>
-              <el-option label="全部推送" value="4"></el-option>
-              <el-option label="未实名认证" value="5"></el-option>
-            </el-select>
+          <el-form-item label="是否默认:">
+            <el-radio class="radio" v-model="form.isDefault" label="1">默认活动</el-radio>
+            <el-radio class="radio" v-model="form.isDefault" label="2">城市活动</el-radio>
           </el-form-item>
 
-          <el-form-item label="推送城市:">
-            <el-select v-model="form.push_city" placeholder="推送城市" clearable>
-              <el-option label="上海市" value="1"></el-option>
-              <el-option label="湖州市" value="2"></el-option>
-              <el-option label="成都市" value="3"></el-option>
-              <el-option label="厦门市" value="4"></el-option>
-              <el-option label="北京市" value="5"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="跳转活动:">
-            <el-select v-model="form.jump_activity" placeholder="跳转活动" clearable>
-              <el-option label="拉新活动" value="1"></el-option>
-              <el-option label="还有什么活动" value="2"></el-option>
-            </el-select>
-          </el-form-item>
-
-          <el-form-item label="个推内容:">
-            <el-input v-model="form.push_content" type="textarea" class='textarea'></el-input>
-          </el-form-item>
-
-          <el-form-item label="短信内容:">
-            <el-input v-model="form.message_content" type="textarea" class='textarea'></el-input>
+          <el-form-item label="有效日期:">
+            <el-date-picker
+              v-model="form.effective_date"
+              type="datetimerange"
+              placeholder="选择时间范围">
+            </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
             <el-input v-model="form.des" type="textarea" class='textarea'></el-input>
+          </el-form-item>
+
+          <el-form-item label="快速添加到城市:">
+            <el-checkbox-group v-model="form.add_cities">
+              <el-checkbox label="成都市"></el-checkbox>
+              <el-checkbox label="湖州市"></el-checkbox>
+              <el-checkbox label="上海市"></el-checkbox>
+              <el-checkbox label="北京市"></el-checkbox>
+              <el-checkbox label="深圳市"></el-checkbox>
+              <el-checkbox label="厦门市"></el-checkbox>
+              <el-checkbox label="珠海市"></el-checkbox>
+              <el-checkbox label="厦门"></el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
 
           <el-form-item>
@@ -302,6 +322,7 @@
         </el-form>
 
       </el-tab-pane>
+
     </el-tabs>
   </div>
 </template>
@@ -317,17 +338,22 @@
           isHave: '',
           logo: '',
           status: '',
+          checkList: [],
           city_name: ''
         },
         form: {
-          push_data: '',
-          checkList: [],
-          push_group: '',
-          push_city: '',
-          jump_activity: '',
-          push_content: '',
-          message_content: '',
-          des: ''
+          activity_des: '',
+          activity_type: '',
+          isEnjoy: '',
+          min_credit: '',
+          show_order: '',
+          activity_url: '',
+          share_platform: [],
+          isDefault: '1',
+          city_name: 'default',
+          effective_date: '',
+          des: '',
+          add_cities: []
         },
         tableData4: [{
           city_name: '上海市',
@@ -456,6 +482,9 @@
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {
-    width: 220px;
+    width: 300px;
+  }
+  p{
+    color:red;
   }
 </style>

@@ -92,7 +92,7 @@ import ActivityCoupon from '@/pages/Activity/ActivityCoupon.vue'
 import ActivityInviteDetail from '@/pages/Activity/ActivityInviteDetail.vue'
 import ActivityCouponReceive from '@/pages/Activity/ActivityCouponReceive.vue'
 import ActivityInviteList from '@/pages/Activity/ActivityInviteList.vue'
-import ActivityConfigIcon from '@/pages/Activity/ActivityConfigIcon.vue'
+import ActivityConfigIcon from '@/pages/Activity/Zombie/ActivityConfigIcon.vue'
 
 Vue.use(Router)
 
