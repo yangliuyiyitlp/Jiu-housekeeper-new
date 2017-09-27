@@ -60,7 +60,7 @@
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime |AddDate}}</span>
+          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -140,13 +140,13 @@
         rules: {
           account: [
             {required: true, message: '请输入账户名称', trigger: 'blur'}
+          ],
+          providerName: [
+            {required: true, message: '请输入厂家名称', trigger: 'change'}
+          ],
+          providerNo: [
+            {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
-//          providerName: [
-//            {required: true, message: '请输入厂家名称', trigger: 'change'}
-//          ],
-//          providerNo: [
-//            {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
-//          ]
         },
         pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1},
         providerOptions: []
@@ -164,6 +164,7 @@
         })
       },
       query: function (condition) {
+        console.log(condition)
         var param = {}
         if (condition === 'condition') {
           param = this.requestParam
@@ -182,6 +183,7 @@
         })
       },
       modifyRecord: function (scope) {
+        console.log(scope)
         this.dialogFormVisible = true
         this.form.id = scope.row.id
         this.form.account = scope.row.account
@@ -271,7 +273,6 @@
               })
             })
           } else {
-            console.log('error submit!!')
             return
           }
         })
@@ -296,13 +297,8 @@
         this.query('condition')
       },
       onSelected: function (val) {
-        console.log(val)
-        var obj = this.providerOptions.find(function (item) {
-          if (item.no === val) {
-            return item.name
-          }
-        })
-        console.log(obj)
+        var obj = this.providerOptions.find(item => item.no === val)
+        this.form.providerName = obj.name
       }
     }
   }

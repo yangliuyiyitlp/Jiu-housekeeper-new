@@ -21,6 +21,11 @@
       </el-form-item>
       <el-form-item label="城市代码：">
         <!--数模型-->
+        <el-input
+          icon="search"
+          v-model="formInline.search"
+          :on-icon-click="handleIconClick" @click="dialogVisible = true">
+        </el-input>
       </el-form-item>
       <el-form-item label="车锁电压：">
         <el-input v-model="formInline.pressure" placeholder="电压小于XXX"></el-input>
@@ -37,7 +42,7 @@
       <el-form-item label="软件版本：">
         <el-input v-model="formInline.versions" placeholder="精确查询"></el-input>
       </el-form-item>
-      <el-button type="primary" @click="onSubmit">查询</el-button>
+      <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
       <el-button type="primary" @click="onExport">导出</el-button>
     </el-form>
     <el-table
@@ -93,19 +98,50 @@
         label="备注">
       </el-table-column>
     </el-table>
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagination.index"
+      :page-sizes="pagination.pageSizes"
+      :page-size="pagination.pageSize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="pagination.total">
+    </el-pagination>
+<!--弹框-->
+    <el-dialog
+      title="选择区域"
+      :visible.sync="dialogVisible"
+      size="tiny"
+      :before-close="handleClose">
+      <el-form ref="formInline" :model="formInline" label-width="80px">
+        <el-form-item label="关键字:">
+          <el-input v-model="formInline.key" style="width:150px;"></el-input>
+        </el-form-item>
+        <el-button   @click="onsearch">搜索</el-button>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+    <el-button @click="dialogVisible = false">取 消</el-button>
+    <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+  </span>
+    </el-dialog>
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
+        dialogVisible: false,
         formInline: {
           user: '',
           region: '',
           pressure: '',
           status: '',
           edition: '',
-          versions: ''
+          versions: '',
+          search: '',
+          key: '',
+          pageSize: 10,
+          index: 1
         },
         tableData: [{
           number: '0008',
@@ -133,15 +169,50 @@
           person: '张三',
           date: '2016-05-02',
           remark: 'aaa'
-        }]
+        }],
+        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
       }
     },
     methods: {
-      onSubmit () {
-        console.log('submit!')
+      handleClose (done) {
+        this.$confirm('确认关闭？')
+          .then(_ => {
+            done()
+          })
+          .catch(_ => {})
+      },
+      onsearch: {},
+      onSubmit: function (condition) {
+        var param = {}
+        if (condition === 'condition') {
+          param = this.formInline
+        } else {
+          param = condition
+        }
+        console.log(param)
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
+      handleSizeChange: function (val) {
+        this.formInline.pageSize = val
+        this.onSubmit('condition')
+      },
+      handleCurrentChange: function (val) {
+        this.formInline.index = val
+        this.onSubmit('condition')
       },
       onExport () {
         console.log('onexport!')
+      },
+      handleIconClick (ev) {
+        console.log(ev)
       }
     }
   }
