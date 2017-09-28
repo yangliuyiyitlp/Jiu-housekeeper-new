@@ -11,7 +11,7 @@
   export default {
     data () {
       return {
-        bar: 'tabs'
+        bar: ''
       }
     },
     components: {
@@ -20,7 +20,6 @@
     mounted () {
       Connector.$on('call', (bar) => {
         this.bar = bar
-        console.log(this.bar)
         this.$router.push({
           name: this.bar
         })

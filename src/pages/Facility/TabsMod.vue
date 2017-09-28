@@ -21,7 +21,7 @@
         <el-button type="primary" @click="query('condition')">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出</el-button>
+        <el-button type="primary"@click='export2Excel'>导出</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
@@ -296,7 +296,23 @@
       onSelected: function (val) {
         var obj = this.providerOptions.find(item => item.no === val)
         this.form.providerName = obj.name
+      },
+      export2Excel: function () {
+        alert('下载吗')
       }
+//      export2Excel () {
+//        require.ensure([], () => {
+//          const { export_json_to_excel } = require('../../assets/vendor/Export2Excel')
+//          const tHeader = ['序号', '账号', '厂家名称', '锁厂家编号']  // '登录状态', '添加时间'
+//          const filterVal = ['ID', 'account', 'providerName', 'providerNo']
+//          const list = this.tableData
+//          const data = this.formatJson(filterVal, list)
+//          export_json_to_excel(tHeader, data, '列表excel')
+//        })
+//      },
+//      formatJson (filterVal, jsonData) {
+//        return jsonData.map(v => filterVal.map(j => v[j]))
+//      }
     }
   }
 </script>

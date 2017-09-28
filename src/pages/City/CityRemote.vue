@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div>远程升级
   </div>
 </template>
 

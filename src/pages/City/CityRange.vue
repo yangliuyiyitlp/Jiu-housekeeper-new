@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div>小区域管理
   </div>
 </template>
 

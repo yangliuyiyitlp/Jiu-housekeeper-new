@@ -1,5 +1,6 @@
 <template>
   <div>
+    公司信息管理
   </div>
 </template>
 

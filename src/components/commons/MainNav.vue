@@ -61,7 +61,7 @@
       },
       facility () {
         this.$router.push({
-          name: 'facility'
+          name: 'tabs'
         })
       },
       content () {
