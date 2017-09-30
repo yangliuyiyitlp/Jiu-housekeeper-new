@@ -283,7 +283,7 @@
     }
   }
 </script>
-<style>
+<style scoped>
   .right {
     margin-left: 270px;
   }
