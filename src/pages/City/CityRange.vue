@@ -65,7 +65,34 @@
         </el-pagination>
 
       </el-tab-pane>
-      <el-tab-pane label="小区域列表添加" name="second">配置管理</el-tab-pane>
+      <el-tab-pane label="小区域列表添加" name="second">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="版本号" prop="num">
+          <el-input v-model="ruleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="所属区域" prop="area">
+
+        </el-form-item>
+        <el-form-item label="版本文件上传" prop="update">
+          <el-upload
+            class="upload-demo"
+            action="https://jsonplaceholder.typicode.com/posts/"
+            :on-preview="handlePreview"
+            :on-remove="handleRemove">
+            <el-button size="small" type="primary">点击上传</el-button>
+            <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
+          </el-upload>
+        </el-form-item>
+        <el-form-item label="备注" prop="desc">
+          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+          <el-button @click="resetForm('ruleForm')">重置</el-button>
+        </el-form-item>
+      </el-form>
+      </el-tab-pane>
+
     </el-tabs>
   </div>
 </template>
@@ -75,6 +102,21 @@
       return {
         activeName2: 'first',
         value6: '',
+        ruleForm: {
+          name: '',
+          area: '',
+          uodate: '',
+          desc: ''
+        },
+        rules: {
+          name: [
+            { required: true, message: '请输入活动名称', trigger: 'blur' },
+            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          ],
+          desc: [
+            { required: true, message: '请填写活动形式', trigger: 'blur' }
+          ]
+        },
         formInline: {
           user: '',
           photo: '',
@@ -102,39 +144,50 @@
       this.onSubmit('condition')
     },
     methods: {
+      onSubmit: function (condition) {
+        var param = {}
+        if (condition === 'condition') {
+          param = this.formInline
+        } else {
+          param = condition
+        }
+        console.log(param)
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
+      handleSizeChange: function (val) {
+        this.formInline.pageSize = val
+        this.onSubmit('condition')
+      },
+      handleCurrentChange: function (val) {
+        this.formInline.index = val
+        this.onSubmit('condition')
+      },
       handleClick (tab, event) {
         console.log(tab, event)
       },
-      methods: {
-        onSubmit: function (condition) {
-          var param = {}
-          if (condition === 'condition') {
-            param = this.formInline
+      onExport () {
+        console.log('onexport!')
+      },
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!')
           } else {
-            param = condition
+            console.log('error submit!!')
+            return false
           }
-          console.log(param)
-          this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-            this.tableData = response.data.list
-            this.pagination.total = response.data.total
-          }, function (err) {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败' + err.status
-            })
-          })
-        },
-        handleSizeChange: function (val) {
-          this.formInline.pageSize = val
-          this.onSubmit('condition')
-        },
-        handleCurrentChange: function (val) {
-          this.formInline.index = val
-          this.onSubmit('condition')
-        },
-        onExport () {
-          console.log('onexport!')
-        }
+        })
+      },
+      resetForm (formName) {
+        this.$refs[formName].resetFields()
       }
     }
   }
