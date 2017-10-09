@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>about</h1>
+    <h1>不用写</h1>
   </div>
 </template>
 

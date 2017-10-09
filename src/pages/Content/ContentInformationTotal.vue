@@ -1,7 +1,7 @@
 <template>
   <div>
     <content-bar></content-bar>
-    <table-info></table-info>
+    <h1>不用写</h1>
   </div>
 </template>
 
