@@ -176,7 +176,8 @@
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
-      }
+      },
+      handleIconClick () {}
     }
   }
 </script>

@@ -116,7 +116,7 @@
             <el-input v-model="ruleForm.name" class="width"></el-input>
           </el-form-item>
           <el-form-item label="性别：" prop="region">
-            <el-select v-model="ruleForm.region"  class="width">
+            <el-select v-model="ruleForm.region" class="width">
               <el-option label="未设置" value="noset"></el-option>
               <el-option label="男" value="nan"></el-option>
               <el-option label="女" value="nv"></el-option>
@@ -138,7 +138,7 @@
             <el-input v-model="ruleForm.cityname" class="width"></el-input>
           </el-form-item>
           <el-form-item label="管理员类型：" prop="type">
-            <el-select v-model="ruleForm.type"  class="width">
+            <el-select v-model="ruleForm.type" class="width">
               <el-option label="兼职人员" value="pone"></el-option>
               <el-option label="运营督导" value="ptwo"></el-option>
               <el-option label="运维人员" value="pthree"></el-option>
@@ -234,51 +234,56 @@
       handleClick (tab, event) {
         console.log(tab, event)
       },
-      methods: {
-        onSubmit: function (condition) {
-          var param = {}
-          if (condition === 'condition') {
-            param = this.formInline
+      onSubmit: function (condition) {
+        var param = {}
+        if (condition === 'condition') {
+          param = this.formInline
+        } else {
+          param = condition
+        }
+        console.log(param)
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
+      handleSizeChange: function (val) {
+        this.formInline.pageSize = val
+        this.onSubmit('condition')
+      },
+      handleCurrentChange: function (val) {
+        this.formInline.index = val
+        this.onSubmit('condition')
+      },
+      onExport () {
+        console.log('onexport!')
+      },
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!')
           } else {
-            param = condition
+            console.log('error submit!!')
+            return false
           }
-          console.log(param)
-          this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-            this.tableData = response.data.list
-            this.pagination.total = response.data.total
-          }, function (err) {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败' + err.status
-            })
-          })
-        },
-        handleSizeChange: function (val) {
-          this.formInline.pageSize = val
-          this.onSubmit('condition')
-        },
-        handleCurrentChange: function (val) {
-          this.formInline.index = val
-          this.onSubmit('condition')
-        },
-        onExport () {
-          console.log('onexport!')
-        },
-        submitForm (formName) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              alert('submit!')
-            } else {
-              console.log('error submit!!')
-              return false
-            }
-          })
-        },
-        resetForm (formName) {
-          this.$refs[formName].resetFields()
-        },
-        handleClick: function () {}
-      }
+        })
+      },
+      resetForm (formName) {
+        this.$refs[formName].resetFields()
+      },
+      handleRemove (file, fileList) {
+        console.log(file, fileList)
+      },
+      handlePreview (file) {
+        console.log(file)
+      },
+      handleIconClick () {}
+//      handleClick: function () {}
     }
   }
 </script>
@@ -286,7 +291,8 @@
   .count {
     margin-left: 250px;
   }
+
   .width {
-   width:300px;
+    width: 300px;
   }
 </style>

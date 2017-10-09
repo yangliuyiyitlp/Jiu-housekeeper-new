@@ -4,7 +4,7 @@
       <el-tab-pane label="小区域列表" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="区域名称：">
-            <el-input v-model="formInline.user" ></el-input>
+            <el-input v-model="formInline.user"></el-input>
           </el-form-item>
           <el-form-item label="所属区域：">
             <!--数模型-->
@@ -67,30 +67,30 @@
       </el-tab-pane>
       <el-tab-pane label="小区域列表添加" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="版本号：" prop="num">
-          <el-input v-model="ruleForm.name"class="width"></el-input>
-        </el-form-item>
-        <el-form-item label="所属区域：" prop="area">
+          <el-form-item label="版本号：" prop="num">
+            <el-input v-model="ruleForm.name" class="width"></el-input>
+          </el-form-item>
+          <el-form-item label="所属区域：" prop="area">
 
-        </el-form-item>
-        <el-form-item label="版本文件上传：" prop="update">
-          <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
-            :on-preview="handlePreview"
-            :on-remove="handleRemove">
-            <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="备注：" prop="desc">
-          <el-input type="textarea" v-model="ruleForm.desc" class="width"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
-        </el-form-item>
-      </el-form>
+          </el-form-item>
+          <el-form-item label="版本文件上传：" prop="update">
+            <el-upload
+              class="upload-demo"
+              action="https://jsonplaceholder.typicode.com/posts/"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove">
+              <el-button size="small" type="primary">点击上传</el-button>
+              <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="备注：" prop="desc">
+            <el-input type="textarea" v-model="ruleForm.desc" class="width"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button @click="resetForm('ruleForm')">重置</el-button>
+          </el-form-item>
+        </el-form>
       </el-tab-pane>
 
     </el-tabs>
@@ -110,11 +110,11 @@
         },
         rules: {
           name: [
-            { required: true, message: '请输入活动名称', trigger: 'blur' },
-            { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+            {required: true, message: '请输入活动名称', trigger: 'blur'},
+            {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
           ],
           desc: [
-            { required: true, message: '请填写活动形式', trigger: 'blur' }
+            {required: true, message: '请填写活动形式', trigger: 'blur'}
           ]
         },
         formInline: {
@@ -188,7 +188,10 @@
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
-      }
+      },
+      handleRemove () {},
+      handlePreview () {},
+      handleIconClick () {}
     }
   }
 </script>
@@ -196,7 +199,8 @@
   .count {
     margin-left: 250px;
   }
-.width{
-  width:300px;
-}
+
+  .width {
+    width: 300px;
+  }
 </style>

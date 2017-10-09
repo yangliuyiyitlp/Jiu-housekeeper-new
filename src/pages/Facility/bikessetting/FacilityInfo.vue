@@ -107,7 +107,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-<!--弹框-->
+    <!--弹框-->
     <el-dialog
       title="选择区域"
       :visible.sync="dialogVisible"
@@ -117,7 +117,7 @@
         <el-form-item label="关键字:">
           <el-input v-model="formInline.key" style="width:150px;"></el-input>
         </el-form-item>
-        <el-button   @click="onsearch">搜索</el-button>
+        <el-button @click="onsearch">搜索</el-button>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">取 消</el-button>
@@ -215,7 +215,8 @@
       },
       handleIconClick (ev) {
         console.log(ev)
-      }
+      },
+      onsearch () {}
     }
   }
 </script>

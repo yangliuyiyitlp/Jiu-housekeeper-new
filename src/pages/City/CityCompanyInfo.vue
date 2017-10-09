@@ -161,50 +161,49 @@
       handleClick (tab, event) {
         console.log(tab, event)
       },
-      methods: {
-        onSubmit: function (condition) {
-          var param = {}
-          if (condition === 'condition') {
-            param = this.formInline
-          } else {
-            param = condition
-          }
-          console.log(param)
-          this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-            this.tableData = response.data.list
-            this.pagination.total = response.data.total
-          }, function (err) {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败' + err.status
-            })
-          })
-        },
-        handleSizeChange: function (val) {
-          this.formInline.pageSize = val
-          this.onSubmit('condition')
-        },
-        handleCurrentChange: function (val) {
-          this.formInline.index = val
-          this.onSubmit('condition')
-        },
-        onExport () {
-          console.log('onexport!')
-        },
-        submitForm (formName) {
-          this.$refs[formName].validate((valid) => {
-            if (valid) {
-              alert('submit!')
-            } else {
-              console.log('error submit!!')
-              return false
-            }
-          })
-        },
-        resetForm (formName) {
-          this.$refs[formName].resetFields()
+      onSubmit: function (condition) {
+        var param = {}
+        if (condition === 'condition') {
+          param = this.formInline
+        } else {
+          param = condition
         }
-      }
+        console.log(param)
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
+      handleSizeChange: function (val) {
+        this.formInline.pageSize = val
+        this.onSubmit('condition')
+      },
+      handleCurrentChange: function (val) {
+        this.formInline.index = val
+        this.onSubmit('condition')
+      },
+      onExport () {
+        console.log('onexport!')
+      },
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!')
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      },
+      resetForm (formName) {
+        this.$refs[formName].resetFields()
+      },
+      handleIconClick () {}
     }
   }
 </script>
@@ -214,13 +213,16 @@
   html, body {
     height: 100%;
   }
-  .width{
-    width:300px;
+
+  .width {
+    width: 300px;
   }
-  .demo-ruleForm>.el-form-item>.el-form-item__label {
-    width: 150px!important;
+
+  .demo-ruleForm > .el-form-item > .el-form-item__label {
+    width: 150px !important;
   }
-  .demo-ruleForm>.el-form-item>.el-form-item__content{
-    margin-left: 150px!important;
+
+  .demo-ruleForm > .el-form-item > .el-form-item__content {
+    margin-left: 150px !important;
   }
 </style>

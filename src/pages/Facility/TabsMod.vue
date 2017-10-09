@@ -172,7 +172,7 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('http://172.16.20.235:8080/a/electric/lockfactoryinfo/interface/list').then(function (response) {
+        this.$http.post('http://172.16.20.235:8080/a/electric/lockfactoryinfo/interface/list', JSON.stringify(param)).then(function (response) {
           this.tableData = response.page.list
           this.pagination.total = response.page.pageNo
         }, function (err) {

@@ -171,7 +171,8 @@
       },
       onExport () {
         console.log('onexport!')
-      }
+      },
+      handleIconClick () {}
     }
   }
 </script>

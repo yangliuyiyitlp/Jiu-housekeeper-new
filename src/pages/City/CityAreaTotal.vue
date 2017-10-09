@@ -12,65 +12,65 @@
             </el-input>
           </el-form-item>
           <el-form-item label="小区域：">
-            <el-input v-model="formInline.user" ></el-input>
+            <el-input v-model="formInline.user"></el-input>
           </el-form-item>
-          <el-form-item label="运维人数：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="运维人数：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="正常车辆：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="正常车辆：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="离线：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="离线：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="报废：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="报废：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="故障车：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="故障车：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="低电量：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="低电量：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
               <el-input v-model="formInline.electricend"></el-input>
             </el-col>
           </el-form-item>
-          <el-form-item label="僵尸车：" >
-            <el-col :span="11" >
-              <el-input v-model="formInline.electricstart" ></el-input>
+          <el-form-item label="僵尸车：">
+            <el-col :span="11">
+              <el-input v-model="formInline.electricstart"></el-input>
             </el-col>
             <el-col class="line" :span="1" style="text-align: center">-</el-col>
             <el-col :span="11">
@@ -210,37 +210,36 @@
       handleClick (tab, event) {
         console.log(tab, event)
       },
-      methods: {
-        onSubmit: function (condition) {
-          var param = {}
-          if (condition === 'condition') {
-            param = this.formInline
-          } else {
-            param = condition
-          }
-          console.log(param)
-          this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-            this.tableData = response.data.list
-            this.pagination.total = response.data.total
-          }, function (err) {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败' + err.status
-            })
-          })
-        },
-        handleSizeChange: function (val) {
-          this.formInline.pageSize = val
-          this.onSubmit('condition')
-        },
-        handleCurrentChange: function (val) {
-          this.formInline.index = val
-          this.onSubmit('condition')
-        },
-        onExport () {
-          console.log('onexport!')
+      onSubmit: function (condition) {
+        var param = {}
+        if (condition === 'condition') {
+          param = this.formInline
+        } else {
+          param = condition
         }
-      }
+        console.log(param)
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
+      },
+      handleSizeChange: function (val) {
+        this.formInline.pageSize = val
+        this.onSubmit('condition')
+      },
+      handleCurrentChange: function (val) {
+        this.formInline.index = val
+        this.onSubmit('condition')
+      },
+      onExport () {
+        console.log('onexport!')
+      },
+      handleIconClick () {}
     }
   }
 </script>
