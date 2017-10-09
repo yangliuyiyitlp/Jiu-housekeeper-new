@@ -55,10 +55,12 @@
     height: 100%;
   }
   .skillselect {
-      width: 200px;
+      width: 250px;
       height: 100% !important;
       /*float: left;*/
       border:1px solid #ccc;
+    padding-left: 20px;
+    box-sizing:border-box!important;
   }
 .row{
   position: relative;

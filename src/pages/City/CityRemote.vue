@@ -66,14 +66,14 @@
       </el-tab-pane>
       <el-tab-pane label="远程升级明细表添加" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="区域名称" prop="num">
-            <el-input v-model="ruleForm.name"></el-input>
+          <el-form-item label="区域名称：" prop="num">
+            <el-input v-model="ruleForm.name"class="width"></el-input>
           </el-form-item>
-          <el-form-item label="所属区域" prop="area">
+          <el-form-item label="所属区域：" prop="area">
 
           </el-form-item>
-          <el-form-item label="备注" prop="desc">
-            <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+          <el-form-item label="备注：" prop="desc">
+            <el-input type="textarea" v-model="ruleForm.desc"class="width"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
@@ -184,5 +184,7 @@
   .count {
     margin-left: 250px;
   }
-
+.width{
+  width:300px;
+}
 </style>

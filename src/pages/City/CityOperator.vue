@@ -109,36 +109,35 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.total">
         </el-pagination>
-
       </el-tab-pane>
       <el-tab-pane label="运营人员管理添加" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-          <el-form-item label="姓名" prop="name">
+          <el-form-item label="姓名：" prop="name">
             <el-input v-model="ruleForm.name" class="width"></el-input>
           </el-form-item>
-          <el-form-item label="性别" prop="region">
+          <el-form-item label="性别：" prop="region">
             <el-select v-model="ruleForm.region"  class="width">
               <el-option label="未设置" value="noset"></el-option>
               <el-option label="男" value="nan"></el-option>
               <el-option label="女" value="nv"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="手机号" prop="photo">
+          <el-form-item label="手机号：" prop="photo">
             <el-input v-model="ruleForm.photo" class="width"></el-input>
           </el-form-item>
-          <el-form-item label="证件号" prop="num">
+          <el-form-item label="证件号：" prop="num">
             <el-input v-model="ruleForm.num" class="width"></el-input>
           </el-form-item>
-          <el-form-item label="城市ID" prop="cityid">
+          <el-form-item label="城市ID：" prop="cityid">
 
           </el-form-item>
-          <el-form-item label="小区域ID" prop="areaid">
+          <el-form-item label="小区域ID：" prop="areaid">
             <el-input v-model="ruleForm.areaid" class="width"></el-input>
           </el-form-item>
-          <el-form-item label="小区域名称" prop="cityname">
+          <el-form-item label="小区域名称：" prop="cityname">
             <el-input v-model="ruleForm.cityname" class="width"></el-input>
           </el-form-item>
-          <el-form-item label="管理员类型" prop="type">
+          <el-form-item label="管理员类型：" prop="type">
             <el-select v-model="ruleForm.type"  class="width">
               <el-option label="兼职人员" value="pone"></el-option>
               <el-option label="运营督导" value="ptwo"></el-option>
@@ -147,7 +146,7 @@
               <el-option label="调度人员" value="pfive"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="证件照正面" prop="type">
+          <el-form-item label="证件照正面：" prop="type">
             <el-upload
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
@@ -157,9 +156,9 @@
               <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
             </el-upload>
           </el-form-item>
-          <el-form-item label="证件照反面" prop="type">
+          <el-form-item label="证件照反面：" prop="type">
             <el-upload
-              class="upload-demo"
+              class="upload-demo "
               action="https://jsonplaceholder.typicode.com/posts/"
               :on-preview="handlePreview"
               :on-remove="handleRemove">
@@ -167,7 +166,7 @@
               <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
             </el-upload>
           </el-form-item>
-          <el-form-item label="备注" prop="desc">
+          <el-form-item label="备注：" prop="desc">
             <el-input type="textarea" v-model="ruleForm.desc" class="width"></el-input>
           </el-form-item>
           <el-form-item>
@@ -277,7 +276,8 @@
         },
         resetForm (formName) {
           this.$refs[formName].resetFields()
-        }
+        },
+        handleClick: function () {}
       }
     }
   }

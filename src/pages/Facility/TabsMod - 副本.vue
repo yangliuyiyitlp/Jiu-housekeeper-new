@@ -154,9 +154,8 @@
     },
     methods: {
       getSelectOptions: function () {
-        this.$http.post('/provider/selectOptions').then(function (res) {
-          this.providerOptions = res.data
-          console.log(res.data)
+        this.$http.post('/provider/selectOptions').then(function (response) {
+          this.providerOptions = response.data
         }, function (err) {
           this.$message({
             type: 'info',
@@ -172,9 +171,9 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('http://172.16.20.235:8080/a/electric/lockfactoryinfo/interface/list').then(function (response) {
-          this.tableData = response.page.list
-          this.pagination.total = response.page.pageNo
+        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+          this.tableData = response.data.list
+          this.pagination.total = response.data.total
         }, function (err) {
           this.$message({
             type: 'info',

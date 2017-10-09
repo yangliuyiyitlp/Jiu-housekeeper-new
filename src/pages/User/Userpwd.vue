@@ -2,13 +2,13 @@
   <div class="pwd">
     <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm center">
       <el-form-item label="旧密码" prop="oldpass">
-        <el-input type="password"  auto-complete="off"></el-input>
+        <el-input type="password"  auto-complete="off" class="width"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="pass">
-        <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+        <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"class="width"></el-input>
       </el-form-item>
       <el-form-item label="确认密码" prop="checkPass">
-        <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off"></el-input>
+        <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off"class="width"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
@@ -91,4 +91,7 @@
    position: absolute;
    margin-top:100px;
  }
+  .width{
+    width:300px;
+  }
 </style>

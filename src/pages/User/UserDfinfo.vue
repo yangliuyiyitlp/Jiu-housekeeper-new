@@ -51,17 +51,23 @@
   html, body {
     height: 100%;
   }
+
   .mypanel {
     height: 100%;
   }
+
   .skillselect {
-      width: 200px;
-      height: 100% !important;
-      /*float: left;*/
-      border:1px solid #ccc;
+    width: 250px!important;
+    height: 100% !important;
+    /*float: left;*/
+    border: 1px solid #ccc;
+    padding-left: 20px;
+    box-sizing:border-box!important;
+
   }
-.row{
-  position: relative;
-}
+
+  .row {
+    position: relative;
+  }
 
 </style>
