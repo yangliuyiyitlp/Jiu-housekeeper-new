@@ -5,16 +5,13 @@
 </template>
 
 <script>
-  import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
+
   export default {
     data () {
-      return {
-      }
-    },
-    components: {
-      SystemBar
+      return {}
     }
   }
+
 </script>
 
 <style scoped>
