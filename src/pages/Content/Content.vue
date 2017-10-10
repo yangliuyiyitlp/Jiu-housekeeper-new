@@ -1,13 +1,13 @@
 <template>
   <div>
     <content-bar></content-bar>
-    <router></router>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-  import ContentBar from '@/components/commons/Ztree/ContentBar.vue'
-  import bus from '@/assets/js/eventBus.js'
+  import ContentBar from '../../components/commons/Ztree/ContentBar.vue'
+  import bus from '../../assets/js/eventBus.js'
   export default {
     data () {
       return {

@@ -2,13 +2,13 @@
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" class="demo-form-inline">
       <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.providerName" placeholder="锁厂名称"></el-input>
+        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
       </el-form-item>
       <!--<el-form-item label="锁厂编号">-->
-      <!--<el-input v-model="requestParam.providerName" placeholder="锁厂编号"></el-input>-->
+      <!--<el-input v-model="requestParam.factoryName" placeholder="锁厂编号"></el-input>-->
       <!--</el-form-item>-->
       <el-form-item label="锁厂编号">
-        <el-input v-model="requestParam.providerNo" placeholder="锁厂编号"></el-input>
+        <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
       <el-form-item label="添加时间">
         <el-date-picker
@@ -19,7 +19,7 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="query('condition')">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary">导出</el-button>
@@ -33,17 +33,17 @@
       border
       fit
       style="width: 100%">
-      <el-table-column
-        prop="id"
-        label="序号">
-      </el-table-column>
+      <!--<el-table-column-->
+      <!--prop="id"-->
+      <!--label="序号">-->
+      <!--</el-table-column>-->
       // 返回的客户id
       <el-table-column
-        prop="providerName"
+        prop="factoryName"
         label="锁厂名称">
       </el-table-column>
       <el-table-column
-        prop="providerNo"
+        prop="lockFactoryNo"
         label="锁厂家编号	">
       </el-table-column>
       <!--<el-table-column-->
@@ -57,7 +57,7 @@
         label="添加时间">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime |AddDate}}</span>
+          <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
         </template>
       </el-table-column>
       <el-table-column
@@ -65,8 +65,8 @@
         label="操作者	"> // 后台暂无数据
       </el-table-column>
       <el-table-column
-        prop="remark"
-        label="备注	"> // 后台暂无数据
+        prop="remarks"
+        label="备注	">
       </el-table-column>
       <el-table-column
         label="操作">
@@ -79,31 +79,30 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="pagination.index"
+      :current-page="pagination.pageNo"
       :page-sizes="pagination.pageSizes"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="pagination.total">
+      :total="pagination.count">
     </el-pagination>
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item label="厂家名称" prop="providerName" class="elform">
-          <el-input v-model="form.providerName"></el-input>
+        <el-form-item label="厂家名称" prop="factoryName" class="elform">
+          <el-input v-model="form.factoryName"></el-input>
         </el-form-item>
-        <el-form-item label="锁厂家编号" prop="providerNo" class="elform" >
-          <el-input v-model="form.providerNo" ></el-input>
+        <el-form-item label="锁厂家编号" prop="lockFactoryNo" class="elform">
+          <el-input v-model="form.lockFactoryNo"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remark" class="elform">
-          <el-input type="textarea" :row="3" v-model="form.remark"></el-input>
+        <el-form-item label="备注" prop="remarks" class="elform">
+          <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
         <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
       </div>
-
     </el-dialog>
   </div>
 </template>
@@ -111,7 +110,7 @@
 <script>
   export default {
     created: function () {
-      this.query('condition')
+      this.query()
     },
     data: function () {
       return {
@@ -119,36 +118,36 @@
         dialogFormVisible: false,  // 模态框是否显示
         addLoading: false,       // 是否显示loading
         form: {
-          providerName: '',
-          providerNo: '',
+          factoryName: '',
+          lockFactoryNo: '',
           id: '',
           providerInfo: ''
         },
         formLabelWidth: '80px',
-        requestParam: {selectedDate: null, providerName: '', providerNo: '', pageSize: 10, index: 1},
+        requestParam: {selectedDate: null, factoryName: '', lockFactoryNo: '', pageSize: 10, pageNo: 1},  // TODO 修改筛选时间
         rules: {
-          providerName: [
+          factoryName: [
             {required: true, message: '请输入厂家名称', trigger: 'blur'}
           ],
-          providerNo: [
+          lockFactoryNo: [
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, count: 0, pageNo: 1}
       }
     },
     methods: {
-      query: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.requestParam
-        } else {
-          param = condition
-        }
-        console.log(param)
-        this.$http.post('/provider/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
+      query: function () {
+        this.$http.post('/provider/query', JSON.stringify(this.requestParam)).then(function (response) {
+          if (response.data.code === 0) {
+            this.tableData = response.data.page.list
+            this.pagination.count = response.data.page.count
+          } else {
+            this.$message({
+              type: 'info',
+              message: '获取列表信息失败'
+            })
+          }
         }, function (err) {
           this.$message({
             type: 'info',
@@ -159,11 +158,10 @@
       modifyRecord: function (scope) {
         this.dialogFormVisible = true
         this.form.id = scope.row.id
-        this.form.providerName = scope.row.providerName
-        this.form.providerNo = scope.row.providerNo
+        this.form.factoryName = scope.row.factoryName
+        this.form.lockFactoryNo = scope.row.lockFactoryNo
         this.form.operator = scope.row.operator
-        this.form.remark = scope.row.remark
-        console.log(this.form)
+        this.form.remarks = scope.row.remarks
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -182,7 +180,7 @@
                   message: '删除成功'
                 })
                 // 刷新页面
-                this.query(this.requestParam)
+                this.query()
               } else {
                 this.$message({
                   type: 'error',
@@ -226,7 +224,7 @@
                 })
                 this.$refs['formA'].resetFields()
                 // 刷新页面
-                this.query(this.requestParam)
+                this.query()
               } else {
                 this.$message({
                   type: 'error',
@@ -248,21 +246,21 @@
       cancelOperate: function () {
         this.dialogFormVisible = false
         this.form = {
-          providerName: '',
-          providerNo: '',
+          factoryName: '',
+          lockFactoryNo: '',
           id: '',
           operator: '',
-          remark: ''
+          remarks: ''
         }
         this.$refs['formA'].resetFields()
       },
       handleSizeChange: function (val) {
         this.requestParam.pageSize = val
-        this.query('condition')
+        this.query()
       },
       handleCurrentChange: function (val) {
-        this.requestParam.index = val
-        this.query('condition')
+        this.requestParam.pageNo = val
+        this.query()
       }
     }
   }

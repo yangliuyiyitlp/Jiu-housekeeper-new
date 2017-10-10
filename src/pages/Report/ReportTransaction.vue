@@ -241,7 +241,8 @@
       },
       handleIconClick (ev) {
         console.log(ev)
-      }
+      },
+      onsearch: function () {}
     }
   }
 </script>

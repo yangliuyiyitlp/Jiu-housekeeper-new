@@ -109,6 +109,7 @@
     },
     data () {
       return {
+        value6: '',
         dialogVisible: false,
         formInline: {
           user: '',
@@ -191,7 +192,8 @@
       },
       handleIconClick (ev) {
         console.log(ev)
-      }
+      },
+      onsearch: function () {}
     }
   }
 </script>
