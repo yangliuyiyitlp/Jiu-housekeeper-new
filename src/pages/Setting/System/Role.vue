@@ -144,12 +144,6 @@
       return {
         value1: '',
         activeName2: 'first',
-        formInline: {
-          attribution_company: '',
-          login_name: '',
-          attribution_department: '',
-          name: ''
-        },
         form: {
           attribution_mechanism: '',
           role_name: '',

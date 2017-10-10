@@ -1,20 +1,17 @@
 <template>
   <div>
-    <h1>daily</h1>
+    <h1>不用写</h1>
   </div>
 </template>
 
 <script>
-  import SystemBar from '@/components/commons/Ztree/SystemBar.vue'
+
   export default {
     data () {
-      return {
-      }
-    },
-    components: {
-      SystemBar
+      return {}
     }
   }
+
 </script>
 
 <style scoped>
