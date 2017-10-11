@@ -1,3 +1,4 @@
+<script src="../../main.js"></script>
 <template>
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" class="demo-form-inline">
@@ -21,7 +22,7 @@
         <el-button type="primary" @click="query('condition')">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary"@click='export2Excel'>导出</el-button>
+        <el-button type="primary" @click='export2Excel'>导出</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
@@ -112,9 +113,9 @@
         <el-button @click="cancelOperate">取 消</el-button>
         <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
       </div>
-
+    
     </el-dialog>
-
+  
   </div>
 </template>
 
@@ -172,7 +173,12 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('http://172.16.20.235:8080/a/electric/lockfactoryinfo/interface/list', JSON.stringify(param)).then(function (response) {
+        console.log(this.$qs.stringify(param))
+        this.$http.post('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(function (response) {
           this.tableData = response.page.list
           this.pagination.total = response.page.pageNo
         }, function (err) {
@@ -321,17 +327,17 @@
   #dataGrid {
     margin-left: 250px;
   }
-
+  
   form {
     padding-top: 20px;
     height: 75px;
   }
-
+  
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
-
+  
   .common {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -349,37 +355,37 @@
     padding: 3px 10px;
     transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
   }
-
+  
   .module {
     height: 240px !important;
     width: 400px !important;
   }
-
+  
   .tbody {
     height: 240px !important;
   }
-
+  
   .elform {
     text-align: left !important;
   }
-
+  
   .el-form-item__content {
     margin-left: 100px !important;
   }
-
+  
   .el-dialog {
     width: 500px !important;
     height: 350px;
   }
-
+  
   .cell {
     text-align: center;
   }
-
+  
   .el-dialog {
     width: 20%;
   }
-
+  
   .el-dialog__title {
     text-align: left;
     margin-left: 0%;
