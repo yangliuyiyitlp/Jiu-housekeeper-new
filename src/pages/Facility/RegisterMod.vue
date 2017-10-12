@@ -1,8 +1,8 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" style="padding-left:10px;"class="demo-form-inline">
       <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
+        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称" ></el-input>
       </el-form-item>
       <!--<el-form-item label="锁厂编号">-->
       <!--<el-input v-model="requestParam.factoryName" placeholder="锁厂编号"></el-input>-->
@@ -14,19 +14,19 @@
         <el-date-picker
           v-model="requestParam.addTimeStart"
           type="datetime"
-          placeholder="选择日期时间">
+          placeholder="开始时间">
         </el-date-picker>
         <el-date-picker
           v-model="requestParam.addTimeEnd"
           type="datetime"
-          placeholder="选择日期时间">
+          placeholder="结束时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary">导出</el-button>
+        <el-button type="primary" >导出</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
@@ -36,15 +36,25 @@
       :data="tableData"
       border
       fit
-      style="width: 100%">
+      style="width: 100%"
+      @cell-click="more">
+      <!-- lihaibu-->
       <el-table-column
         prop="id"
-        label="id" v-show="idfalse"> // id 隐藏
+        label="id" v-if="idfalse"> // id 隐藏
       </el-table-column>
       // 返回的客户id
+      <!--<el-table-column-->
+        <!--v-bind:class="{active: true}"-->
+        <!--prop="factoryName"-->
+        <!--label="锁厂名称">-->
+      <!--</el-table-column>-->
       <el-table-column
-        prop="factoryName"
-        label="锁厂名称">
+        label="锁厂名称"
+        prop="factoryName">
+        <template scope="scope">
+          <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="lockFactoryNo"
@@ -89,6 +99,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.count">
     </el-pagination>
+     <!--增加修改弹框-->
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
@@ -108,6 +119,34 @@
         <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
       </div>
     </el-dialog>
+     <!--详情弹框-->
+    <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+
+      <el-form label-width="150px"  :model="form" ref="formA" class="tbody">
+        <el-form-item label="锁厂名称"  class="elform">
+          <el-input :value="moreinfo.factoryName":disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="锁厂家编号"  class="elform">
+          <el-input :value="moreinfo.lockFactoryNo":disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="添加时间" class="elform">
+          <el-input :value="moreinfo.addTime":disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="更新时间" class="elform">
+          <el-input :value="moreinfo.updateDate":disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="操作者" class="elform">
+          <el-input :value="moreinfo['createBy.id']":disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注"  class="elform">
+          <el-input type="textarea" :row="3" :value="moreinfo.remarks":disabled="true"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button type="primary" @click="cancelmore">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -120,7 +159,8 @@
       return {
         idfalse: false,
         tableData: [],
-        dialogFormVisible: false,  // 模态框是否显示
+        dialogFormVisible: false,  // 增加修改是否显示
+        moreFormVisible: false,   // 详情
         addLoading: false,       // 是否显示loading
         form: {
           id: '',
@@ -129,10 +169,18 @@
           'createBy.id': '',
           remarks: ''
         },
+        moreinfo: {
+          factoryName: '',
+          lockFactoryNo: '',
+          'createBy.id': '',
+          remarks: '',
+          addTime: '',
+          updateDate: ''
+        },
         formLabelWidth: '80px',
         requestParam: {
-          addTimeStart: null,
-          addTimeEnd: null,
+          addTimeStart: '',
+          addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: '',
           pageSize: 10,
@@ -151,8 +199,11 @@
     },
     methods: {
       query: function () {
+//        this.requestParam.addTimeStart = this.formatDate(this.requestParam.addTimeStart, 'yyyy-MM-dd HH:mm:ss')
+//        this.requestParam.addTimeEnd = this.formatDate(this.requestParam.addTimeEnd, 'yyyy-MM-dd HH:mm:ss')
+        this.requestParam.addTimeStart = this.requestParam.addTimeStart.toString()
+        this.requestParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
-          console.log(JSON.stringify(this.requestParam))
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -193,6 +244,7 @@
                   type: 'success',
                   message: '删除成功'
                 })
+                this.$refs['formA'].resetFields()
                 // 刷新页面
                 this.query()
               } else {
@@ -268,6 +320,35 @@
         }
         this.$refs['formA'].resetFields()
       },
+      more: function (row, column, cell, event) {
+//        console.log(row)
+//        console.log(row.id)
+//        console.log(column)
+//        console.log(column.property)
+//        console.log(event)
+        if (column.property !== 'factoryName') {
+          return false
+        } else {
+          this.moreFormVisible = true
+          this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
+            if (res.data.code === 0) {
+              this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
+              this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
+              this.moreinfo.factoryName = res.data.tLockFactoryInfo.factoryName
+              this.moreinfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
+              this.moreinfo.addTime = res.data.tLockFactoryInfo.addTime
+            }
+          }).catch(function (err) {
+            this.$message({
+              type: 'info',
+              message: '获取详情失败' + err.status
+            })
+          })
+        }
+      },
+      cancelmore: function () {
+        this.moreFormVisible = false
+      },
       handleSizeChange: function (val) {
         this.requestParam.pageSize = val
         this.query()
@@ -293,7 +374,12 @@
     font-size: 20px !important;
     text-align: center;
   }
-
+  .tbody[data-v-30c85a31] {
+    height: 350px !important;
+  }
+  .active{
+   color:#20a0ff;
+ }
   .module {
     height: 240px !important;
     width: 400px !important;

@@ -1,6 +1,6 @@
 <template>
   <div class="info">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="formInline" style="padding-left:10px;" class="demo-form-inline">
       <el-form-item label="车辆编号：">
         <el-input v-model="formInline.user" placeholder="模糊查询"></el-input>
       </el-form-item>

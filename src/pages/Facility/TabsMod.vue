@@ -1,7 +1,7 @@
 <script src="../../main.js"></script>
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
       <el-form-item label="账户：">
         <el-input v-model="requestParam.account" placeholder="账户"></el-input>
       </el-form-item>
@@ -113,9 +113,9 @@
         <el-button @click="cancelOperate">取 消</el-button>
         <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
       </div>
-    
+
     </el-dialog>
-  
+
   </div>
 </template>
 
@@ -327,17 +327,17 @@
   #dataGrid {
     margin-left: 250px;
   }
-  
+
   form {
     padding-top: 20px;
     height: 75px;
   }
-  
+
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
-  
+
   .common {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -355,37 +355,37 @@
     padding: 3px 10px;
     transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
   }
-  
+
   .module {
     height: 240px !important;
     width: 400px !important;
   }
-  
+
   .tbody {
     height: 240px !important;
   }
-  
+
   .elform {
     text-align: left !important;
   }
-  
+
   .el-form-item__content {
     margin-left: 100px !important;
   }
-  
+
   .el-dialog {
     width: 500px !important;
     height: 350px;
   }
-  
+
   .cell {
     text-align: center;
   }
-  
+
   .el-dialog {
     width: 20%;
   }
-  
+
   .el-dialog__title {
     text-align: left;
     margin-left: 0%;
