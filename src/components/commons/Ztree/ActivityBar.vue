@@ -3,19 +3,19 @@
     <el-tree
       :data="data"
       :props="defaultProps"
-      accordion
       highlight-current
       node-key="id"
       :default-expanded-keys="[5]"
       :default-checked-keys="[6]"
+      default-expand-all
       @node-click="handleNodeClick">
     </el-tree>
-  
+
   </div>
 </template>
 <script>
   import bus from '@/assets/js/eventBus.js'
-  
+
   export default {
     data () {
       return {

@@ -39,7 +39,7 @@
       style="width: 100%">
       <el-table-column
         prop="id"
-        label="id" v-show="idfalse"> // id 隐藏
+        label="id" v-if=0> // id 隐藏
       </el-table-column>
       // 返回的客户id
       <el-table-column
@@ -118,7 +118,7 @@
     },
     data: function () {
       return {
-        idfalse: false,
+//        idfalse: false,
         tableData: [],
         dialogFormVisible: false,  // 模态框是否显示
         addLoading: false,       // 是否显示loading

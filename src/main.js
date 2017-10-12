@@ -18,7 +18,8 @@ import './assets/plugins/bootstrap/js/bootstrap.min'
 import Axios from 'axios'
 Vue.prototype.$axios = Axios
 Vue.use(VueMoment)
-global.$ = global.jQuery = $
+// global.$ = global.jQuery = $
+
 Vue.use(VueResource)
 // 设置中文
 // VeeValidate.Validator.addLocale(ZHCN)
