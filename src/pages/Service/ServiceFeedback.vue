@@ -1,7 +1,7 @@
 <template>
   <div class="right">
     <el-tabs v-model="activeName" type="card">
-      <el-tab-pane label="反馈明细列表" name="first">
+      <el-tab-pane label="反馈明细列表" name="first"style="padding-left:10px;">
 
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -350,6 +350,6 @@
 
 <style scoped>
   .right {
-    margin-left: 260px;
+    margin-left: 250px;
   }
 </style>

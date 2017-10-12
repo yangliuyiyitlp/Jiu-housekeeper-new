@@ -2,7 +2,7 @@
   <div>
     <div class="right">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-        <el-tab-pane label="会员邀请统计列表" name="first">
+        <el-tab-pane label="会员邀请统计列表" name="first"style="padding-left:10px;">
           <!--筛选-->
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="邀请者">
@@ -41,7 +41,7 @@
             <el-button type="primary" @click="exportData">导出</el-button>
           </el-form-item>
         </el-form>
-  
+
           <!--table-->
           <el-table
             :data="tableData"
@@ -67,7 +67,7 @@
               label="邀请人数">
             </el-table-column>
           </el-table>
-  
+
           <!--分页-->
           <paginations></paginations>
         </el-tab-pane>
@@ -155,6 +155,6 @@
 </script>
 <style scoped>
   .right {
-    margin-left: 270px;
+    margin-left: 250px;
   }
 </style>

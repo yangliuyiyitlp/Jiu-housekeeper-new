@@ -1,6 +1,6 @@
 <template>
   <div class="detailed">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="formInline" class="demo-form-inline"style="padding-left:10px;">
       <el-form-item label="分类：">
         <el-select v-model="formInline.status">
           <el-option label="咨询" value="open"></el-option>

@@ -2,7 +2,7 @@
   <div>
     <div class="right">
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-        <el-tab-pane label="会员邀请统计列表" name="first">
+        <el-tab-pane label="会员邀请统计列表" name="first"style="padding-left:10px;">
           <!--筛选-->
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="邀请者">
@@ -23,7 +23,7 @@
                 <el-option label="临时用户" value="2"></el-option>
               </el-select>
             </el-form-item>
-            
+
             <el-form-item label="是否有效">
               <el-select v-model="formInline.region4" placeholder="选择是否有效">
                 <el-option label="待更新" value="1"></el-option>
@@ -31,11 +31,11 @@
                 <el-option label="无效" value="3"></el-option>
               </el-select>
             </el-form-item>
-            
+
             <el-form-item label="邀请时间:">
               <date-pickers></date-pickers>
             </el-form-item>
-            
+
             <el-form-item>
               <el-button type="primary" @click="search">查询</el-button>
             </el-form-item>
@@ -43,7 +43,7 @@
               <el-button type="primary" @click="exportData">导出</el-button>
             </el-form-item>
           </el-form>
-          
+
           <!--table-->
           <el-table
             :data="tableData"
@@ -80,7 +80,7 @@
               prop="invited_effective"
               label="是否有效邀请">
             </el-table-column>
-            
+
             <el-table-column
               header-align="center"
               align="center"
@@ -88,7 +88,7 @@
               label="邀请时间">
             </el-table-column>
           </el-table>
-          
+
           <!--分页-->
           <paginations></paginations>
         </el-tab-pane>
@@ -213,6 +213,6 @@
 
 <style scoped>
   .right {
-    margin-left: 270px;
+    margin-left: 250px;
   }
 </style>

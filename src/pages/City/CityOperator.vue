@@ -1,7 +1,7 @@
 <template>
   <div class="count">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-      <el-tab-pane label="运营人员管理列表" name="first">
+      <el-tab-pane label="运营人员管理列表" name="first"style="padding-left:10px;">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="姓名：">
             <el-input v-model="formInline.user"></el-input>
@@ -151,7 +151,8 @@
               class="upload-demo"
               action="https://jsonplaceholder.typicode.com/posts/"
               :on-preview="handlePreview"
-              :on-remove="handleRemove">
+              :on-remove="handleRemove"
+              :auto-upload="false">
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
             </el-upload>
@@ -161,7 +162,8 @@
               class="upload-demo "
               action="https://jsonplaceholder.typicode.com/posts/"
               :on-preview="handlePreview"
-              :on-remove="handleRemove">
+              :on-remove="handleRemove"
+              :auto-upload="false">
               <el-button size="small" type="primary">点击上传</el-button>
               <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
             </el-upload>

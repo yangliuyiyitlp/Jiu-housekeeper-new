@@ -31,6 +31,6 @@
 
 <style scoped>
   .right {
-    margin-left: 270px;
+    margin-left: 250px;
   }
 </style>

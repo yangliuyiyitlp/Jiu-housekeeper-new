@@ -12,10 +12,14 @@
       </el-form-item>
       <el-form-item label="添加时间">
         <el-date-picker
-          v-model="requestParam.selectedDate"
-          type="daterange"
-          clearable
-          placeholder="选择日期范围">
+          v-model="requestParam.addTimeStart"
+          type="datetime"
+          placeholder="选择日期时间">
+        </el-date-picker>
+        <el-date-picker
+          v-model="requestParam.addTimeEnd"
+          type="datetime"
+          placeholder="选择日期时间">
         </el-date-picker>
       </el-form-item>
       <el-form-item>
@@ -33,10 +37,10 @@
       border
       fit
       style="width: 100%">
-      <!--<el-table-column-->
-      <!--prop="id"-->
-      <!--label="序号">-->
-      <!--</el-table-column>-->
+      <el-table-column
+        prop="id"
+        label="id" v-show="idfalse"> // id 隐藏
+      </el-table-column>
       // 返回的客户id
       <el-table-column
         prop="factoryName"
@@ -61,8 +65,8 @@
         </template>
       </el-table-column>
       <el-table-column
-        prop="operator"
-        label="操作者	"> // 后台暂无数据
+        prop="createBy.id"
+        label="操作者	"> // 返回空就是没有
       </el-table-column>
       <el-table-column
         prop="remarks"
@@ -114,17 +118,26 @@
     },
     data: function () {
       return {
+        idfalse: false,
         tableData: [],
         dialogFormVisible: false,  // 模态框是否显示
         addLoading: false,       // 是否显示loading
         form: {
+          id: '',
           factoryName: '',
           lockFactoryNo: '',
-          id: '',
-          providerInfo: ''
+          'createBy.id': '',
+          remarks: ''
         },
         formLabelWidth: '80px',
-        requestParam: {selectedDate: null, factoryName: '', lockFactoryNo: '', pageSize: 10, pageNo: 1},  // TODO 修改筛选时间
+        requestParam: {
+          addTimeStart: null,
+          addTimeEnd: null,
+          factoryName: '',
+          lockFactoryNo: '',
+          pageSize: 10,
+          pageNo: 1
+        },
         rules: {
           factoryName: [
             {required: true, message: '请输入厂家名称', trigger: 'blur'}
@@ -133,12 +146,13 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, count: 0, pageNo: 1}
+        pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1}
       }
     },
     methods: {
       query: function () {
-        this.$http.post('/provider/query', JSON.stringify(this.requestParam)).then(function (response) {
+        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
+          console.log(JSON.stringify(this.requestParam))
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -160,7 +174,7 @@
         this.form.id = scope.row.id
         this.form.factoryName = scope.row.factoryName
         this.form.lockFactoryNo = scope.row.lockFactoryNo
-        this.form.operator = scope.row.operator
+        this.form['createBy.id'] = scope.row['createBy.id']
         this.form.remarks = scope.row.remarks
       },
       deleteRecord: function (id) {
@@ -172,8 +186,8 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.post('/provider/delete', {'id': id}).then(function (response) {
-              if (response.data.code === '1') {
+            this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(function (response) {
+              if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
                   type: 'success',
@@ -205,18 +219,18 @@
           })
         })
       },
-      doModify: function (formName) {
+      doModify: function (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = '/provider/add'
+              url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save' // 新增功能
             } else {
-              url = '/provider/modify'
+              url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save'
             }
             this.dialogFormVisible = false
-            this.$http.post(url, JSON.stringify(this.form)).then(function (response) {
-              if (response.data.code === '1') {
+            this.$http.get(url, {params: this.form}).then(function (response) {
+              if (response.data.code === 0) {
                 // 更新成功
                 this.$message({
                   type: 'success',
@@ -249,7 +263,7 @@
           factoryName: '',
           lockFactoryNo: '',
           id: '',
-          operator: '',
+          'createBy.id': '',
           remarks: ''
         }
         this.$refs['formA'].resetFields()

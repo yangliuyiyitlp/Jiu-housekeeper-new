@@ -2,7 +2,7 @@
   <div class="right">
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <!-- 字典列表-->
-      <el-tab-pane label="字典列表" name="first">
+      <el-tab-pane label="字典列表" name="first"style="padding-left:10px;">
 
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -246,7 +246,7 @@
 
 <style scoped>
   .right {
-    margin-left: 260px;
+    margin-left: 250px;
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

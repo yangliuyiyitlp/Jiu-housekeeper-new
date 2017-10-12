@@ -2,7 +2,7 @@
   <div class="right">
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <!--违规工单登记列表-->
-      <el-tab-pane label="违规工单登记列表" name="first">
+      <el-tab-pane label="违规工单登记列表" name="first"style="padding-left:10px;">
 
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -334,8 +334,8 @@
           bicycle_number: '5055005055',
           violation_type: '非法移车',
           violation_date: '2017-09-21 15:51:12',
-          change_points: '11',
           logo: '未冲正',
+          change_points: '11',
           audit_status: '审核未通过',
           integral_zero: '是',
           operator: '大剿匪啊',
@@ -431,7 +431,7 @@
 
 <style scoped>
   .right {
-    margin-left: 260px;
+    margin-left: 250px;
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

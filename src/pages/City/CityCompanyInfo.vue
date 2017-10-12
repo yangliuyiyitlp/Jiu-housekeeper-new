@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-tabs style='margin-left: 250px;' v-model="activeName2" type="card" @tab-click="handleClick">
-      <el-tab-pane label="公司信息管理列表" name="first">
+      <el-tab-pane label="公司信息管理列表" name="first"style="padding-left:10px;">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="城市：">
             <!--数模型-->

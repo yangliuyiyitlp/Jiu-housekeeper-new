@@ -23,7 +23,7 @@ module.exports = {
   },
   dev: {
     env: require('./dev.env'),
-    port: 8086,
+    port: 8101,
     host: '0.0.0.0',
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
@@ -31,6 +31,7 @@ module.exports = {
     proxyTable: {
       '/dataGrid':'http://47.94.109.245:8080/blog/',
       '/provider':'http://47.94.109.245:8080/blog/'}, //后面添加
+    // '/a': 'http://172.16.20.235:8080',
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

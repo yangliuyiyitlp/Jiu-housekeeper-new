@@ -1,7 +1,7 @@
 <template>
   <div class="count">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-      <el-tab-pane label="小区域列表" name="first">
+      <el-tab-pane label="小区域列表" name="first"style="padding-left:10px;">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="区域名称：">
             <el-input v-model="formInline.user"></el-input>

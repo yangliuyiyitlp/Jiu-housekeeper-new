@@ -1,6 +1,6 @@
 <template>
   <div class="detailed">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
+    <el-form :inline="true" :model="formInline" class="demo-form-inline"style="padding-left:10px;">
       <el-form-item label="点位名称：">
         <el-input v-model="formInline.user" ></el-input>
       </el-form-item>
