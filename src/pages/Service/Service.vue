@@ -1,7 +1,13 @@
 <template>
   <div>
-    <service-bar></service-bar>
-    <router-view></router-view>
+    <el-row>
+      <el-col :span="3">
+        <service-bar></service-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
 

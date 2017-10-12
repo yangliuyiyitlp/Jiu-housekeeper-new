@@ -135,7 +135,7 @@
 </script>
 <style scoped>
   .detailed {
-    margin-left: 250px;
+  
   }
 
 

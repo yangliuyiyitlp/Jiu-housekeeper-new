@@ -123,7 +123,7 @@
 
 <style scoped>
   .right {
-    margin-left: 250px;
+  
   }
 
   .el-input, .el-input__inner {

@@ -302,7 +302,7 @@
 
 <style scoped>
   .right {
-    margin-left: 260px;
+  
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

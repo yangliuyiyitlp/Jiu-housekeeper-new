@@ -1,7 +1,13 @@
 <template>
   <div>
-    <packet-bar></packet-bar>
-    <router-view></router-view>
+    <el-row>
+      <el-col :span="3">
+        <packet-bar></packet-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
 

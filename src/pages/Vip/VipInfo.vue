@@ -549,7 +549,7 @@
 
 <style scoped>
   .right {
-    margin-left: 250px;
+  
   }
   .textarea, .el-input, .el-input__inner{
     width: 300px;

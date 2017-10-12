@@ -4,9 +4,6 @@
       :data="data"
       :props="defaultProps"
       highlight-current
-      node-key="id"
-      :default-expanded-keys="[5]"
-      :default-checked-keys="[6]"
       default-expand-all
       @node-click="handleNodeClick">
     </el-tree>
@@ -82,9 +79,6 @@
 
 
 <style scoped>
-  div {
-    width: 250px;
-    float: left;
-  }
+
 </style>
 

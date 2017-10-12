@@ -243,7 +243,7 @@
 </script>
 <style scoped>
   .info {
-    margin-left: 250px;
+  
   }
 
 

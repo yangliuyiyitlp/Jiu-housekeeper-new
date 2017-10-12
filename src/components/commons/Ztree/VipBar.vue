@@ -3,6 +3,7 @@
     <el-tree
       :data="data"
       :props="defaultProps"
+      default-expand-all
       highlight-current
       @node-click="handleNodeClick">
     </el-tree>
@@ -40,8 +41,5 @@
   }
 </script>
 <style scoped>
-  div {
-    width: 250px;
-    float: left;
-  }
+
 </style>

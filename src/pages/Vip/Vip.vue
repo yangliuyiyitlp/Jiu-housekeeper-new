@@ -1,7 +1,13 @@
 <template>
   <div>
-    <vip-bar></vip-bar>
-    <router-view></router-view>
+    <el-row>
+      <el-col :span="3">
+        <vip-bar></vip-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
@@ -30,7 +36,5 @@
 </script>
 
 <style scoped>
-  .right {
-    margin-left: 250px;
-  }
+
 </style>

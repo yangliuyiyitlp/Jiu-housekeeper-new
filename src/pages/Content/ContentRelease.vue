@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-tabs style='margin-left: 250px;' v-model="activeName2" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <el-tab-pane label="文章列表" name="first"style="padding-left:10px;">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="栏目：">
@@ -182,7 +182,7 @@
 </script>
 
 <style>
-  /*没有加scoped，是因为需要需要表单el-form-item__label和el-form-item__content的样式*/
+  /*没有加scoped，是因为需要表单el-form-item__label和el-form-item__content的样式*/
   html, body {
     height: 100%;
   }

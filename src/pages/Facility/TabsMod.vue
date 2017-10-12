@@ -325,7 +325,7 @@
 </script>
 <style scoped>
   #dataGrid {
-    margin-left: 250px;
+  
   }
 
   form {

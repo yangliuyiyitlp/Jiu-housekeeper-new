@@ -1,8 +1,13 @@
 <template>
   <div>
-    <!-- <router-link :to='{name:bar}'></router-link> -->
-    <activity-bar></activity-bar>
-    <router-view></router-view>
+    <el-row>
+      <el-col :span="3">
+        <activity-bar></activity-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
 

@@ -115,7 +115,7 @@
 </script>
 <style scoped>
   .count {
-    margin-left: 250px;
+  
   }
 
 

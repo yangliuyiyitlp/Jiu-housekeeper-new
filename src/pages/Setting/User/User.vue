@@ -487,14 +487,11 @@
 
 <style scoped>
   .right {
-    /*height: 100%;*/
-    margin-left: 250px;
     overflow: hidden;
   }
 
   .search_bar {
     border: 1px solid #ccc;
-    /*height: 800px;*/
     overflow: auto;
   }
 

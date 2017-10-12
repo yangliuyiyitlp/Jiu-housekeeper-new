@@ -1,17 +1,23 @@
 <template>
   <div>
-    <report-bar></report-bar>
-    <router-view></router-view>
+    <el-row>
+      <el-col :span="3">
+        <report-bar></report-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
   import ReportBar from '@/components/commons/Ztree/ReportBar.vue'
   import bus from '@/assets/js/eventBus.js'
+  
   export default {
     data () {
-      return {
-      }
+      return {}
     },
     components: {
       ReportBar

@@ -69,9 +69,6 @@
 
 
 <style scoped>
-  div {
-    width: 250px;
-    float: left;
-  }
+
 </style>
 
