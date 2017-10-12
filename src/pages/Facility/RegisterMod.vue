@@ -1,8 +1,8 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;"class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
       <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称" ></el-input>
+        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
       </el-form-item>
       <!--<el-form-item label="锁厂编号">-->
       <!--<el-input v-model="requestParam.factoryName" placeholder="锁厂编号"></el-input>-->
@@ -26,69 +26,70 @@
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" >导出</el-button>
+        <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
+        <el-button type="primary" @click="addNewRecord">新增</el-button>
       </el-form-item>
     </el-form>
     <el-table
       :data="tableData"
       border
-      fit
+      show-header
       style="width: 100%"
       @cell-click="more">
-      <!-- lihaibu-->
-      <el-table-column
-        prop="id"
-        label="id" v-if=0> // id 隐藏
-      </el-table-column>
-      // 返回的客户id
-      <!--<el-table-column-->
-        <!--v-bind:class="{active: true}"-->
-        <!--prop="factoryName"-->
-        <!--label="锁厂名称">-->
-      <!--</el-table-column>-->
-      <el-table-column
-        label="锁厂名称"
-        prop="factoryName">
-        <template scope="scope">
-          <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="lockFactoryNo"
-        label="锁厂家编号	">
-      </el-table-column>
-      <!--<el-table-column-->
-      <!--label="登录状态">-->
-      <!--<template scope="scope">-->
-      <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
-      <!--<div v-else>否</div>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
-      <el-table-column
-        label="添加时间">
-        <template scope="scope">
-          <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        prop="createBy.id"
-        label="操作者	"> // 返回空就是没有
-      </el-table-column>
-      <el-table-column
-        prop="remarks"
-        label="备注	">
-      </el-table-column>
-      <el-table-column
-        label="操作">
-        <template scope="scope">
-          <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
-          <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
-        </template>
-      </el-table-column>
+    <!-- lihaibu-->
+    <el-table-column
+      prop="id"
+      label="id" v-if=0> // id 隐藏
+    </el-table-column>
+    // 返回的客户id
+    <!--<el-table-column-->
+    <!--v-bind:class="{active: true}"-->
+    <!--prop="factoryName"-->
+    <!--label="锁厂名称">-->
+    <!--</el-table-column>-->
+    <el-table-column
+      label="锁厂名称"
+      prop="factoryName">
+      <template scope="scope">
+        <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="lockFactoryNo"
+      label="锁厂家编号	">
+    </el-table-column>
+    <!--<el-table-column-->
+    <!--label="登录状态">-->
+    <!--<template scope="scope">-->
+    <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
+    <!--<div v-else>否</div>-->
+    <!--</template>-->
+    <!--</el-table-column>-->
+    <el-table-column
+      label="添加时间">
+      <template scope="scope">
+        <el-icon name="time"></el-icon>
+        <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="createBy.id"
+      label="操作者	"> // 返回空就是没有
+    </el-table-column>
+    <el-table-column
+      prop="remarks"
+      show-overflow-tooltip
+      label="备注">
+    </el-table-column>
+    <el-table-column
+      label="操作">
+      <template scope="scope">
+        <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
+        <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
+      </template>
+    </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -99,7 +100,7 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.count">
     </el-pagination>
-     <!--增加修改弹框-->
+    <!--增加修改弹框-->
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
@@ -119,28 +120,28 @@
         <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
       </div>
     </el-dialog>
-     <!--详情弹框-->
+    <!--详情弹框-->
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px"  :model="form" ref="formA" class="tbody">
-        <el-form-item label="锁厂名称"  class="elform">
-          <el-input :value="moreinfo.factoryName":disabled="true"></el-input>
+      <el-form label-width="150px" :model="form" ref="formA" class="tbody">
+        <el-form-item label="锁厂名称" class="elform">
+          <el-input :value="moreinfo.factoryName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="锁厂家编号"  class="elform">
-          <el-input :value="moreinfo.lockFactoryNo":disabled="true"></el-input>
+        <el-form-item label="锁厂家编号" class="elform">
+          <el-input :value="moreinfo.lockFactoryNo" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="添加时间" class="elform">
-          <el-input :value="moreinfo.addTime":disabled="true"></el-input>
+          <el-input :value="moreinfo.addTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="更新时间" class="elform">
-          <el-input :value="moreinfo.updateDate":disabled="true"></el-input>
+          <el-input :value="moreinfo.updateDate" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="操作者" class="elform">
-          <el-input :value="moreinfo['createBy.id']":disabled="true"></el-input>
+          <el-input :value="moreinfo['createBy.id']" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="备注"  class="elform">
-          <el-input type="textarea" :row="3" :value="moreinfo.remarks":disabled="true"></el-input>
+        <el-form-item label="备注" class="elform">
+          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -193,13 +194,21 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1}
+        pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1},
+        exportParam: {
+          addTimeStart: '',
+          addTimeEnd: '',
+          factoryName: '',
+          lockFactoryNo: ''
+        }
       }
     },
     methods: {
       query: function () {
-//        this.requestParam.addTimeStart = this.formatDate(this.requestParam.addTimeStart, 'yyyy-MM-dd HH:mm:ss')
-//        this.requestParam.addTimeEnd = this.formatDate(this.requestParam.addTimeEnd, 'yyyy-MM-dd HH:mm:ss')
+        this.exportParam.addTimeStart = this.requestParam.addTimeStart
+        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
+        this.exportParam.factoryName = this.requestParam.factoryName
+        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.requestParam.addTimeStart = this.requestParam.addTimeStart.toString()
         this.requestParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
@@ -287,7 +296,6 @@
                   type: 'success',
                   message: '操作成功'
                 })
-                this.$refs['formA'].resetFields()
                 // 刷新页面
                 this.query()
               } else {
@@ -355,13 +363,37 @@
       handleCurrentChange: function (val) {
         this.requestParam.pageNo = val
         this.query()
+      },
+      addNewRecord: function () {
+        this.form = {
+          id: '',
+          factoryName: '',
+          lockFactoryNo: '',
+          'createBy.id': '',
+          remarks: ''
+        }
+        this.dialogFormVisible = true
+      },
+      exportFile: function () {
+        console.log(JSON.stringify(this.exportParam))
+        this.$axios(
+          {
+            method: 'post',
+            url: '/interface/export',
+            data: this.exportParam
+          }
+        ).then(function (response) {
+          console.log(response.data)
+        }).catch(function (error) {
+          console.log(error)
+        })
       }
     }
   }
 </script>
 <style scoped>
   #dataGrid {
-  
+
   }
 
   form {
@@ -373,19 +405,22 @@
     font-size: 20px !important;
     text-align: center;
   }
+
   .tbody[data-v-30c85a31] {
     height: 350px !important;
   }
-  .active{
-   color:#20a0ff;
- }
+
+  .active {
+    color: #20a0ff;
+  }
+
   .module {
     height: 240px !important;
     width: 400px !important;
   }
 
   .tbody {
-    height: 240px !important;
+    height: 400px !important;
   }
 
   .elform {

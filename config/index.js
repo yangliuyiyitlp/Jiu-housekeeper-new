@@ -30,7 +30,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       '/dataGrid':'http://47.94.109.245:8080/blog/',
-      '/provider':'http://47.94.109.245:8080/blog/'}, //后面添加
+      '/provider':'http://47.94.109.245:8080/blog/',
+      '/interface':'http://116.231.72.55:10001/a/electric/lockfactoryinfo'}, //后面添加
     // '/a': 'http://172.16.20.235:8080',
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
