@@ -2,15 +2,15 @@ const path = require('path')
 const utils = require('./utils')
 const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
-var webpack=require("webpack")
+const webpack = require('webpack')
 
-function resolve(dir) {
+function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
   entry: {
-    app: ["babel-polyfill", "./src/main.js"]
+    app: ['babel-polyfill', './src/main.js']
   },
   output: {
     path: config.build.assetsRoot,
@@ -24,7 +24,8 @@ module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
-      'jquery': path.resolve(__dirname, '../node_modules/jquery/src/jquery'),
+      // 'jquery': path.resolve(__dirname, '../node_modules/jquery/src/jquery'),
+      // 'jquery':  'jquery'
     }
   },
   module: {
@@ -34,7 +35,7 @@ module.exports = {
         loader: 'eslint-loader',
         enforce: 'pre',
         include: [resolve('src'), resolve('test')],
-        exclude: [/node_modules/,/js/],// 后面加的 不检查js
+        exclude: [/node_modules/, /js/],// 后面加的 不检查js
         options: {
           formatter: require('eslint-friendly-formatter')
         }
@@ -71,15 +72,15 @@ module.exports = {
       {
         test: /\.less$/,
         exclude: /node_modules/,
-        loader: "style-loader!css-loader!less-loader"
+        loader: 'style-loader!css-loader!less-loader'
       }
     ]
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('common.js'),
     new webpack.ProvidePlugin({
-      jQuery: "jquery",
-      $: "jquery"
+      $: 'jquery',
+      jQuery: 'jquery'
     })
   ]
 }

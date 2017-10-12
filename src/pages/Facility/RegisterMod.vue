@@ -41,7 +41,7 @@
       <!-- lihaibu-->
       <el-table-column
         prop="id"
-        label="id" v-if="idfalse"> // id 隐藏
+        label="id" v-if=0> // id 隐藏
       </el-table-column>
       // 返回的客户id
       <!--<el-table-column-->
@@ -157,7 +157,6 @@
     },
     data: function () {
       return {
-        idfalse: false,
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
         moreFormVisible: false,   // 详情

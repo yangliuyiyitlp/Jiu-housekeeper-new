@@ -3,7 +3,7 @@
     <el-tree
       :data="data"
       :props="defaultProps"
-      accordion
+      default-expand-all
       highlight-current
       @node-click="handleNodeClick">
     </el-tree>
