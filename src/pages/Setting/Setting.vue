@@ -1,6 +1,7 @@
+<script src="../../../../../ximige-sniper-v5-master/sniper-v5/config/index.js"></script>
 <template>
   <div>
-    <el-row>
+    <el-row :gutter="5">
       <el-col :span="3">
         <system-bar></system-bar>
       </el-col>

@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-      <el-tab-pane label="文章列表" name="first"style="padding-left:10px;">
+
+      <el-tab-pane label="文章列表" name="first" style="padding-left:10px;">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="栏目：">
             <!--数模型-->
@@ -66,6 +67,7 @@
           :total="pagination.total">
         </el-pagination>
       </el-tab-pane>
+
       <el-tab-pane label="文章添加" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
           <el-form-item label="摘要：" prop="desc">
@@ -81,12 +83,25 @@
           </el-form-item>
         </el-form>
       </el-tab-pane>
+
     </el-tabs>
+
+    <!--富文本编辑器-->
+    <div id="editor">
+      <VueUEditor @ready="editorReady">
+      </VueUEditor>
+    </div>
+
   </div>
 </template>
 
 <script>
+  import VueUEditor from 'vue-ueditor'
   export default {
+    name: 'editor',
+    components: {
+      VueUEditor
+    },
     data () {
       return {
         fontcolor: '',
@@ -176,6 +191,12 @@
       colorchange () {
         this.fontcolor = this.color1
         console.log(this.color1)
+      },
+      editorReady (editorInstance) {
+        editorInstance.setContent('hello world!<br> come here! editor')
+        editorInstance.addListener('contentChange', () => {
+          console.log('编辑器内容发生了变化:', editorInstance.getContent())
+        })
       }
     }
   }
