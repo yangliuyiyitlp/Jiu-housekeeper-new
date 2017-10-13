@@ -84,14 +84,24 @@
         </el-form>
       </el-tab-pane>
 
-
     </el-tabs>
+
+    <!--富文本编辑器-->
+    <div id="editor">
+      <VueUEditor @ready="editorReady">
+      </VueUEditor>
+    </div>
+
   </div>
 </template>
 
 <script>
-//  import VueUeditor from 'vue-ueditor'
+  import VueUEditor from 'vue-ueditor'
   export default {
+    name: 'editor',
+    components: {
+      VueUEditor
+    },
     data () {
       return {
         fontcolor: '',
@@ -181,6 +191,12 @@
       colorchange () {
         this.fontcolor = this.color1
         console.log(this.color1)
+      },
+      editorReady (editorInstance) {
+        editorInstance.setContent('hello world!<br> come here! editor')
+        editorInstance.addListener('contentChange', () => {
+          console.log('编辑器内容发生了变化:', editorInstance.getContent())
+        })
       }
     }
   }
