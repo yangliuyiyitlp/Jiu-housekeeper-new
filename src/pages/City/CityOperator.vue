@@ -146,28 +146,36 @@
               <el-option label="调度人员" value="pfive"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="证件照正面：" prop="type">
-            <el-upload
-              class="upload-demo"
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :auto-upload="false">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
-            </el-upload>
+          <el-form-item label="证件照正面:">
+            <input type="file" @change="getFileOne">
+            <p class="photo">证件照正面命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</p>
           </el-form-item>
-          <el-form-item label="证件照反面：" prop="type">
-            <el-upload
-              class="upload-demo "
-              action="https://jsonplaceholder.typicode.com/posts/"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :auto-upload="false">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>
-            </el-upload>
+          <el-form-item label="证件照反面:">
+            <input type="file" @change="getFileTwo">
+            <p class="photo">证件照反面命名以“n姓名_手机号”的方式：n张三_13706533081(只能上传jpg/png文件，且不超过500kb）</p>
           </el-form-item>
+          <!--<el-form-item label="证件照正面：" prop="type">-->
+            <!--<el-upload-->
+              <!--class="upload-demo"-->
+              <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+              <!--:on-preview="handlePreview"-->
+              <!--:on-remove="handleRemove"-->
+              <!--:auto-upload="false">-->
+              <!--<el-button size="small" type="primary">点击上传</el-button>-->
+              <!--<div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="证件照反面：" prop="type">-->
+            <!--<el-upload-->
+              <!--class="upload-demo "-->
+              <!--action="https://jsonplaceholder.typicode.com/posts/"-->
+              <!--:on-preview="handlePreview"-->
+              <!--:on-remove="handleRemove"-->
+              <!--:auto-upload="false">-->
+              <!--<el-button size="small" type="primary">点击上传</el-button>-->
+              <!--<div slot="tip" class="el-upload__tip">证件照命名以“p姓名_手机号”的方式：p张三_13706533081(只能上传jpg/png文件，且不超过500kb）</div>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
           <el-form-item label="备注：" prop="desc">
             <el-input type="textarea" v-model="ruleForm.desc" class="width"></el-input>
           </el-form-item>
@@ -202,7 +210,9 @@
           areaid: '',
           cityname: '',
           type: '',
-          desc: ''
+          desc: '',
+          avatarOne: '',
+          avatarTwo: ''
         },
         rules: {
           name: [
@@ -266,14 +276,35 @@
         console.log('onexport!')
       },
       submitForm (formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!')
-          } else {
-            console.log('error submit!!')
-            return false
+        var formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
+        formData.append('name', this.ruleForm.name) // 文件数据
+        formData.append('region', this.ruleForm.region) // 其他的一些参数
+        formData.append('num', this.ruleForm.num) // 其他的一些参数
+        formData.append('cityid', this.ruleForm.cityid) // 其他的一些参数
+        formData.append('cityname', this.ruleForm.cityname) // 其他的一些参数
+        formData.append('region', this.ruleForm.region) // 其他的一些参数
+        formData.append('fileOne', this.ruleForm.avatarOne) // 其他的一些参数
+        formData.append('fileTwo', this.ruleForm.avatarTwo) // 其他的一些参数
+        console.dir(formData)
+        this.$ajax(
+          {
+            method: 'post',
+            url: '/form/submit',
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           }
+        ).then(function (response) {
+          this.$message({
+            message: response.data,
+            type: 'success'
+          })
+          console.log(response.data)
+        }).catch(function (error) {
+          console.log(error)
         })
+//        以上是文件上传功能
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
@@ -284,16 +315,24 @@
       handlePreview (file) {
         console.log(file)
       },
-      handleIconClick () {}
-//      handleClick: function () {}
+      handleIconClick () {},
+      getFileOne: function ($event) {
+        this.ruleForm.avatarOne = $event.target.files[0]
+      },
+      getFileTwo: function ($event) {
+        this.ruleForm.avatarTwo = $event.target.files[0]
+      }
     }
   }
 </script>
 <style scoped>
   .count {
-  
-  }
 
+  }
+ .photo{
+   font-size: 12px;
+   color: #8391a5;
+ }
   .width {
     width: 300px;
   }

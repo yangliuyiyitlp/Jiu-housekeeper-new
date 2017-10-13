@@ -12,11 +12,11 @@ import '@/assets/icon_font/iconfont.css'
 // import ZHCN from 'vee-validate/dist/locale/zh_CN'
 import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
-import $ from 'jquery'
-import './assets/plugins/bootstrap/css/bootstrap.min.css'
-import './assets/plugins/bootstrap/js/bootstrap.min'
+// import $ from 'jquery'
+// import './assets/plugins/bootstrap/css/bootstrap.min.css'
+// import './assets/plugins/bootstrap/js/bootstrap.min'
 import Axios from 'axios'
-Vue.prototype.$axios = Axios
+Vue.prototype.$ajax = Axios
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
 

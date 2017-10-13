@@ -11,17 +11,24 @@
         <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
       <el-form-item label="添加时间">
-        <el-date-picker
-          v-model="requestParam.addTimeStart"
-          type="datetime"
-          placeholder="开始时间">
-        </el-date-picker>
-        <el-date-picker
-          v-model="requestParam.addTimeEnd"
-          type="datetime"
-          placeholder="结束时间">
-        </el-date-picker>
+      <el-date-picker
+      v-model="requestParam.addTimeBegin"
+      type="datetime"
+      placeholder="开始时间">
+      </el-date-picker>
+      <el-date-picker
+      v-model="requestParam.addTimeEnd"
+      type="datetime"
+      placeholder="结束时间">
+      </el-date-picker>
       </el-form-item>
+      <!--<el-form-item label="添加时间">-->
+        <!--<el-date-picker-->
+          <!--v-model="requestParam.selectTime"-->
+          <!--type="datetimerange"-->
+          <!--placeholder="选择时间范围">-->
+        <!--</el-date-picker>-->
+      <!--</el-form-item>-->
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
@@ -32,64 +39,72 @@
         <el-button type="primary" @click="addNewRecord">新增</el-button>
       </el-form-item>
     </el-form>
+    <!--隐藏表单用于文件导出-->
+    <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"  method="post" ref="downloadFileForm">
+      <input name="factoryName" v-model="exportParam.factoryName"/>
+      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
+      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
+      <input name="addTimeEnd" v-model="exportParam.addTimeEnd"/>
+    </form>
+    <div v-html="downloadFile"></div>
     <el-table
       :data="tableData"
       border
       show-header
       style="width: 100%"
       @cell-click="more">
-    <!-- lihaibu-->
-    <el-table-column
-      prop="id"
-      label="id" v-if=0> // id 隐藏
-    </el-table-column>
-    // 返回的客户id
-    <!--<el-table-column-->
-    <!--v-bind:class="{active: true}"-->
-    <!--prop="factoryName"-->
-    <!--label="锁厂名称">-->
-    <!--</el-table-column>-->
-    <el-table-column
-      label="锁厂名称"
-      prop="factoryName">
-      <template scope="scope">
-        <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="lockFactoryNo"
-      label="锁厂家编号	">
-    </el-table-column>
-    <!--<el-table-column-->
-    <!--label="登录状态">-->
-    <!--<template scope="scope">-->
-    <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
-    <!--<div v-else>否</div>-->
-    <!--</template>-->
-    <!--</el-table-column>-->
-    <el-table-column
-      label="添加时间">
-      <template scope="scope">
-        <el-icon name="time"></el-icon>
-        <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
-      </template>
-    </el-table-column>
-    <el-table-column
-      prop="createBy.id"
-      label="操作者	"> // 返回空就是没有
-    </el-table-column>
-    <el-table-column
-      prop="remarks"
-      show-overflow-tooltip
-      label="备注">
-    </el-table-column>
-    <el-table-column
-      label="操作">
-      <template scope="scope">
-        <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
-        <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
-      </template>
-    </el-table-column>
+      <!-- lihaibu-->
+      <el-table-column
+        prop="id"
+        label="id" v-if=0> // id 隐藏
+      </el-table-column>
+      // 返回的客户id
+      <!--<el-table-column-->
+      <!--v-bind:class="{active: true}"-->
+      <!--prop="factoryName"-->
+      <!--label="锁厂名称">-->
+      <!--</el-table-column>-->
+      <el-table-column
+        label="锁厂名称"
+        prop="factoryName">
+        <template scope="scope">
+          <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="lockFactoryNo"
+        label="锁厂家编号	">
+      </el-table-column>
+      <!--<el-table-column-->
+      <!--label="登录状态">-->
+      <!--<template scope="scope">-->
+      <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
+      <!--<div v-else>否</div>-->
+      <!--</template>-->
+      <!--</el-table-column>-->
+      <el-table-column
+        label="添加时间">
+        <template scope="scope">
+          <el-icon name="time"></el-icon>
+          <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column
+        prop="createBy.id"
+        label="操作者	"> // 返回空就是没有
+      </el-table-column>
+      <el-table-column
+        prop="remarks"
+        show-overflow-tooltip
+        label="备注">
+      </el-table-column>
+      <el-table-column
+        label="操作">
+        <template scope="scope">
+          <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
+          <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -179,7 +194,8 @@
         },
         formLabelWidth: '80px',
         requestParam: {
-          addTimeStart: '',
+//          selectTime: '',
+          addTimeBegin: '',
           addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: '',
@@ -196,20 +212,25 @@
         },
         pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1},
         exportParam: {
-          addTimeStart: '',
+//          selectTime: '',
+          addTimeBegin: '',
           addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: ''
-        }
+        },
+        downloadFile: ''
       }
     },
     methods: {
       query: function () {
-        this.exportParam.addTimeStart = this.requestParam.addTimeStart
+//        this.exportParam.selectTime = this.requestParam.selectTime
+//        this.requestParam.addTimeBegin = this.requestParam.selectTime[0]
+//        this.requestParam.addTimeEnd = this.requestParam.selectTime[1]
+        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin
         this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.requestParam.addTimeStart = this.requestParam.addTimeStart.toString()
+        this.requestParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
         this.requestParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
           if (response.data.code === 0) {
@@ -375,18 +396,10 @@
         this.dialogFormVisible = true
       },
       exportFile: function () {
-        console.log(JSON.stringify(this.exportParam))
-        this.$axios(
-          {
-            method: 'post',
-            url: '/interface/export',
-            data: this.exportParam
-          }
-        ).then(function (response) {
-          console.log(response.data)
-        }).catch(function (error) {
-          console.log(error)
-        })
+        var r = confirm('确定下载么')
+        if (r === true) {
+          this.$refs['downloadFileForm'].submit()
+        }
       }
     }
   }
@@ -421,6 +434,9 @@
 
   .tbody {
     height: 400px !important;
+  }
+  .addUp{
+    height: 240px !important;
   }
 
   .elform {
