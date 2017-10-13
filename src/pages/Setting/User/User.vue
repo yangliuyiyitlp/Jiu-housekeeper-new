@@ -2,14 +2,12 @@
   <div class="right" ref="right">
     <el-row>
       <el-col :span="3" class="search_bar" ref="search_bar">
-        <div class="grid-content bg-purple">
-          <el-tree
-            :data="select_city"
-            :props="defaultProps"
-            @node-click="handleNodeClick"
-            default-expand-all>
-          </el-tree>
-        </div>
+        <el-tree
+          :data="select_mechanism"
+          :props="defaultProps"
+          @node-click="handleNodeClick"
+          default-expand-all>
+        </el-tree>
       </el-col>
 
       <el-col :span="21">
@@ -22,7 +20,11 @@
               <el-form :inline="true" :model="formInline" class="demo-form-inline">
 
                 <el-form-item label="归属公司:">
-                  <el-input v-model="formInline.attribution_company" placeholder="选择归属公司">
+                  <el-input
+                    :on-icon-click="search_company"
+                    icon="search"
+                    v-model="formInline.attribution_company"
+                    placeholder="选择归属公司">
                   </el-input>
                 </el-form-item>
 
@@ -233,6 +235,20 @@
 
 
           <!--模态框-->
+          <!--城市-->
+          <el-dialog title="选择公司" size="tiny" :visible.sync="cityVisible">
+            <el-tree
+              highlight-current
+              default-expand-all
+              :data="select_city"
+              :props="defaultProps"
+              @node-click="searchOneCity">
+            </el-tree>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="cityVisible = false">取 消</el-button>
+              <el-button type="primary" @click="sureCity">确 定</el-button>
+            </div>
+          </el-dialog>
         </div>
       </el-col>
     </el-row>
@@ -246,7 +262,48 @@
   export default {
     data () {
       return {
+        cityVisible: false,
+        dialog: {
+          name: '',
+          region: '',
+          date1: '',
+          date2: '',
+          delivery: false,
+          type: [],
+          resource: '',
+          desc: ''
+        },
+        formLabelWidth: '120px',
         select_city: [{
+          id: 1,
+          label: '上海市总公司',
+          children: [{
+            id: 2,
+            label: '厦门分公司'
+          }, {
+            id: 3,
+            label: '佛山分公司'
+          }, {
+            id: 4,
+            label: '珠海分公司'
+          }, {
+            id: 5,
+            label: '北京分公司'
+          }, {
+            id: 6,
+            label: '上海分公司'
+          }, {
+            id: 7,
+            label: '成都分公司'
+          }, {
+            id: 8,
+            label: '湖州分公司'
+          }, {
+            id: 9,
+            label: '深圳分公司'
+          }]
+        }],
+        select_mechanism: [{
           id: 1,
           label: '上海市总公司',
           children: [{
@@ -477,8 +534,14 @@
       saveData () {
         console.log('saveData!')
       },
-      handleNodeClick (data) {
+      searchOneCity (data) {
         console.log(data)
+      },
+      search_company () {
+        this.cityVisible = true
+      },
+      sureCity () {
+        this.cityVisible = false
       }
     },
     watch: {}
