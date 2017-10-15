@@ -495,6 +495,7 @@
       }
     },
     mounted () {
+//      console.log(jQuery)
       this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
     },
     methods: {

@@ -12,7 +12,8 @@ import '@/assets/icon_font/iconfont.css'
 // import ZHCN from 'vee-validate/dist/locale/zh_CN'
 import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
-// import $ from 'jquery'
+import 'jquery'
+import 'ztree'
 // import './assets/plugins/bootstrap/css/bootstrap.min.css'
 // import './assets/plugins/bootstrap/js/bootstrap.min'
 import Axios from 'axios'
@@ -45,17 +46,20 @@ Vue.filter('AddDate', function (value) {
 
 // 注册全局组件 start
 
-// import TableInfo from './components/commons/Table'
 import Paginations from './components/commons/Paginations'
 import DatePickers from './components/commons/DatePicker'
 import FormSearch from './components/commons/FormSearch'
 
-// Vue.component('TableInfo', TableInfo)
 Vue.component('Paginations', Paginations)
 Vue.component('DatePickers', DatePickers)
 Vue.component('FormSearch', FormSearch)
 
 // 注册全局组件 end
+import BaiduMap from 'vue-baidu-map'
+Vue.use(BaiduMap, {
+  // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
+  ak: 'YOUR_APP_KEY'
+})
 
 const i18n = new VueI18n({
   locale: getLanguage()

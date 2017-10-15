@@ -26,6 +26,11 @@
         list: ''
       }
     },
+    methods: {
+      test () {
+        console.log(this.store)
+      }
+    },
     mounted () {
       this.$http.get('http://localhost/vueapi/index.php/Home/user/index').then((res) => {
         this.list = res.data
