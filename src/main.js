@@ -18,6 +18,10 @@ import 'ztree'
 // import './assets/plugins/bootstrap/js/bootstrap.min'
 import Axios from 'axios'
 Vue.prototype.$ajax = Axios
+import global_ from './Global.vue'
+Vue.prototype.GLOBAL = global_
+Axios.defaults.baseURL = global_.BASE_URL
+
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
 
