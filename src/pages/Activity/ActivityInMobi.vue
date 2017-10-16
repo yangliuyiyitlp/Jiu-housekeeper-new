@@ -1,34 +1,34 @@
 <template>
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
-      <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
+      <el-form-item label="展示设置:">
+        <el-select v-model="formInline.type"  clearable>
+          <el-option label="活动二级弹窗" value="1"></el-option>
+          <el-option label="启动页" value="1"></el-option>
+          <el-option label="确认换车后" value="1"></el-option>
+        </el-select>
       </el-form-item>
-      <!--<el-form-item label="锁厂编号">-->
-      <!--<el-input v-model="requestParam.factoryName" placeholder="锁厂编号"></el-input>-->
-      <!--</el-form-item>-->
-      <el-form-item label="锁厂编号">
-        <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
+
+      <el-form-item label="展示类型:">
+        <el-select v-model="formInline.displayType"  clearable>
+          <el-option label="app" value="1"></el-option>
+          <el-option label="广告" value="2"></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="添加时间">
-      <el-date-picker
-      v-model="requestParam.addTimeBegin"
-      type="datetime"
-      placeholder="开始时间">
-      </el-date-picker>
-      <el-date-picker
-      v-model="requestParam.addTimeEnd"
-      type="datetime"
-      placeholder="结束时间">
-      </el-date-picker>
+
+      <el-form-item label="城市名称:">
+        <el-input v-model="formInline.cityName" placeholder="城市名称">
+        </el-input>
       </el-form-item>
-      <!--<el-form-item label="添加时间">-->
-        <!--<el-date-picker-->
-          <!--v-model="requestParam.selectTime"-->
-          <!--type="datetimerange"-->
-          <!--placeholder="选择时间范围">-->
-        <!--</el-date-picker>-->
-      <!--</el-form-item>-->
+      <el-form-item label="安卓:">
+        <el-input v-model="formInline.androidInmobiId">
+        </el-input>
+      </el-form-item>
+      <el-form-item label="ios:">
+        <el-input v-model="formInline.iosInmobiId">
+        </el-input>
+      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
@@ -41,63 +41,50 @@
     </el-form>
     <!--隐藏表单用于文件导出-->
     <form action = "http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"  method="post" ref="FileForm">
-      <input name="factoryName" v-model="exportParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="addTimeEnd" v-model="exportParam.addTimeEnd"/>
+      <input name="type" v-model="exportParam.type"/>
+      <input name="displayType" v-model="exportParam.displayType"/>
+      <input name="cityName" v-model="exportParam.cityName"/>
+      <input name="androidInmobiId" v-model="exportParam.androidInmobiId"/>
+      <input name="iosInmobiId" v-model="exportParam.iosInmobiId"/>
     </form>
     <form action = "http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll"  style="display: none"  method="post" ref="FileFormAll">
-      <input name="factoryName" v-model="exportParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="addTimeEnd" v-model="exportParam.addTimeEnd"/>
+      <input name="type" v-model="exportParam.type"/>
+      <input name="displayType" v-model="exportParam.displayType"/>
+      <input name="cityName" v-model="exportParam.cityName"/>
+      <input name="androidInmobiId" v-model="exportParam.androidInmobiId"/>
+      <input name="iosInmobiId" v-model="exportParam.iosInmobiId"/>
     </form>
     <div v-html="downloadFile"></div>
     <el-table
       :data="tableData"
       border
       show-header
-      style="width: 100%"
-      @cell-click="more">
+      style="width: 100%">
       <!-- lihaibu-->
       <el-table-column
         prop="id"
         label="id" v-if=0> // id 隐藏
       </el-table-column>
-      // 返回的客户id
-      <!--<el-table-column-->
-      <!--v-bind:class="{active: true}"-->
-      <!--prop="factoryName"-->
-      <!--label="锁厂名称">-->
-      <!--</el-table-column>-->
       <el-table-column
-        label="锁厂名称"
-        prop="factoryName">
-        <template scope="scope">
-          <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
-        </template>
+        prop="cityName"
+        show-overflow-tooltip
+        label="城市名称">
       </el-table-column>
       <el-table-column
-        prop="lockFactoryNo"
-        label="锁厂家编号	">
-      </el-table-column>
-      <!--<el-table-column-->
-      <!--label="登录状态">-->
-      <!--<template scope="scope">-->
-      <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
-      <!--<div v-else>否</div>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
-      <el-table-column
-        label="添加时间">
-        <template scope="scope">
-          <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
-        </template>
+        prop="rank"
+        label="显示顺序	">
       </el-table-column>
       <el-table-column
         prop="createBy.id"
-        label="操作者	"> // 返回空就是没有
+        show-overflow-tooltip
+        label="操作者">
+      </el-table-column>
+      <el-table-column
+        label="创建时间">
+        <template scope="scope">
+          <el-icon name="time"></el-icon>
+          <span style="margin-left: 10px">{{ scope.row.createDate}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="remarks"
@@ -126,14 +113,14 @@
                :close-on-click-modal="false" class="demo-ruleForm ">
 
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item label="厂家名称" prop="factoryName" class="elform">
-          <el-input v-model="form.factoryName"></el-input>
+        <el-form-item label="厂家名称" prop="type" class="elform">
+          <el-input v-model="formInline.type"></el-input>
         </el-form-item>
-        <el-form-item label="锁厂家编号" prop="lockFactoryNo" class="elform">
-          <el-input v-model="form.lockFactoryNo"></el-input>
+        <el-form-item label="锁厂家编号" prop="displayType" class="elform">
+          <el-input v-model="formInline.displayType"></el-input>
         </el-form-item>
-        <el-form-item label="备注" prop="remarks" class="elform">
-          <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
+        <el-form-item label="备注" prop="cityName" class="elform">
+          <el-input type="textarea" :row="3" v-model="formInline.cityName"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -147,29 +134,26 @@
 
       <el-form label-width="150px" :model="moreinfo" ref="formA" class="tbody">
         <el-form-item label="锁厂名称" class="elform">
-          <el-input :value="moreinfo.factoryName" :disabled="true"></el-input>
+          <el-input :value="moreinfo.type" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="锁厂家编号" class="elform">
-          <el-input :value="moreinfo.lockFactoryNo" :disabled="true"></el-input>
+          <el-input :value="moreinfo.displayType" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="添加时间" class="elform">
-          <el-input :value="moreinfo.addTime" :disabled="true"></el-input>
+          <el-input :value="moreinfo.cityName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="更新时间" class="elform">
-          <el-input :value="moreinfo.updateDate" :disabled="true"></el-input>
+          <el-input :value="moreinfo.androidInmobiId" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="操作者" class="elform">
-          <el-input :value="moreinfo['createBy.id']" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" class="elform">
-          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
+          <el-input :value="moreinfo.iosInmobiId" :disabled="true"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="cancelmore">关 闭</el-button>
       </div>
     </el-dialog>
-  <!--导出弹框-->
+    <!--导出弹框-->
     <el-dialog title="导出" :visible.sync="exportFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="exportCurrent">导出当前页</el-button>
@@ -193,28 +177,27 @@
         moreFormVisible: false,   // 详情
         exportFormVisible: false,
         addLoading: false,       // 是否显示loading
-        form: {
-          id: '',
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
-          remarks: ''
+        formInline: {
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: ''
         },
         moreinfo: {
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
-          remarks: '',
-          addTime: '',
-          updateDate: ''
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: ''
         },
         formLabelWidth: '80px',
         requestParam: {
-//          selectTime: '',
-          addTimeBegin: '',
-          addTimeEnd: '',
-          factoryName: '',
-          lockFactoryNo: '',
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: '',
           pageSize: 30,
           pageNo: 1
         },
@@ -228,26 +211,22 @@
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
-//          selectTime: '',
-          addTimeBegin: '',
-          addTimeEnd: '',
-          factoryName: '',
-          lockFactoryNo: ''
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: ''
         },
         downloadFile: ''
       }
     },
     methods: {
       query: function () {
-//        this.exportParam.selectTime = this.requestParam.selectTime
-//        this.requestParam.addTimeBegin = this.requestParam.selectTime[0]
-//        this.requestParam.addTimeEnd = this.requestParam.selectTime[1]
-        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin
-        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
-        this.exportParam.factoryName = this.requestParam.factoryName
-        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.requestParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
-        this.requestParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
+        this.exportParam.type = this.requestParam.type
+        this.exportParam.displayType = this.requestParam.displayType
+        this.exportParam.cityName = this.requestParam.cityName
+        this.exportParam.androidInmobiId = this.requestParam.androidInmobiId
+        this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
@@ -267,11 +246,11 @@
       },
       modifyRecord: function (scope) {
         this.dialogFormVisible = true
-        this.form.id = scope.row.id
-        this.form.factoryName = scope.row.factoryName
-        this.form.lockFactoryNo = scope.row.lockFactoryNo
-        this.form['createBy.id'] = scope.row['createBy.id']
-        this.form.remarks = scope.row.remarks
+        this.formInline.type = scope.row.type
+        this.formInline.displayType = scope.row.displayType
+        this.formInline.cityName = scope.row.cityName
+        this.formInline.androidInmobiId = scope.row.androidInmobiId
+        this.formInline.iosInmobiId = scope.row.iosInmobiId
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -320,13 +299,13 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             var url = ''
-            if (this.form.id === undefined || this.form.id === '') {
+            if (this.formInline.id === undefined || this.formInline.id === '') {
               url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save' // 新增功能
             } else {
               url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save'
             }
             this.dialogFormVisible = false
-            this.$http.get(url, {params: this.form}).then(function (response) {
+            this.$http.get(url, {params: this.formInline}).then(function (response) {
               if (response.data.code === 0) {
                 // 更新成功
                 this.$message({
@@ -355,32 +334,27 @@
       },
       cancelOperate: function () {
         this.dialogFormVisible = false
-        this.form = {
-          factoryName: '',
-          lockFactoryNo: '',
-          id: '',
-          'createBy.id': '',
-          remarks: ''
+        this.formInline = {
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: ''
         }
         this.$refs['formA'].resetFields()
       },
       more: function (row, column, cell, event) {
-//        console.log(row)
-//        console.log(row.id)
-//        console.log(column)
-//        console.log(column.property)
-//        console.log(event)
         if (column.property !== 'factoryName') {
           return false
         } else {
           this.moreFormVisible = true
           this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
             if (res.data.code === 0) {
-              this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
-              this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
-              this.moreinfo.factoryName = res.data.tLockFactoryInfo.factoryName
-              this.moreinfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
-              this.moreinfo.addTime = res.data.tLockFactoryInfo.addTime
+              this.moreinfo.type = res.data.tLockFactoryInfo.type
+              this.moreinfo.displayType = res.data.tLockFactoryInfo.displayType
+              this.moreinfo.cityName = res.data.tLockFactoryInfo.cityName
+              this.moreinfo.androidInmobiId = res.data.tLockFactoryInfo.androidInmobiId
+              this.moreinfo.iosInmobiId = res.data.tLockFactoryInfo.iosInmobiId
             }
           }).catch(function (err) {
             this.$message({
@@ -402,12 +376,12 @@
         this.query()
       },
       addNewRecord: function () {
-        this.form = {
-          id: '',
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
-          remarks: ''
+        this.formInline = {
+          type: '',
+          displayType: '',
+          cityName: '',
+          androidInmobiId: '',
+          iosInmobiId: ''
         }
         this.dialogFormVisible = true
       },
@@ -431,10 +405,10 @@
 
   }
 
-  form {
-    padding-top: 20px;
-    height: 75px;
-  }
+  /*form {*/
+    /*padding-top: 20px;*/
+    /*height: 75px;*/
+  /*}*/
 
   .demo-ruleForm {
     font-size: 20px !important;

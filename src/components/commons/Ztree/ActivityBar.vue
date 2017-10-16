@@ -60,6 +60,14 @@
             label: '车辆图标配置',
             name: 'activity.config.icon'
           }]
+        }, {
+          id: 11,
+          label: '广告中心',
+          children: [{
+            id: 11,
+            label: 'inmobi广告配置',
+            name: 'activity.inmobi'
+          }]
         }],
         defaultProps: {
           children: 'children',
