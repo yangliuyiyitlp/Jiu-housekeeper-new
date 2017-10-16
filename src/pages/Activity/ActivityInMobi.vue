@@ -54,7 +54,6 @@
       <input name="androidInmobiId" v-model="exportParam.androidInmobiId"/>
       <input name="iosInmobiId" v-model="exportParam.iosInmobiId"/>
     </form>
-    <div v-html="downloadFile"></div>
     <el-table
       :data="tableData"
       border
@@ -216,8 +215,7 @@
           cityName: '',
           androidInmobiId: '',
           iosInmobiId: ''
-        },
-        downloadFile: ''
+        }
       }
     },
     methods: {
