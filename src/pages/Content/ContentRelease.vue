@@ -3,7 +3,9 @@
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
 
       <el-tab-pane label="文章列表" name="first" style="padding-left:10px;">
+        <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
+
           <el-form-item label="栏目：">
             <!--数模型-->
             <el-input
@@ -12,10 +14,13 @@
               :on-icon-click="handleIconClick" @click="dialogVisible = true">
             </el-input>
           </el-form-item>
+
           <el-form-item label="标题：">
             <el-input v-model="formInline.name"></el-input>
           </el-form-item>
+
           <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
+
           <el-form-item label="状态：">
             <el-radio-group v-model="radio2">
               <el-radio :label="3">发布</el-radio>
@@ -23,7 +28,10 @@
               <el-radio :label="9">删除</el-radio>
             </el-radio-group>
           </el-form-item>
+
         </el-form>
+
+        <!--表格展示-->
         <el-table
           :data="tableData"
           border
@@ -57,6 +65,8 @@
             label="操作">
           </el-table-column>
         </el-table>
+
+        <!--分页-->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -66,47 +76,49 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.total">
         </el-pagination>
+
       </el-tab-pane>
 
       <el-tab-pane label="文章添加" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
-  
+
           <el-form-item label="归属栏目:">
             <el-input v-model="ruleForm.attribution_column" placeholder="选择归属栏目"></el-input>
-            <!--<span class="demonstration">有默认值</span>-->
-            <el-color-picker v-model="color1" @change="colorchange"></el-color-picker>
           </el-form-item>
-  
+
           <el-form-item label="标题:">
-            <el-input v-model="ruleForm.title" placeholder="输入标题"></el-input>
-            <span>外部链接:</span>
+            <el-input v-model="ruleForm.title" placeholder="输入标题" ref="title"></el-input>
+            <span>有无外部链接:</span>
             <el-switch
               v-model="isExternallink"
               on-color="#13ce66" off-color="#ff4949"
               on-text="Y" off-text="N">
             </el-switch>
+
           </el-form-item>
-  
+
           <el-form-item v-show='this.isExternallink' label="外部链接:">
             <el-input v-model="ruleForm.external_link" placeholder="输入外部链接"></el-input>
             <span>绝对或相对地址。</span>
           </el-form-item>
-  
+
           <el-form-item label="关键字:">
             <el-input v-model="ruleForm.keyword" placeholder="输入关键字"></el-input>
             <span>多个关键字，用空格分隔。</span>
           </el-form-item>
-  
+
           <el-form-item label="权重:">
-            <el-input v-model="ruleForm.power" :placeholder='this.isTop?"999":"0"'></el-input>
+            <el-input ref="power" v-model="ruleForm.power" placeholder="0"></el-input>
             <span>置顶:</span>
             <el-switch
+              @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
+              on-value="999" off-value="0"
               on-text="Y" off-text="N">
             </el-switch>
           </el-form-item>
-  
+
           <el-form-item label="过期时间:">
             <el-date-picker
               v-model="ruleForm.deadline"
@@ -115,11 +127,12 @@
             </el-date-picker>
             <span>数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>
           </el-form-item>
-          
+
           <el-form-item label="摘要：" prop="desc">
-            <el-input type="textarea" v-model="ruleForm.abstract" class="width" v-bind:style="{color:fontcolor}"></el-input>
+            <el-input type="textarea" v-model="ruleForm.abstract" class="width"
+                      v-bind:style="{color:fontcolor}"></el-input>
           </el-form-item>
-  
+
           <!--格式应该不对-->
           <el-form-item label="缩略图:">
             <el-upload
@@ -134,29 +147,29 @@
               <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             </el-upload>
           </el-form-item>
-  
+
           <el-form-item label="正文:">
             <input type="text" v-model='ruleForm.main_text' v-show='false'>
             <div id="editorElem" style="text-align:left"></div>
             <button @click="getContent">查看内容</button>
           </el-form-item>
-  
+
           <el-form-item label="来源:">
             <el-input v-model="ruleForm.source" placeholder="输入来源"></el-input>
           </el-form-item>
-  
+
           <!--如何同步上传-->
           <el-form-item label="相关文章:">
             <el-button>添加相关</el-button>
           </el-form-item>
-  
+
           <el-form-item label="推荐位:">
             <el-checkbox-group v-model="ruleForm.recommended_bit">
               <el-checkbox label="首页焦点图"></el-checkbox>
               <el-checkbox label="栏目页文章推荐"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-  
+
           <el-form-item label="发布时间:">
             <el-date-picker
               v-model="ruleForm.release_time"
@@ -164,7 +177,7 @@
               placeholder="选择日期时间">
             </el-date-picker>
           </el-form-item>
-  
+
           <el-form-item label="发布状态:">
             <el-radio-group v-model="ruleForm.release_status">
               <el-radio :label="3">发布</el-radio>
@@ -172,28 +185,29 @@
               <el-radio :label="9">删除</el-radio>
             </el-radio-group>
           </el-form-item>
-          
+
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
             <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
-          
+
         </el-form>
       </el-tab-pane>
 
     </el-tabs>
-    
+
   </div>
 </template>
 
 <script>
   // 富文本编辑器引入
   import E from 'wangeditor'
-  
+
   export default {
     name: 'editor',
     data () {
       return {
+        editor: '',
         isExternallink: '',
         isTop: '',
         editorContent: '',
@@ -248,16 +262,30 @@
     },
     created: function () {
       this.onSubmit('condition')
-      console.log($('#editor'))
+      // console.log($('#editor'))
     },
     mounted () {
-      var editor = new E('#editorElem')
-      editor.customConfig.onchange = (html) => {
+      this.editor = new E('#editorElem')
+      this.editor.customConfig.onchange = (html) => {
         this.editorContent = html
       }
-      editor.create()
+      // 关闭粘贴样式的过滤
+      this.editor.customConfig.pasteFilterStyle = false
+      // 插入网络图片时，可通过如下配置获取到图片的信息。v3.0.10开始支持。
+      this.editor.customConfig.linkImgCallback = function (url) {
+        console.log(url) // url 即插入图片的地址
+      }
+      // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
+      // editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
+      this.editor.customConfig.uploadImgServer = '/oss'  // 上传图片到服务器
+      // 查看阿里云图片上传功能
+      this.editor.create()
     },
     methods: {
+      isTopp (val) {
+        console.log(val)
+        this.ruleForm.power = val
+      },
       handleClick (tab, event) {
         console.log(tab, event)
       },
@@ -299,13 +327,27 @@
         })
       },
       resetForm (formName) {
+        this.editorContent = ''
+        this.editor.txt.clear()
+        console.log(this.editorContent)
+        this.ruleForm = {
+          attribution_column: '',
+          abstract: '',
+          recommended_bit: [],
+          title: '',
+          external_link: '',
+          keyword: '',
+          power: '',
+          deadline: '',
+          pic: '',
+          main_text: '',
+          source: '',
+          release_time: '',
+          release_status: ''
+        }
         this.$refs[formName].resetFields()
       },
       handleIconClick () {},
-      colorchange () {
-        this.fontcolor = this.color1
-        console.log(this.color1)
-      },
       getContent () {
         this.main_text = this.editorContent
         console.log(this.editorContent)
