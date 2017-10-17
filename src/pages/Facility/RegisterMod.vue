@@ -4,9 +4,6 @@
       <el-form-item label="锁厂名称">
         <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
       </el-form-item>
-      <!--<el-form-item label="锁厂编号">-->
-      <!--<el-input v-model="requestParam.factoryName" placeholder="锁厂编号"></el-input>-->
-      <!--</el-form-item>-->
       <el-form-item label="锁厂编号">
         <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
@@ -211,7 +208,7 @@
           addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: '',
-          pageSize: 10,
+          pageSize: 30,
           pageNo: 1
         },
         rules: {
@@ -222,31 +219,28 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
 //          selectTime: '',
           addTimeBegin: '',
           addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: '',
-          pageSize: 10,
+          pageSize: 30,
           pageNo: 1
         }
       }
     },
     methods: {
       query: function () {
-//        this.exportParam.selectTime = this.requestParam.selectTime
-//        this.requestParam.addTimeBegin = this.requestParam.selectTime[0]
-//        this.requestParam.addTimeEnd = this.requestParam.selectTime[1]
-        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin
-        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
+//        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin
+//        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.exportParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
         this.exportParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
         this.exportParam.pageNo = this.requestParam.pageNo
-        this.exportParam.pageSizes = this.requestParam.pageSize
+        this.exportParam.pageSize = this.requestParam.pageSize
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
@@ -304,10 +298,6 @@
               })
             })
           }
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
         }).catch(() => {
           this.$message({
             type: 'info',
