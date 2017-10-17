@@ -151,7 +151,6 @@
           <el-form-item label="正文:">
             <input type="text" v-model='ruleForm.main_text' v-show='false'>
             <div id="editorElem" style="text-align:left"></div>
-            <button @click="getContent">查看内容</button>
           </el-form-item>
 
           <el-form-item label="来源:">
@@ -202,6 +201,8 @@
 <script>
   // 富文本编辑器引入
   import E from 'wangeditor'
+//  import '../../assets/js/wangEditor-fullscreen-plugin.js'
+//  import '../../assets/css/wangEditor-fullscreen-plugin.css'
 
   export default {
     name: 'editor',
@@ -277,13 +278,14 @@
       }
       // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
       // editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
-      this.editor.customConfig.uploadImgServer = '/oss'  // 上传图片到服务器
+      this.editor.customConfig.uploadImgServer = '172.16.20.235:10001/a/electric/utils/ossutil/policy'  // 上传图片到服务器
       // 查看阿里云图片上传功能
       this.editor.create()
+      // console.log(this.editor.fullscreen)
+      // this.editor.fullscreen.init('#editorElem')
     },
     methods: {
       isTopp (val) {
-        console.log(val)
         this.ruleForm.power = val
       },
       handleClick (tab, event) {
@@ -348,11 +350,6 @@
         this.$refs[formName].resetFields()
       },
       handleIconClick () {},
-      getContent () {
-        this.main_text = this.editorContent
-        console.log(this.editorContent)
-        console.log(this.main_text)
-      },
       handleRemove (file, fileList) {
         console.log(file, fileList)
       },

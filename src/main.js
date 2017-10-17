@@ -23,6 +23,7 @@ Vue.prototype.GLOBAL = global_
 Axios.defaults.baseURL = global_.BASE_URL
 
 Vue.use(VueMoment)
+// global.$ = global.jQuery = $
 
 Vue.use(VueResource)
 // 设置中文
@@ -61,7 +62,7 @@ Vue.component('FormSearch', FormSearch)
 import BaiduMap from 'vue-baidu-map'
 Vue.use(BaiduMap, {
   // ak 是在百度地图开发者平台申请的密钥 详见 http://lbsyun.baidu.com/apiconsole/key */
-  ak: 'IK5AlGXoZ23tDAGjldRalicbhdpsrKwE'
+  ak: 'YOUR_APP_KEY'
 })
 
 const i18n = new VueI18n({
