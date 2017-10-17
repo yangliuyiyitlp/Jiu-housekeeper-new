@@ -11,23 +11,23 @@
         <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
       <el-form-item label="添加时间">
-      <el-date-picker
-      v-model="requestParam.addTimeBegin"
-      type="datetime"
-      placeholder="开始时间">
-      </el-date-picker>
-      <el-date-picker
-      v-model="requestParam.addTimeEnd"
-      type="datetime"
-      placeholder="结束时间">
-      </el-date-picker>
+        <el-date-picker
+          v-model="requestParam.addTimeBegin"
+          type="datetime"
+          placeholder="开始时间">
+        </el-date-picker>
+        <el-date-picker
+          v-model="requestParam.addTimeEnd"
+          type="datetime"
+          placeholder="结束时间">
+        </el-date-picker>
       </el-form-item>
       <!--<el-form-item label="添加时间">-->
-        <!--<el-date-picker-->
-          <!--v-model="requestParam.selectTime"-->
-          <!--type="datetimerange"-->
-          <!--placeholder="选择时间范围">-->
-        <!--</el-date-picker>-->
+      <!--<el-date-picker-->
+      <!--v-model="requestParam.selectTime"-->
+      <!--type="datetimerange"-->
+      <!--placeholder="选择时间范围">-->
+      <!--</el-date-picker>-->
       <!--</el-form-item>-->
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
@@ -40,19 +40,14 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form action = "http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"  method="post" ref="FileForm">
+    <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
+          method="post" ref="FileForm">
       <input name="factoryName" v-model="exportParam.factoryName"/>
       <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
       <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="addTimeEnd" v-model="exportParam.addTimeEnd"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>
-    <form action = "http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll"  style="display: none"  method="post" ref="FileFormAll">
-      <input name="factoryName" v-model="exportParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="addTimeEnd" v-model="exportParam.addTimeEnd"/>
-    </form>
-    <div v-html="downloadFile"></div>
     <el-table
       :data="tableData"
       border
@@ -169,8 +164,9 @@
         <el-button type="primary" @click="cancelmore">关 闭</el-button>
       </div>
     </el-dialog>
-  <!--导出弹框-->
-    <el-dialog title="导出" :visible.sync="exportFormVisible" :show-close="false" :close-on-press-escape="false"
+    <!--导出弹框-->
+    <el-dialog title="导出" custom-class="dialogClass" size="tiny" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="exportCurrent">导出当前页</el-button>
       <el-button @click="exportAll">导出所有</el-button>
@@ -215,7 +211,7 @@
           addTimeEnd: '',
           factoryName: '',
           lockFactoryNo: '',
-          pageSize: 30,
+          pageSize: 10,
           pageNo: 1
         },
         rules: {
@@ -226,15 +222,16 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [10, 40, 60, 100], pageSize: 10, count: 0, pageNo: 1},
         exportParam: {
 //          selectTime: '',
           addTimeBegin: '',
           addTimeEnd: '',
           factoryName: '',
-          lockFactoryNo: ''
-        },
-        downloadFile: ''
+          lockFactoryNo: '',
+          pageSize: 10,
+          pageNo: 1
+        }
       }
     },
     methods: {
@@ -246,8 +243,10 @@
         this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.requestParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
-        this.requestParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
+        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
+        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
+        this.exportParam.pageNo = this.requestParam.pageNo
+        this.exportParam.pageSizes = this.requestParam.pageSize
         this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
@@ -365,11 +364,6 @@
         this.$refs['formA'].resetFields()
       },
       more: function (row, column, cell, event) {
-//        console.log(row)
-//        console.log(row.id)
-//        console.log(column)
-//        console.log(column.property)
-//        console.log(event)
         if (column.property !== 'factoryName') {
           return false
         } else {
@@ -418,10 +412,14 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
+        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
         this.$refs['FileForm'].submit()
       },
       exportAll: function () {
-        this.$refs['FileFormAll'].submit()
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
+        this.$refs['FileForm'].submit()
       }
     }
   }
@@ -440,9 +438,11 @@
     font-size: 20px !important;
     text-align: center;
   }
-  .el-dialog--small{
+
+  .el-dialog--small {
 
   }
+
   .tbody[data-v-30c85a31] {
     height: 350px !important;
   }
@@ -459,7 +459,8 @@
   .tbody {
     height: 400px !important;
   }
-  .addUp{
+
+  .addUp {
     height: 240px !important;
   }
 
@@ -487,5 +488,9 @@
   .el-dialog__title {
     text-align: left;
     margin-left: 0%;
+  }
+
+  .dialogClass {
+    background-color: #5cb85c;
   }
 </style>
