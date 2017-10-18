@@ -5,8 +5,8 @@
         <el-tree
           :data="select_mechanism"
           :props="defaultProps"
-          @node-click="handleNodeClick"
           default-expand-all>
+          <!--@node-click="handleNodeClick"-->
         </el-tree>
       </el-col>
 
