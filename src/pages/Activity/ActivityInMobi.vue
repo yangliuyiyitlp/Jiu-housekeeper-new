@@ -83,13 +83,13 @@
       <el-table-column
         label="显示顺序"
         sortable
-        prop="rank"
-      >
-        <template scope="scope">
+        prop="rank">
+        <template slot-scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
         </template>
+
       </el-table-column>
 
       <el-table-column
@@ -121,7 +121,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -175,15 +175,13 @@
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
         <!--ToDO-->
-        <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
-                     @change="handleCheckAllChange">快速添加城市：
+        <el-checkbox class='check-all' v-if="vif" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">快速添加城市：
         </el-checkbox>
         <el-form-item v-if="vif" style="text-align: left;">
           <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
@@ -244,10 +242,10 @@
         typeObj: {},
         disObj: {},
         vif: false,
-        checkAll: true,
-        checkedCities: '',
-        cities: cityOptions,
         isIndeterminate: true,
+        checkAll: false,
+        checkedCities: [],
+        cities: cityOptions,
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
         moreFormVisible: false,   // 详情
@@ -261,7 +259,8 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: ''
+          remarks: '',
+          areaNames: ''
         },
         moreinfo: {
           cityName: '',
@@ -425,6 +424,7 @@
           if (valid) {
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
+            this.checkedCities = []
             console.log(this.form)
             this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
               if (response.status === 200) {
@@ -461,7 +461,8 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: ''
+          remarks: '',
+          areaNames: ''
         }
         this.$refs['formA'].resetFields()
       },
@@ -509,8 +510,10 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: ''
+          remarks: '',
+          areaNames: ''
         }
+        this.checkedCities = []
         this.dialogFormVisible = true
         this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/findMaxSort')
           .then(function (res) {
@@ -617,7 +620,12 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort', {params: {'ids': newids, 'sorts': newsorts}})
+        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort', {
+          params: {
+            'ids': newids,
+            'sorts': newsorts
+          }
+        })
           .then(function (res) {
             this.$message({
               message: res.data.mesage,
@@ -637,14 +645,13 @@
   .check-all {
     width: 150px;
     float: left;
-    padding-top:6px;
+    padding-top: 6px;
   }
 
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
-
 
   .tbody[data-v-30c85a31] {
     height: 350px !important;
@@ -653,6 +660,7 @@
   .active {
     color: #20a0ff;
   }
+
   .module {
     height: 240px !important;
     width: 400px !important;

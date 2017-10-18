@@ -21,6 +21,7 @@
 
                 <el-form-item label="归属公司:">
                   <el-input
+                    :disabled="true"
                     :on-icon-click="search_company"
                     icon="search"
                     v-model="formInline.attribution_company"
@@ -117,7 +118,7 @@
                   align="center"
                   label="操作"
                   width="160">
-                  <template scope="scope">
+                  <template slot-scope="scope">
                     <el-button type="text" size="small">修改</el-button>
                     <el-button
                       @click="open2(scope.$index, tableData4)"
@@ -249,6 +250,7 @@
               <el-button type="primary" @click="sureCity">确 定</el-button>
             </div>
           </el-dialog>
+
         </div>
       </el-col>
     </el-row>
@@ -495,7 +497,6 @@
       }
     },
     mounted () {
-//      console.log(jQuery)
       this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
     },
     methods: {

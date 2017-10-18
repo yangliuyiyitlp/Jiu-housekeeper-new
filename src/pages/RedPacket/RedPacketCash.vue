@@ -110,7 +110,7 @@
               prop="add_time"
               label="添加时间"
               width="120">
-              <!--<template scope="scope">{{ scope.row.date }}</template>-->
+              <!--<template slot-scope="scope">{{ scope.row.date }}</template>-->
             </el-table-column>
 
             <el-table-column
@@ -129,7 +129,7 @@
               prop="cash_time"
               label="提现时间"
               width="120">
-              <!--<template scope="scope">{{ scope.row.date }}</template>-->
+              <!--<template slot-scope="scope">{{ scope.row.date }}</template>-->
             </el-table-column>
 
             <el-table-column
@@ -286,6 +286,6 @@
 </script>
 <style scoped>
   .right {
-  
+
   }
 </style>
