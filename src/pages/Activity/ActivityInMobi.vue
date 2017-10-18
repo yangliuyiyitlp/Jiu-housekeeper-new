@@ -84,7 +84,7 @@
         label="显示顺序"
         sortable
         prop="rank">
-        <template slot-scope="scope">
+        <template scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
@@ -121,7 +121,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
