@@ -65,7 +65,7 @@
       <el-table-column
         label="锁厂名称"
         prop="factoryName">
-        <template slot-scope="scope">
+        <template scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
         </template>
       </el-table-column>
@@ -75,14 +75,14 @@
       </el-table-column>
       <!--<el-table-column-->
       <!--label="登录状态">-->
-      <!--<template slot-scope="scope">-->
+      <!--<template scope="scope">-->
       <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
       <!--<div v-else>否</div>-->
       <!--</template>-->
       <!--</el-table-column>-->
       <el-table-column
         label="添加时间">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
         </template>
@@ -98,7 +98,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
