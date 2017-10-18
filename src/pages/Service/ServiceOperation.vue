@@ -144,7 +144,7 @@
             align="center"
             label="操作"
             width="150">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small">修改</el-button>
               <el-button
                 @click="open2(scope.$index, tableData)"
@@ -309,7 +309,7 @@
 
 <style scoped>
   .right {
-  
+
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

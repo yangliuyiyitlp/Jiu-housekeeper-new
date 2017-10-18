@@ -15,8 +15,8 @@
 
   export default {
     name: 'app',
-    data: {
-      male: false
+    data () {
+      return {male: false}
     },
     components: {
       MainNav

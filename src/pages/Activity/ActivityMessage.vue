@@ -65,7 +65,7 @@
             align="center"
             label="操作"
             width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small">修改</el-button>
               <el-button
                 @click="open2(scope.$index, tableData4)"
@@ -81,7 +81,7 @@
             align="center"
             label="预览"
             width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small">预览限定结果</el-button>
             </template>
           </el-table-column>
@@ -285,6 +285,6 @@
 </script>
 <style scoped>
   .right {
-  
+
   }
 </style>

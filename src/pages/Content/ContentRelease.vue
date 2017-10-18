@@ -10,8 +10,9 @@
             <!--数模型-->
             <el-input
               icon="search"
+              :disabled="true"
               v-model="formInline.city"
-              :on-icon-click="handleIconClick" @click="dialogVisible = true">
+              :on-icon-click="search_company" @click="dialogVisible = true">
             </el-input>
           </el-form-item>
 
@@ -37,34 +38,76 @@
           border
           style="width: 100%">
           <el-table-column
-            prop="city"
+            align="center"
+            prop="column"
             label="栏目">
           </el-table-column>
+
           <el-table-column
-            prop="adminphone"
+            align="center"
+            prop="title"
             label="标题">
           </el-table-column>
+
           <el-table-column
-            prop="adminphone"
+            align="center"
+            prop="power"
             label="权重">
           </el-table-column>
+
           <el-table-column
-            prop="number"
+            align="center"
+            prop="click_number"
             label="点击数">
           </el-table-column>
+
           <el-table-column
-            prop="number"
+            align="center"
+            prop="announcer"
             label="发布者">
           </el-table-column>
+
           <el-table-column
-            prop="city"
+            align="center"
+            prop="update_time"
             label="更新时间">
           </el-table-column>
+
           <el-table-column
-            prop="date"
-            label="操作">
+            fixed="right"
+            header-align="center"
+            align="center"
+            label="操作"
+            width="160">
+            <template slot-scope="scope">
+              <el-button type="text" size="small">访问</el-button>
+              <el-button type="text" size="small">修改</el-button>
+              <el-button
+                @click="open2(scope.$index, tableData4)"
+                type="text"
+                size="small">
+                移除
+              </el-button>
+            </template>
           </el-table-column>
+
         </el-table>
+
+        <!--模态框-->
+        <!--城市-->
+        <el-dialog title="选择公司" size="tiny" :visible.sync="cityVisible">
+          <el-tree
+            highlight-current
+            default-expand-all
+            :data="select_city"
+            :props="defaultProps">
+            <!--@node-click="searchOneCity">-->
+          </el-tree>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="cityVisible = false">取 消</el-button>
+            <el-button type="primary" @click="sureCity">确 定</el-button>
+          </div>
+        </el-dialog>
 
         <!--分页-->
         <el-pagination
@@ -83,7 +126,13 @@
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="demo-ruleForm">
 
           <el-form-item label="归属栏目:">
-            <el-input v-model="ruleForm.attribution_column" placeholder="选择归属栏目"></el-input>
+            <el-input
+              icon="search"
+              :disabled="true"
+              v-model="ruleForm.attribution_column"
+              placeholder="选择归属栏目">
+              <!--:on-icon-click="handleIconClick"-->
+            </el-input>
           </el-form-item>
 
           <el-form-item label="标题:">
@@ -92,7 +141,7 @@
             <el-switch
               v-model="isExternallink"
               on-color="#13ce66" off-color="#ff4949"
-              on-text="Y" off-text="N">
+              on-text="On" off-text="Off">
             </el-switch>
 
           </el-form-item>
@@ -115,7 +164,7 @@
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
               on-value="999" off-value="0"
-              on-text="Y" off-text="N">
+              on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -135,22 +184,25 @@
 
           <!--格式应该不对-->
           <el-form-item label="缩略图:">
+            <el-input v-model="ruleForm.pic" v-show='false'></el-input>
             <el-upload
-              v-model="ruleForm.pic"
               class="upload-demo"
               ref="upload"
-              action="https://jsonplaceholder.typicode.com/posts/"
+              action=""
+              :http-request="uploadThumbnails"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
+              :on-change="change"
               :file-list="ruleForm.fileList"
-              :auto-upload="false">
+              :auto-upload="true">
               <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             </el-upload>
           </el-form-item>
 
           <el-form-item label="正文:">
-            <input type="text" v-model='ruleForm.main_text' v-show='false'>
-            <div id="editorElem" style="text-align:left"></div>
+            <el-input v-model='ruleForm.main_text' v-show='false'></el-input>
+            <VueUEditor @ready="editorReady">
+            </VueUEditor>
           </el-form-item>
 
           <el-form-item label="来源:">
@@ -200,15 +252,50 @@
 
 <script>
   // 富文本编辑器引入
-  import E from 'wangeditor'
-//  import '../../assets/js/wangEditor-fullscreen-plugin.js'
-//  import '../../assets/css/wangEditor-fullscreen-plugin.css'
+  import VueUEditor from 'vue-ueditor'
 
   export default {
-    name: 'editor',
+    name: 'app',
+    components: {
+      VueUEditor
+    },
     data () {
       return {
-        editor: '',
+        cityVisible: false,
+        select_city: [{
+          id: 1,
+          label: '上海市总公司',
+          children: [{
+            id: 2,
+            label: '厦门分公司'
+          }, {
+            id: 3,
+            label: '佛山分公司'
+          }, {
+            id: 4,
+            label: '珠海分公司'
+          }, {
+            id: 5,
+            label: '北京分公司'
+          }, {
+            id: 6,
+            label: '上海分公司'
+          }, {
+            id: 7,
+            label: '成都分公司'
+          }, {
+            id: 8,
+            label: '湖州分公司'
+          }, {
+            id: 9,
+            label: '深圳分公司'
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+        E: null,
         isExternallink: '',
         isTop: '',
         editorContent: '',
@@ -246,17 +333,26 @@
           ]
         },
         tableData: [{
-          admin: '0008',
-          adminphone: '12345678999',
-          number: '0',
-          city: '上海',
-          date: '2017-09-12 10:28:35'
+          column: '内部机构',
+          title: '标题标题标题标题',
+          power: '0',
+          click_number: '2',
+          announcer: '系统管理员',
+          update_time: '2017-09-12 10:28:35'
         }, {
-          admin: '0008',
-          adminphone: '12345678999',
-          number: '0',
-          city: '北京',
-          date: '2017-09-12 10:28:35'
+          column: '内部机构',
+          title: '标题标题标题标题',
+          power: '0',
+          click_number: '2',
+          announcer: '系统管理员',
+          update_time: '2017-09-12 10:28:35'
+        }, {
+          column: '内部机构',
+          title: '标题标题标题标题',
+          power: '0',
+          click_number: '2',
+          announcer: '系统管理员',
+          update_time: '2017-09-12 10:28:35'
         }],
         pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
       }
@@ -264,25 +360,6 @@
     created: function () {
       this.onSubmit('condition')
       // console.log($('#editor'))
-    },
-    mounted () {
-      this.editor = new E('#editorElem')
-      this.editor.customConfig.onchange = (html) => {
-        this.editorContent = html
-      }
-      // 关闭粘贴样式的过滤
-      this.editor.customConfig.pasteFilterStyle = false
-      // 插入网络图片时，可通过如下配置获取到图片的信息。v3.0.10开始支持。
-      this.editor.customConfig.linkImgCallback = function (url) {
-        console.log(url) // url 即插入图片的地址
-      }
-      // 下面两个配置，使用其中一个即可显示“上传图片”的tab。但是两者不要同时使用！！！
-      // editor.customConfig.uploadImgShowBase64 = true   // 使用 base64 保存图片
-      this.editor.customConfig.uploadImgServer = '172.16.20.235:10001/a/electric/utils/ossutil/policy'  // 上传图片到服务器
-      // 查看阿里云图片上传功能
-      this.editor.create()
-      // console.log(this.editor.fullscreen)
-      // this.editor.fullscreen.init('#editorElem')
     },
     methods: {
       isTopp (val) {
@@ -318,6 +395,24 @@
         this.formInline.index = val
         this.onSubmit('condition')
       },
+      open2 (index, rows) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          this.deleteRow(index, rows)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+      },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
@@ -329,9 +424,7 @@
         })
       },
       resetForm (formName) {
-        this.editorContent = ''
-        this.editor.txt.clear()
-        console.log(this.editorContent)
+        this.E.setContent('')
         this.ruleForm = {
           attribution_column: '',
           abstract: '',
@@ -349,12 +442,32 @@
         }
         this.$refs[formName].resetFields()
       },
-      handleIconClick () {},
       handleRemove (file, fileList) {
         console.log(file, fileList)
       },
       handlePreview (file) {
         console.log(file)
+      },
+      editorReady (eidtorInstance) {
+        this.E = eidtorInstance
+        eidtorInstance.setContent('请在此输入正文')
+        eidtorInstance.addListener('contentChange', () => {
+          this.ruleForm.main_text = eidtorInstance.getContent()
+          // console.log('发生的变化:', this.ruleForm.main_text)
+        })
+      },
+      search_company () {
+        this.cityVisible = true
+      },
+      sureCity () {
+        this.cityVisible = false
+      },
+      uploadThumbnails () {
+        console.log(this.ruleForm.fileList)
+      },
+      change (file, filelist) {
+        console.log(file, filelist)
+        console.log(file.raw)
       }
     }
   }

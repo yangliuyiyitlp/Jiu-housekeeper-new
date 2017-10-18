@@ -42,7 +42,7 @@
             header-align="center"
             align="center"
             label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small">分配</el-button>
               <el-button type="text" size="small">修改</el-button>
               <el-button
@@ -229,7 +229,7 @@
 
 <style scoped>
   .right {
-  
+
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

@@ -161,7 +161,7 @@
             align="center"
             label="操作"
             width="120">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button type="text" size="small">积分冲正</el-button>
             </template>
           </el-table-column>
@@ -258,7 +258,7 @@
 
 <style scoped>
   .right {
-  
+
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {
