@@ -84,7 +84,7 @@
         label="显示顺序"
         sortable
         prop="rank">
-        <template scope="scope">
+        <template slot-scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
@@ -121,7 +121,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -175,13 +175,15 @@
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
         <!--ToDO-->
-        <el-checkbox class='check-all' v-if="vif" v-model="checkAll" :indeterminate="isIndeterminate" @change="handleCheckAllChange">快速添加城市：
+        <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
+                     @change="handleCheckAllChange">快速添加城市：
         </el-checkbox>
         <el-form-item v-if="vif" style="text-align: left;">
           <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
@@ -242,10 +244,10 @@
         typeObj: {},
         disObj: {},
         vif: false,
-        isIndeterminate: true,
         checkAll: false,
         checkedCities: [],
         cities: cityOptions,
+        isIndeterminate: true,
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
         moreFormVisible: false,   // 详情
@@ -259,8 +261,7 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: '',
-          areaNames: ''
+          remarks: ''
         },
         moreinfo: {
           cityName: '',

@@ -71,10 +71,10 @@ Vue.use(BaiduMap, {
 // 注册百度地图 end
 
 // 富文本编辑器
-// import '../static/ueditor1_4_3_3/ueditor.config.js'
-// import '../static/ueditor1_4_3_3/ueditor.all.min.js'
-// import '../static/ueditor1_4_3_3/lang/zh-cn/zh-cn.js'
-// import '../static/ueditor1_4_3_3/ueditor.parse.min.js'
+import '../static/ueditor1_4_3_3/ueditor.config.js'
+import '../static/ueditor1_4_3_3/ueditor.all.min.js'
+import '../static/ueditor1_4_3_3/lang/zh-cn/zh-cn.js'
+import '../static/ueditor1_4_3_3/ueditor.parse.min.js'
 
 const i18n = new VueI18n({
   locale: getLanguage()

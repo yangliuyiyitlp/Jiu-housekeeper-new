@@ -15,10 +15,10 @@
       <el-menu-item index="12" @click="activity">活动中心</el-menu-item>
       <el-submenu index="13" class="right ">
         <template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>
-          <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
-          <el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>
+        <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
+        <el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>
       </el-submenu>
-      <li data-v-01c7fadb class="time right">{{date | convertDate}}</li>
+      <li data-v-01c7fadb class="time right">{{this.date | convertDate}}</li>
     </el-menu>
   </div>
 </template>
@@ -159,8 +159,9 @@
     margin: 0px;
     font-size: 14px !important;
   }
+
   /*.el-menu--horizontal .el-submenu>.el-menu{*/
-    /*padding:0px!important;*/
+  /*padding:0px!important;*/
   /*}*/
 </style>
 
