@@ -75,7 +75,7 @@
       <el-table-column
         label="城市名称"
         prop="cityName">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
         </template>
       </el-table-column>
