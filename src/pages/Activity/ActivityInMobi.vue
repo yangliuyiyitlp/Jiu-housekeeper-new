@@ -11,15 +11,17 @@
       </el-form-item>
       <el-form-item label="广告位置:">
         <el-select v-model="requestParam.type" clearable>
-          <el-option label="活动二级弹窗" value="1"></el-option>
-          <el-option label="启动页" value="2"></el-option>
-          <el-option label="确认换车后" value="3"></el-option>
+          <el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>
+          <!--<el-option label="活动二级弹窗" value="1"></el-option>-->
+          <!--<el-option label="启动页" value="2"></el-option>-->
+          <!--<el-option label="确认换车后" value="3"></el-option>-->
         </el-select>
       </el-form-item>
       <el-form-item label="广告类型:">
         <el-select v-model="requestParam.displayType" clearable>
-          <el-option label="app" value="1"></el-option>
-          <el-option label="广告" value="2"></el-option>
+          <el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx ref="s"></el-option>
+          <!--<el-option label="app" value="1"></el-option>-->
+          <!--<el-option label="广告" value="2"></el-option>-->
         </el-select>
       </el-form-item>
       <el-form-item label="安卓编号:">
@@ -41,8 +43,8 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
-          method="post" ref="FileForm">
+    <form action="" style="display: none"
+          method=" " ref="FileForm">
       <input name="cityName" v-model="exportParam.cityName"/>
       <input name="rank" v-model="exportParam.rank"/>
       <input name="type" v-model="exportParam.type"/>
@@ -56,26 +58,40 @@
       show-header
       style="width: 100%"
       fit
+      @cell-click="more"
     >
       <el-table-column
         prop="id"
         label="id"
+        v-if=0
       >
       </el-table-column>
+      <!--<el-table-column-->
+        <!--prop="cityName"-->
+        <!--show-overflow-tooltip-->
+        <!--v-bind:class="{active: true}"-->
+        <!--label="城市名称">-->
+      <!--</el-table-column>-->
       <el-table-column
-        prop="cityName"
-        show-overflow-tooltip
-        label="城市名称">
+        label="城市名称"
+        prop="cityName">
+        <template scope="scope">
+          <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
+        </template>
       </el-table-column>
+
       <el-table-column
         label="显示顺序"
         sortable
-        prop="rank"
-      >
+        prop="rank">
         <template slot-scope="scope">
-          <el-input v-bind:value=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
+          <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
+          <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
+          <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
         </template>
+
       </el-table-column>
+
       <el-table-column
         prop="type"
         label="广告位置">
@@ -132,23 +148,21 @@
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item label="城市名称：" prop="cityName" class="elform">
+        <el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">
           <el-input v-model="form.cityName"></el-input>
+          <!--<p v-if="vif" style="color:red;">添加模式下，城市的添加以《快速添加城市》的选项为准</p>-->
         </el-form-item>
         <el-form-item label="显示顺序：" prop="rank" class="elform">
           <el-input v-model="form.rank"></el-input>
         </el-form-item>
         <el-form-item label="广告位置：" prop="type">
           <el-select style='width:100%;' v-model="form.type" clearable>
-            <el-option label="活动二级弹窗" value="5"></el-option>
-            <el-option label="启动页" value="6"></el-option>
-            <el-option label="确认换车后" value="9"></el-option>
+            <el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="广告类型：" prop="displayType">
           <el-select style='width:100%;' v-model="form.displayType" clearable>
-            <el-option label="app" value="1"></el-option>
-            <el-option label="广告" value="2"></el-option>
+            <el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">
@@ -160,7 +174,7 @@
         <el-form-item label="备注：" prop="remarks" class="elform">
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
-
+        <!--ToDO-->
         <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
                      @change="handleCheckAllChange">快速添加城市：
         </el-checkbox>
@@ -169,6 +183,7 @@
             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
@@ -180,24 +195,30 @@
                :close-on-click-modal="false" class="demo-ruleForm ">
 
       <el-form label-width="150px" :model="moreinfo" ref="formA" class="tbody">
-        <el-form-item label="锁厂名称" class="elform">
-          <el-input :value="moreinfo.type" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="锁厂家编号" class="elform">
-          <el-input :value="moreinfo.displayType" :disabled="true"></el-input>
-        </el-form-item>
-        <el-form-item label="添加时间" class="elform">
+        <el-form-item label="城市名称" class="elform">
           <el-input :value="moreinfo.cityName" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="更新时间" class="elform">
+        <el-form-item label="显示顺序" class="elform">
+          <el-input :value="moreinfo.rank" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="广告位置" class="elform">
+          <el-input :value="moreinfo.type" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="广告类型" class="elform">
+          <el-input :value="moreinfo.displayType" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="安卓inmobi编号" class="elform">
           <el-input :value="moreinfo.androidInmobiId" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="操作者" class="elform">
+        <el-form-item label="苹果inmobi编号" class="elform">
           <el-input :value="moreinfo.iosInmobiId" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注：" class="elform">
+          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="cancelmore">关 闭</el-button>
+        <el-button type="primary" @click="cancelMore">关 闭</el-button>
       </div>
     </el-dialog>
     <!--导出弹框-->
@@ -233,6 +254,7 @@
         exportFormVisible: false,
         addLoading: false,       // 是否显示loading
         form: {
+          id: '',
           cityName: '',
           rank: '',
           type: '',
@@ -242,9 +264,10 @@
           remarks: ''
         },
         moreinfo: {
+          cityName: '',
+          rank: '',
           type: '',
           displayType: '',
-          cityName: '',
           androidInmobiId: '',
           iosInmobiId: '',
           remarks: ''
@@ -321,7 +344,6 @@
           this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
             if (response.status === 200) {
               this.tableData = response.data.page.list
-              console.log(this.tableData)
               for (var i = 0; i < response.data.page.list.length; i++) {
                 this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
                 this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
@@ -344,13 +366,20 @@
       modifyRecord: function (scope) {
         this.vif = false
         this.dialogFormVisible = true
-        this.form.cityName = scope.row.cityName
-        this.form.rank = scope.row.rank
-        this.form.type = scope.row.type
-        this.form.displayType = scope.row.displayType
-        this.form.androidInmobiId = scope.row.androidInmobiId
-        this.form.iosInmobiId = scope.row.iosInmobiId
-        this.form.remarks = scope.row.remarks
+        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
+          .then(function (res) {
+            if (res.status === 200) {
+              console.log(res.data)
+              this.form.id = res.data.tDisplayType.id
+              this.form.cityName = res.data.tDisplayType.cityName
+              this.form.rank = res.data.tDisplayType.rank
+              this.form.type = res.data.tDisplayType.type
+              this.form.displayType = res.data.tDisplayType.displayType
+              this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
+              this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
+              this.form.remarks = res.data.tDisplayType.remarks
+            }
+          })
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -394,14 +423,10 @@
       doModify: function (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            var url = ''
-            if (this.form.id === undefined || this.form.id === '') {
-              url = 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/save' // 修改功能
-            } else {
-              url = 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/form'// 新增功能
-            }
             this.dialogFormVisible = false
-            this.$http.get(url, {params: this.form}).then(function (response) {
+            this.form.areaNames = this.checkedCities.join(',')
+            console.log(this.form)
+            this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
               if (response.status === 200) {
                 // 更新成功
                 this.$message({
@@ -423,7 +448,6 @@
               })
             })
           } else {
-            console.log('error submit!!')
             return
           }
         })
@@ -442,17 +466,19 @@
         this.$refs['formA'].resetFields()
       },
       more: function (row, column, cell, event) {
-        if (column.property !== 'factoryName') {
+        if (column.property !== 'cityName') {
           return false
         } else {
           this.moreFormVisible = true
-          this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
-            if (res.data.code === 0) {
-              this.moreinfo.type = res.data.tLockFactoryInfo.type
-              this.moreinfo.displayType = res.data.tLockFactoryInfo.displayType
-              this.moreinfo.cityName = res.data.tLockFactoryInfo.cityName
-              this.moreinfo.androidInmobiId = res.data.tLockFactoryInfo.androidInmobiId
-              this.moreinfo.iosInmobiId = res.data.tLockFactoryInfo.iosInmobiId
+          this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
+            if (res.status === 200) {
+              this.moreinfo.type = this.typeObj[res.data.tDisplayType.type]
+              this.moreinfo.displayType = this.disObj[res.data.tDisplayType.displayType]
+              this.moreinfo.cityName = res.data.tDisplayType.cityName
+              this.moreinfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
+              this.moreinfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
+              this.moreinfo.rank = res.data.tDisplayType.rank
+              this.moreinfo.remarks = res.data.tDisplayType.remarks
             }
           }).catch(function (err) {
             this.$message({
@@ -462,7 +488,7 @@
           })
         }
       },
-      cancelmore: function () {
+      cancelMore: function () {
         this.moreFormVisible = false
       },
       handleSizeChange: function (val) {
@@ -476,6 +502,7 @@
       addNewRecord: function () {
         this.vif = true
         this.form = {
+          id: '',
           cityName: '',
           rank: '',
           type: '',
@@ -485,6 +512,22 @@
           remarks: ''
         }
         this.dialogFormVisible = true
+        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/findMaxSort')
+          .then(function (res) {
+            if (res.status === 200) {
+              this.form.rank = res.data.maxSort
+            } else {
+              this.$message({
+                type: 'info',
+                message: '获取信息失败'
+              })
+            }
+          }, function (err) {
+            this.$message({
+              type: 'info',
+              message: '获取失败' + err.status
+            })
+          })
       },
       exportFile: function () {
         this.exportFormVisible = true
@@ -493,13 +536,15 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
-        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
+        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/export')
+        this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()
       },
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
+        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/exportAll')
+        this.$refs['FileForm'].setAttribute('method', 'post')
         this.$refs['FileForm'].submit()
       },
       handleCheckAllChange (event) {
@@ -539,35 +584,50 @@
         }
       },
       doModifyOrder () {
+//        this.$ajax(
+//          {
+//            method: 'post',
+//            url: 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort',
+//            data: this.tableData,
+//            headers: {
+//              'Content-Type': 'multipart/form-data'
+//            }
+//          }
+//        ).then(function (response) {
+//          this.$message({
+//            message: response.data,
+//            type: 'success'
+//          })
+//          console.log(response.data)
+//        }).catch(function (error) {
+//          console.log(error)
+//        })
         console.log(JSON.stringify(this.modifyOrders))
         if (this.modifyOrders === [] || this.modifyOrders === undefined) {
           return
         }
         // post 到后台
-        var ids = []
-        var sorts = []
+        let ids = []
+        let sorts = []
+        let newids = []
+        let newsorts = []
         this.modifyOrders.forEach(function (value, index) {
           ids.push(value.id)
           sorts.push(value.rank)
+          newids = ids.join(',')
+          newsorts = sorts.join(',')
         })
-        this.$ajax(
-          {
-            method: 'post',
-            url: '/tDisplayType/interface/updateSort',
-            data: JSON.stringify({'ids': ids, 'sorts': sorts}),
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        ).then(function (response) {
-          this.$message({
-            message: response.data,
-            type: 'success'
+        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort', {params: {'ids': newids, 'sorts': newsorts}})
+          .then(function (res) {
+            this.$message({
+              message: res.data.mesage,
+              type: 'success'
+            })
+            this.query()
           })
-          console.log(response.data)
-        }).catch(function (error) {
-          console.log(error)
-        })
+          .catch(function (error) {
+            console.log(error)
+          })
       }
     }
   }
@@ -577,6 +637,7 @@
   .check-all {
     width: 150px;
     float: left;
+    padding-top:6px;
   }
 
   .demo-ruleForm {
@@ -584,9 +645,6 @@
     text-align: center;
   }
 
-  .el-dialog--small {
-
-  }
 
   .tbody[data-v-30c85a31] {
     height: 350px !important;
@@ -595,7 +653,6 @@
   .active {
     color: #20a0ff;
   }
-
   .module {
     height: 240px !important;
     width: 400px !important;

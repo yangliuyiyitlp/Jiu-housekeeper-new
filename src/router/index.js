@@ -98,7 +98,7 @@ Vue.use(Router)
 
 export default new Router({
   routes: [
-    {path: '/', name: 'Login', component: Login},
+    { path: '/', redirect: {name: 'Login'} }, // 不能同名
     {path: '/login', name: 'Login', component: Login},
     {path: '/main', name: 'Main', component: Main},
     {path: '/home', name: 'Home', component: Home},

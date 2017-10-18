@@ -233,8 +233,6 @@
     },
     methods: {
       query: function () {
-//        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin
-//        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.exportParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
