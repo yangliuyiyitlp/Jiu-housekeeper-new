@@ -67,15 +67,15 @@
       >
       </el-table-column>
       <!--<el-table-column-->
-        <!--prop="cityName"-->
-        <!--show-overflow-tooltip-->
-        <!--v-bind:class="{active: true}"-->
-        <!--label="城市名称">-->
+      <!--prop="cityName"-->
+      <!--show-overflow-tooltip-->
+      <!--v-bind:class="{active: true}"-->
+      <!--label="城市名称">-->
       <!--</el-table-column>-->
       <el-table-column
         label="城市名称"
         prop="cityName">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
         </template>
       </el-table-column>
@@ -87,7 +87,7 @@
         <template scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
-          <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
+          <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
         </template>
 
       </el-table-column>
@@ -162,7 +162,7 @@
         </el-form-item>
         <el-form-item label="广告类型：" prop="displayType">
           <el-select style='width:100%;' v-model="form.displayType" clearable>
-            <el-option v-for="(val,key) in disObj " v-bind:key=key :label=disObj[key] :value=key ></el-option>
+            <el-option v-for="(val,key) in disObj " v-bind:key=key :label=disObj[key] :value=key></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">
@@ -333,11 +333,13 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
+
 // 下面是更改代码
 // 下面是原先代码
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
           .then(function (res) {
             console.log(this.data)
+
             for (var i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }

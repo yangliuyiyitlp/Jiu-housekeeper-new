@@ -344,7 +344,14 @@
         }]
       }
     },
-    methods: {}
+    methods: {
+      search () {
+        console.log('search')
+      },
+      exportData () {
+        console.log('exportData')
+      }
+    }
   }
 </script>
 

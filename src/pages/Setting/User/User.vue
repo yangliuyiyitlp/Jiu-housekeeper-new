@@ -1,12 +1,13 @@
 <template>
   <div class="right" ref="right">
     <el-row>
+
       <el-col :span="3" class="search_bar" ref="search_bar">
         <el-tree
           :data="select_mechanism"
           :props="defaultProps"
-          @node-click="handleNodeClick"
           default-expand-all>
+          <!--@node-click="handleNodeClick"-->
         </el-tree>
       </el-col>
 

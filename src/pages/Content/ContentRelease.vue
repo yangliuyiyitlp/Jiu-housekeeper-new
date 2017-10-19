@@ -3,122 +3,123 @@
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
 
       <el-tab-pane label="文章列表" name="first" style="padding-left:10px;">
-        <!--筛选条件-->
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
 
-          <el-form-item label="栏目：">
-            <!--数模型-->
-            <el-input
-              icon="search"
-              :disabled="true"
-              v-model="formInline.city"
-              :on-icon-click="search_company" @click="dialogVisible = true">
-            </el-input>
-          </el-form-item>
+        <el-row>
 
-          <el-form-item label="标题：">
-            <el-input v-model="formInline.name"></el-input>
-          </el-form-item>
+          <el-col :span="3" class="search_bar" ref="search_bar">
+            <el-tree
+              :data="select_organization"
+              :props="defaultProps"
+              @node-click="selectOrganization"
+              default-expand-all>
+            </el-tree>
+          </el-col>
 
-          <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
+          <el-col :span="21">
+            <!--筛选条件-->
+            <el-form :inline="true" :model="formInline" class="demo-form-inline">
 
-          <el-form-item label="状态：">
-            <el-radio-group v-model="radio2">
-              <el-radio :label="3">发布</el-radio>
-              <el-radio :label="6">审核</el-radio>
-              <el-radio :label="9">删除</el-radio>
-            </el-radio-group>
-          </el-form-item>
+              <el-form-item label="栏目：">
+                <!--数模型-->
+                <el-input
+                  icon="search"
+                  :disabled="true"
+                  v-model="formInline.city"
+                  :on-icon-click="searchColumn"
+                  @click="dialogVisible = true">
+                </el-input>
+              </el-form-item>
 
-        </el-form>
+              <el-form-item label="标题：">
+                <el-input v-model="formInline.name"></el-input>
+              </el-form-item>
 
-        <!--表格展示-->
-        <el-table
-          :data="tableData"
-          border
-          style="width: 100%">
-          <el-table-column
-            align="center"
-            prop="column"
-            label="栏目">
-          </el-table-column>
+              <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
 
-          <el-table-column
-            align="center"
-            prop="title"
-            label="标题">
-          </el-table-column>
+              <el-form-item label="状态：">
+                <el-radio-group v-model="radio2">
+                  <el-radio :label="3">发布</el-radio>
+                  <el-radio :label="6">审核</el-radio>
+                  <el-radio :label="9">删除</el-radio>
+                </el-radio-group>
+              </el-form-item>
 
-          <el-table-column
-            align="center"
-            prop="power"
-            label="权重">
-          </el-table-column>
+            </el-form>
 
-          <el-table-column
-            align="center"
-            prop="click_number"
-            label="点击数">
-          </el-table-column>
+            <!--表格展示-->
+            <el-table
+              :data="tableData"
+              border
+              style="width: 100%">
+              <el-table-column
+                align="center"
+                prop="column"
+                label="栏目">
+              </el-table-column>
 
-          <el-table-column
-            align="center"
-            prop="announcer"
-            label="发布者">
-          </el-table-column>
+              <el-table-column
+                align="center"
+                prop="title"
+                label="标题">
+              </el-table-column>
 
-          <el-table-column
-            align="center"
-            prop="update_time"
-            label="更新时间">
-          </el-table-column>
+              <el-table-column
+                align="center"
+                prop="power"
+                label="权重">
+              </el-table-column>
 
-          <el-table-column
-            fixed="right"
-            header-align="center"
-            align="center"
-            label="操作"
-            width="160">
-            <template slot-scope="scope">
-              <el-button type="text" size="small">访问</el-button>
-              <el-button type="text" size="small">修改</el-button>
-              <el-button
-                @click="open2(scope.$index, tableData4)"
-                type="text"
-                size="small">
-                移除
-              </el-button>
-            </template>
-          </el-table-column>
+              <el-table-column
+                align="center"
+                prop="click_number"
+                label="点击数">
+              </el-table-column>
 
-        </el-table>
+              <el-table-column
+                align="center"
+                prop="announcer"
+                label="发布者">
+              </el-table-column>
 
-        <!--模态框-->
-        <!--城市-->
-        <el-dialog title="选择公司" size="tiny" :visible.sync="cityVisible">
-          <el-tree
-            highlight-current
-            default-expand-all
-            :data="select_city"
-            :props="defaultProps">
-            <!--@node-click="searchOneCity">-->
-          </el-tree>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="cityVisible = false">取 消</el-button>
-            <el-button type="primary" @click="sureCity">确 定</el-button>
-          </div>
-        </el-dialog>
+              <el-table-column
+                align="center"
+                prop="update_time"
+                label="更新时间">
+              </el-table-column>
 
-        <!--分页-->
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pagination.index"
-          :page-sizes="pagination.pageSizes"
-          :page-size="pagination.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
-        </el-pagination>
+              <el-table-column
+                header-align="center"
+                align="center"
+                label="操作">
+                <template slot-scope="scope">
+                  <el-button type="text" size="small">访问</el-button>
+                  <el-button type="text" size="small">修改</el-button>
+                  <el-button
+                    @click="open2(scope.$index, tableData4)"
+                    type="text"
+                    size="small">
+                    移除
+                  </el-button>
+                </template>
+              </el-table-column>
+
+            </el-table>
+
+            <!--分页-->
+            <el-pagination
+              @size-change="handleSizeChange"
+              @current-change="handleCurrentChange"
+              :current-page="pagination.index"
+              :page-sizes="pagination.pageSizes"
+              :page-size="pagination.pageSize"
+              layout="total, sizes, prev, pager, next, jumper"
+              :total="pagination.total">
+            </el-pagination>
+
+          </el-col>
+
+        </el-row>
+
 
       </el-tab-pane>
 
@@ -129,9 +130,10 @@
             <el-input
               icon="search"
               :disabled="true"
+              :on-icon-click="searchAttributionColumn"
+              @click="dialogVisible = true"
               v-model="ruleForm.attribution_column"
               placeholder="选择归属栏目">
-              <!--:on-icon-click="handleIconClick"-->
             </el-input>
           </el-form-item>
 
@@ -247,6 +249,39 @@
 
     </el-tabs>
 
+
+    <!--模态框-->
+    <!--栏目-->
+    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible1">
+      <el-tree
+        highlight-current
+        default-expand-all
+        :data="select_column"
+        @node-click="searchOneColumn"
+        :props="defaultProps">
+
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnVisible1 = false">取 消</el-button>
+        <el-button type="primary" @click="sureColumn">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible2">
+      <el-tree
+        highlight-current
+        default-expand-all
+        :data="select_column"
+        @node-click="searchOneAttributionColumn"
+        :props="defaultProps">
+
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="columnVisible2 = false">取 消</el-button>
+        <el-button type="primary" @click="sureAttributionColumn">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -261,35 +296,104 @@
     },
     data () {
       return {
-        cityVisible: false,
-        select_city: [{
-          id: 1,
-          label: '上海市总公司',
+        columnVisible1: false,
+        columnVisible2: false,
+        select_organization: [{
+          label: '组织机构',
           children: [{
-            id: 2,
-            label: '厦门分公司'
+            label: '内部机构'
           }, {
-            id: 3,
-            label: '佛山分公司'
-          }, {
-            id: 4,
-            label: '珠海分公司'
-          }, {
-            id: 5,
-            label: '北京分公司'
-          }, {
-            id: 6,
-            label: '上海分公司'
-          }, {
-            id: 7,
-            label: '成都分公司'
-          }, {
-            id: 8,
-            label: '湖州分公司'
-          }, {
-            id: 9,
-            label: '深圳分公司'
+            label: '地方机构'
           }]
+        }, {
+          label: '软件介绍',
+          children: [{
+            label: '网络工具'
+          }, {
+            label: '网站简介'
+          }, {
+            label: '浏览工具'
+          }, {
+            label: '浏览辅助'
+          }, {
+            label: '网络优化'
+          }, {
+            label: '邮件处理'
+          }, {
+            label: '下载工具'
+          }, {
+            label: '搜索工具'
+          }]
+        }, {
+          label: '质量检验',
+          children: [{
+            label: '产品质量'
+          }, {
+            label: '技术质量'
+          }, {
+            label: '工程质量'
+          }]
+        }, {
+          label: '友情链接',
+          children: [{
+            label: '常用网站'
+          }, {
+            label: '门户网站'
+          }, {
+            label: '购物网站'
+          }, {
+            label: '交友社区'
+          }, {
+            label: '音乐视频'
+          }]
+        }, {
+          label: '百度一下'
+        }, {
+          label: '全文检索'
+        }, {
+          label: '公共留言'
+        }],
+        select_column: [{
+          label: '组织机构',
+          children: [{
+            label: '内部机构'
+          }, {
+            label: '地方机构'
+          }]
+        }, {
+          label: '软件介绍',
+          children: [{
+            label: '网络工具'
+          }, {
+            label: '网站简介'
+          }, {
+            label: '浏览工具'
+          }, {
+            label: '浏览辅助'
+          }, {
+            label: '网络优化'
+          }, {
+            label: '邮件处理'
+          }, {
+            label: '下载工具'
+          }, {
+            label: '搜索工具'
+          }]
+        }, {
+          label: '质量检验',
+          children: [{
+            label: '产品质量'
+          }, {
+            label: '技术质量'
+          }, {
+            label: '工程质量'
+          }]
+        }, {
+          label: '百度一下'
+        }, {
+          label: '全文检索'
+        }, {
+          label: '公共留言'
         }],
         defaultProps: {
           children: 'children',
@@ -361,9 +465,40 @@
       this.onSubmit('condition')
       // console.log($('#editor'))
     },
+    mounted () {
+      this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 160) + 'px'
+    },
     methods: {
       isTopp (val) {
         this.ruleForm.power = val
+      },
+      searchColumn () {
+        this.columnVisible1 = true
+      },
+      searchAttributionColumn () {
+        this.columnVisible2 = true
+      },
+      searchOneColumn (data) {
+        // 获取树组件被选中的参数并保存在formInline.city中
+        this.formInline.city = data.label
+//        console.log(this.formInline.city)
+      },
+      searchOneAttributionColumn (data) {
+        // 获取树组件被选中的参数并保存在this.ruleForm.attribution_column中
+        this.ruleForm.attribution_column = data.label
+//        console.log(this.ruleForm.attribution_column)
+      },
+      sureColumn () {
+        this.columnVisible1 = false
+      },
+      sureAttributionColumn () {
+        this.columnVisible2 = false
+      },
+      selectOrganization (data) {
+        // 获取树组件被选中的参数并保存在formInline.city中
+        this.formInline.city = data.label
+//        console.log(this.formInline.city)
+        // 同时根据栏目的内容 发送请求
       },
       handleClick (tab, event) {
         console.log(tab, event)
@@ -456,12 +591,6 @@
           // console.log('发生的变化:', this.ruleForm.main_text)
         })
       },
-      search_company () {
-        this.cityVisible = true
-      },
-      sureCity () {
-        this.cityVisible = false
-      },
       uploadThumbnails () {
         console.log(this.ruleForm.fileList)
       },
@@ -474,6 +603,11 @@
 </script>
 
 <style scoped>
+  .search_bar {
+    border: 1px solid #ccc;
+    overflow: auto;
+  }
+
   /*没有加scoped，是因为需要表单el-form-item__label和el-form-item__content的样式*/
   html, body {
     height: 100%;
