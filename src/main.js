@@ -14,20 +14,19 @@ import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
 import 'jquery'
 import 'ztree'
-// import './assets/plugins/bootstrap/css/bootstrap.min.css'
-// import './assets/plugins/bootstrap/js/bootstrap.min'
+
 import Axios from 'axios'
 
 Vue.prototype.$ajax = Axios
-import global_ from './Global.vue'
-
-Vue.prototype.GLOBAL = global_
-Axios.defaults.baseURL = global_.BASE_URL
+Axios.defaults.baseURL = 'http://116.231.72.55:10001/a'
 
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
 
 Vue.use(VueResource)
+Vue.http.options.root = 'http://116.231.72.55:10001/a'
+// Vue.http.options.root = 'http://172.16.20.235:10001/a'
+
 // 设置中文
 // VeeValidate.Validator.addLocale(ZHCN)
 Vue.config.productionTip = false
@@ -35,9 +34,9 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueI18n)
 
-import Querystring from 'querystring'
-
-Vue.prototype.$qs = Querystring
+// import Querystring from 'querystring'
+//
+// Vue.prototype.$qs = Querystring
 
 // Moment开始
 import Moment from 'moment'
