@@ -14,26 +14,25 @@ import 'jquery'
 import 'ztree'
 
 import Axios from 'axios'
-import global_ from './Global.vue'
 
 Vue.prototype.$ajax = Axios
-
-Vue.prototype.GLOBAL = global_
-
 Axios.defaults.baseURL = 'http://116.231.72.55:10001/a'
-
 
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
 
 Vue.use(VueResource)
-
-Vue.http.options.root = 'http://172.16.20.235:10001/a'// baseUrl的设置
+Vue.http.options.root = 'http://116.231.72.55:10001/a'
+// Vue.http.options.root = 'http://172.16.20.235:10001/a'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueI18n)
+
+import Querystring from 'querystring'
+
+Vue.prototype.$qs = Querystring
 
 // Moment开始
 import Moment from 'moment'
