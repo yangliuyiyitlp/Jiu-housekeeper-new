@@ -34,9 +34,9 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.use(VueI18n)
 
-// import Querystring from 'querystring'
-//
-// Vue.prototype.$qs = Querystring
+import Querystring from 'querystring'
+
+Vue.prototype.$qs = Querystring
 
 // Moment开始
 import Moment from 'moment'
