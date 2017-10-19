@@ -51,21 +51,15 @@
       show-header
       style="width: 100%"
       @cell-click="more">
-      <!-- lihaibu-->
       <el-table-column
         prop="id"
         label="id" v-if=0> // id 隐藏
       </el-table-column>
       // 返回的客户id
-      <!--<el-table-column-->
-      <!--v-bind:class="{active: true}"-->
-      <!--prop="factoryName"-->
-      <!--label="锁厂名称">-->
-      <!--</el-table-column>-->
       <el-table-column
         label="锁厂名称"
         prop="factoryName">
-        <template slot-scope="scope">
+        <template scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
         </template>
       </el-table-column>
@@ -73,16 +67,9 @@
         prop="lockFactoryNo"
         label="锁厂家编号	">
       </el-table-column>
-      <!--<el-table-column-->
-      <!--label="登录状态">-->
-      <!--<template slot-scope="scope">-->
-      <!--<div v-if="scope.row.loginStatus==='true'">是</div>-->
-      <!--<div v-else>否</div>-->
-      <!--</template>-->
-      <!--</el-table-column>-->
       <el-table-column
         label="添加时间">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
         </template>
@@ -98,7 +85,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -158,7 +145,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="cancelmore">关 闭</el-button>
+        <el-button type="primary" @click="cancelMore">关 闭</el-button>
       </div>
     </el-dialog>
     <!--导出弹框-->
@@ -233,13 +220,25 @@
     },
     methods: {
       query: function () {
+        this.requestParam.factoryName = this.requestParam.factoryName.trim()
+        this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.exportParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
         this.exportParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
+        this.$http(
+          {
+            method: 'post',
+            url: 'electric/lockfactoryinfo/interface/list',
+            data: this.requestParam,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        )
+        .then(function (response) {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -255,6 +254,22 @@
             message: '获取列表信息失败' + err.status
           })
         })
+//        this.$http.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
+//          if (response.data.code === 0) {
+//            this.tableData = response.data.page.list
+//            this.pagination.count = response.data.page.count
+//          } else {
+//            this.$message({
+//              type: 'info',
+//              message: '获取列表信息失败'
+//            })
+//          }
+//        }, function (err) {
+//          this.$message({
+//            type: 'info',
+//            message: '获取列表信息失败' + err.status
+//          })
+//        })
       },
       modifyRecord: function (scope) {
         this.dialogFormVisible = true
@@ -273,7 +288,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(function (response) {
+            this.$http.get('electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(function (response) {
               if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
@@ -308,9 +323,9 @@
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save' // 新增功能
+              url = 'electric/lockfactoryinfo/interface/save' // 新增功能
             } else {
-              url = 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/save'
+              url = 'electric/lockfactoryinfo/interface/save'
             }
             this.dialogFormVisible = false
             this.$http.get(url, {params: this.form}).then(function (response) {
@@ -356,7 +371,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
+          this.$http.get('electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
             if (res.data.code === 0) {
               this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
               this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
@@ -372,7 +387,7 @@
           })
         }
       },
-      cancelmore: function () {
+      cancelMore: function () {
         this.moreFormVisible = false
       },
       handleSizeChange: function (val) {

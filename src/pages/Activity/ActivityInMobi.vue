@@ -11,7 +11,7 @@
       </el-form-item>
       <el-form-item label="广告位置:">
         <el-select v-model="requestParam.type" clearable>
-          <el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>
+          <el-option v-for="(val,key) in typeObj" v-bind:key=key :label=typeObj[key] :value=key></el-option>
           <!--<el-option label="活动二级弹窗" value="1"></el-option>-->
           <!--<el-option label="启动页" value="2"></el-option>-->
           <!--<el-option label="确认换车后" value="3"></el-option>-->
@@ -19,7 +19,7 @@
       </el-form-item>
       <el-form-item label="广告类型:">
         <el-select v-model="requestParam.displayType" clearable>
-          <el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx ref="s"></el-option>
+          <el-option v-for="(val,key) in disObj" v-bind:key=key :label=disObj[key] :value=key ref="s"></el-option>
           <!--<el-option label="app" value="1"></el-option>-->
           <!--<el-option label="广告" value="2"></el-option>-->
         </el-select>
@@ -67,10 +67,10 @@
       >
       </el-table-column>
       <!--<el-table-column-->
-        <!--prop="cityName"-->
-        <!--show-overflow-tooltip-->
-        <!--v-bind:class="{active: true}"-->
-        <!--label="城市名称">-->
+      <!--prop="cityName"-->
+      <!--show-overflow-tooltip-->
+      <!--v-bind:class="{active: true}"-->
+      <!--label="城市名称">-->
       <!--</el-table-column>-->
       <el-table-column
         label="城市名称"
@@ -84,10 +84,10 @@
         label="显示顺序"
         sortable
         prop="rank">
-        <template slot-scope="scope">
+        <template scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
-          <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder" ></el-input>
+          <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
         </template>
 
       </el-table-column>
@@ -121,7 +121,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -157,12 +157,12 @@
         </el-form-item>
         <el-form-item label="广告位置：" prop="type">
           <el-select style='width:100%;' v-model="form.type" clearable>
-            <el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>
+            <el-option v-for="(val,key) in typeObj" v-bind:key=key :label=typeObj[key] :value=key></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="广告类型：" prop="displayType">
           <el-select style='width:100%;' v-model="form.displayType" clearable>
-            <el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx ></el-option>
+            <el-option v-for="(val,key) in disObj " v-bind:key=key :label=disObj[key] :value=key></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">
@@ -174,7 +174,6 @@
         <el-form-item label="备注：" prop="remarks" class="elform">
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
-        <!--ToDO-->
         <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
                      @change="handleCheckAllChange">快速添加城市：
         </el-checkbox>
@@ -244,8 +243,8 @@
         typeObj: {},
         disObj: {},
         vif: false,
-        checkAll: true,
-        checkedCities: '',
+        checkAll: false,
+        checkedCities: [],
         cities: cityOptions,
         isIndeterminate: true,
         tableData: [],
@@ -322,6 +321,10 @@
     },
     methods: {
       query: function () {
+        this.requestParam.cityName = this.requestParam.cityName.trim()
+        this.requestParam.rank = this.requestParam.rank.trim()
+        this.requestParam.androidInmobiId = this.requestParam.androidInmobiId.trim()
+        this.requestParam.iosInmobiId = this.requestParam.iosInmobiId.trim()
         this.exportParam.cityName = this.requestParam.cityName
         this.exportParam.rank = this.requestParam.rank
         this.exportParam.type = this.requestParam.type
@@ -330,43 +333,56 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$http.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}}).then(function (res) {
-          for (var i = 0; i < res.data.length; i++) {
-            this.disObj[res.data[i].value] = res.data[i].label
-          }
-        }).then(function () {
-          this.$http.get('http://172.16.20.235:10001/a/sys/dictutils/interface/getDictList', {params: {type: 'inmobi_type'}}).then(function (res) {
+
+// 下面是更改代码
+// 下面是原先代码
+        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
+          .then(function (res) {
+            console.log(this.data)
+
             for (var i = 0; i < res.data.length; i++) {
-              this.typeObj[res.data[i].value] = res.data[i].label
+              this.disObj[res.data[i].value] = res.data[i].label
             }
-          })
-        }).then(function () {
-          this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
-            if (response.status === 200) {
-              this.tableData = response.data.page.list
-              for (var i = 0; i < response.data.page.list.length; i++) {
-                this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
-                this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
+          }.bind(this))
+          .then(function () {
+            this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_type'}})
+              .then(function (res) {
+                for (var i = 0; i < res.data.length; i++) {
+                  this.typeObj[res.data[i].value] = res.data[i].label
+                }
+              }.bind(this))
+          }.bind(this))
+          .then(function () {
+            this.$http.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
+              if (response.status === 200) {
+                this.tableData = response.data.page.list
+                console.log(response)
+                for (var i = 0; i < response.data.page.list.length; i++) {
+                  this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
+                  this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
+                }
+                this.pagination.count = response.data.page.count
+              } else {
+                this.$message({
+                  type: 'info',
+                  message: response.data.message
+                })
               }
-              this.pagination.count = response.data.page.count
-            } else {
+            }, function (err) {
               this.$message({
                 type: 'info',
-                message: '获取列表信息失败'
+                message: '获取列表信息失败' + err.status
               })
-            }
-          }, function (err) {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败' + err.status
             })
+          }.bind(this))
+          .catch(function (err) {
+            console.log(err)
           })
-        })
       },
       modifyRecord: function (scope) {
         this.vif = false
         this.dialogFormVisible = true
-        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
+        this.$http.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
           .then(function (res) {
             if (res.status === 200) {
               console.log(res.data)
@@ -390,7 +406,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
+            this.$http.get('electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
               if (response.status === 200) {
                 // 删除成功
                 this.$message({
@@ -425,10 +441,12 @@
           if (valid) {
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
+            this.checkedCities = []
             console.log(this.form)
-            this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
+            this.$http.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
               if (response.status === 200) {
                 // 更新成功
+                console.log(response)
                 this.$message({
                   type: 'success',
                   message: '操作成功'
@@ -461,7 +479,8 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: ''
+          remarks: '',
+          areaNames: ''
         }
         this.$refs['formA'].resetFields()
       },
@@ -470,7 +489,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
+          this.$http.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
             if (res.status === 200) {
               this.moreinfo.type = this.typeObj[res.data.tDisplayType.type]
               this.moreinfo.displayType = this.disObj[res.data.tDisplayType.displayType]
@@ -500,7 +519,9 @@
         this.query()
       },
       addNewRecord: function () {
+        this.dialogFormVisible = true
         this.vif = true
+        this.checkedCities = []
         this.form = {
           id: '',
           cityName: '',
@@ -509,10 +530,10 @@
           displayType: '',
           androidInmobiId: '',
           iosInmobiId: '',
-          remarks: ''
+          remarks: '',
+          areaNames: ''
         }
-        this.dialogFormVisible = true
-        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/findMaxSort')
+        this.$http.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
           .then(function (res) {
             if (res.status === 200) {
               this.form.rank = res.data.maxSort
@@ -522,10 +543,10 @@
                 message: '获取信息失败'
               })
             }
-          }, function (err) {
+          }, function (res) {
             this.$message({
               type: 'info',
-              message: '获取失败' + err.status
+              message: '获取失败'
             })
           })
       },
@@ -584,7 +605,7 @@
         }
       },
       doModifyOrder () {
-//        this.$ajax(
+//        this.vm.$http(
 //          {
 //            method: 'post',
 //            url: 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort',
@@ -602,7 +623,6 @@
 //        }).catch(function (error) {
 //          console.log(error)
 //        })
-        console.log(JSON.stringify(this.modifyOrders))
         if (this.modifyOrders === [] || this.modifyOrders === undefined) {
           return
         }
@@ -617,7 +637,12 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$http.get('http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort', {params: {'ids': newids, 'sorts': newsorts}})
+        this.$http.get('electric/inmobidisplay/tDisplayType/interface/updateSort', {
+          params: {
+            'ids': newids,
+            'sorts': newsorts
+          }
+        })
           .then(function (res) {
             this.$message({
               message: res.data.mesage,
@@ -637,14 +662,13 @@
   .check-all {
     width: 150px;
     float: left;
-    padding-top:6px;
+    padding-top: 6px;
   }
 
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
-
 
   .tbody[data-v-30c85a31] {
     height: 350px !important;
@@ -653,6 +677,7 @@
   .active {
     color: #20a0ff;
   }
+
   .module {
     height: 240px !important;
     width: 400px !important;

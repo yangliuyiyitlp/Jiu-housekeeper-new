@@ -12,14 +12,16 @@ import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
 import 'jquery'
 import 'ztree'
+
 import Axios from 'axios'
 import global_ from './Global.vue'
 
 Vue.prototype.$ajax = Axios
-// Axios.defaults.baseURL = 'https://api.example.com'
 
 Vue.prototype.GLOBAL = global_
-// Axios.defaults.baseURL = global_.BASE_URL
+
+Axios.defaults.baseURL = 'http://116.231.72.55:10001/a'
+
 
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
