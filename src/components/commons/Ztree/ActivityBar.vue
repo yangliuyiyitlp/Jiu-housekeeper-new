@@ -61,12 +61,20 @@
             name: 'activity.config.icon'
           }]
         }, {
-          id: 11,
+          id: 12,
           label: '广告中心',
           children: [{
-            id: 11,
+            id: 13,
             label: 'inmobi广告配置',
             name: 'activity.inmobi'
+          }]
+        }, {
+          id: 14,
+          label: '饿了么活动',
+          children: [{
+            id: 15,
+            label: '饿了么活动',
+            name: 'activity.ele.manage.coupon'
           }]
         }],
         defaultProps: {

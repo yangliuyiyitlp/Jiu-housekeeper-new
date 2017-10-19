@@ -94,6 +94,7 @@ import ActivityCouponReceive from '@/pages/Activity/ActivityCouponReceive.vue'
 import ActivityInviteList from '@/pages/Activity/ActivityInviteList.vue'
 import ActivityConfigIcon from '@/pages/Activity/Zombie/ActivityConfigIcon.vue'
 import ActivityInMobi from '@/pages/Activity/ActivityInMobi.vue'
+import ActivityEleManageCoupon from '@/pages/Activity/ActivityEle/EleManageCoupon.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -245,7 +246,8 @@ export default new Router({
         {path: '/activity/coupon/receive', name: 'activity.coupon.receive', component: ActivityCouponReceive},
         {path: '/activity/invite/list', name: 'activity.invite.list', component: ActivityInviteList},
         {path: '/activity/config/icon', name: 'activity.config.icon', component: ActivityConfigIcon},
-        {path: '/activity/inmobi', name: 'activity.inmobi', component: ActivityInMobi}
+        {path: '/activity/inmobi', name: 'activity.inmobi', component: ActivityInMobi},
+        {path: '/activity/ele/manage/coupon', name: 'activity.ele.manage.coupon', component: ActivityEleManageCoupon}
       ]
     },
     {path: '*', component: NotFound}

@@ -8,10 +8,10 @@
 
           <el-col :span="3" class="search_bar" ref="search_bar">
             <el-tree
-              :data="select_mechanism"
+              :data="select_organization"
               :props="defaultProps"
+              @node-click="selectOrganization"
               default-expand-all>
-              <!--@node-click="handleNodeClick"-->
             </el-tree>
           </el-col>
 
@@ -119,7 +119,6 @@
           </el-col>
 
         </el-row>
-
 
 
       </el-tab-pane>
@@ -253,7 +252,7 @@
 
     <!--模态框-->
     <!--栏目-->
-    <el-dialog title="选择归属栏目" size="tiny" :visible.sync="columnVisible1">
+    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible1">
       <el-tree
         highlight-current
         default-expand-all
@@ -268,7 +267,7 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="选择归属栏目" size="tiny" :visible.sync="columnVisible2">
+    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible2">
       <el-tree
         highlight-current
         default-expand-all
@@ -299,167 +298,102 @@
       return {
         columnVisible1: false,
         columnVisible2: false,
-        select_mechanism: [{
-          id: 1,
-          label: '上海市总公司',
+        select_organization: [{
+          label: '组织机构',
           children: [{
-            id: 4,
-            label: '厦门分公司'
+            label: '内部机构'
           }, {
-            id: 4,
-            label: '佛山分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '珠海分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '运营部'
-          }, {
-            id: 4,
-            label: '北京分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '客服部',
-            children: [{
-              id: 9,
-              label: '红包管理员'
-            }, {
-              id: 9,
-              label: '客服部'
-            }]
-          }, {
-            id: 4,
-            label: '上海分公司',
-            children: [{
-              id: 9,
-              label: '黄浦区政府'
-            }, {
-              id: 9,
-              label: '城市运营'
-            }, {
-              id: 9,
-              label: '虹口区政府'
-            }, {
-              id: 9,
-              label: '普陀区政府'
-            }, {
-              id: 9,
-              label: '静安区政府'
-            }, {
-              id: 9,
-              label: '嘉定区政府'
-            }, {
-              id: 9,
-              label: '浦东新区政府'
-            }, {
-              id: 9,
-              label: '闵行区政府'
-            }, {
-              id: 9,
-              label: '宝山区政府'
-            }, {
-              id: 9,
-              label: '松江区政府'
-            }, {
-              id: 9,
-              label: '杨浦区政府'
-            }, {
-              id: 9,
-              label: '徐汇区政府'
-            }, {
-              id: 9,
-              label: '长宁区政府'
-            }, {
-              id: 9,
-              label: '青浦区政府'
-            }, {
-              id: 9,
-              label: '奉贤区政府'
-            }, {
-              id: 9,
-              label: '金山区政府'
-            }]
-          }, {
-            id: 4,
-            label: '生产部'
-          }, {
-            id: 4,
-            label: '成都分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '湖州分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '公司领导'
-          }, {
-            id: 4,
-            label: '综合部'
-          }, {
-            id: 4,
-            label: '市场部'
-          }, {
-            id: 4,
-            label: '技术部'
-          }, {
-            id: 4,
-            label: '研发部'
-          }, {
-            id: 4,
-            label: '深圳分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
+            label: '地方机构'
           }]
+        }, {
+          label: '软件介绍',
+          children: [{
+            label: '网络工具'
+          }, {
+            label: '网站简介'
+          }, {
+            label: '浏览工具'
+          }, {
+            label: '浏览辅助'
+          }, {
+            label: '网络优化'
+          }, {
+            label: '邮件处理'
+          }, {
+            label: '下载工具'
+          }, {
+            label: '搜索工具'
+          }]
+        }, {
+          label: '质量检验',
+          children: [{
+            label: '产品质量'
+          }, {
+            label: '技术质量'
+          }, {
+            label: '工程质量'
+          }]
+        }, {
+          label: '友情链接',
+          children: [{
+            label: '常用网站'
+          }, {
+            label: '门户网站'
+          }, {
+            label: '购物网站'
+          }, {
+            label: '交友社区'
+          }, {
+            label: '音乐视频'
+          }]
+        }, {
+          label: '百度一下'
+        }, {
+          label: '全文检索'
+        }, {
+          label: '公共留言'
         }],
         select_column: [{
-          id: 1,
-          label: '上海市总公司',
+          label: '组织机构',
           children: [{
-            id: 2,
-            label: '厦门分公司'
+            label: '内部机构'
           }, {
-            id: 3,
-            label: '佛山分公司'
-          }, {
-            id: 4,
-            label: '珠海分公司'
-          }, {
-            id: 5,
-            label: '北京分公司'
-          }, {
-            id: 6,
-            label: '上海分公司'
-          }, {
-            id: 7,
-            label: '成都分公司'
-          }, {
-            id: 8,
-            label: '湖州分公司'
-          }, {
-            id: 9,
-            label: '深圳分公司'
+            label: '地方机构'
           }]
+        }, {
+          label: '软件介绍',
+          children: [{
+            label: '网络工具'
+          }, {
+            label: '网站简介'
+          }, {
+            label: '浏览工具'
+          }, {
+            label: '浏览辅助'
+          }, {
+            label: '网络优化'
+          }, {
+            label: '邮件处理'
+          }, {
+            label: '下载工具'
+          }, {
+            label: '搜索工具'
+          }]
+        }, {
+          label: '质量检验',
+          children: [{
+            label: '产品质量'
+          }, {
+            label: '技术质量'
+          }, {
+            label: '工程质量'
+          }]
+        }, {
+          label: '百度一下'
+        }, {
+          label: '全文检索'
+        }, {
+          label: '公共留言'
         }],
         defaultProps: {
           children: 'children',
@@ -532,7 +466,7 @@
       // console.log($('#editor'))
     },
     mounted () {
-      this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
+      this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 160) + 'px'
     },
     methods: {
       isTopp (val) {
@@ -547,18 +481,24 @@
       searchOneColumn (data) {
         // 获取树组件被选中的参数并保存在formInline.city中
         this.formInline.city = data.label
-        console.log(this.formInline.city)
+//        console.log(this.formInline.city)
       },
       searchOneAttributionColumn (data) {
         // 获取树组件被选中的参数并保存在this.ruleForm.attribution_column中
         this.ruleForm.attribution_column = data.label
-        console.log(this.ruleForm.attribution_column)
+//        console.log(this.ruleForm.attribution_column)
       },
       sureColumn () {
         this.columnVisible1 = false
       },
       sureAttributionColumn () {
         this.columnVisible2 = false
+      },
+      selectOrganization (data) {
+        // 获取树组件被选中的参数并保存在formInline.city中
+        this.formInline.city = data.label
+//        console.log(this.formInline.city)
+        // 同时根据栏目的内容 发送请求
       },
       handleClick (tab, event) {
         console.log(tab, event)
@@ -667,6 +607,7 @@
     border: 1px solid #ccc;
     overflow: auto;
   }
+
   /*没有加scoped，是因为需要表单el-form-item__label和el-form-item__content的样式*/
   html, body {
     height: 100%;

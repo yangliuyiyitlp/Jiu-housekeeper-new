@@ -330,7 +330,7 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$http.get('http://172.16.20.235:10001/a/sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}}).then(function (res) {
+        this.$http.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}}).then(function (res) {
           for (var i = 0; i < res.data.length; i++) {
             this.disObj[res.data[i].value] = res.data[i].label
           }

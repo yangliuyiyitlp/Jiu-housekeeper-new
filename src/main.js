@@ -8,36 +8,30 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
-// import VeeValidate from 'vee-validate'
-// import ZHCN from 'vee-validate/dist/locale/zh_CN'
 import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
 import 'jquery'
 import 'ztree'
-// import './assets/plugins/bootstrap/css/bootstrap.min.css'
-// import './assets/plugins/bootstrap/js/bootstrap.min'
 import Axios from 'axios'
-
-Vue.prototype.$ajax = Axios
 import global_ from './Global.vue'
 
+Vue.prototype.$ajax = Axios
+// Axios.defaults.baseURL = 'https://api.example.com'
+
 Vue.prototype.GLOBAL = global_
-Axios.defaults.baseURL = global_.BASE_URL
+// Axios.defaults.baseURL = global_.BASE_URL
 
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
 
 Vue.use(VueResource)
-// 设置中文
-// VeeValidate.Validator.addLocale(ZHCN)
+
+Vue.http.options.root = 'http://172.16.20.235:10001/a'// baseUrl的设置
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueI18n)
-
-import Querystring from 'querystring'
-
-Vue.prototype.$qs = Querystring
 
 // Moment开始
 import Moment from 'moment'
@@ -102,25 +96,4 @@ new Vue({
   template: '<App/>',
   components: {App}
 })
-
-// config 必须配置
-// const config = {
-//   errorBagName: 'errors', // change if property conflicts.
-//   fieldsBagName: 'fields',
-//   delay: 0,
-//   locale: 'zh_CN',
-//   strict: true,
-//   enableAutoClasses: false,
-//   classNames: {
-//     touched: 'touched', // the control has been blurred
-//     untouched: 'untouched', // the control hasn't been blurred
-//     valid: 'valid', // model is valid
-//     invalid: 'invalid', // model is invalid
-//     pristine: 'pristine', // control has not been interacted with
-//     dirty: 'dirty' // control has been interacted with
-//   },
-//   events: 'blur',
-//   inject: true
-// }
-// Vue.use(VeeValidate, config)
 
