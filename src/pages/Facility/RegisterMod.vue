@@ -9,12 +9,12 @@
       </el-form-item>
       <el-form-item label="添加时间">
         <el-date-picker
-          v-model="requestParam.addTimeBegin"
+          v-model="requestParam.beginAddTime"
           type="datetime"
           placeholder="开始时间">
         </el-date-picker>
         <el-date-picker
-          v-model="requestParam.addTimeEnd"
+          v-model="requestParam.endAddTime"
           type="datetime"
           placeholder="结束时间">
         </el-date-picker>
@@ -101,10 +101,10 @@
       :total="pagination.count">
     </el-pagination>
     <!--增加修改弹框-->
-    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
+    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible"size="small" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
+      <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="addBody">
         <el-form-item label="厂家名称" prop="factoryName" class="elform">
           <el-input v-model="form.factoryName"></el-input>
         </el-form-item>
@@ -162,6 +162,7 @@
 </template>
 
 <script>
+  import Moment from 'moment'
   export default {
     created: function () {
       this.query()
@@ -191,8 +192,8 @@
         formLabelWidth: '80px',
         requestParam: {
 //          selectTime: '',
-          addTimeBegin: '',
-          addTimeEnd: '',
+          beginAddTime: '',
+          endAddTime: '',
           factoryName: '',
           lockFactoryNo: '',
           pageSize: 30,
@@ -209,8 +210,8 @@
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
 //          selectTime: '',
-          addTimeBegin: '',
-          addTimeEnd: '',
+          beginAddTime: '',
+          endAddTime: '',
           factoryName: '',
           lockFactoryNo: '',
           pageSize: 30,
@@ -219,42 +220,28 @@
       }
     },
     methods: {
-      query: function () {
+      query () {
         this.requestParam.factoryName = this.requestParam.factoryName.trim()
         this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.exportParam.addTimeBegin = this.requestParam.addTimeBegin.toString()
-        this.exportParam.addTimeEnd = this.requestParam.addTimeEnd.toString()
+        this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
+        this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
+        this.exportParam.beginAddTime = this.requestParam.beginAddTime
+        this.exportParam.endAddTime = this.requestParam.endAddTime
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$http(
-          {
-            method: 'post',
-            url: 'electric/lockfactoryinfo/interface/list',
-            data: this.requestParam,
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        )
-        .then(function (response) {
-          if (response.data.code === 0) {
-            this.tableData = response.data.page.list
-            this.pagination.count = response.data.page.count
-          } else {
-            this.$message({
-              type: 'info',
-              message: '获取列表信息失败'
-            })
-          }
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
-//        this.$http.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(function (response) {
+//        this.$ajax(
+//          {
+//            method: 'post',
+//            url: 'electric/lockfactoryinfo/interface/list',
+//            data: this.requestParam,
+//            headers: {
+//              'Content-Type': 'multipart/form-data'
+//            }
+//          }
+//        )
+//        .then(function (response) {
 //          if (response.data.code === 0) {
 //            this.tableData = response.data.page.list
 //            this.pagination.count = response.data.page.count
@@ -270,16 +257,37 @@
 //            message: '获取列表信息失败' + err.status
 //          })
 //        })
+        this.$ajax.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(response => {
+          if (response.data.code === 0) {
+            this.tableData = response.data.page.list
+            this.pagination.count = response.data.page.count
+          } else {
+            this.$message({
+              type: 'error',
+              message: response.data.msg
+            })
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'error',
+            message: '获取列表信息失败'
+          })
+        })
       },
-      modifyRecord: function (scope) {
-        this.dialogFormVisible = true
-        this.form.id = scope.row.id
-        this.form.factoryName = scope.row.factoryName
-        this.form.lockFactoryNo = scope.row.lockFactoryNo
-        this.form['createBy.id'] = scope.row['createBy.id']
-        this.form.remarks = scope.row.remarks
+      modifyRecord (scope) {
+        this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
+          .then(res => {
+            if (res.data.code === 0) {
+              this.dialogFormVisible = true
+              this.form.id = res.data.tLockFactoryInfo.id
+              this.form.factoryName = res.data.tLockFactoryInfo.factoryName
+              this.form.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
+//              this.form['createBy.id'] = res.datatLockFactoryInfo['createBy.id']
+              this.form.remarks = res.data.tLockFactoryInfo.remarks
+            }
+          })
       },
-      deleteRecord: function (id) {
+      deleteRecord (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -288,7 +296,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.get('electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(function (response) {
+            this.$ajax.get('electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(response => {
               if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
@@ -301,13 +309,13 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: '删除记录失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, function (err) {
+            }, () => {
               this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
+                type: 'error',
+                message: '删除记录失败'
               })
             })
           }
@@ -318,7 +326,7 @@
           })
         })
       },
-      doModify: function (formName) {       // 修改确定功能
+      doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
             var url = ''
@@ -328,7 +336,7 @@
               url = 'electric/lockfactoryinfo/interface/save'
             }
             this.dialogFormVisible = false
-            this.$http.get(url, {params: this.form}).then(function (response) {
+            this.$ajax.get(url, {params: this.form}).then(response => {
               if (response.data.code === 0) {
                 // 更新成功
                 this.$message({
@@ -340,22 +348,21 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: '操作失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, function (err) {
+            }, () => {
               this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
+                type: 'error',
+                message: '操作失败'
               })
             })
           } else {
-            console.log('error submit!!')
             return
           }
         })
       },
-      cancelOperate: function () {
+      cancelOperate () {
         this.dialogFormVisible = false
         this.form = {
           factoryName: '',
@@ -366,12 +373,12 @@
         }
         this.$refs['formA'].resetFields()
       },
-      more: function (row, column, cell, event) {
+      more (row, column, cell, event) {
         if (column.property !== 'factoryName') {
           return false
         } else {
           this.moreFormVisible = true
-          this.$http.get('electric/lockfactoryinfo/interface/form', {params: {id: row.id}}).then(function (res) {
+          this.$ajax.get('electric/lockfactoryinfo/interface/view_form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
               this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
@@ -379,26 +386,26 @@
               this.moreinfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
               this.moreinfo.addTime = res.data.tLockFactoryInfo.addTime
             }
-          }).catch(function (err) {
+          }).catch((err) => {
             this.$message({
-              type: 'info',
-              message: '获取详情失败' + err.status
+              type: 'error',
+              message: err.data.msg
             })
           })
         }
       },
-      cancelMore: function () {
+      cancelMore () {
         this.moreFormVisible = false
       },
-      handleSizeChange: function (val) {
+      handleSizeChange (val) {
         this.requestParam.pageSize = val
         this.query()
       },
-      handleCurrentChange: function (val) {
+      handleCurrentChange (val) {
         this.requestParam.pageNo = val
         this.query()
       },
-      addNewRecord: function () {
+      addNewRecord () {
         this.form = {
           id: '',
           factoryName: '',
@@ -408,21 +415,31 @@
         }
         this.dialogFormVisible = true
       },
-      exportFile: function () {
+      exportFile () {
         this.exportFormVisible = true
       },
-      cancelExport: function () {
+      cancelExport () {
         this.exportFormVisible = false
       },
-      exportCurrent: function () {
-        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
-        this.$refs['FileForm'].submit()
+      exportCurrent () {
+        var r = confirm('确定导出么')
+        if (r === true) {
+          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
+          this.$refs['FileForm'].submit()
+        } else {
+          return
+        }
       },
-      exportAll: function () {
-        this.exportParam.pageSize = ''
-        this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
-        this.$refs['FileForm'].submit()
+      exportAll () {
+        var r = confirm('确定导出么')
+        if (r === true) {
+          this.exportParam.pageSize = ''
+          this.exportParam.pageNo = ''
+          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
+          this.$refs['FileForm'].submit()
+        } else {
+          return
+        }
       }
     }
   }
@@ -447,7 +464,7 @@
   }
 
   .tbody[data-v-30c85a31] {
-    height: 350px !important;
+    height: 400px !important;
   }
 
   .active {
@@ -459,8 +476,8 @@
     width: 400px !important;
   }
 
-  .tbody {
-    height: 400px !important;
+  .addBody {
+    height: 200px !important;
   }
 
   .addUp {

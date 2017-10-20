@@ -66,16 +66,10 @@
         v-if=0
       >
       </el-table-column>
-      <!--<el-table-column-->
-      <!--prop="cityName"-->
-      <!--show-overflow-tooltip-->
-      <!--v-bind:class="{active: true}"-->
-      <!--label="城市名称">-->
-      <!--</el-table-column>-->
       <el-table-column
         label="城市名称"
         prop="cityName">
-        <template slot-scope="scope">
+        <template scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
         </template>
       </el-table-column>
@@ -84,9 +78,8 @@
         label="显示顺序"
         sortable
         prop="rank">
+        <<<<<<< HEAD
         <template slot-scope="scope">
-          <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
-          <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
         </template>
 
@@ -121,7 +114,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -150,7 +143,6 @@
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
         <el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">
           <el-input v-model="form.cityName"></el-input>
-          <!--<p v-if="vif" style="color:red;">添加模式下，城市的添加以《快速添加城市》的选项为准</p>-->
         </el-form-item>
         <el-form-item label="显示顺序：" prop="rank" class="elform">
           <el-input v-model="form.rank"></el-input>
@@ -182,7 +174,6 @@
             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
           </el-checkbox-group>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
@@ -290,10 +281,10 @@
             {required: true, message: '请输入显示顺序', trigger: 'blur'}
           ],
           type: [
-            {required: true, message: '请输入广告位置', trigger: 'blur'}
+            {required: true, message: '请选择广告位置', trigger: 'change'}
           ],
           displayType: [
-            {required: true, message: '请输入广告类型', trigger: 'blur'}
+            {required: true, message: '请选择广告类型', trigger: 'change'}
           ],
           androidInmobiId: [
             {required: true, message: '请输入安卓inmobi编号', trigger: 'blur'}
@@ -334,7 +325,6 @@
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
 
-// 下面是更改代码
 // 下面是原先代码
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
           .then(function (res) {
@@ -353,36 +343,39 @@
               }.bind(this))
           }.bind(this))
           .then(function () {
-            this.$http.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
+            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
               if (response.status === 200) {
                 this.tableData = response.data.page.list
-                console.log(response)
                 for (var i = 0; i < response.data.page.list.length; i++) {
                   this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
                   this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
                 }
                 this.pagination.count = response.data.page.count
               } else {
+                console.log(response)
                 this.$message({
-                  type: 'info',
-                  message: response.data.message
+                  type: 'error',
+                  message: response.data.msg
                 })
               }
-            }, function (err) {
+            }.bind(this), function () {
               this.$message({
                 type: 'info',
-                message: '获取列表信息失败' + err.status
+                message: '获取失败'
               })
-            })
+            }.bind(this))
           }.bind(this))
-          .catch(function (err) {
-            console.log(err)
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '删除记录失败'
+            })
           })
       },
       modifyRecord: function (scope) {
         this.vif = false
         this.dialogFormVisible = true
-        this.$http.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
+        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
           .then(function (res) {
             if (res.status === 200) {
               console.log(res.data)
@@ -395,7 +388,7 @@
               this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
               this.form.remarks = res.data.tDisplayType.remarks
             }
-          })
+          }.bind(this))
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -406,47 +399,47 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.get('electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
-              if (response.status === 200) {
+            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
+              console.log(response)
+              if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
                   type: 'success',
-                  message: '删除成功'
+                  message: response.data.msg
                 })
-                this.$refs['formA'].resetFields()
+//                this.$refs['formA'].resetFields()
                 // 刷新页面
                 this.query()
               } else {
                 this.$message({
                   type: 'error',
-                  message: '删除记录失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, function (err) {
+            }.bind(this), function (err) {
+              console.log(err)
               this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
+                type: 'error',
+                message: '操作失败'
               })
-            })
+            }.bind(this))
           }
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '删除记录失败'
+            message: '取消删除'
           })
         })
       },
-      doModify: function (formName) {       // 修改确定功能
+      doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
             this.checkedCities = []
-            console.log(this.form)
-            this.$http.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
+            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
               if (response.status === 200) {
                 // 更新成功
-                console.log(response)
                 this.$message({
                   type: 'success',
                   message: '操作成功'
@@ -456,17 +449,17 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: '操作失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, function (err) {
+            }.bind(this), function () {
               this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
+                type: 'error',
+                message: '操作失败'
               })
-            })
+            }.bind(this))
           } else {
-            return
+            return false
           }
         })
       },
@@ -489,8 +482,8 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$http.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
-            if (res.status === 200) {
+          this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
+            if (res.data.code === 0) {
               this.moreinfo.type = this.typeObj[res.data.tDisplayType.type]
               this.moreinfo.displayType = this.disObj[res.data.tDisplayType.displayType]
               this.moreinfo.cityName = res.data.tDisplayType.cityName
@@ -499,10 +492,10 @@
               this.moreinfo.rank = res.data.tDisplayType.rank
               this.moreinfo.remarks = res.data.tDisplayType.remarks
             }
-          }).catch(function (err) {
+          }.bind(this)).catch(function (err) {
             this.$message({
-              type: 'info',
-              message: '获取详情失败' + err.status
+              type: 'error',
+              message: err.data.msg
             })
           })
         }
@@ -533,19 +526,20 @@
           remarks: '',
           areaNames: ''
         }
-        this.$http.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
+        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
           .then(function (res) {
+            console.log(res)
             if (res.status === 200) {
               this.form.rank = res.data.maxSort
             } else {
               this.$message({
-                type: 'info',
-                message: '获取信息失败'
+                type: 'error',
+                message: res.data.msg
               })
             }
-          }, function (res) {
+          }.bind(this), function () {
             this.$message({
-              type: 'info',
+              type: 'error',
               message: '获取失败'
             })
           })
@@ -605,7 +599,7 @@
         }
       },
       doModifyOrder () {
-//        this.vm.$http(
+//        this.vm.$ajax(
 //          {
 //            method: 'post',
 //            url: 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/updateSort',
@@ -637,7 +631,7 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$http.get('electric/inmobidisplay/tDisplayType/interface/updateSort', {
+        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/updateSort', {
           params: {
             'ids': newids,
             'sorts': newsorts
@@ -645,13 +639,16 @@
         })
           .then(function (res) {
             this.$message({
-              message: res.data.mesage,
+              message: res.data.msg,
               type: 'success'
             })
             this.query()
-          })
-          .catch(function (error) {
-            console.log(error)
+          }.bind(this))
+          .catch(function (err) {
+            this.$message({
+              message: err.data.msg,
+              type: 'error'
+            })
           })
       }
     }
