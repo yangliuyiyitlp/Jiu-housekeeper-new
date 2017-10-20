@@ -45,7 +45,7 @@
 
           <el-form-item label="优惠券类型:">
             <el-select v-model="formInline.coupon_type" placeholder="选择优惠券类型" clearable>
-              <el-option v-for="item in coupon_type" :label=item.label :value=item.value  :key="item.id"></el-option>
+              <el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>
             </el-select>
           </el-form-item>
 
@@ -128,7 +128,7 @@
             show-overflow-tooltip
             header-align="center"
             align="center"
-            prop="state"
+            prop="t_cup_state"
             label="优惠券状态"
             width="120">
           </el-table-column>
@@ -137,7 +137,7 @@
             show-overflow-tooltip
             header-align="center"
             align="center"
-            prop="type"
+            prop="coupon_type"
             label="优惠券类型"
             width="140">
           </el-table-column>
@@ -218,7 +218,7 @@
             label="操作"
             width="120">
             <template slot-scope="scope">
-              <el-button type="text" size="small" @click="modifyRecord(scope)">修改</el-button>
+              <el-button type="text" size="small" @click="modifyRecord(scope.row.id)">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
@@ -391,73 +391,73 @@
 
     <!--模态框-->
     <!--修改弹框-->
-    <el-dialog title="收货地址" :visible.sync="modifyFormVisible">
-      <el-form :model="form">
-        <el-form-item label="活动名称" label-width="150px">
-          <el-input v-model="form.name" auto-complete="off"></el-input>
+    <el-dialog title="添加/修改" :visible.sync="modifyFormVisible">
+
+      <el-form ref="form" :model="updateForm" label-width="150px">
+        <el-form-item label="id:" v-if=0>
+          <el-input v-model="updateForm.id"></el-input>
         </el-form-item>
-        <el-form-item label="活动区域" label-width="150px">
-          <el-select v-model="form.region" placeholder="请选择活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+
+        <el-form-item label="优惠券编号:">
+          <el-input v-model="updateForm.couponNo" placeholder="填写优惠券编号"></el-input>
+        </el-form-item>
+
+        <el-form-item label="商标:">
+          <!--<el-input v-model="updateForm.trademark"></el-input>-->
+          <el-button type="primary">选择文件</el-button>
+          <el-button type="primary">开始上传</el-button>
+        </el-form-item>
+
+        <el-form-item label="商户名:">
+          <el-input v-model="updateForm.business"></el-input>
+        </el-form-item>
+
+        <el-form-item label="优惠券类型:">
+          <el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>
+            <el-option label="商户优惠券" value="1"></el-option>
+            <el-option label="骑行券" value="2"></el-option>
           </el-select>
         </el-form-item>
+
+        <el-form-item label="优惠券内容:">
+          <el-input v-model="updateForm.content" type="textarea" class='textarea'></el-input>
+        </el-form-item>
+
+        <el-form-item label="详情url:">
+          <el-input v-model="updateForm.detailsUrl" placeholder="填写详情url"></el-input>
+        </el-form-item>
+
+        <el-form-item label="有效时间:">
+          <el-date-picker
+            v-model="updateForm.startTime"
+            type="date"
+            placeholder="开始时间">
+          </el-date-picker>
+          -
+          <el-date-picker
+            v-model="updateForm.endTime"
+            type="date"
+            placeholder="结束时间">
+          </el-date-picker>
+        </el-form-item>
+
+        <el-form-item label="备注:">
+          <el-input v-model="updateForm.remarks" type="textarea" class='textarea'></el-input>
+        </el-form-item>
       </el-form>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="modifyFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="modifyFormVisible = false">确 定</el-button>
+        <el-button type="primary" @click="doUpdate">确 定</el-button>
       </div>
     </el-dialog>
 
-    <!--<el-dialog title="添加/修改" :visible.sync="modifyFormVisible" :show-close="false" :close-on-press-escape="false"-->
-    <!--:close-on-click-modal="false" class="demo-ruleForm ">-->
-    <!--<el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">-->
-    <!--<el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">-->
-    <!--<el-input v-model="form.cityName"></el-input>-->
-    <!--&lt;!&ndash;<p v-if="vif" style="color:red;">添加模式下，城市的添加以《快速添加城市》的选项为准</p>&ndash;&gt;-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="显示顺序：" prop="rank" class="elform">-->
-    <!--<el-input v-model="form.rank"></el-input>-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="广告位置：" prop="type">-->
-    <!--<el-select style='width:100%;' v-model="form.type" clearable>-->
-    <!--<el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>-->
-    <!--</el-select>-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="广告类型：" prop="displayType">-->
-    <!--<el-select style='width:100%;' v-model="form.displayType" clearable>-->
-    <!--<el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx></el-option>-->
-    <!--</el-select>-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">-->
-    <!--<el-input v-model="form.androidInmobiId"></el-input>-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="苹果inmobi编号：" prop="iosInmobiId" class="elform">-->
-    <!--<el-input v-model="form.iosInmobiId"></el-input>-->
-    <!--</el-form-item>-->
-    <!--<el-form-item label="备注：" prop="remarks" class="elform">-->
-    <!--<el-input type="textarea" :row="3" v-model="form.remarks"></el-input>-->
-    <!--</el-form-item>-->
-    <!--&lt;!&ndash;ToDO&ndash;&gt;-->
-    <!--<el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"-->
-    <!--@change="handleCheckAllChange">快速添加城市：-->
-    <!--</el-checkbox>-->
-    <!--<el-form-item v-if="vif" style="text-align: left;">-->
-    <!--<el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">-->
-    <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
-    <!--</el-checkbox-group>-->
-    <!--</el-form-item>-->
-
-    <!--</el-form>-->
-    <!--<div slot="footer" class="dialog-footer">-->
-    <!--<el-button @click="cancelOperate">取 消</el-button>-->
-    <!--<el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>-->
-    <!--</div>-->
-    <!--</el-dialog>-->
   </div>
 </template>
 
 <script>
+  import Moment from 'moment'
+
   export default {
     data () {
       return {
@@ -465,7 +465,10 @@
         modifyFormVisible: false,
         coupon_type: [],
         t_cup_state: [],
+        coupon_type_obj: {},
+        t_cup_state_obj: {},
         tableData: [],
+        updateForm: {},
         formInline: {
           coupon_number: '',
           trademark: '',
@@ -514,74 +517,97 @@
         this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_type')
           .then(res => {
             this.coupon_type = res.data
+            for (let i = 0; i < this.coupon_type.length; i++) {
+              this.coupon_type_obj[this.coupon_type[i].value] = this.coupon_type[i].label
+            }
           })
           .then(this.$ajax.get('sys/dictutils/interface/getDictList?type=t_cup_state')
             .then(res => {
               this.t_cup_state = res.data
+              for (let i = 0; i < res.data.length; i++) {
+                this.t_cup_state_obj[res.data[i].value] = res.data[i].label
+              }
             }))
           .then(this.$ajax.get('electric/tCouponInfo/interface/list')
             .then(res => {
               this.tableData = res.data.page.list
+              for (let i = 0; i < this.tableData.length; i++) {
+                this.tableData[i].coupon_type = this.coupon_type_obj[this.tableData[i].type]
+                this.tableData[i].t_cup_state = this.t_cup_state_obj[this.tableData[i].state]
+              }
             }))
           .catch(err => {
             console.log(err)
           })
       },
-      modifyRecord: function (scope) {
+      modifyRecord (id) {
         this.modifyFormVisible = true
-//        this.$http.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
-//          .then(function (res) {
-//            if (res.status === 200) {
-//              console.log(res.data)
-//              this.form.id = res.data.tDisplayType.id
-//              this.form.cityName = res.data.tDisplayType.cityName
-//              this.form.rank = res.data.tDisplayType.rank
-//              this.form.type = res.data.tDisplayType.type
-//              this.form.displayType = res.data.tDisplayType.displayType
-//              this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
-//              this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
-//              this.form.remarks = res.data.tDisplayType.remarks
-//            }
-//          })
+        this.$ajax.get('electric/tCouponInfo/interface/form?id=' + id)
+          .then(res => {
+            this.updateForm = res.data.tCouponInfo
+            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
+          })
+          .catch(err => {
+            console.log(err)
+          })
       },
-      deleteRecord: function (id) {
-        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+      doUpdate () {
+        this.modifyFormVisible = false
+        this.updateForm.startTime = Moment(this.updateForm.startTime).format('YYYY-MM-DD HH:mm:ss')
+        this.updateForm.endTime = Moment(this.updateForm.endTime).format('YYYY-MM-DD HH:mm:ss')
+        for (let k in this.coupon_type_obj) {
+          if (this.coupon_type_obj[k] === this.updateForm.type) {
+            this.updateForm.type = k
+            this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
+              .then(res => {
+                this.open('success', res.data.msg)
+                // 刷新页面
+                this.query()
+              })
+              .catch(err => {
+                this.open('info', err.data.msg)
+                console.log(err)
+              })
+          }
+        }
+      },
+      open (type, msg) {
+        // 提示信息
+        this.$message({
+          type: type,
+          message: msg
+        })
+      },
+      deleteRecord (id) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          if (id !== undefined) {
-            // 调用后台服务
-            // 删除元素
-            this.$http.get('electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
-              if (response.status === 200) {
-                // 删除成功
-                this.$message({
-                  type: 'success',
-                  message: '删除成功'
-                })
-                this.$refs['formA'].resetFields()
-                // 刷新页面
-                this.query()
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: '删除记录失败:' + response.data.msg
-                })
-              }
-            }, function (err) {
-              this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
-              })
-            })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '删除记录失败'
-          })
         })
+          .then(() => {
+            this.delRecord(id)
+          })
+          .catch(() => {
+            this.open('info', '已取消删除')
+          })
+      },
+      delRecord (id) {
+        this.$ajax.get('electric/tCouponInfo/interface/delete?id=' + id)
+          .then(res => {
+            if (res.status === 200) {
+              // 删除成功
+              this.open('success', res.data.msg)
+              // 刷新页面
+              this.query()
+            } else {
+              // 删除失败
+              this.open('info', res.data.msg)
+            }
+          })
+          .catch(err => {
+            // 删除失败
+            this.open('info', err.data.msg)
+          })
       },
       handleClick (tab, event) {
 //        console.log(tab, event)
@@ -592,12 +618,12 @@
       exportData () {
         console.log('exportData!')
       },
-      handleSizeChange: function (val) {
+      handleSizeChange (val) {
         console.log(`每页 ${val} 条`)
 //        this.requestParam.pageSize = val
 //        this.query()
       },
-      handleCurrentChange: function (val) {
+      handleCurrentChange (val) {
         console.log(`当前页: ${val}`)
 //        this.requestParam.pageNo = val
 //        this.query()
