@@ -84,7 +84,7 @@
         label="显示顺序"
         sortable
         prop="rank">
-        <template scope="scope">
+        <template slot-scope="scope">
           <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
           <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>

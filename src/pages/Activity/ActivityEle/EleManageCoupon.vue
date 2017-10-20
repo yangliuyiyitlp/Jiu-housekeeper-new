@@ -39,13 +39,13 @@
 
           <el-form-item label="优惠券状态:">
             <el-select v-model="formInline.coupon_status" placeholder="选择优惠券状态" clearable>
-              <el-option v-for="item in t_cup_state" :label=item.label :value=item.value></el-option>
+              <el-option v-for="item in t_cup_state" :label=item.label :value=item.value :key="item.id"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="优惠券类型:">
             <el-select v-model="formInline.coupon_type" placeholder="选择优惠券类型" clearable>
-              <el-option v-for="item in coupon_type" :label=item.label :value=item.value></el-option>
+              <el-option v-for="item in coupon_type" :label=item.label :value=item.value  :key="item.id"></el-option>
             </el-select>
           </el-form-item>
 
@@ -410,49 +410,49 @@
     </el-dialog>
 
     <!--<el-dialog title="添加/修改" :visible.sync="modifyFormVisible" :show-close="false" :close-on-press-escape="false"-->
-               <!--:close-on-click-modal="false" class="demo-ruleForm ">-->
-      <!--<el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">-->
-        <!--<el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">-->
-          <!--<el-input v-model="form.cityName"></el-input>-->
-          <!--&lt;!&ndash;<p v-if="vif" style="color:red;">添加模式下，城市的添加以《快速添加城市》的选项为准</p>&ndash;&gt;-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="显示顺序：" prop="rank" class="elform">-->
-          <!--<el-input v-model="form.rank"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="广告位置：" prop="type">-->
-          <!--<el-select style='width:100%;' v-model="form.type" clearable>-->
-            <!--<el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="广告类型：" prop="displayType">-->
-          <!--<el-select style='width:100%;' v-model="form.displayType" clearable>-->
-            <!--<el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx></el-option>-->
-          <!--</el-select>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">-->
-          <!--<el-input v-model="form.androidInmobiId"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="苹果inmobi编号：" prop="iosInmobiId" class="elform">-->
-          <!--<el-input v-model="form.iosInmobiId"></el-input>-->
-        <!--</el-form-item>-->
-        <!--<el-form-item label="备注：" prop="remarks" class="elform">-->
-          <!--<el-input type="textarea" :row="3" v-model="form.remarks"></el-input>-->
-        <!--</el-form-item>-->
-        <!--&lt;!&ndash;ToDO&ndash;&gt;-->
-        <!--<el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"-->
-                     <!--@change="handleCheckAllChange">快速添加城市：-->
-        <!--</el-checkbox>-->
-        <!--<el-form-item v-if="vif" style="text-align: left;">-->
-          <!--<el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">-->
-            <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
-          <!--</el-checkbox-group>-->
-        <!--</el-form-item>-->
+    <!--:close-on-click-modal="false" class="demo-ruleForm ">-->
+    <!--<el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">-->
+    <!--<el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">-->
+    <!--<el-input v-model="form.cityName"></el-input>-->
+    <!--&lt;!&ndash;<p v-if="vif" style="color:red;">添加模式下，城市的添加以《快速添加城市》的选项为准</p>&ndash;&gt;-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="显示顺序：" prop="rank" class="elform">-->
+    <!--<el-input v-model="form.rank"></el-input>-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="广告位置：" prop="type">-->
+    <!--<el-select style='width:100%;' v-model="form.type" clearable>-->
+    <!--<el-option v-for="(val,idx) in typeObj" :label=typeObj[idx] :value=idx></el-option>-->
+    <!--</el-select>-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="广告类型：" prop="displayType">-->
+    <!--<el-select style='width:100%;' v-model="form.displayType" clearable>-->
+    <!--<el-option v-for="(val,idx) in disObj" :label=disObj[idx] :value=idx></el-option>-->
+    <!--</el-select>-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="安卓inmobi编号：" prop="androidInmobiId" class="elform">-->
+    <!--<el-input v-model="form.androidInmobiId"></el-input>-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="苹果inmobi编号：" prop="iosInmobiId" class="elform">-->
+    <!--<el-input v-model="form.iosInmobiId"></el-input>-->
+    <!--</el-form-item>-->
+    <!--<el-form-item label="备注：" prop="remarks" class="elform">-->
+    <!--<el-input type="textarea" :row="3" v-model="form.remarks"></el-input>-->
+    <!--</el-form-item>-->
+    <!--&lt;!&ndash;ToDO&ndash;&gt;-->
+    <!--<el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"-->
+    <!--@change="handleCheckAllChange">快速添加城市：-->
+    <!--</el-checkbox>-->
+    <!--<el-form-item v-if="vif" style="text-align: left;">-->
+    <!--<el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">-->
+    <!--<el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>-->
+    <!--</el-checkbox-group>-->
+    <!--</el-form-item>-->
 
-      <!--</el-form>-->
-      <!--<div slot="footer" class="dialog-footer">-->
-        <!--<el-button @click="cancelOperate">取 消</el-button>-->
-        <!--<el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>-->
-      <!--</div>-->
+    <!--</el-form>-->
+    <!--<div slot="footer" class="dialog-footer">-->
+    <!--<el-button @click="cancelOperate">取 消</el-button>-->
+    <!--<el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>-->
+    <!--</div>-->
     <!--</el-dialog>-->
   </div>
 </template>
