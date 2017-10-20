@@ -2,11 +2,10 @@
   <div class="right">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!--赳赳乐享活动列表-->
-      <el-tab-pane label="赳赳乐享活动列表" name="first"style="padding-left:10px;">
+      <el-tab-pane label="赳赳乐享活动列表" name="first">
 
         <!--筛选条件-->
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-
+        <el-form :inline="true" :model="formInline" style="padding-left:10px;" class="demo-form-inline">
           <el-form-item label="活动类型:">
             <el-select v-model="formInline.type" placeholder="选择活动类型" clearable>
               <el-option label="普通活动" value="1"></el-option>
@@ -52,18 +51,42 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="生效时间:">
-            <date-pickers></date-pickers>
+          <el-form-item label="生效时间">
+            <el-date-picker
+              v-model="formInline.beginBeginTime"
+              type="datetime"
+              placeholder="开始时间">
+            </el-date-picker>
+            <el-date-picker
+              v-model="formInline.endBeginTime"
+              type="datetime"
+              placeholder="结束时间">
+            </el-date-picker>
           </el-form-item>
-
-          <el-form-item label="失效时间:">
-            <date-pickers></date-pickers>
+          <el-form-item label="失效时间">
+            <el-date-picker
+              v-model="formInline.beginEndTime"
+              type="datetime"
+              placeholder="开始时间">
+            </el-date-picker>
+            <el-date-picker
+              v-model="formInline.endEndTime"
+              type="datetime"
+              placeholder="结束时间">
+            </el-date-picker>
           </el-form-item>
-
-          <el-form-item label="添加时间:">
-            <date-pickers></date-pickers>
+          <el-form-item label="添加时间">
+            <el-date-picker
+              v-model="formInline.beginAddTime"
+              type="datetime"
+              placeholder="开始时间">
+            </el-date-picker>
+            <el-date-picker
+              v-model="formInline.endAddTime"
+              type="datetime"
+              placeholder="结束时间">
+            </el-date-picker>
           </el-form-item>
-
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
           </el-form-item>
@@ -79,26 +102,32 @@
           border
           stripe>
           <el-table-column
+            prop="id"
+            label="id"
+          >
+          </el-table-column>
+          <el-table-column
             header-align="center"
             align="center"
-            prop="city_name"
+            prop="cityName"
             label="城市名称"
             width="100">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="activity_des"
+            prop="description"
             label="活动描述"
             width="120">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="isDefault"
-            label="推送方式"
+            prop="state"
+            label="是否默认"
             width="100">
           </el-table-column>
+<!--Todo-->
           <el-table-column
             header-align="center"
             align="center"
@@ -109,24 +138,23 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="activity_id"
-            label="活动ID"
-            width="300">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="show_order"
             label="展示顺序"
-            width="100">
+            width="120"
+            sortable
+            prop="sort">
+            <template scope="scope">
+              <el-input v-model=scope.row.sort ></el-input>
+            </template>
           </el-table-column>
+
           <el-table-column
             header-align="center"
             align="center"
-            prop="activity_type"
+            prop="type"
             label="活动类型"
-            width="100">
+            width="120">
           </el-table-column>
+ <!--Todo-->
           <el-table-column
             header-align="center"
             align="center"
@@ -137,45 +165,46 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="limit_credit"
+            prop="creditLimit"
             label="限制信用分"
             width="120">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="isEnjoy"
+            prop="isLexiang"
             label="是否乐享活动"
             width="130">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="isRedpacket"
+            prop="redPackage"
             label="有无红包"
             width="100">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="share_platform"
+            prop="sharePlatform"
             label="分享平台"
             width="120">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="share_title"
+            prop="shareTitle"
             label="分享标题"
-            width="200">
+            width="100">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="share_content"
+            prop="shareContent"
             label="分享内容"
-            width="300">
+            width="100">
           </el-table-column>
+ <!--todo-->
           <el-table-column
             header-align="center"
             align="center"
@@ -186,53 +215,48 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="failure_date"
-            label="失效时间"
+            prop="showTime"
+            label="展示时间"
             width="170">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="add_date"
-            label="添加时间"
-            width="170">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="update_date"
+            prop="updateTime"
             label="更新时间"
             width="170">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="des"
+            prop="remarks"
             label="备注"
             width="100">
           </el-table-column>
 
           <el-table-column
-            fixed="right"
             header-align="center"
-            align="center"
-            label="操作"
-            width="120">
-            <template slot-scope="scope">
-              <el-button type="text" size="small">修改</el-button>
-              <el-button
-                @click="open2(scope.$index, tableData4)"
-                type="text"
-                size="small">
-                移除
-              </el-button>
+            width="100"
+            fixed="right"
+            label="操作">
+            <template scope="scope">
+              <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
+              <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
 
         </el-table>
 
         <!--分页-->
-        <paginations></paginations>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.pageNo"
+          :page-sizes="pagination.pageSizes"
+          :page-size="pagination.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.count">
+        </el-pagination>
 
       </el-tab-pane>
 
@@ -339,7 +363,13 @@
           logo: '',
           status: '',
           checkList: [],
-          city_name: ''
+          city_name: '',
+          beginBeginTime: '',
+          endBeginTime: '',
+          beginEndTime: '',
+          endEndTime: '',
+          beginAddTime: '',
+          endAddTime: ''
         },
         form: {
           activity_des: '',
@@ -375,67 +405,8 @@
           add_date: '2017-09-21 15:51:12',
           update_date: '2017-09-21 15:51:12',
           des: ''
-        }, {
-          city_name: '上海市',
-          activity_des: '僵尸车测试1',
-          isDefault: '是否活动',
-          status: '已过期',
-          activity_id: '02744d0d75fb48bea3e9b97344afe001',
-          show_order: 40,
-          activity_type: '骑行活动',
-          activity_status: '大剿匪',
-          limit_credit: 99,
-          isEnjoy: '是',
-          isRedpacket: '是',
-          share_platform: '微信好友',
-          share_title: '微信好友',
-          share_content: '激动啊佛爱UFO会啊复牌分',
-          effective_date: '2017-09-21 15:51:12',
-          failure_date: '2017-09-21 15:51:12',
-          add_date: '2017-09-21 15:51:12',
-          update_date: '2017-09-21 15:51:12',
-          des: ''
-        }, {
-          city_name: '上海市',
-          activity_des: '僵尸车测试1',
-          isDefault: '是否活动',
-          status: '已过期',
-          activity_id: '02744d0d75fb48bea3e9b97344afe001',
-          show_order: 40,
-          activity_type: '骑行活动',
-          activity_status: '大剿匪',
-          limit_credit: 99,
-          isEnjoy: '是',
-          isRedpacket: '是',
-          share_platform: '微信好友',
-          share_title: '微信好友',
-          share_content: '激动啊佛爱UFO会啊复牌分',
-          effective_date: '2017-09-21 15:51:12',
-          failure_date: '2017-09-21 15:51:12',
-          add_date: '2017-09-21 15:51:12',
-          update_date: '2017-09-21 15:51:12',
-          des: ''
-        }, {
-          city_name: '上海市',
-          activity_des: '僵尸车测试1',
-          isDefault: '是否活动',
-          status: '已过期',
-          activity_id: '02744d0d75fb48bea3e9b97344afe001',
-          show_order: 40,
-          activity_type: '骑行活动',
-          activity_status: '大剿匪',
-          limit_credit: 99,
-          isEnjoy: '是',
-          isRedpacket: '是',
-          share_platform: '微信好友',
-          share_title: '微信好友',
-          share_content: '激动啊佛爱UFO会啊复牌分',
-          effective_date: '2017-09-21 15:51:12',
-          failure_date: '2017-09-21 15:51:12',
-          add_date: '2017-09-21 15:51:12',
-          update_date: '2017-09-21 15:51:12',
-          des: ''
-        }]
+        }],
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
       }
     },
     methods: {
@@ -471,6 +442,14 @@
       },
       saveData () {
         console.log('saveData!')
+      },
+      handleSizeChange: function (val) {
+        this.requestParam.pageSize = val
+        this.query()
+      },
+      handleCurrentChange: function (val) {
+        this.requestParam.pageNo = val
+        this.query()
       }
     }
   }

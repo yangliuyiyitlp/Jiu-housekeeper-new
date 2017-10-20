@@ -263,14 +263,14 @@
             this.pagination.count = response.data.page.count
           } else {
             this.$message({
-              type: 'info',
-              message: '获取列表信息失败'
+              type: 'error',
+              message: response.data.msg
             })
           }
-        }).catch((res) => {
+        }).catch(() => {
           this.$message({
             type: 'error',
-            message: res.data.msg
+            message: '获取列表信息失败'
           })
         })
       },
@@ -309,13 +309,13 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: '删除记录失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, err => {
+            }, () => {
               this.$message({
                 type: 'error',
-                message: err.data.msg
+                message: '删除记录失败'
               })
             })
           }
@@ -348,13 +348,13 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: '操作失败:' + response.data.msg
+                  message: response.data.msg
                 })
               }
-            }, err => {
+            }, () => {
               this.$message({
                 type: 'error',
-                message: err.data.msg
+                message: '操作失败'
               })
             })
           } else {

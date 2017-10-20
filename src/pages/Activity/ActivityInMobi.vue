@@ -66,12 +66,6 @@
         v-if=0
       >
       </el-table-column>
-      <!--<el-table-column-->
-      <!--prop="cityName"-->
-      <!--show-overflow-tooltip-->
-      <!--v-bind:class="{active: true}"-->
-      <!--label="城市名称">-->
-      <!--</el-table-column>-->
       <el-table-column
         label="城市名称"
         prop="cityName">
@@ -85,8 +79,6 @@
         sortable
         prop="rank">
         <template scope="scope">
-          <!--<el-input v-model=scope.row.rank name="sorts" v-if= 0></el-input>-->
-          <!--<el-input v-model=scope.row.id name="ids" v-if= 0></el-input>-->
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
         </template>
 
@@ -121,7 +113,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -361,14 +353,14 @@
               } else {
                 console.log(response)
                 this.$message({
-                  type: 'info',
+                  type: 'error',
                   message: response.data.msg
                 })
               }
-            }.bind(this), function (err) {
+            }.bind(this), function () {
               this.$message({
                 type: 'info',
-                message: err.data.msg
+                message: '获取失败'
               })
             }.bind(this))
           }.bind(this))
@@ -427,7 +419,7 @@
               console.log(err)
               this.$message({
                 type: 'error',
-                message: err.data.msg
+                message: '操作失败'
               })
             }.bind(this))
           }
@@ -459,10 +451,10 @@
                   message: response.data.msg
                 })
               }
-            }.bind(this), function (err) {
+            }.bind(this), function () {
               this.$message({
                 type: 'error',
-                message: err.data.msg
+                message: '操作失败'
               })
             }.bind(this))
           } else {
@@ -541,13 +533,13 @@
             } else {
               this.$message({
                 type: 'error',
-                message: '获取失败'
+                message: res.data.msg
               })
             }
-          }.bind(this), function (res) {
+          }.bind(this), function () {
             this.$message({
               type: 'error',
-              message: res.data.msg
+              message: '获取失败'
             })
           })
       },
