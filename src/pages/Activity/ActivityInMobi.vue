@@ -183,27 +183,27 @@
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px" :model="moreinfo" ref="formA" class="tbody">
+      <el-form label-width="150px" :model="moreInfo" ref="formA" class="tbody">
         <el-form-item label="城市名称" class="elform">
-          <el-input :value="moreinfo.cityName" :disabled="true"></el-input>
+          <el-input :value="moreInfo.cityName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="显示顺序" class="elform">
-          <el-input :value="moreinfo.rank" :disabled="true"></el-input>
+          <el-input :value="moreInfo.rank" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="广告位置" class="elform">
-          <el-input :value="moreinfo.type" :disabled="true"></el-input>
+          <el-input :value="moreInfo.type" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="广告类型" class="elform">
-          <el-input :value="moreinfo.displayType" :disabled="true"></el-input>
+          <el-input :value="moreInfo.displayType" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="安卓inmobi编号" class="elform">
-          <el-input :value="moreinfo.androidInmobiId" :disabled="true"></el-input>
+          <el-input :value="moreInfo.androidInmobiId" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="苹果inmobi编号" class="elform">
-          <el-input :value="moreinfo.iosInmobiId" :disabled="true"></el-input>
+          <el-input :value="moreInfo.iosInmobiId" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注：" class="elform">
-          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
+          <el-input type="textarea" :row="3" :value="moreInfo.remarks" :disabled="true" style="resize:none"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -252,7 +252,7 @@
           iosInmobiId: '',
           remarks: ''
         },
-        moreinfo: {
+        moreInfo: {
           cityName: '',
           rank: '',
           type: '',
@@ -327,8 +327,6 @@
 // 下面是原先代码
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
           .then(function (res) {
-            console.log(this.data)
-
             for (var i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
@@ -343,7 +341,7 @@
           }.bind(this))
           .then(function () {
             this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
-              if (response.status === 200) {
+              if (response.data.code === 0) {
                 this.tableData = response.data.page.list
                 for (var i = 0; i < response.data.page.list.length; i++) {
                   this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
@@ -351,7 +349,6 @@
                 }
                 this.pagination.count = response.data.page.count
               } else {
-                console.log(response)
                 this.$message({
                   type: 'error',
                   message: response.data.msg
@@ -367,7 +364,7 @@
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '删除记录失败'
+              message: '获取失败'
             })
           })
       },
@@ -483,13 +480,13 @@
           this.moreFormVisible = true
           this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
             if (res.data.code === 0) {
-              this.moreinfo.type = this.typeObj[res.data.tDisplayType.type]
-              this.moreinfo.displayType = this.disObj[res.data.tDisplayType.displayType]
-              this.moreinfo.cityName = res.data.tDisplayType.cityName
-              this.moreinfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
-              this.moreinfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
-              this.moreinfo.rank = res.data.tDisplayType.rank
-              this.moreinfo.remarks = res.data.tDisplayType.remarks
+              this.moreInfo.type = this.typeObj[res.data.tDisplayType.type]
+              this.moreInfo.displayType = this.disObj[res.data.tDisplayType.displayType]
+              this.moreInfo.cityName = res.data.tDisplayType.cityName
+              this.moreInfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
+              this.moreInfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
+              this.moreInfo.rank = res.data.tDisplayType.rank
+              this.moreInfo.remarks = res.data.tDisplayType.remarks
             }
           }.bind(this)).catch(function (err) {
             this.$message({
