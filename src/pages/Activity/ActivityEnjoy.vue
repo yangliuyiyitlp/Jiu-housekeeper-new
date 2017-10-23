@@ -260,7 +260,7 @@
             width="100"
             fixed="right"
             label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>

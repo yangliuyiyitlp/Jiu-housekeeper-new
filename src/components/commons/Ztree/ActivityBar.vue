@@ -73,7 +73,7 @@
           label: '饿了么活动',
           children: [{
             id: 15,
-            label: '饿了么活动',
+            label: '优惠券管理',
             name: 'activity.ele.manage.coupon'
           }]
         }],
