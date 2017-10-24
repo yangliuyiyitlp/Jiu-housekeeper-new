@@ -3,7 +3,6 @@
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!--赳赳乐享活动列表-->
       <el-tab-pane label="赳赳乐享活动列表" name="first">
-
         <!--筛选条件-->
         <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
           <el-form-item label="活动类型:">
@@ -83,15 +82,31 @@
             <el-button type="primary" @click="query">查询</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="exportData">导出</el-button>
+            <el-button type="primary" @click="exportFile">导出</el-button>
           </el-form-item>
         </el-form>
-
+        <!--隐藏表格用于提交-->
+        <form action="" style="display: none"
+              method="post" ref="FileForm">
+          <input name="type" v-model="exportParam.type"/>
+          <input name="redPackage" v-model="exportParam.redPackage"/>
+          <input name="sharePlatform" v-model="exportParam.sharePlatform"/>
+          <input name="state" v-model="exportParam.state"/>
+          <input name="isExecuting" v-model="exportParam.isExecuting"/>
+          <input name="cityName" v-model="exportParam.cityName"/>
+          <input name="beginBeginTime" v-model="exportParam.beginBeginTime"/>
+          <input name="endBeginTime" v-model="exportParam.endBeginTime"/>
+          <input name="beginEndTime" v-model="exportParam.beginEndTime"/>
+          <input name="endEndTime" v-model="exportParam.endEndTime"/>
+          <input name="beginAddTime" v-model="exportParam.beginAddTime"/>
+          <input name="endAddTime" v-model="exportParam.endAddTime"/>
+        </form>
         <!--表格-->
         <el-table
           :data="tableData"
           style="width: 100%"
           border
+          @cell-click="more"
           stripe>
           <el-table-column
             prop="id"
@@ -99,15 +114,6 @@
             v-if=0
           >
           </el-table-column>
-          <!--<el-table-column-->
-            <!--header-align="center"-->
-            <!--align="center"-->
-            <!--prop="cityName"-->
-            <!--label="城市名称"-->
-            <!--show-overflow-tooltip-->
-            <!--width="100">-->
-          <!--</el-table-column>-->
-
           <el-table-column
             header-align="center"
             align="center"
@@ -119,7 +125,6 @@
               <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
             </template>
           </el-table-column>
-
           <el-table-column
             header-align="center"
             align="center"
@@ -260,14 +265,13 @@
             width="100"
             fixed="right"
             label="操作">
-            <template slot-scope="scope">
+            <template scope="scope">
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
 
         </el-table>
-
         <!--分页-->
         <el-pagination
           @size-change="handleSizeChange"
@@ -278,76 +282,139 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.count">
         </el-pagination>
+        <!--导出-->
+        <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+                   :close-on-press-escape="false"
+                   :close-on-click-modal="false" class="demo-ruleForm ">
+          <el-button @click="exportCurrent">导出当前页</el-button>
+          <el-button @click="exportAll">导出所有</el-button>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="cancelExport">取 消</el-button>
+          </div>
+        </el-dialog>
 
       </el-tab-pane>
-
       <!--赳赳乐享活动添加-->
-      <el-tab-pane label="赳赳乐享活动添加" name="second" class="second">
+      <el-tab-pane :label='title' name="second" class="second">
 
         <el-form ref="form" :model="form" label-width="150px">
 
           <el-form-item label="活动描述:">
-            <el-input v-model="form.activity_des" placeholder="活动简要描述"></el-input>
+            <el-input v-model="form.description" :disabled=show></el-input>
           </el-form-item>
 
           <el-form-item label="活动类型:">
-            <el-select v-model="form.activity_type" placeholder="选择活动类型" clearable>
-              <el-option label="普通活动" value="1"></el-option>
-              <el-option label="视屏活动" value="2"></el-option>
-              <el-option label="骑行活动" value="2"></el-option>
+            <el-select v-model="form.type" clearable class="selectInput"
+                       :disabled=show>
+              <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
+                         :value=key></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="是否乐享活动:">
-            <el-select v-model="form.isEnjoy" placeholder="是否乐享活动" clearable>
-              <el-option label="是" value="1"></el-option>
-              <el-option label="否" value="2"></el-option>
+            <el-select v-model="form.isLeXiang" clearable class="selectInput"
+                       :disabled=show>
+              <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
+                         :value=key></el-option>
+              <!--<el-option label="是" value="1"></el-option>-->
+              <!--<el-option label="否" value="2"></el-option>-->
             </el-select>
           </el-form-item>
 
           <el-form-item label="限制信用分:">
-            <el-input v-model="form.min_credit" placeholder="可以参与活动的最小信用分"></el-input>
+            <el-input v-model="form.creditLimit" :disabled=show></el-input>
+            <span>可以参与活动的最小信用分</span>
           </el-form-item>
-
+          <el-form-item label="参与车辆状态:" v-if="bike">
+            <el-input v-model="form.bikeLimit" :disabled=show></el-input>
+          </el-form-item>
           <el-form-item label="封面图片:">
+            {{form.imgPath}}
           </el-form-item>
 
           <el-form-item label="展示顺序:">
-            <el-input v-model="form.show_order" placeholder="填写展示顺序"></el-input>
+            <el-input v-model="form.sort" :disabled=show></el-input>
           </el-form-item>
 
           <el-form-item label="活动链接:">
-            <el-input v-model="form.activity_url" placeholder="填写活动链接"></el-input>
+            <el-input v-model="form.activityPath" :disabled=show></el-input>
           </el-form-item>
-
+          <el-form-item label="视频链接:" v-if="video">
+            <el-input v-model="form.videoPath" :disabled=show></el-input>
+          </el-form-item>
+          <el-form-item label="视频封面:" v-if="cover">
+            <el-input v-model="form.coverPath" :disabled=show></el-input>
+          </el-form-item>
+          <el-form-item label="有无红包:" v-if="red">
+            <el-select v-model="form.redPackage" clearable class="selectInput" :disabled=show>
+              <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
+                         :value=key></el-option>
+              <!--<el-option label="是" value="1"></el-option>-->
+              <!--<el-option label="否" value="2"></el-option>-->
+            </el-select>
+          </el-form-item>
           <el-form-item label="分享平台:">
-            <el-checkbox-group v-model="form.share_platform">
-              <el-checkbox label="微信好友"></el-checkbox>
-              <el-checkbox label="朋友圈"></el-checkbox>
-              <el-checkbox label="QQ好友"></el-checkbox>
-              <el-checkbox label="QQ空间"></el-checkbox>
-              <el-checkbox label="微博"></el-checkbox>
+            <el-checkbox-group v-model='this.formList' :disabled=show>
+              <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
+              <!--<el-checkbox label="微信好友"></el-checkbox>-->
+              <!--<el-checkbox label="朋友圈"></el-checkbox>-->
+              <!--<el-checkbox label="QQ好友"></el-checkbox>-->
+              <!--<el-checkbox label="QQ空间"></el-checkbox>-->
+              <!--<el-checkbox label="微博"></el-checkbox>-->
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="是否默认:">
-            <el-radio class="radio" v-model="form.isDefault" label="1">默认活动</el-radio>
-            <el-radio class="radio" v-model="form.isDefault" label="2">城市活动</el-radio>
+          <el-form-item label="是否默认:" :disabled=show>
+            <el-select v-model="form.state" clearable class="selectInput" :disabled=show>
+              <el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]
+                         :value=key></el-option>
+              <!--<el-radio class="radio" v-model="form.isDefault" label="1">默认活动</el-radio>-->
+              <!--<el-radio class="radio" v-model="form.isDefault" label="2">城市活动</el-radio>-->
+            </el-select>
           </el-form-item>
-
+          <el-form-item label="城市名称:">
+            <el-input v-model="form.cityName" :disabled=show></el-input>
+          </el-form-item>
           <el-form-item label="有效日期:">
             <el-date-picker
-              v-model="form.effective_date"
-              type="datetimerange"
-              placeholder="选择时间范围">
+              v-model="form.beginTime"
+              type="datetime" :disabled=show>
+            </el-date-picker>
+            -
+            <el-date-picker
+              v-model="form.endTime"
+              type="datetime" :disabled=show>
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="展示日期:">
+            <el-date-picker
+              v-model="form.showTime"
+              type="datetime" :disabled=show>
+            </el-date-picker>
+            -
+            <el-date-picker
+              v-model="form.hideTime"
+              type="datetime" :disabled=show>
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="添加时间:">
+            <el-date-picker
+              v-model="form.addTime"
+              type="datetime" :disabled=show>
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="更新时间:">
+            <el-date-picker
+              v-model="form.updateTime"
+              type="datetime" :disabled=show>
             </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
-            <el-input v-model="form.des" type="textarea" class='textarea'></el-input>
+            <el-input v-model="form.remarks" type="textarea" class='textarea' :disabled=show></el-input>
           </el-form-item>
 
-          <el-form-item label="快速添加到城市:">
+          <el-form-item label="快速添加到城市:" v-if=add>
             <el-checkbox-group v-model="form.add_cities">
               <el-checkbox label="成都市"></el-checkbox>
               <el-checkbox label="湖州市"></el-checkbox>
@@ -361,8 +428,8 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="saveData">保存</el-button>
-            <el-button>返回</el-button>
+            <el-button type="primary" @click="saveData" v-if=saveUp>保存</el-button>
+            <el-button type="primary" @click="back">返回</el-button>
           </el-form-item>
         </el-form>
 
@@ -381,6 +448,13 @@
     },
     data () {
       return {
+        add: false,
+        show: true,
+        saveUp: false,
+        bike: true,  // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
+        video: true,
+        cover: true,
+        red: true,
         activeState: {}, // 是否默认
         executingState: {}, // 生效状态
         activityType: {}, // 活动类型
@@ -388,7 +462,7 @@
         sharePlat: {}, // 分享平台
         value1: '',
         activeName2: 'first',
-//        share: [],
+        title: '赳赳乐享活动添加',
         requestParam: {
           share: [],
           sharePlatform: '',
@@ -404,20 +478,8 @@
           beginAddTime: '',
           endAddTime: ''
         },
-        form: {
-          activity_des: '',
-          activity_type: '',
-          isEnjoy: '',
-          min_credit: '',
-          show_order: '',
-          activity_url: '',
-          share_platform: [],
-          isDefault: '1',
-          city_name: 'default',
-          effective_date: '',
-          des: '',
-          add_cities: []
-        },
+        form: {},
+        formList: [],
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
         moreFormVisible: false,   // 详情
@@ -456,10 +518,12 @@
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
           type: '',
-          isHave: '',
-          logo: '',
-          status: '',
-          city_name: '',
+          redPackage: '',
+          share: [],
+          sharePlatform: '',
+          state: '',
+          isExecuting: '',
+          cityName: '',
           beginBeginTime: '',
           endBeginTime: '',
           beginEndTime: '',
@@ -473,6 +537,16 @@
         focusId: '',
         focusRank: '',
         modifyRank: ''
+      }
+    },
+    watch: {
+      'this.form.type': function (newv, oldv) {
+        console.log(newv, oldv)
+//        if (newv === '普通活动' || newv === '骑行活动') {
+//          this.video = false
+//        } else {
+//          this.video = true
+//        }
       }
     },
     methods: {
@@ -727,11 +801,79 @@
           })
         })
       },
+      exportFile: function () {
+        this.exportFormVisible = true
+      },
+      cancelExport: function () {
+        this.exportFormVisible = false
+      },
+      exportCurrent: function () {
+        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/export')
+        this.$refs['FileForm'].submit()
+      },
+      exportAll: function () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/exportAll')
+        this.$refs['FileForm'].submit()
+      },     // 导出所有
+      handleSizeChange: function (val) {
+        this.requestParam.pageSize = val
+        this.query()
+      },   // 分页
+      handleCurrentChange: function (val) {
+        this.requestParam.pageNo = val
+        this.query()
+      },
+      more: function (row, column, cell, event) {
+        if (column.property !== 'cityName') {
+          return false
+        } else {
+          this.activeName2 = 'second'
+          this.title = '赳赳乐享活动详情'
+          this.$ajax.get('/electric/tActivitiesInfo/interface/view_form', {params: {id: row.id}})
+            .then((res) => {
+              if (res.data.code === 0) {
+                this.form = res.data.tActivitiesInfo
+                for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                  this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+                }
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            })
+        }
+      }, // 详情
+      back () {
+        this.activeName2 = 'first'
+        this.title = '赳赳乐享活动添加'
+      }, // 详情返回按钮
+      modifyRecord: function (scope) {
+        this.activeName2 = 'second'
+        this.show = false
+        this.saveUp = true
+        this.title = '赳赳乐享活动修改'
+        this.$ajax.get('/electric/tActivitiesInfo/interface/form', {params: {id: scope.row.id}})
+          .then((res) => {
+            console.log(res)
+            if (res.data.code === 0) {
+              this.form = res.data.tActivitiesInfo
+              for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+              }
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.msg
+              })
+            }
+          })
+      }, // 修改   这行下面的代码暂无用
       handleClick (tab, event) {
         console.log(tab, event)
-      },
-      exportData () {
-        console.log('exportData!')
       },
       deleteRow (index, rows) {
         rows.splice(index, 1)
@@ -756,32 +898,6 @@
       },
       saveData () {
         console.log('saveData!')
-      },
-      handleSizeChange: function (val) {
-        this.requestParam.pageSize = val
-        this.query()
-      },
-      handleCurrentChange: function (val) {
-        this.requestParam.pageNo = val
-        this.query()
-      },
-      modifyRecord: function (scope) {
-        this.vif = false
-        this.dialogFormVisible = true
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
-          .then(function (res) {
-            if (res.status === 200) {
-              console.log(res.data)
-              this.form.id = res.data.tDisplayType.id
-              this.form.cityName = res.data.tDisplayType.cityName
-              this.form.rank = res.data.tDisplayType.rank
-              this.form.type = res.data.tDisplayType.type
-              this.form.displayType = res.data.tDisplayType.displayType
-              this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
-              this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
-              this.form.remarks = res.data.tDisplayType.remarks
-            }
-          }.bind(this))
       },
       doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
@@ -829,29 +945,6 @@
         }
         this.$refs['formA'].resetFields()
       },
-      more: function (row, column, cell, event) {
-        if (column.property !== 'cityName') {
-          return false
-        } else {
-          this.moreFormVisible = true
-          this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
-            if (res.data.code === 0) {
-              this.moreInfo.type = this.typeObj[res.data.tDisplayType.type]
-              this.moreInfo.displayType = this.disObj[res.data.tDisplayType.displayType]
-              this.moreInfo.cityName = res.data.tDisplayType.cityName
-              this.moreInfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
-              this.moreInfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
-              this.moreInfo.rank = res.data.tDisplayType.rank
-              this.moreInfo.remarks = res.data.tDisplayType.remarks
-            }
-          }.bind(this)).catch(function (err) {
-            this.$message({
-              type: 'error',
-              message: err.data.msg
-            })
-          })
-        }
-      },
       cancelMore: function () {
         this.moreFormVisible = false
       },
@@ -887,24 +980,6 @@
               message: '获取失败'
             })
           })
-      },
-      exportFile: function () {
-        this.exportFormVisible = true
-      },
-      cancelExport: function () {
-        this.exportFormVisible = false
-      },
-      exportCurrent: function () {
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/export')
-        this.$refs['FileForm'].setAttribute('method', 'get')
-        this.$refs['FileForm'].submit()
-      },
-      exportAll: function () {
-        this.exportParam.pageSize = ''
-        this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/exportAll')
-        this.$refs['FileForm'].setAttribute('method', 'post')
-        this.$refs['FileForm'].submit()
       },
       onFocus (scope) {
         this.focusId = scope.row.id
@@ -989,20 +1064,26 @@
     }
   }
 </script>
-
 <style scoped>
-  .right {
-
+  .selectInput {
+    width: 300px;
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {
     width: 300px;
   }
 
+  .demo-ruleForm {
+    font-size: 20px !important;
+    text-align: center;
+  }
+
   p {
     color: red;
   }
+
   .active {
     color: #20a0ff;
+    cursor: pointer;
   }
 </style>

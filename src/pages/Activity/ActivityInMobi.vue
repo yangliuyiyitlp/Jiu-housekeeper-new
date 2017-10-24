@@ -12,9 +12,6 @@
       <el-form-item label="广告位置:">
         <el-select v-model="requestParam.type" clearable>
           <el-option v-for="(val,key) in typeObj" v-bind:key=key :label=typeObj[key] :value=key></el-option>
-          <!--<el-option label="活动二级弹窗" value="1"></el-option>-->
-          <!--<el-option label="启动页" value="2"></el-option>-->
-          <!--<el-option label="确认换车后" value="3"></el-option>-->
         </el-select>
       </el-form-item>
       <el-form-item label="广告类型:">
@@ -211,7 +208,7 @@
       </div>
     </el-dialog>
     <!--导出弹框-->
-    <el-dialog title="导出" :visible.sync="exportFormVisible" :show-close="false" :close-on-press-escape="false"
+    <el-dialog size='tiny'title="导出" :visible.sync="exportFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="exportCurrent">导出当前页</el-button>
       <el-button @click="exportAll">导出所有</el-button>
@@ -374,7 +371,6 @@
         this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
           .then(function (res) {
             if (res.status === 200) {
-              console.log(res.data)
               this.form.id = res.data.tDisplayType.id
               this.form.cityName = res.data.tDisplayType.cityName
               this.form.rank = res.data.tDisplayType.rank
