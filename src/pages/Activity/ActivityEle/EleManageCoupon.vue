@@ -558,17 +558,18 @@
         for (let k in this.coupon_type_obj) {
           if (this.coupon_type_obj[k] === this.updateForm.type) {
             this.updateForm.type = k
-            this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
-              .then(res => {
-                this.open('success', res.data.msg)
-                // 刷新页面
-                this.query()
-              })
-              .catch(err => {
-                this.open('info', err.data.msg)
-                console.log(err)
-              })
+            console.log(this.updateForm.type)
           }
+          this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
+            .then(res => {
+              this.open('success', res.data.msg)
+              // 刷新页面
+              this.query()
+            })
+            .catch(err => {
+              this.open('info', err.data.msg)
+              console.log(err)
+            })
         }
       },
       open (type, msg) {

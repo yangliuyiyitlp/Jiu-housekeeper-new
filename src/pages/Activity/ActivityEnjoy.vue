@@ -142,7 +142,7 @@
             width="120"
             sortable
             prop="sort">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-input v-model=scope.row.sort ></el-input>
             </template>
           </el-table-column>
@@ -239,7 +239,7 @@
             width="100"
             fixed="right"
             label="操作">
-            <template scope="scope">
+            <template slot-scope="scope">
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
