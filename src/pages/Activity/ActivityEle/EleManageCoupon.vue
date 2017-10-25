@@ -411,7 +411,7 @@
         <el-form-item label="商户名:">
           <el-input v-model="updateForm.business"></el-input>
         </el-form-item>
-  
+
         <el-form-item label="优惠券类型:">
           <el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>
             <el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>
@@ -419,11 +419,11 @@
         </el-form-item>
 
         <!--<el-form-item label="优惠券类型:">-->
-          <!--<el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>-->
-            <!--<el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>-->
-          <!--</el-select>-->
+        <!--<el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>-->
+        <!--<el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>-->
+        <!--</el-select>-->
         <!--</el-form-item>-->
-        
+
         <el-form-item label="优惠券内容:">
           <el-input v-model="updateForm.content" type="textarea" class='textarea'></el-input>
         </el-form-item>
@@ -462,6 +462,7 @@
 
 <script>
   import Moment from 'moment'
+
   export default {
     data () {
       return {
@@ -565,6 +566,16 @@
             console.log(k, this.updateForm.type)
             this.updateForm.type = k
           }
+          this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
+            .then(res => {
+              this.open('success', res.data.msg)
+              // 刷新页面
+              this.query()
+            })
+            .catch(err => {
+              this.open('info', err.data.msg)
+              console.log(err)
+            })
         }
         // 数据类型转换完毕，发送save请求，保存数据
         this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})

@@ -84,6 +84,9 @@
           <el-form-item>
             <el-button type="primary" @click="exportFile">导出</el-button>
           </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="addNewRecord">新增</el-button>
+          </el-form-item>
         </el-form>
         <!--隐藏表格用于提交-->
         <form action="" style="display: none"
@@ -111,7 +114,7 @@
           <el-table-column
             prop="id"
             label="id"
-            v-if=0
+            show-overflow-tooltip
           >
           </el-table-column>
           <el-table-column
@@ -155,7 +158,7 @@
             sortable
             prop="sort">
             <template scope="scope">
-              <el-input v-model=scope.row.sort></el-input>
+              <el-input v-model=scope.row.sort @focus="onFocus(scope)" @change="modifyOrder"></el-input>
             </template>
           </el-table-column>
           <el-table-column
@@ -165,13 +168,14 @@
             label="活动类型"
             width="120">
           </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="bikeLimit"
-            label="车辆活动状态"
-            width="130">
-          </el-table-column>
+          <!--功能不展示-->
+          <!--<el-table-column-->
+          <!--header-align="center"-->
+          <!--align="center"-->
+          <!--prop="bikeLimit"-->
+          <!--label="车辆活动状态"-->
+          <!--width="130">-->
+          <!--</el-table-column>-->
           <el-table-column
             header-align="center"
             align="center"
@@ -221,6 +225,7 @@
             align="center"
             prop="beginTime"
             label="生效时间"
+            sortable
             width="175">
           </el-table-column>
           <el-table-column
@@ -228,6 +233,7 @@
             align="center"
             prop="endTime"
             label="失效时间"
+            sortable
             width="175">
           </el-table-column>
           <el-table-column
@@ -235,6 +241,7 @@
             align="center"
             prop="showTime"
             label="展示时间"
+            sortable
             width="175">
           </el-table-column>
           <el-table-column
@@ -242,6 +249,7 @@
             align="center"
             prop="hideTime"
             label="隐藏时间"
+            sortable
             width="175">
           </el-table-column>
           <el-table-column
@@ -272,6 +280,12 @@
           </el-table-column>
 
         </el-table>
+        <div v-if="modifyRank.trim() !== ''">
+          <el-button type="info" size="small" @click="doModifyOrder">保存排序</el-button>
+        </div>
+        <div v-else>
+          <el-button type="info" size="small" @click="doModifyOrder" :disabled="true">保存排序</el-button>
+        </div>
         <!--分页-->
         <el-pagination
           @size-change="handleSizeChange"
@@ -294,86 +308,87 @@
         </el-dialog>
 
       </el-tab-pane>
-      <!--赳赳乐享活动添加-->
+      <!--赳赳乐享活动修改添加-->
       <el-tab-pane :label='title' name="second" class="second">
 
-        <el-form ref="form" :model="form" label-width="150px">
+        <el-form ref="formA" :model="form" :rules="rules" label-width="150px">
 
-          <el-form-item label="活动描述:">
+          <el-form-item label="活动描述:" prop="description">
             <el-input v-model="form.description" :disabled=show></el-input>
           </el-form-item>
 
-          <el-form-item label="活动类型:">
-            <el-select v-model="form.type" clearable class="selectInput"
+          <el-form-item label="活动类型:" prop='type'>
+            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange"
                        :disabled=show>
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
                          :value=key></el-option>
             </el-select>
           </el-form-item>
 
-          <el-form-item label="是否乐享活动:">
+          <el-form-item label="是否乐享活动:" prop='isLeXiang'>
             <el-select v-model="form.isLeXiang" clearable class="selectInput"
                        :disabled=show>
               <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
                          :value=key></el-option>
-              <!--<el-option label="是" value="1"></el-option>-->
-              <!--<el-option label="否" value="2"></el-option>-->
             </el-select>
           </el-form-item>
 
-          <el-form-item label="限制信用分:">
+          <el-form-item label="限制信用分:" prop='creditLimit'>
             <el-input v-model="form.creditLimit" :disabled=show></el-input>
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
-          <el-form-item label="参与车辆状态:" v-if="bike">
-            <el-input v-model="form.bikeLimit" :disabled=show></el-input>
-          </el-form-item>
-          <el-form-item label="封面图片:">
+          <el-form-item label="封面图片:" prop='imgPath'>
             {{form.imgPath}}
           </el-form-item>
 
-          <el-form-item label="展示顺序:">
+          <el-form-item label="展示顺序:" prop='sort'>
             <el-input v-model="form.sort" :disabled=show></el-input>
           </el-form-item>
 
-          <el-form-item label="活动链接:">
+          <el-form-item label="活动链接:" prop='activityPath'>
             <el-input v-model="form.activityPath" :disabled=show></el-input>
           </el-form-item>
-          <el-form-item label="视频链接:" v-if="video">
-            <el-input v-model="form.videoPath" :disabled=show></el-input>
-          </el-form-item>
-          <el-form-item label="视频封面:" v-if="cover">
-            <el-input v-model="form.coverPath" :disabled=show></el-input>
-          </el-form-item>
-          <el-form-item label="有无红包:" v-if="red">
-            <el-select v-model="form.redPackage" clearable class="selectInput" :disabled=show>
-              <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
-                         :value=key></el-option>
-              <!--<el-option label="是" value="1"></el-option>-->
-              <!--<el-option label="否" value="2"></el-option>-->
-            </el-select>
-          </el-form-item>
+          <div v-show="video">
+            <el-form-item label="视频链接:">
+              <el-input v-model="form.videoPath" :disabled=show></el-input>
+            </el-form-item>
+            <el-form-item label="视频封面:" prop='coverPath'>
+              <el-input v-model="form.coverPath" :disabled=show></el-input>
+            </el-form-item>
+            <el-form-item label="有无红包:">
+              <el-select v-model="form.redPackage" clearable class="selectInput" :disabled=show>
+                <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
+                           :value=key></el-option>
+              </el-select>
+            </el-form-item>
+          </div>
           <el-form-item label="分享平台:">
             <el-checkbox-group v-model='this.formList' :disabled=show>
               <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
-              <!--<el-checkbox label="微信好友"></el-checkbox>-->
-              <!--<el-checkbox label="朋友圈"></el-checkbox>-->
-              <!--<el-checkbox label="QQ好友"></el-checkbox>-->
-              <!--<el-checkbox label="QQ空间"></el-checkbox>-->
-              <!--<el-checkbox label="微博"></el-checkbox>-->
             </el-checkbox-group>
           </el-form-item>
-
+          <el-form-item label="分享标题:" prop='shareTitle'>
+            <el-input v-model="form.shareTitle" :disabled=show></el-input>
+          </el-form-item>
+          <el-form-item label="分享图片链接:" prop='sharePic'>
+            {{form.sharePic}}
+          </el-form-item>
+          <el-form-item label="分享链接:" prop='shareUrl'>
+            <el-input v-model="form.shareUrl" :disabled=show></el-input>
+          </el-form-item>
+          <el-form-item label="分享内容:" prop='shareContent'>
+            <el-input v-model="form.shareContent" :disabled=show></el-input>
+          </el-form-item>
           <el-form-item label="是否默认:" :disabled=show>
-            <el-select v-model="form.state" clearable class="selectInput" :disabled=show>
+            <el-select v-model="form.state" clearable class="selectInput" :disabled=show
+                       @change="onActivityStateChange">
               <el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]
                          :value=key></el-option>
-              <!--<el-radio class="radio" v-model="form.isDefault" label="1">默认活动</el-radio>-->
-              <!--<el-radio class="radio" v-model="form.isDefault" label="2">城市活动</el-radio>-->
             </el-select>
           </el-form-item>
           <el-form-item label="城市名称:">
             <el-input v-model="form.cityName" :disabled=show></el-input>
+            <span v-if="add">添加模式下，城市的添加以《快速添加到城市》的选项为准</span>
           </el-form-item>
           <el-form-item label="有效日期:">
             <el-date-picker
@@ -414,24 +429,19 @@
             <el-input v-model="form.remarks" type="textarea" class='textarea' :disabled=show></el-input>
           </el-form-item>
 
-          <el-form-item label="快速添加到城市:" v-if=add>
-            <el-checkbox-group v-model="form.add_cities">
-              <el-checkbox label="成都市"></el-checkbox>
-              <el-checkbox label="湖州市"></el-checkbox>
-              <el-checkbox label="上海市"></el-checkbox>
-              <el-checkbox label="北京市"></el-checkbox>
-              <el-checkbox label="深圳市"></el-checkbox>
-              <el-checkbox label="厦门市"></el-checkbox>
-              <el-checkbox label="珠海市"></el-checkbox>
-              <el-checkbox label="厦门"></el-checkbox>
+          <el-checkbox class='check-all' v-if='add' :indeterminate="isIndeterminate" v-model="checkAll"
+                       @change="handleCheckAllChange">快速添加城市：
+          </el-checkbox>
+          <el-form-item v-if="add" style="text-align: left;">
+            <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
+              <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-
-          <el-form-item>
-            <el-button type="primary" @click="saveData" v-if=saveUp>保存</el-button>
-            <el-button type="primary" @click="back">返回</el-button>
-          </el-form-item>
         </el-form>
+        <div class="footer">
+          <el-button type="primary" @click="doModify('formA')" v-if=saveUp>保存</el-button>
+          <el-button type="primary" @click="back">返回</el-button>
+        </div>
 
       </el-tab-pane>
 
@@ -442,19 +452,22 @@
 <script>
   import Moment from 'moment'
 
+  const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   export default {
     created: function () {
       this.list()
     },
     data () {
       return {
+        checkAll: true,
+        checkedCities: [],
+        cities: cityOptions,
+        isIndeterminate: true,
         add: false,
         show: true,
         saveUp: false,
-        bike: true,  // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
-        video: true,
-        cover: true,
-        red: true,
+//        bike: true,
+        video: true, // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
         activeState: {}, // 是否默认
         executingState: {}, // 生效状态
         activityType: {}, // 活动类型
@@ -496,23 +509,41 @@
         },
         formLabelWidth: '80px',
         rules: {
-          cityName: [
-            {required: true, message: '请输入城市名称', trigger: 'blur'}
-          ],
-          rank: [
-            {required: true, message: '请输入显示顺序', trigger: 'blur'}
+          description: [
+            {required: true, message: '请输入活动描述', trigger: 'blur'}
           ],
           type: [
-            {required: true, message: '请选择广告位置', trigger: 'change'}
+            {required: true, message: '请输入活动类型', trigger: 'blur'}
           ],
-          displayType: [
-            {required: true, message: '请选择广告类型', trigger: 'change'}
+          isLeXiang: [
+            {required: true, message: '请选择是否乐享活动', trigger: 'change'}
           ],
-          androidInmobiId: [
-            {required: true, message: '请输入安卓inmobi编号', trigger: 'blur'}
+          creditLimit: [
+            {required: true, message: '请输入限制信用分', trigger: 'blur'}
           ],
-          iosInmobiId: [
-            {required: true, message: '请输入苹果inmobi编号', trigger: 'blur'}
+          imgPath: [
+            {required: true, message: '请选择封面图片', trigger: 'change'}
+          ],
+          sort: [
+            {required: true, message: '请输入展示顺序', trigger: 'blur'}
+          ],
+          activityPath: [
+            {required: true, message: '请输入活动链接', trigger: 'blur'}
+          ],
+          coverPath: [
+            {required: true, message: '请选择视频封面', trigger: 'change'}
+          ],
+          shareTitle: [
+            {required: true, message: '请输入分享标题', trigger: 'blur'}
+          ],
+          sharePic: [
+            {required: true, message: '请选择分享图片链接', trigger: 'change'}
+          ],
+          shareUrl: [
+            {required: true, message: '请输入分享链接', trigger: 'blur'}
+          ],
+          shareContent: [
+            {required: true, message: '请输入分享内容', trigger: 'blur'}
           ]
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
@@ -539,98 +570,12 @@
         modifyRank: ''
       }
     },
-    watch: {
-      'this.form.type': function (newv, oldv) {
-        console.log(newv, oldv)
-//        if (newv === '普通活动' || newv === '骑行活动') {
-//          this.video = false
-//        } else {
-//          this.video = true
-//        }
-      }
-    },
     methods: {
-      // 功能
-//      list: function () {
-//        this.requestParam.city_name = this.requestParam.city_name.trim()
-//        this.exportParam.type = this.requestParam.type
-//        this.exportParam.isHave = this.requestParam.isHave
-//        this.exportParam.logo = this.requestParam.logo
-//        this.exportParam.status = this.requestParam.status
-//        this.exportParam.city_name = this.requestParam.city_name
-//        this.exportParam.beginBeginTime = this.requestParam.beginBeginTime
-//        this.exportParam.endBeginTime = this.requestParam.endBeginTime
-//        this.exportParam.beginEndTime = this.requestParam.beginEndTime
-//        this.exportParam.endEndTime = this.requestParam.endEndTime
-//        this.exportParam.beginAddTime = this.requestParam.beginAddTime
-//        this.exportParam.endAddTime = this.requestParam.endAddTime
-//        this.exportParam.pageNo = this.requestParam.pageNo
-//        this.exportParam.pageSize = this.requestParam.pageSize
-//        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activity_state'}})
-//          .then((res) => {
-//            for (var i = 0; i < res.data.length; i++) {
-//              this.activeState[res.data[i].value] = res.data[i].label
-//            }
-//          })
-//          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'black_list_is_executing'}})
-//            .then((res) => {
-//              for (var i = 0; i < res.data.length; i++) {
-//                this.executingState[res.data[i].value] = res.data[i].label
-//              }
-//            })
-//          )
-//          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activitys_type'}})
-//            .then((res) => {
-//              for (var i = 0; i < res.data.length; i++) {
-//                this.activityType[res.data[i].value] = res.data[i].label
-//              }
-//            })
-//          )
-//          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'yes_no'}})
-//            .then((res) => {
-//              for (var i = 0; i < res.data.length; i++) {
-//                this.yesNo[res.data[i].value] = res.data[i].label
-//              }
-//            })
-//          )
-//          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'share_platform'}})
-//            .then((res) => {
-//              for (var i = 0; i < res.data.length; i++) {
-//                this.sharePlat[res.data[i].value] = res.data[i].label
-//              }
-//            })
-//          ).then(this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
-//          .then((res) => {
-//            if (res.data.code === 0) {
-//              this.tableData = res.data.page.list
-//              this.pagination.count = res.data.page.count
-//              for (var i = 0; i < res.data.page.list.length; i++) {
-//                this.tableData[i].state = this.activeState[res.data.page.list[i].state]
-//                this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
-//                this.tableData[i].type = this.activityType[res.data.page.list[i].type]
-//                this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
-//                this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
-//                var arr = res.data.page.list[i].sharePlatform.split(',')
-//                var newArr = []
-//                for (var j = 0; j < arr.length; j++) {
-//                  newArr.push(this.sharePlat[arr[j]])
-//                }
-//                this.tableData[i].sharePlatform = newArr.join(',')
-//              }
-//            } else {
-//              this.$message({
-//                type: 'error',
-//                message: res.data.msg
-//              })
-//            }
-//          }))// 请求列表
-//          .catch(() => {
-//            this.$message({
-//              type: 'info',
-//              message: '获取列表失败'
-//            })
-//          })
-//      },
+      handleClick (tab, event) {
+        if (tab.label === '赳赳乐享活动添加') {
+          this.addNewRecord()
+        }
+      },
       list: function () {
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activity_state'}})
           .then((res) => {
@@ -669,6 +614,7 @@
           .then((res) => {
             if (res.data.code === 0) {
               this.tableData = res.data.page.list
+              console.log(res.data.page.list)
               this.pagination.count = res.data.page.count
               for (var i = 0; i < res.data.page.list.length; i++) {
                 this.tableData[i].state = this.activeState[res.data.page.list[i].state]
@@ -676,6 +622,13 @@
                 this.tableData[i].type = this.activityType[res.data.page.list[i].type]
                 this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
                 this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
+//                var arr = res.data.page.list[i].sharePlatformList
+//                console.log(arr.length)
+//                var newArr = []
+//                for (var j = 0; j < arr.length; j++) {
+//                  newArr.push(this.sharePlat[arr[j]])
+//                }
+//                this.tableData[i].sharePlatform = newArr.join(',')
                 var arr = res.data.page.list[i].sharePlatform.split(',')
                 var newArr = []
                 for (var j = 0; j < arr.length; j++) {
@@ -831,6 +784,9 @@
         } else {
           this.activeName2 = 'second'
           this.title = '赳赳乐享活动详情'
+          this.show = true
+          this.saveUp = false
+          this.bike = true
           this.$ajax.get('/electric/tActivitiesInfo/interface/view_form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
@@ -858,7 +814,6 @@
         this.title = '赳赳乐享活动修改'
         this.$ajax.get('/electric/tActivitiesInfo/interface/form', {params: {id: scope.row.id}})
           .then((res) => {
-            console.log(res)
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
               for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
@@ -871,115 +826,51 @@
               })
             }
           })
-      }, // 修改   这行下面的代码暂无用
-      handleClick (tab, event) {
-        console.log(tab, event)
+      }, // 修改
+      onActivityTypeChange (value) {
+        if (value === '1') {
+          this.video = true
+        } else {
+          this.video = false
+        }
       },
-      deleteRow (index, rows) {
-        rows.splice(index, 1)
+      onActivityStateChange (value) {
+        if (value === '1') {
+          this.form.cityName = 'default'
+        } else {
+          this.form.cityName = ''
+        }
       },
-      open2 (index, rows) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.deleteRow(index, rows)
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      },
-      saveData () {
-        console.log('saveData!')
-      },
-      doModify (formName) {       // 修改确定功能
-        this.$refs[formName].validate((valid) => {
+      doModify (formA) {       // 修改确定功能
+        this.$refs[formA].validate((valid) => {
           if (valid) {
-            this.dialogFormVisible = false
-            this.form.areaNames = this.checkedCities.join(',')
-            this.checkedCities = []
-            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (res) {
-              if (res.status === 200) {
-                // 更新成功
-                this.$message({
-                  type: 'success',
-                  message: '操作成功'
-                })
-                // 刷新页面
-                this.query()
-              } else {
+//            this.activeName2 = 'first'
+            this.$ajax.get('/electric/tActivitiesInfo/interface/save', {params: this.form})
+              .then(function (response) {
+                if (response.data.code === 0) {
+                  // 更新成功
+                  this.$message({
+                    type: 'success',
+                    message: '操作成功'
+                  })
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: response.data.msg
+                  })
+                }
+              }.bind(this), function () {
                 this.$message({
                   type: 'error',
-                  message: res.data.msg
+                  message: '操作失败'
                 })
-              }
-            }.bind(this), function () {
-              this.$message({
-                type: 'error',
-                message: '操作失败'
-              })
-            }.bind(this))
+              }.bind(this))
           } else {
             return false
           }
         })
-      },
-      cancelOperate: function () {
-        this.dialogFormVisible = false
-        this.form = {
-          cityName: '',
-          rank: '',
-          type: '',
-          displayType: '',
-          androidInmobiId: '',
-          iosInmobiId: '',
-          remarks: '',
-          areaNames: ''
-        }
-        this.$refs['formA'].resetFields()
-      },
-      cancelMore: function () {
-        this.moreFormVisible = false
-      },
-      addNewRecord: function () {
-        this.dialogFormVisible = true
-        this.vif = true
-        this.checkedCities = []
-        this.form = {
-          id: '',
-          cityName: '',
-          rank: '',
-          type: '',
-          displayType: '',
-          androidInmobiId: '',
-          iosInmobiId: '',
-          remarks: '',
-          areaNames: ''
-        }
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
-          .then(function (res) {
-            console.log(res)
-            if (res.status === 200) {
-              this.form.rank = res.data.maxSort
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.data.msg
-              })
-            }
-          }.bind(this), function () {
-            this.$message({
-              type: 'error',
-              message: '获取失败'
-            })
-          })
       },
       onFocus (scope) {
         this.focusId = scope.row.id
@@ -1041,7 +932,7 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/updateSort', {
+        this.$ajax.get('/electric/tActivitiesInfo/interface/updateSort', {
           params: {
             'ids': newids,
             'sorts': newsorts
@@ -1060,6 +951,42 @@
               type: 'error'
             })
           })
+      },
+      handleCheckAllChange (event) {
+        this.checkedCities = event.target.checked ? cityOptions : []
+        this.isIndeterminate = false
+      },
+      handleCheckedCitiesChange (value) {
+        let checkedCount = value.length
+        this.checkAll = checkedCount === this.cities.length
+        this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
+      },
+      addNewRecord: function () {
+        this.activeName2 = 'second'
+        this.show = false
+        this.saveUp = true
+        this.add = true
+        this.title = '赳赳乐享活动添加'
+        this.checkedCities = []
+        this.form = {}
+        this.formList = {}
+        this.$ajax.get('/electric/tActivitiesInfo/interface/save')
+          .then((res) => {
+            console.log(res)
+            if (res.data.code === 1) {
+              this.form.sort = res.data.tActivitiesInfo.sort
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.msg
+              })
+            }
+          }, function () {
+            this.$message({
+              type: 'error',
+              message: '请求失败'
+            })
+          })
       }
     }
   }
@@ -1067,6 +994,12 @@
 <style scoped>
   .selectInput {
     width: 300px;
+  }
+
+  .check-all {
+    width: 150px;
+    float: left;
+    padding-top: 6px;
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {
@@ -1085,5 +1018,9 @@
   .active {
     color: #20a0ff;
     cursor: pointer;
+  }
+
+  .footer {
+    margin-left: 200px;
   }
 </style>

@@ -190,13 +190,9 @@
             <el-upload
               class="upload-demo"
               ref="upload"
-              action=""
-              :http-request="uploadThumbnails"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :on-change="change"
-              :file-list="ruleForm.fileList"
-              :auto-upload="true">
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token"
+              :before-upload="beforeUpload">
               <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
             </el-upload>
           </el-form-item>
@@ -296,6 +292,7 @@
     },
     data () {
       return {
+        Token: {},
         columnVisible1: false,
         columnVisible2: false,
         select_organization: [{
@@ -450,20 +447,12 @@
           click_number: '2',
           announcer: '系统管理员',
           update_time: '2017-09-12 10:28:35'
-        }, {
-          column: '内部机构',
-          title: '标题标题标题标题',
-          power: '0',
-          click_number: '2',
-          announcer: '系统管理员',
-          update_time: '2017-09-12 10:28:35'
         }],
         pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
       }
     },
     created: function () {
       this.onSubmit('condition')
-      // console.log($('#editor'))
     },
     mounted () {
       this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 160) + 'px'
@@ -501,17 +490,17 @@
         // 同时根据栏目的内容 发送请求
       },
       handleClick (tab, event) {
-        console.log(tab, event)
+//        console.log(tab, event)
       },
       onSubmit: function (condition) {
         this.ruleForm.main_text = this.editorContent
-        var param = {}
-        if (condition === 'condition') {
-          param = this.formInline
-        } else {
-          param = condition
-        }
-        console.log(param)
+//        let param = {}
+//        if (condition === 'condition') {
+//          param = this.formInline
+//        } else {
+//          param = condition
+//        }
+//        console.log(param)
 //        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
 //          this.tableData = response.data.list
 //          this.pagination.total = response.data.total
@@ -591,12 +580,49 @@
           // console.log('发生的变化:', this.ruleForm.main_text)
         })
       },
-      uploadThumbnails () {
-        console.log(this.ruleForm.fileList)
-      },
-      change (file, filelist) {
-        console.log(file, filelist)
-        console.log(file.raw)
+      /* uploadThumbnails (file) {
+         // 自定义上传至服务器
+         // 1.aliyun-oss-upload方式
+ //        this.$OssUpload.post(file.file)
+ //          .then(res => {
+ //            console.log(res)
+ //            this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+ //          })
+ //          .catch(err => {
+ //            console.log(err)
+ //          })
+         // 2.el-upload方式
+ //        this.$ajax.get('electric/ossutil/interface/policy?user_dir=zhang')
+ //          .then(res => {
+ //            if (res.status === 200) {
+ //              console.log(res.data)
+ //              this.$ajax.post('http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com', qs.stringify(res.data))
+ //                .then(result => {
+ //                  console.log(result)
+ //                })
+ //            }
+ //          })
+ //          .catch(err => {
+ //            console.log(err)
+ //          })
+       }, */
+      beforeUpload (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get('electric/ossutil/interface/policy?user_dir=cmsContent')
+            .then((res) => {
+              this.Token = res.data
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+              this.Token.OSSAccessKeyId = res.data.accessid
+//              console.log(this.Token)
+              // oss上图片的路由
+              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              console.log(this.pic_url)
+              resolve()
+            })
+            .catch(err => {
+              console.log(err)
+            })
+        })
       }
     }
   }
