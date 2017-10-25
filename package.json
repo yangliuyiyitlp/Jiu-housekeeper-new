@@ -35,8 +35,7 @@
     "vuedraggable": "^2.14.1",
     "vuex": "^2.4.0",
     "xlsx": "^0.11.4",
-    "zrender": "^3.6.1",
-    "ztree": "^3.5.24"
+    "zrender": "^3.6.1"
   },
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.1.1",

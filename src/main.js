@@ -11,8 +11,6 @@ import '@/assets/icon_font/iconfont.css'
 // import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
 import 'jquery'
-import 'ztree'
-import 'ztree/css/zTreeStyle/zTreeStyle.css'
 
 import Axios from 'axios'
 
@@ -38,7 +36,7 @@ Vue.filter('convertDate', function (value) {
   return Moment(value).format('HH:mm:ss')
 })
 Vue.filter('AddDate', function (value) {
-  var nevalue = new Date(value)
+  let nevalue = new Date(value)
   return Moment(nevalue).format('YYYY-MM-DD HH:mm:ss')
 })
 // Moment：结束
