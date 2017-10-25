@@ -364,7 +364,7 @@
           </div>
           <el-form-item label="分享平台:">
             <el-checkbox-group v-model='this.formList' :disabled=show>
-              <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
+              <el-checkbox v-for="(val,key) in sharePlat"  v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="分享标题:" prop='shareTitle'>
@@ -582,67 +582,62 @@
             for (var i = 0; i < res.data.length; i++) {
               this.activeState[res.data[i].value] = res.data[i].label
             }
-          })
-          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'black_list_is_executing'}})
-            .then((res) => {
-              for (var i = 0; i < res.data.length; i++) {
-                this.executingState[res.data[i].value] = res.data[i].label
-              }
-            })
-          )
-          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activitys_type'}})
-            .then((res) => {
-              for (var i = 0; i < res.data.length; i++) {
-                this.activityType[res.data[i].value] = res.data[i].label
-              }
-            })
-          )
-          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'yes_no'}})
-            .then((res) => {
-              for (var i = 0; i < res.data.length; i++) {
-                this.yesNo[res.data[i].value] = res.data[i].label
-              }
-            })
-          )
-          .then(this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'share_platform'}})
-            .then((res) => {
-              for (var i = 0; i < res.data.length; i++) {
-                this.sharePlat[res.data[i].value] = res.data[i].label
-              }
-            })
-          ).then(this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
-          .then((res) => {
-            if (res.data.code === 0) {
-              this.tableData = res.data.page.list
-              console.log(res.data.page.list)
-              this.pagination.count = res.data.page.count
-              for (var i = 0; i < res.data.page.list.length; i++) {
-                this.tableData[i].state = this.activeState[res.data.page.list[i].state]
-                this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
-                this.tableData[i].type = this.activityType[res.data.page.list[i].type]
-                this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
-                this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
-//                var arr = res.data.page.list[i].sharePlatformList
-//                console.log(arr.length)
-//                var newArr = []
-//                for (var j = 0; j < arr.length; j++) {
-//                  newArr.push(this.sharePlat[arr[j]])
-//                }
-//                this.tableData[i].sharePlatform = newArr.join(',')
-                var arr = res.data.page.list[i].sharePlatform.split(',')
-                var newArr = []
-                for (var j = 0; j < arr.length; j++) {
-                  newArr.push(this.sharePlat[arr[j]])
+            this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'black_list_is_executing'}})
+              .then((res) => {
+                for (var i = 0; i < res.data.length; i++) {
+                  this.executingState[res.data[i].value] = res.data[i].label
                 }
-                this.tableData[i].sharePlatform = newArr.join(',')
-              }
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.data.msg
+                this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activitys_type'}})
+                  .then((res) => {
+                    for (var i = 0; i < res.data.length; i++) {
+                      this.activityType[res.data[i].value] = res.data[i].label
+                    }
+                    this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'yes_no'}})
+                      .then((res) => {
+                        for (var i = 0; i < res.data.length; i++) {
+                          this.yesNo[res.data[i].value] = res.data[i].label
+                        }
+                        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'share_platform'}})
+                          .then((res) => {
+                            for (var i = 0; i < res.data.length; i++) {
+                              this.sharePlat[res.data[i].value] = res.data[i].label
+                            }
+                            this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
+                              .then((res) => {
+                                if (res.data.code === 0) {
+                                  this.tableData = res.data.page.list
+                                  this.pagination.count = res.data.page.count
+                                  for (var i = 0; i < res.data.page.list.length; i++) {
+                                    this.tableData[i].state = this.activeState[res.data.page.list[i].state]
+                                    this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
+                                    this.tableData[i].type = this.activityType[res.data.page.list[i].type]
+                                    this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
+                                    this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
+                                    let arr = res.data.page.list[i].sharePlatform.split(',')
+                                    let newArr = []
+                                    for (let j = 0; j < arr.length; j++) {
+                                      newArr.push(this.sharePlat[arr[j]])
+                                    }
+                                    this.tableData[i].sharePlatform = newArr.join(',')
+                                  }
+                                } else {
+                                  this.$message({
+                                    type: 'error',
+                                    message: res.data.msg
+                                  })
+                                }
+                              })
+                              .catch(() => {
+                                this.$message({
+                                  type: 'info',
+                                  message: '获取列表失败'
+                                })
+                              })
+                          })
+                      })
+                  })
               })
-            }
-          }))// 请求列表
+          })
           .catch(() => {
             this.$message({
               type: 'info',
@@ -692,9 +687,9 @@
                 this.tableData[i].type = this.activityType[res.data.page.list[i].type]
                 this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
                 this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
-                var arr = res.data.page.list[i].sharePlatform.split(',')
-                var newArr = []
-                for (var j = 0; j < arr.length; j++) {
+                let arr = res.data.page.list[i].sharePlatform.split(',')
+                let newArr = []
+                for (let j = 0; j < arr.length; j++) {
                   newArr.push(this.sharePlat[arr[j]])
                 }
                 this.tableData[i].sharePlatform = newArr.join(',')
@@ -844,7 +839,8 @@
       doModify (formA) {       // 修改确定功能
         this.$refs[formA].validate((valid) => {
           if (valid) {
-//            this.activeName2 = 'first'
+            this.activeName2 = 'first'
+            this.form.sharePlatformList = []
             this.$ajax.get('/electric/tActivitiesInfo/interface/save', {params: this.form})
               .then(function (response) {
                 if (response.data.code === 0) {
