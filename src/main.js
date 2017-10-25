@@ -12,6 +12,7 @@ import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
 import 'jquery'
 import 'ztree'
+import 'ztree/css/zTreeStyle/zTreeStyle.css'
 
 import Axios from 'axios'
 
