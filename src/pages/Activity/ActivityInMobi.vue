@@ -543,6 +543,8 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
+        this.exportParam.pageSize = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
         this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/export')
         this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()

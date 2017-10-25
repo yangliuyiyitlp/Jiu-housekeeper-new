@@ -424,6 +424,8 @@
       exportCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
+          this.exportParam.pageSize = this.pagination.pageNo
+          this.exportParam.pageSize = this.pagination.pageSize
           this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
           this.$refs['FileForm'].submit()
         } else {

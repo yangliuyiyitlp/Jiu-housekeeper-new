@@ -318,8 +318,7 @@
           </el-form-item>
 
           <el-form-item label="活动类型:" prop='type'>
-            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange"
-                       :disabled=show>
+            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange">
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
                          :value=key></el-option>
             </el-select>
@@ -332,7 +331,6 @@
                          :value=key></el-option>
             </el-select>
           </el-form-item>
-
           <el-form-item label="限制信用分:" prop='creditLimit'>
             <el-input v-model="form.creditLimit" :disabled=show></el-input>
             <span>可以参与活动的最小信用分</span>
@@ -363,8 +361,8 @@
             </el-form-item>
           </div>
           <el-form-item label="分享平台:">
-            <el-checkbox-group v-model='this.formList' :disabled=show>
-              <el-checkbox v-for="(val,key) in sharePlat"  v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
+            <el-checkbox-group v-model="formList" @change="onCheckboxChange">
+              <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="分享标题:" prop='shareTitle'>
@@ -734,8 +732,7 @@
                     message: res.data.msg
                   })
                 }
-              }, function (err) {
-                console.log(err)
+              }, function () {
                 this.$message({
                   type: 'error',
                   message: '操作失败'
@@ -756,6 +753,8 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
+        this.exportParam.pageSize = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
         this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/export')
         this.$refs['FileForm'].submit()
       },
@@ -786,8 +785,12 @@
             .then((res) => {
               if (res.data.code === 0) {
                 this.form = res.data.tActivitiesInfo
-                for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
-                  this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+                if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
+                  for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                    this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+                  }
+                } else {
+                  return
                 }
               } else {
                 this.$message({
@@ -803,6 +806,7 @@
         this.title = '赳赳乐享活动添加'
       }, // 详情返回按钮
       modifyRecord: function (scope) {
+        this.$refs['formA'].resetFields()
         this.activeName2 = 'second'
         this.show = false
         this.saveUp = true
@@ -811,8 +815,12 @@
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
-              for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
-                this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+              if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
+                for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                  this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
+                }
+              } else {
+                return
               }
             } else {
               this.$message({
@@ -874,7 +882,6 @@
       },
       modifyOrder (val) {
         this.modifyRank = val
-        console.log(this.focusId, val)
         var obj = this.modifyOrders.find(item => item.id === this.focusId)
         if (val !== undefined && val.trim() !== '') {
           if (this.focusRank === val) {  // 修改的值是原始的值
@@ -958,17 +965,39 @@
         this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length
       },
       addNewRecord: function () {
+        this.$refs['formA'].resetFields()
         this.activeName2 = 'second'
         this.show = false
         this.saveUp = true
         this.add = true
         this.title = '赳赳乐享活动添加'
         this.checkedCities = []
-        this.form = {}
-        this.formList = {}
+        this.form = {
+          type: '',
+          isLeXiang: '',
+          redPackage: '',
+          beginTime: '',
+          endTime: '',
+          showTime: '',
+          hideTime: '',
+          addTime: '',
+          description: '',
+          creditLimit: '',
+          sort: '',
+          activityPath: '',
+          videoPath: '',
+          formList: [],
+          shareTitle: '',
+          shareUrl: '',
+          shareContent: '',
+          state: '',
+          cityName: '',
+          updateTime: '',
+          remarks: ''
+        }
+        this.formList = []
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
-            console.log(res)
             if (res.data.code === 1) {
               this.form.sort = res.data.tActivitiesInfo.sort
             } else {
@@ -983,6 +1012,10 @@
               message: '请求失败'
             })
           })
+      },
+      onCheckboxChange (value) {
+        console.log(value)
+        console.log(this.formList)
       }
     }
   }
