@@ -19,7 +19,7 @@
    * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
    */
   var URL = '/static/ueditor1_4_3_3/' || getUEBasePath()
-  // serverUrl: 'http://116.231.72.55:10001/a/electric/ossutil/interface/policy?user_dir=zhang',
+  // serverUrl: 'http://116.231.72.55:10001/a/electric/ossutil/interface/policy?user_dir=cmsContent',
 //   imagePathFormat: 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com',
   /**
    * 配置项主体。注意，此处所有涉及到路径的配置别遗漏URL变量。
@@ -32,7 +32,7 @@
     // 个人修改配置
     // 服务器统一请求接口路径
     // serverUrl: URL + 'php/controller.php',
-    serverUrl: 'http://116.231.72.55:10001/a/electric/ossutil/interface/policy?user_dir=zhang',
+    serverUrl: 'http://116.231.72.55:10001/a/electric/ossutil/interface/policy?user_dir=cmsContent',
     // imagePathFormat(指定文件上传路径和返回路径)
     imagePathFormat: 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com',
     // 工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义

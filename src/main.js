@@ -8,10 +8,8 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
-// import VueResource from 'vue-resource'
 import VueMoment from 'vue-moment'
 import 'jquery'
-import 'ztree'
 
 import Axios from 'axios'
 
@@ -21,9 +19,6 @@ Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded
 
 Vue.use(VueMoment)
 // global.$ = global.jQuery = $
-
-// Vue.use(VueResource)
-// Vue.http.options.root = 'http://116.231.72.55:10001/a'
 
 Vue.config.productionTip = false
 
@@ -37,7 +32,7 @@ Vue.filter('convertDate', function (value) {
   return Moment(value).format('HH:mm:ss')
 })
 Vue.filter('AddDate', function (value) {
-  var nevalue = new Date(value)
+  let nevalue = new Date(value)
   return Moment(nevalue).format('YYYY-MM-DD HH:mm:ss')
 })
 // Moment：结束

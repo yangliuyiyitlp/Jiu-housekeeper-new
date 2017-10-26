@@ -124,7 +124,7 @@
             label="城市名称"
             show-overflow-tooltip
             width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
             </template>
           </el-table-column>
