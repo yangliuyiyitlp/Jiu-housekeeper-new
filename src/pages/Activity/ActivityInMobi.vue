@@ -48,10 +48,13 @@
       <input name="displayType" v-model="exportParam.displayType"/>
       <input name="androidInmobiId" v-model="exportParam.androidInmobiId"/>
       <input name="iosInmobiId" v-model="exportParam.iosInmobiId"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>
     <el-table
       :data="tableData"
       border
+      stripe
       show-header
       style="width: 100%"
       fit
@@ -208,7 +211,8 @@
       </div>
     </el-dialog>
     <!--导出弹框-->
-    <el-dialog size='tiny'title="导出" :visible.sync="exportFormVisible" :show-close="false" :close-on-press-escape="false"
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="exportCurrent">导出当前页</el-button>
       <el-button @click="exportAll">导出所有</el-button>
@@ -320,44 +324,39 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-
-// 下面是原先代码
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
-          .then(function (res) {
+          .then((res) => {
             for (var i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
-          }.bind(this))
-          .then(function () {
             this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_type'}})
-              .then(function (res) {
+              .then((res) => {
                 for (var i = 0; i < res.data.length; i++) {
                   this.typeObj[res.data[i].value] = res.data[i].label
                 }
-              }.bind(this))
-          }.bind(this))
-          .then(function () {
-            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam}).then(function (response) {
-              if (response.data.code === 0) {
-                this.tableData = response.data.page.list
-                for (var i = 0; i < response.data.page.list.length; i++) {
-                  this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
-                  this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
-                }
-                this.pagination.count = response.data.page.count
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: response.data.msg
-                })
-              }
-            }.bind(this), function () {
-              this.$message({
-                type: 'info',
-                message: '获取失败'
+                this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam})
+                  .then((response) => {
+                    if (response.data.code === 0) {
+                      this.tableData = response.data.page.list
+                      for (var i = 0; i < response.data.page.list.length; i++) {
+                        this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
+                        this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
+                      }
+                      this.pagination.count = response.data.page.count
+                    } else {
+                      this.$message({
+                        type: 'error',
+                        message: response.data.msg
+                      })
+                    }
+                  }, function () {
+                    this.$message({
+                      type: 'info',
+                      message: '获取失败'
+                    })
+                  }.bind(this))
               })
-            }.bind(this))
-          }.bind(this))
+          })
           .catch(() => {
             this.$message({
               type: 'info',
@@ -497,10 +496,12 @@
       },
       handleSizeChange: function (val) {
         this.requestParam.pageSize = val
+        this.pagination.pageSize = val
         this.query()
       },
       handleCurrentChange: function (val) {
         this.requestParam.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       addNewRecord: function () {

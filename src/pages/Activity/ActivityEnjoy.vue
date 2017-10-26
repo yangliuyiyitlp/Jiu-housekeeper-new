@@ -42,7 +42,7 @@
             </el-input>
           </el-form-item>
 
-          <el-form-item label="生效-失效时间">
+          <el-form-item label="生效时间:">
             <el-date-picker
               v-model="requestParam.beginBeginTime"
               type="datetime"
@@ -54,7 +54,7 @@
               placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="展示-隐藏时间">
+          <el-form-item label="展示时间:">
             <el-date-picker
               v-model="requestParam.beginEndTime"
               type="datetime"
@@ -66,7 +66,7 @@
               placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="添加时间">
+          <el-form-item label="添加时间:">
             <el-date-picker
               v-model="requestParam.beginAddTime"
               type="datetime"
@@ -103,6 +103,8 @@
           <input name="endEndTime" v-model="exportParam.endEndTime"/>
           <input name="beginAddTime" v-model="exportParam.beginAddTime"/>
           <input name="endAddTime" v-model="exportParam.endAddTime"/>
+          <input name="pageSize" v-model="exportParam.pageSize"/>
+          <input name="pageNo" v-model="exportParam.pageNo"/>
         </form>
         <!--表格-->
         <el-table
@@ -115,6 +117,7 @@
             prop="id"
             label="id"
             show-overflow-tooltip
+            v-if=0
           >
           </el-table-column>
           <el-table-column
@@ -122,9 +125,10 @@
             align="center"
             prop="cityName"
             label="城市名称"
+            fixed="left"
             show-overflow-tooltip
             width="100">
-            <template slot-scope="scope">
+            <template scope="scope">
               <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
             </template>
           </el-table-column>
@@ -210,6 +214,7 @@
             align="center"
             prop="shareTitle"
             label="分享标题"
+            show-overflow-tooltip
             width="100">
           </el-table-column>
           <el-table-column
@@ -318,7 +323,7 @@
           </el-form-item>
 
           <el-form-item label="活动类型:" prop='type'>
-            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange">
+            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange" :disabled=show>
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
                          :value=key></el-option>
             </el-select>
@@ -335,8 +340,21 @@
             <el-input v-model="form.creditLimit" :disabled=show></el-input>
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
+          <!--<el-form-item label="封面图片:" prop='imgPath'>-->
+          <!--{{form.imgPath}}-->
+          <!--</el-form-item>-->
+
           <el-form-item label="封面图片:" prop='imgPath'>
-            {{form.imgPath}}
+            <el-input v-model="form.imgPath" v-show='false' :disabled=show></el-input>
+            <el-upload
+              :disabled=show
+              class="upload-demo"
+              ref="upload"
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token"
+              :before-upload="beforeUploadImgPath">
+              <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+            </el-upload>
           </el-form-item>
 
           <el-form-item label="展示顺序:" prop='sort'>
@@ -346,12 +364,24 @@
           <el-form-item label="活动链接:" prop='activityPath'>
             <el-input v-model="form.activityPath" :disabled=show></el-input>
           </el-form-item>
-          <div v-show="video">
+          <div v-if="video">
             <el-form-item label="视频链接:">
               <el-input v-model="form.videoPath" :disabled=show></el-input>
             </el-form-item>
+            <!--<el-form-item label="视频封面:" prop='coverPath'>-->
+            <!--<el-input v-model="form.coverPath" :disabled=show></el-input>-->
+            <!--</el-form-item>-->
             <el-form-item label="视频封面:" prop='coverPath'>
-              <el-input v-model="form.coverPath" :disabled=show></el-input>
+              <el-input v-model="form.coverPath" v-show='false' :disabled=show></el-input>
+              <el-upload
+                :disabled=show
+                class="upload-demo"
+                ref="upload"
+                action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                :data="Token"
+                :before-upload="beforeUploadCoverPath">
+                <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+              </el-upload>
             </el-form-item>
             <el-form-item label="有无红包:">
               <el-select v-model="form.redPackage" clearable class="selectInput" :disabled=show>
@@ -361,22 +391,25 @@
             </el-form-item>
           </div>
           <el-form-item label="分享平台:">
-            <el-checkbox-group v-model="formList" @change="onCheckboxChange">
-              <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key></el-checkbox>
+            <el-checkbox-group v-model="formList" @change="onCheckboxChange" ref='checkShare'>
+              <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key
+                           :disabled=show></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="分享标题:" prop='shareTitle'>
-            <el-input v-model="form.shareTitle" :disabled=show></el-input>
-          </el-form-item>
-          <el-form-item label="分享图片链接:" prop='sharePic'>
-            {{form.sharePic}}
-          </el-form-item>
-          <el-form-item label="分享链接:" prop='shareUrl'>
-            <el-input v-model="form.shareUrl" :disabled=show></el-input>
-          </el-form-item>
-          <el-form-item label="分享内容:" prop='shareContent'>
-            <el-input v-model="form.shareContent" :disabled=show></el-input>
-          </el-form-item>
+          <div v-if='enjoy'>
+            <el-form-item label="分享标题:" prop='shareTitle'>
+              <el-input v-model="form.shareTitle" :disabled=show></el-input>
+            </el-form-item>
+            <el-form-item label="分享图片链接:" prop='sharePic'>
+              <el-input v-model="form.sharePic" :disabled=show></el-input>
+            </el-form-item>
+            <el-form-item label="分享链接:" prop='shareUrl'>
+              <el-input v-model="form.shareUrl" :disabled=show></el-input>
+            </el-form-item>
+            <el-form-item label="分享内容:" prop='shareContent'>
+              <el-input v-model="form.shareContent" :disabled=show></el-input>
+            </el-form-item>
+          </div>
           <el-form-item label="是否默认:" :disabled=show>
             <el-select v-model="form.state" clearable class="selectInput" :disabled=show
                        @change="onActivityStateChange">
@@ -384,7 +417,7 @@
                          :value=key></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="城市名称:">
+          <el-form-item label="城市名称:" prop="cityName">
             <el-input v-model="form.cityName" :disabled=show></el-input>
             <span v-if="add">添加模式下，城市的添加以《快速添加到城市》的选项为准</span>
           </el-form-item>
@@ -464,6 +497,7 @@
         add: false,
         show: true,
         saveUp: false,
+        enjoy: false, //  分享
 //        bike: true,
         video: true, // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
         activeState: {}, // 是否默认
@@ -496,17 +530,11 @@
         moreFormVisible: false,   // 详情
         exportFormVisible: false,
         addLoading: false,       // 是否显示loading
-        moreInfo: {
-          cityName: '',
-          rank: '',
-          type: '',
-          displayType: '',
-          androidInmobiId: '',
-          iosInmobiId: '',
-          remarks: ''
-        },
         formLabelWidth: '80px',
         rules: {
+          cityName: [
+            {required: true, message: '请输入城市名称', trigger: 'blur'}
+          ],
           description: [
             {required: true, message: '请输入活动描述', trigger: 'blur'}
           ],
@@ -565,7 +593,8 @@
         modifyOrders: [],
         focusId: '',
         focusRank: '',
-        modifyRank: ''
+        modifyRank: '',
+        Token: {}
       }
     },
     methods: {
@@ -628,7 +657,7 @@
                               .catch(() => {
                                 this.$message({
                                   type: 'info',
-                                  message: '获取列表失败'
+                                  message: '列表获取失败'
                                 })
                               })
                           })
@@ -695,14 +724,14 @@
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '列表获取失败'
               })
             }
           })// 请求列表
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '获取列表失败'
+              message: '列表获取失败'
             })
           })
       },
@@ -753,7 +782,7 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
-        this.exportParam.pageSize = this.pagination.pageNo
+        this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
         this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/export')
         this.$refs['FileForm'].submit()
@@ -766,10 +795,12 @@
       },     // 导出所有
       handleSizeChange: function (val) {
         this.requestParam.pageSize = val
+        this.pagination.pageSize = val
         this.query()
       },   // 分页
       handleCurrentChange: function (val) {
         this.requestParam.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       more: function (row, column, cell, event) {
@@ -779,6 +810,7 @@
           this.activeName2 = 'second'
           this.title = '赳赳乐享活动详情'
           this.show = true
+          this.add = false
           this.saveUp = false
           this.bike = true
           this.$ajax.get('/electric/tActivitiesInfo/interface/view_form', {params: {id: row.id}})
@@ -810,16 +842,22 @@
         this.activeName2 = 'second'
         this.show = false
         this.saveUp = true
+        this.add = false
         this.title = '赳赳乐享活动修改'
+        this.formList = []
         this.$ajax.get('/electric/tActivitiesInfo/interface/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
+              this.form.cityName = res.data.tActivitiesInfo.cityName
+              console.log(res.data.tActivitiesInfo.sharePlatformList.length)
               if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
                 for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
                   this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
                 }
+                this.enjoy = true
               } else {
+                this.enjoy = false
                 return
               }
             } else {
@@ -828,6 +866,11 @@
                 message: res.data.msg
               })
             }
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取失败'
+            })
           })
       }, // 修改
       onActivityTypeChange (value) {
@@ -993,9 +1036,11 @@
           state: '',
           cityName: '',
           updateTime: '',
-          remarks: ''
+          remarks: '',
+          imgPath: ''
         }
         this.formList = []
+        console.log('1' + this.form.imgPath)
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
             if (res.data.code === 1) {
@@ -1012,10 +1057,53 @@
               message: '请求失败'
             })
           })
-      },
+      }, // 新增
       onCheckboxChange (value) {
-        console.log(value)
-        console.log(this.formList)
+        if (value.length >= 1) {
+          console.log(value.length)
+          this.enjoy = true
+        } else if (value.length < 1) {
+          this.enjoy = false
+        }
+      },
+      // 上传组件获取oss相关
+      beforeUploadImgPath (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
+            .then((res) => {
+              this.Token = res.data
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+              this.Token.OSSAccessKeyId = res.data.accessid
+              // oss上图片的路由
+              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              resolve()
+            })
+            .catch(err => {
+              this.$message({
+                message: err.data.msg,
+                type: 'error'
+              })
+            })
+        })
+      },
+      beforeUploadCoverPath (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
+            .then((res) => {
+              this.Token = res.data
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+              this.Token.OSSAccessKeyId = res.data.accessid
+              // oss上图片的路由
+              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              resolve()
+            })
+            .catch(err => {
+              this.$message({
+                message: err.data.msg,
+                type: 'error'
+              })
+            })
+        })
       }
     }
   }

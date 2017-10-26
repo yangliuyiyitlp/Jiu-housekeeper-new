@@ -50,6 +50,7 @@
       border
       show-header
       style="width: 100%"
+      stripe
       @cell-click="more">
       <el-table-column
         prop="id"
@@ -399,10 +400,12 @@
       },
       handleSizeChange (val) {
         this.requestParam.pageSize = val
+        this.pagination.pageSize = val
         this.query()
       },
       handleCurrentChange (val) {
         this.requestParam.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       addNewRecord () {
