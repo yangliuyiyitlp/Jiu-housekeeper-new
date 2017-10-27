@@ -340,27 +340,39 @@
             <el-input v-model="form.creditLimit" :disabled=show></el-input>
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
-          <!--<el-form-item label="封面图片:" prop='imgPath'>-->
-          <!--{{form.imgPath}}-->
-          <!--</el-form-item>-->
 
+          <!--<el-form-item label="封面图片:" prop='imgPath'>-->
+          <!--<el-input v-model="form.imgPath" v-show='false'></el-input>-->
+          <!--<img :src="form.imgPath" alt="封面图片" :disabled=show>-->
+          <!--<el-upload-->
+            <!--:disabled=show-->
+            <!--class="upload-demo"-->
+            <!--ref="upload"-->
+            <!--action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'-->
+            <!--:data="Token"-->
+            <!--:before-upload="beforeUploadImgPath">-->
+            <!--<el-button slot="trigger" size="small" type="primary">选取图片</el-button>-->
+          <!--</el-upload>-->
+        <!--</el-form-item>-->
           <el-form-item label="封面图片:" prop='imgPath'>
-            <el-input v-model="form.imgPath" v-show='false' :disabled=show></el-input>
+            <el-input v-model="form.imgPath" v-show='false'></el-input>
             <el-upload
-              :disabled=show
-              class="upload-demo"
               ref="upload"
+              class="avatar-uploader"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
+              :show-file-list="false"
+              :disabled=show
               :before-upload="beforeUploadImgPath">
-              <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+              <img :src="form.imgPath" v-if="form.imgPath" alt="封面图片"class="avatar" :disabled=show>
+              <i v-else class="el-icon-plus
+              avatar-uploader-icon"></i>
             </el-upload>
           </el-form-item>
 
           <el-form-item label="展示顺序:" prop='sort'>
             <el-input v-model="form.sort" :disabled=show></el-input>
           </el-form-item>
-
           <el-form-item label="活动链接:" prop='activityPath'>
             <el-input v-model="form.activityPath" :disabled=show></el-input>
           </el-form-item>
@@ -368,11 +380,9 @@
             <el-form-item label="视频链接:">
               <el-input v-model="form.videoPath" :disabled=show></el-input>
             </el-form-item>
-            <!--<el-form-item label="视频封面:" prop='coverPath'>-->
-            <!--<el-input v-model="form.coverPath" :disabled=show></el-input>-->
-            <!--</el-form-item>-->
             <el-form-item label="视频封面:" prop='coverPath'>
-              <el-input v-model="form.coverPath" v-show='false' :disabled=show></el-input>
+              <el-input v-model="form.coverPath" v-show='false' ></el-input>
+              <img :src="form.coverPath" alt="视频封面" :disabled=show>
               <el-upload
                 :disabled=show
                 class="upload-demo"
@@ -482,7 +492,6 @@
 
 <script>
   import Moment from 'moment'
-
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   export default {
     created: function () {
@@ -497,8 +506,8 @@
         add: false,
         show: true,
         saveUp: false,
+        imgPathUrl: '',
         enjoy: false, //  分享
-//        bike: true,
         video: true, // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
         activeState: {}, // 是否默认
         executingState: {}, // 生效状态
@@ -523,7 +532,7 @@
           beginAddTime: '',
           endAddTime: ''
         },
-        form: {},
+        form: {'cityName': ''},
         formList: [],
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
@@ -594,7 +603,8 @@
         focusId: '',
         focusRank: '',
         modifyRank: '',
-        Token: {}
+        Token: {},
+        tempCityName: ''
       }
     },
     methods: {
@@ -629,46 +639,78 @@
                             for (var i = 0; i < res.data.length; i++) {
                               this.sharePlat[res.data[i].value] = res.data[i].label
                             }
-                            this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
-                              .then((res) => {
-                                if (res.data.code === 0) {
-                                  this.tableData = res.data.page.list
-                                  this.pagination.count = res.data.page.count
-                                  for (var i = 0; i < res.data.page.list.length; i++) {
-                                    this.tableData[i].state = this.activeState[res.data.page.list[i].state]
-                                    this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
-                                    this.tableData[i].type = this.activityType[res.data.page.list[i].type]
-                                    this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
-                                    this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
-                                    let arr = res.data.page.list[i].sharePlatform.split(',')
-                                    let newArr = []
-                                    for (let j = 0; j < arr.length; j++) {
-                                      newArr.push(this.sharePlat[arr[j]])
-                                    }
-                                    this.tableData[i].sharePlatform = newArr.join(',')
-                                  }
-                                } else {
-                                  this.$message({
-                                    type: 'error',
-                                    message: res.data.msg
-                                  })
-                                }
-                              })
-                              .catch(() => {
-                                this.$message({
-                                  type: 'info',
-                                  message: '列表获取失败'
-                                })
-                              })
-                          })
+                            this.getList()
+                          }).catch((error) => {
+                            console.error('查询share_platform失败', error)
+                            this.$message({
+                              type: 'info',
+                              message: '获取列表失败'
+                            })
+                          }) // yes_no
+                      }).catch((error) => {
+                        console.error('查询yes_no失败', error)
+                        this.$message({
+                          type: 'info',
+                          message: '获取列表失败'
+                        })
                       })
+                  }).catch((error) => {
+                    console.error('查询activitys_type失败', error)
+                    this.$message({
+                      type: 'info',
+                      message: '获取列表失败'
+                    })
                   })
+              }).catch((error) => {
+                console.error('查询black_list_is_executing失败', error)
+                this.$message({
+                  type: 'info',
+                  message: '获取列表失败'
+                })
               })
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error('查询activity_state失败', error)
             this.$message({
               type: 'info',
               message: '获取列表失败'
+            })
+          })
+      },
+      getList () {
+        this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.tableData = res.data.page.list
+              this.pagination.count = res.data.page.count
+              for (var i = 0; i < res.data.page.list.length; i++) {
+                this.tableData[i].state = this.activeState[res.data.page.list[i].state]
+                this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
+                this.tableData[i].type = this.activityType[res.data.page.list[i].type]
+                this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
+                this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
+                let sharePlatform = res.data.page.list[i].sharePlatform
+                if (sharePlatform !== '' && sharePlatform !== undefined) {
+                  let arr = res.data.page.list[i].sharePlatform.split(',')
+                  let newArr = []
+                  for (let j = 0; j < arr.length; j++) {
+                    newArr.push(this.sharePlat[arr[j]])
+                  }
+                  this.tableData[i].sharePlatform = newArr.join(',')
+                }
+              }
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.msg
+              })
+            }
+          })
+          .catch((error) => {
+            console.log('获取列表失败:', error)
+            this.$message({
+              type: 'error',
+              message: '列表获取失败'
             })
           })
       },
@@ -703,37 +745,7 @@
           }
         }
         this.requestParam.sharePlatform = arr.join(',')
-        this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
-          .then((res) => {
-            if (res.data.code === 0) {
-              this.tableData = res.data.page.list
-              this.pagination.count = res.data.page.count
-              for (var i = 0; i < res.data.page.list.length; i++) {
-                this.tableData[i].state = this.activeState[res.data.page.list[i].state]
-                this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
-                this.tableData[i].type = this.activityType[res.data.page.list[i].type]
-                this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
-                this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
-                let arr = res.data.page.list[i].sharePlatform.split(',')
-                let newArr = []
-                for (let j = 0; j < arr.length; j++) {
-                  newArr.push(this.sharePlat[arr[j]])
-                }
-                this.tableData[i].sharePlatform = newArr.join(',')
-              }
-            } else {
-              this.$message({
-                type: 'error',
-                message: '列表获取失败'
-              })
-            }
-          })// 请求列表
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '列表获取失败'
-            })
-          })
+        this.getList()
       },
       deleteRecord: function (id) {
         this.$confirm('确定删除?', '提示', {
@@ -804,6 +816,7 @@
         this.query()
       },
       more: function (row, column, cell, event) {
+        this.$refs['formA'].resetFields()
         if (column.property !== 'cityName') {
           return false
         } else {
@@ -849,8 +862,7 @@
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
-              this.form.cityName = res.data.tActivitiesInfo.cityName
-              console.log(res.data.tActivitiesInfo.sharePlatformList.length)
+              this.tempCityName = res.data.tActivitiesInfo.cityName
               if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
                 for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
                   this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
@@ -866,7 +878,8 @@
                 message: res.data.msg
               })
             }
-          }).catch(() => {
+          }).catch((error) => {
+            console.log('点击修改报错:', error)
             this.$message({
               type: 'error',
               message: '获取失败'
@@ -884,7 +897,7 @@
         if (value === '1') {
           this.form.cityName = 'default'
         } else {
-          this.form.cityName = ''
+          this.form.cityName = this.tempCityName
         }
       },
       doModify (formA) {       // 修改确定功能
@@ -905,7 +918,7 @@
                 } else {
                   this.$message({
                     type: 'error',
-                    message: response.data.msg
+                    message: '操作失败'
                   })
                 }
               }.bind(this), function () {
@@ -1040,7 +1053,6 @@
           imgPath: ''
         }
         this.formList = []
-        console.log('1' + this.form.imgPath)
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
             if (res.data.code === 1) {
@@ -1075,7 +1087,9 @@
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
               this.Token.OSSAccessKeyId = res.data.accessid
               // oss上图片的路由
-              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              console.log(2222 + JSON.stringify(this.Token))
+              console.log(this.form.imgPath)
               resolve()
             })
             .catch(err => {
@@ -1109,10 +1123,38 @@
   }
 </script>
 <style scoped>
+  /*图片开始*/
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .avatar-uploader .el-upload:hover {
+    border-color: #20a0ff;
+  }
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+  /*图片结束 */
   .selectInput {
     width: 300px;
   }
-
+  /*img{*/
+    /*width: 100px;*/
+    /*height:100px;*/
+  /*}*/
   .check-all {
     width: 150px;
     float: left;

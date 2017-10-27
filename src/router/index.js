@@ -30,6 +30,7 @@ import FacilityCount from '@/pages/Facility/bikessetting/FacilityCount.vue'
 import FacilityDetailed from '@/pages/Facility/bikessetting/FacilityDetailed.vue'
 import FacilityState from '@/pages/Facility/bikessetting/FacilityState.vue'
 import RegisterMod from '@/pages/Facility/RegisterMod.vue'
+import FacilityUnbund from '@/pages/Facility/bikessetting/FacilityUnbund.vue'
 // setting相关
 import SettingUser from '@/pages/Setting/User/User.vue'
 import SettingMechanism from '@/pages/Setting/User/Mechanism.vue'
@@ -119,7 +120,8 @@ export default new Router({
         {name: 'count', path: '/facilitycount', component: FacilityCount},
         {name: 'detailed', path: '/facilitydetailed', component: FacilityDetailed},
         {name: 'state', path: '/facilitystate', component: FacilityState},
-        {name: 'register', path: '/facilityregister', component: RegisterMod}
+        {name: 'register', path: '/facilityregister', component: RegisterMod},
+        {name: 'unbund', path: '/facilityunbund', component: FacilityUnbund}
       ]
     },
     {

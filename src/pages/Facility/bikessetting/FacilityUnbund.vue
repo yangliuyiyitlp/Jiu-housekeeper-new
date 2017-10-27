@@ -1,31 +1,21 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
-      <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
+    <el-form :inline="true" :model="requestParam" class="demo-form-inline left">
+      <el-form-item label="车辆编号：">
+        <el-input v-model="requestParam.bikeid"></el-input>
       </el-form-item>
-      <el-form-item label="锁厂编号">
-        <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
+      <el-form-item label="imei编号：">
+        <el-input v-model="requestParam.imei"></el-input>
       </el-form-item>
-      <el-form-item label="添加时间">
-        <el-date-picker
-          v-model="requestParam.beginAddTime"
-          type="datetime"
-          placeholder="开始时间">
-        </el-date-picker>
-        <el-date-picker
-          v-model="requestParam.endAddTime"
-          type="datetime"
-          placeholder="结束时间">
-        </el-date-picker>
+      <el-form-item label="设备ID：">
+        <el-input v-model="requestParam.deviceid"></el-input>
       </el-form-item>
-      <!--<el-form-item label="添加时间">-->
-      <!--<el-date-picker-->
-      <!--v-model="requestParam.selectTime"-->
-      <!--type="datetimerange"-->
-      <!--placeholder="选择时间范围">-->
-      <!--</el-date-picker>-->
-      <!--</el-form-item>-->
+      <el-form-item label="MAC地址：">
+        <el-input v-model="requestParam.blemac"></el-input>
+      </el-form-item>
+      <el-form-item label="iccid：">
+        <el-input v-model="requestParam.iccid"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
@@ -33,17 +23,23 @@
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="addNewRecord">新增</el-button>
+        <el-button type="primary" @click="exportFile">下载模板</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="exportFile">点击上传</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="exportFile">导入</el-button>
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
     <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
           method="post" ref="FileForm">
-      <input name="factoryName" v-model="exportParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="pageSize" v-model="exportParam.pageSize"/>
-      <input name="pageNo" v-model="exportParam.pageNo"/>
+      <input name="bikeid" v-model="exportParam.bikeid"/>
+      <input name="imei" v-model="exportParam.imei"/>
+      <input name="deviceid" v-model="exportParam.deviceid"/>
+      <input name="blemac" v-model="exportParam.blemac"/>
+      <input name="iccid" v-model="exportParam.iccid"/>
     </form>
     <el-table
       :data="tableData"
@@ -56,40 +52,40 @@
         prop="id"
         label="id" v-if=0> // id 隐藏
       </el-table-column>
-      // 返回的客户id
       <el-table-column
-        label="锁厂名称"
-        prop="factoryName">
+        label="车辆编号"
+        prop="bikeid">
         <template scope="scope">
-          <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
+          <span v-bind:class="{active: true}">{{ scope.row.bikeid}}</span>
         </template>
       </el-table-column>
       <el-table-column
-        prop="lockFactoryNo"
-        label="锁厂家编号	">
+        prop="imei"
+        label="imei编号">
       </el-table-column>
       <el-table-column
-        label="添加时间">
+        prop="deviceid"
+        label="设备ID">
+      </el-table-column>
+      <el-table-column
+        prop="blemac"
+        label="MAC地址">
+      </el-table-column>
+      <el-table-column
+        prop="iccid"
+        label="iccid">
+      </el-table-column>
+      <el-table-column
+        label="update_date">
         <template scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
+          <span style="margin-left: 10px">{{ scope.row.updateDate}}</span>
         </template>
-      </el-table-column>
-      <el-table-column
-        prop="createBy.id"
-        label="操作者	"> // 返回空就是没有
       </el-table-column>
       <el-table-column
         prop="remarks"
         show-overflow-tooltip
         label="备注">
-      </el-table-column>
-      <el-table-column
-        label="操作">
-        <template scope="scope">
-          <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
-          <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
-        </template>
       </el-table-column>
     </el-table>
     <el-pagination
@@ -101,26 +97,6 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.count">
     </el-pagination>
-    <!--增加修改弹框-->
-    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible"size="small" :show-close="false" :close-on-press-escape="false"
-               :close-on-click-modal="false" class="demo-ruleForm ">
-
-      <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="addBody">
-        <el-form-item label="厂家名称" prop="factoryName" class="elform">
-          <el-input v-model="form.factoryName"></el-input>
-        </el-form-item>
-        <el-form-item label="锁厂家编号" prop="lockFactoryNo" class="elform">
-          <el-input v-model="form.lockFactoryNo"></el-input>
-        </el-form-item>
-        <el-form-item label="备注" prop="remarks" class="elform">
-          <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelOperate">取 消</el-button>
-        <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
-      </div>
-    </el-dialog>
     <!--详情弹框-->
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
@@ -163,7 +139,6 @@
 </template>
 
 <script>
-  import Moment from 'moment'
   export default {
     created: function () {
       this.query()
@@ -177,44 +152,40 @@
         addLoading: false,       // 是否显示loading
         form: {
           id: '',
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
+          bikeid: '',
+          imei: '',
+          deviceid: '',
+          blemac: '',
+          iccid: '',
           remarks: ''
-        },
-        moreinfo: {
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
-          remarks: '',
-          addTime: '',
-          updateDate: ''
         },
         formLabelWidth: '80px',
         requestParam: {
-//          selectTime: '',
-          beginAddTime: '',
-          endAddTime: '',
-          factoryName: '',
-          lockFactoryNo: '',
+          id: '',
+          bikeid: '',
+          imei: '',
+          deviceid: '',
+          blemac: '',
+          iccid: '',
           pageSize: 30,
           pageNo: 1
         },
+        moreinfo: {},
         rules: {
-          factoryName: [
+          bikeid: [
             {required: true, message: '请输入厂家名称', trigger: 'blur'}
           ],
-          lockFactoryNo: [
+          imei: [
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
-//          selectTime: '',
-          beginAddTime: '',
-          endAddTime: '',
-          factoryName: '',
-          lockFactoryNo: '',
+          bikeid: '',
+          imei: '',
+          deviceid: '',
+          blemac: '',
+          iccid: '',
           pageSize: 30,
           pageNo: 1
         }
@@ -222,43 +193,20 @@
     },
     methods: {
       query () {
-        this.requestParam.factoryName = this.requestParam.factoryName.trim()
-        this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
-        this.exportParam.factoryName = this.requestParam.factoryName
-        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.exportParam.beginAddTime = this.requestParam.beginAddTime
-        this.exportParam.endAddTime = this.requestParam.endAddTime
+        this.requestParam.bikeid = this.requestParam.bikeid.trim()
+        this.requestParam.imei = this.requestParam.imei.trim()
+        this.requestParam.deviceid = this.requestParam.deviceid.trim()
+        this.requestParam.blemac = this.requestParam.blemac.trim()
+        this.requestParam.iccid = this.requestParam.iccid.trim()
+        this.exportParam.bikeid = this.requestParam.bikeid
+        this.exportParam.imei = this.requestParam.imei
+        this.exportParam.deviceid = this.requestParam.deviceid
+        this.exportParam.blemac = this.requestParam.blemac
+        this.exportParam.iccid = this.requestParam.iccid
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-//        this.$ajax(
-//          {
-//            method: 'post',
-//            url: 'electric/lockfactoryinfo/interface/list',
-//            data: this.requestParam,
-//            headers: {
-//              'Content-Type': 'multipart/form-data'
-//            }
-//          }
-//        )
-//        .then(function (response) {
-//          if (response.data.code === 0) {
-//            this.tableData = response.data.page.list
-//            this.pagination.count = response.data.page.count
-//          } else {
-//            this.$message({
-//              type: 'info',
-//              message: '获取列表信息失败'
-//            })
-//          }
-//        }, function (err) {
-//          this.$message({
-//            type: 'info',
-//            message: '获取列表信息失败' + err.status
-//          })
-//        })
-        this.$ajax.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(response => {
+        this.$ajax.get('electric/tUnbangdingFail/interface/list', {params: this.requestParam}).then(response => {
+          console.log(response)
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -276,56 +224,16 @@
         })
       },
       modifyRecord (scope) {
-        this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
-          .then(res => {
-            if (res.data.code === 0) {
-              this.dialogFormVisible = true
-              this.form.id = res.data.tLockFactoryInfo.id
-              this.form.factoryName = res.data.tLockFactoryInfo.factoryName
-              this.form.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
-//              this.form['createBy.id'] = res.datatLockFactoryInfo['createBy.id']
-              this.form.remarks = res.data.tLockFactoryInfo.remarks
-            }
-          })
-      },
-      deleteRecord (id) {
-        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (id !== undefined) {
-            // 调用后台服务
-            // 删除元素
-            this.$ajax.get('electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(response => {
-              if (response.data.code === 0) {
-                // 删除成功
-                this.$message({
-                  type: 'success',
-                  message: '删除成功'
-                })
-                this.$refs['formA'].resetFields()
-                // 刷新页面
-                this.query()
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: response.data.msg
-                })
-              }
-            }, () => {
-              this.$message({
-                type: 'error',
-                message: '删除记录失败'
-              })
-            })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
+//        this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
+//          .then(res => {
+//            if (res.data.code === 0) {
+//              this.dialogFormVisible = true
+//              this.form.id = res.data.tLockFactoryInfo.id
+//              this.form.factoryName = res.data.tLockFactoryInfo.factoryName
+//              this.form.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
+//              this.form.remarks = res.data.tLockFactoryInfo.remarks
+//            }
+//          })
       },
       doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
@@ -363,17 +271,6 @@
           }
         })
       },
-      cancelOperate () {
-        this.dialogFormVisible = false
-        this.form = {
-          factoryName: '',
-          lockFactoryNo: '',
-          id: '',
-          'createBy.id': '',
-          remarks: ''
-        }
-        this.$refs['formA'].resetFields()
-      },
       more (row, column, cell, event) {
         if (column.property !== 'factoryName') {
           return false
@@ -408,16 +305,6 @@
         this.pagination.pageNo = val
         this.query()
       },
-      addNewRecord () {
-        this.form = {
-          id: '',
-          factoryName: '',
-          lockFactoryNo: '',
-          'createBy.id': '',
-          remarks: ''
-        }
-        this.dialogFormVisible = true
-      },
       exportFile () {
         this.exportFormVisible = true
       },
@@ -450,8 +337,8 @@
   }
 </script>
 <style scoped>
-  #dataGrid {
-
+  .left{
+    padding-left:10px;
   }
 
   form {

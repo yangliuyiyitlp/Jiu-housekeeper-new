@@ -31,6 +31,9 @@
           }, {
             label: '锁状态明细表',
             name: 'state'
+          }, {
+            label: '解绑失败明细',
+            name: 'unbund'
           }]
         }, {
           label: '锁厂登记表',

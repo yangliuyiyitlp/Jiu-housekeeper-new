@@ -52,21 +52,21 @@
       </el-table-column>
       <el-table-column
         label="登录状态">
-        <template slot-scope="scope">
+        <template scope="scope">
           <div v-if="scope.row.loginStatus==='true'">是</div>
           <div v-else>否</div>
         </template>
       </el-table-column>
       <el-table-column
         label="添加时间">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -165,29 +165,29 @@
           })
         })
       },
-      query: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.requestParam
-        } else {
-          param = condition
-        }
-        console.log(param)
-        console.log(this.$qs.stringify(param))
-        this.$http.post('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }).then(function (response) {
-          this.tableData = response.page.list
-          this.pagination.total = response.page.pageNo
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
-      },
+//      query: function (condition) {
+//        var param = {}
+//        if (condition === 'condition') {
+//          param = this.requestParam
+//        } else {
+//          param = condition
+//        }
+//        console.log(param)
+//       console.log(this.$qs.stringify(param))
+//        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
+//          headers: {
+//            'Content-Type': 'application/x-www-form-urlencoded'
+//          }
+//        }).then(function (response) {
+//          this.tableData = response.page.list
+//          this.pagination.total = response.page.pageNo
+//        }, function (err) {
+//          this.$message({
+//            type: 'info',
+//            message: '获取列表信息失败' + err.status
+//          })
+//        })
+//      },
       modifyRecord: function (scope) {
         console.log(scope)
         this.dialogFormVisible = true
@@ -255,7 +255,7 @@
               url = '/dataGrid/modify'
             }
             this.dialogFormVisible = false
-            this.$http.post(url, JSON.stringify(this.form)).then(function (response) {
+            this.$http.post(url, {params: this.form}).then(function (response) {
               if (response.data.code === '1') {
                 // 更新成功
                 this.$message({
