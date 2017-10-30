@@ -26,10 +26,10 @@
         <el-button type="primary" @click="downLoad">下载模板</el-button>
       </el-form-item>
     </el-form>
-    <el-form class='importForm' >
+    <el-form class='importForm'>
       <el-form-item label="点击上传：">
         <input ref='upload' type="file" @change="getFile">
-        <button @click="importFile('formName')">导入</button>
+        <button @click="importFile">导入</button>
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
@@ -296,9 +296,12 @@
       getFile: function ($event) {
         this.ruleForm.avatarTwo = $event.target.files[0]
       },
-      importFile (formName) {
+      importFile ($event) {
+        $event.preventDefault()
         let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
-        formData.append('fileTwo', this.ruleForm.avatarTwo) // 其他的一些参数
+        console.log(111, this.ruleForm.avatarTwo)
+        formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
+        console.log(JSON.stringify(formData))
         this.$ajax(
           {
             method: 'post',
@@ -308,15 +311,20 @@
               'Content-Type': 'multipart/form-data'
             }
           }
-        ).then(function (response) {
-//          this.$message({
-//            message: response.data,
-//            type: 'success'
-//          })
+        ).then((response) => {
+          this.$message({
+            message: response.data.msg,
+            type: 'success'
+          })
+          console.log(2222222)
           this.query()
           console.log(response.data)
-        }).catch(function (error) {
+        }).catch((error) => {
           console.log(error)
+          this.$message({
+            message: error.data.msg,
+            type: 'error'
+          })
         })
 //        以上是文件上传功能
       }
