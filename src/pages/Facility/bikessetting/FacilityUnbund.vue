@@ -23,13 +23,13 @@
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="exportFile">下载模板</el-button>
+        <el-button type="primary" @click="downLoad">下载模板</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="exportFile">点击上传</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="exportFile">导入</el-button>
+    </el-form>
+    <el-form class='importForm' >
+      <el-form-item label="点击上传：">
+        <input ref='upload' type="file" @change="getFile">
+        <button @click="importFile('formName')">导入</button>
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
@@ -101,24 +101,27 @@
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px" :model="moreinfo" ref="formA" class="tbody">
-        <el-form-item label="锁厂名称" class="elform">
-          <el-input :value="moreinfo.factoryName" :disabled="true"></el-input>
+      <el-form label-width="150px" :model="moreInfo" ref="formA" class="tbody">
+        <el-form-item label="车辆编号：" class="elform">
+          <el-input :value="moreInfo.bikeid" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="锁厂家编号" class="elform">
-          <el-input :value="moreinfo.lockFactoryNo" :disabled="true"></el-input>
+        <el-form-item label="imei编号：" class="elform">
+          <el-input :value="moreInfo.imei" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="添加时间" class="elform">
-          <el-input :value="moreinfo.addTime" :disabled="true"></el-input>
+        <el-form-item label="设备ID：" class="elform">
+          <el-input :value="moreInfo.deviceid" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="更新时间" class="elform">
-          <el-input :value="moreinfo.updateDate" :disabled="true"></el-input>
+        <el-form-item label="MAC地址：" class="elform">
+          <el-input :value="moreInfo.blemac" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="操作者" class="elform">
-          <el-input :value="moreinfo['createBy.id']" :disabled="true"></el-input>
+        <el-form-item label="iccid：" class="elform">
+          <el-input :value="moreInfo.iccid" :disabled="true"></el-input>
         </el-form-item>
-        <el-form-item label="备注" class="elform">
-          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
+        <el-form-item label="updateDate：" class="elform">
+          <el-input :value="moreInfo.updateDate" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="备注：" class="elform">
+          <el-input type="textarea" :row="3" :value="moreInfo.remarks" :disabled="true" style="resize:none"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -146,10 +149,8 @@
     data: function () {
       return {
         tableData: [],
-        dialogFormVisible: false,  // 增加修改是否显示
         moreFormVisible: false,   // 详情
         exportFormVisible: false,
-        addLoading: false,       // 是否显示loading
         form: {
           id: '',
           bikeid: '',
@@ -170,14 +171,9 @@
           pageSize: 30,
           pageNo: 1
         },
-        moreinfo: {},
-        rules: {
-          bikeid: [
-            {required: true, message: '请输入厂家名称', trigger: 'blur'}
-          ],
-          imei: [
-            {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
-          ]
+        moreInfo: {},
+        ruleForm: {
+          avatarTwo: ''
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
@@ -206,7 +202,6 @@
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
         this.$ajax.get('electric/tUnbangdingFail/interface/list', {params: this.requestParam}).then(response => {
-          console.log(response)
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -223,67 +218,22 @@
           })
         })
       },
-      modifyRecord (scope) {
-//        this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
-//          .then(res => {
-//            if (res.data.code === 0) {
-//              this.dialogFormVisible = true
-//              this.form.id = res.data.tLockFactoryInfo.id
-//              this.form.factoryName = res.data.tLockFactoryInfo.factoryName
-//              this.form.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
-//              this.form.remarks = res.data.tLockFactoryInfo.remarks
-//            }
-//          })
-      },
-      doModify (formName) {       // 修改确定功能
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            var url = ''
-            if (this.form.id === undefined || this.form.id === '') {
-              url = 'electric/lockfactoryinfo/interface/save' // 新增功能
-            } else {
-              url = 'electric/lockfactoryinfo/interface/save'
-            }
-            this.dialogFormVisible = false
-            this.$ajax.get(url, {params: this.form}).then(response => {
-              if (response.data.code === 0) {
-                // 更新成功
-                this.$message({
-                  type: 'success',
-                  message: '操作成功'
-                })
-                // 刷新页面
-                this.query()
-              } else {
-                this.$message({
-                  type: 'error',
-                  message: response.data.msg
-                })
-              }
-            }, () => {
-              this.$message({
-                type: 'error',
-                message: '操作失败'
-              })
-            })
-          } else {
-            return
-          }
-        })
-      },
       more (row, column, cell, event) {
-        if (column.property !== 'factoryName') {
+        if (column.property !== 'bikeid') {
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('electric/lockfactoryinfo/interface/view_form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('electric/tUnbangdingFail/interface/view_form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
-              this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
-              this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
-              this.moreinfo.factoryName = res.data.tLockFactoryInfo.factoryName
-              this.moreinfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
-              this.moreinfo.addTime = res.data.tLockFactoryInfo.addTime
+              this.moreInfo.bikeid = res.data.tUnbangdingFail.bikeid
+              this.moreInfo.imei = res.data.tUnbangdingFail.imei
+              this.moreInfo.deviceid = res.data.tUnbangdingFail.deviceid
+              this.moreInfo.blemac = res.data.tUnbangdingFail.blemac
+              this.moreInfo.iccid = res.data.tUnbangdingFail.iccid
+              this.moreInfo.updateDate = res.data.tUnbangdingFail.updateDate
+              this.moreInfo.remarks = res.data.tUnbangdingFail.remarks
             }
+            console.log(this.moreInfo)
           }).catch((err) => {
             this.$message({
               type: 'error',
@@ -316,7 +266,7 @@
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
+          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/tUnbangdingFail/interface/export')
           this.$refs['FileForm'].submit()
         } else {
           return
@@ -327,18 +277,55 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
+          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/tUnbangdingFail/interface/exportAll')
           this.$refs['FileForm'].submit()
         } else {
           return
         }
+      },
+      downLoad () {
+        var r = confirm('确定下载么')
+        if (r === true) {
+          this.$ajax.get('electric/tUnbangdingFail/interface/import/template').then((res) => {
+            console.log(res)
+          })
+        } else {
+          return
+        }
+      },
+      getFile: function ($event) {
+        this.ruleForm.avatarTwo = $event.target.files[0]
+      },
+      importFile (formName) {
+        let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
+        formData.append('fileTwo', this.ruleForm.avatarTwo) // 其他的一些参数
+        this.$ajax(
+          {
+            method: 'post',
+            url: 'electric/tUnbangdingFail/interface/import',
+            data: formData,
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }
+        ).then(function (response) {
+//          this.$message({
+//            message: response.data,
+//            type: 'success'
+//          })
+          this.query()
+          console.log(response.data)
+        }).catch(function (error) {
+          console.log(error)
+        })
+//        以上是文件上传功能
       }
     }
   }
 </script>
 <style scoped>
-  .left{
-    padding-left:10px;
+  .left {
+    padding-left: 10px;
   }
 
   form {
@@ -346,47 +333,34 @@
     height: 75px;
   }
 
+  .importForm {
+    height: 0px;
+    padding-left: 10px;
+    padding-top: 0px !important;
+  }
+
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
 
-  .el-dialog--small {
-
-  }
-
-  .tbody[data-v-30c85a31] {
-    height: 400px !important;
-  }
-
+  /*.demo-form-inline{*/
+  /*height:100px!important;*/
+  /*}*/
   .active {
     color: #20a0ff;
-  }
-
-  .module {
-    height: 240px !important;
-    width: 400px !important;
-  }
-
-  .addBody {
-    height: 200px !important;
-  }
-
-  .addUp {
-    height: 240px !important;
   }
 
   .elform {
     text-align: left !important;
   }
 
-  .el-form-item__content {
-    margin-left: 100px !important;
+  .tbody {
+    height: 400px;
   }
 
-  .el-dialog {
-    width: 500px !important;
-    height: 350px;
+  .el-form-item__content {
+    margin-left: 100px !important;
   }
 
   .cell {

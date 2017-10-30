@@ -341,32 +341,19 @@
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
 
-          <!--<el-form-item label="封面图片:" prop='imgPath'>-->
-          <!--<el-input v-model="form.imgPath" v-show='false'></el-input>-->
-          <!--<img :src="form.imgPath" alt="封面图片" :disabled=show>-->
-          <!--<el-upload-->
-            <!--:disabled=show-->
-            <!--class="upload-demo"-->
-            <!--ref="upload"-->
-            <!--action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'-->
-            <!--:data="Token"-->
-            <!--:before-upload="beforeUploadImgPath">-->
-            <!--<el-button slot="trigger" size="small" type="primary">选取图片</el-button>-->
-          <!--</el-upload>-->
-        <!--</el-form-item>-->
-          <el-form-item label="封面图片:" prop='imgPath'>
+
+          <el-form-item label="封面图片:">
+            <el-dialog v-if="form.imgPath" size="tiny">
+              <img width="100%" :src="form.imgPath">
+            </el-dialog>
             <el-input v-model="form.imgPath" v-show='false'></el-input>
             <el-upload
               ref="upload"
-              class="avatar-uploader"
+              list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
-              :show-file-list="false"
-              :disabled=show
               :before-upload="beforeUploadImgPath">
-              <img :src="form.imgPath" v-if="form.imgPath" alt="封面图片"class="avatar" :disabled=show>
-              <i v-else class="el-icon-plus
-              avatar-uploader-icon"></i>
+              <el-button type="primary" @click="clearUploadedImage">上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-upload>
           </el-form-item>
 
@@ -532,7 +519,7 @@
           beginAddTime: '',
           endAddTime: ''
         },
-        form: {'cityName': ''},
+        form: {},
         formList: [],
         tableData: [],
         dialogFormVisible: false,  // 增加修改是否显示
@@ -1079,6 +1066,7 @@
         }
       },
       // 上传组件获取oss相关
+//      todo
       beforeUploadImgPath (file) {
         return new Promise((resolve) => {
           this.$ajax.get('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
@@ -1088,8 +1076,6 @@
               this.Token.OSSAccessKeyId = res.data.accessid
               // oss上图片的路由
               this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
-              console.log(2222 + JSON.stringify(this.Token))
-              console.log(this.form.imgPath)
               resolve()
             })
             .catch(err => {
@@ -1108,7 +1094,7 @@
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
               this.Token.OSSAccessKeyId = res.data.accessid
               // oss上图片的路由
-              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+//              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })
             .catch(err => {
@@ -1118,6 +1104,12 @@
               })
             })
         })
+      },
+      // 上传之前 清除原有图片
+      clearUploadedImage () {
+//        console.log(1)
+        this.$refs.upload.clearFiles()
+        this.form.imgPath = ''
       }
     }
   }

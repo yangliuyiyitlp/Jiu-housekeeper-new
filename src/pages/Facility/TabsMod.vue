@@ -155,17 +155,17 @@
     },
     methods: {
       getSelectOptions: function () {
-        this.$http.post('/provider/selectOptions').then(function (res) {
-          this.providerOptions = res.data
-          console.log(res.data)
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
+//        this.$http.post('/provider/selectOptions').then(function (res) {
+//          this.providerOptions = res.data
+//          console.log(res.data)
+//        }, function (err) {
+//          this.$message({
+//            type: 'info',
+//            message: '获取列表信息失败' + err.status
+//          })
+//        })
       },
-//      query: function (condition) {
+      query: function (condition) {
 //        var param = {}
 //        if (condition === 'condition') {
 //          param = this.requestParam
@@ -187,7 +187,7 @@
 //            message: '获取列表信息失败' + err.status
 //          })
 //        })
-//      },
+      },
       modifyRecord: function (scope) {
         console.log(scope)
         this.dialogFormVisible = true
