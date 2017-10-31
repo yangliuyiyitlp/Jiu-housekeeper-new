@@ -1,7 +1,8 @@
 /* 前后端通信相关的配置,注释只允许使用多行方式 */
 {
   /* 上传图片配置项 */
-  "imageUrl": "http://localhost/ueditor/php/controller.php?action=uploadimage",
+//  "imageUrl": "http://localhost/ueditor/php/controller.php?action=uploadimage",
+  "imageUrl": "http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com",
   "imagePath": "/ueditor/php/",
   "imageActionName": "uploadimage",
   /* 执行上传图片的action名称 */

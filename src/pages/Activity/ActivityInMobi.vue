@@ -66,7 +66,7 @@
       <el-table-column
         label="城市名称"
         prop="cityName">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
         </template>
       </el-table-column>
@@ -75,7 +75,7 @@
         label="显示顺序"
         sortable
         prop="rank">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-input v-model=scope.row.rank @focus="onFocus(scope)" @change="modifyOrder"></el-input>
         </template>
 
@@ -110,7 +110,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>

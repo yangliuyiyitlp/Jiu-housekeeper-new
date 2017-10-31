@@ -56,59 +56,6 @@ Vue.use(BaiduMap, {
 })
 // 注册百度地图 end
 
-// 图片上传oss
-// import OssUpload from 'aliyun-oss-upload'
-//
-// let ossUpload = new OssUpload({
-//   // 上传目录
-//   dir: 'cmsContent',
-//   // OSS签名缓存时间
-//   expiration: 120000,
-//   // 是否使用uuid随机文件名。默认：false
-//   randomName: true,
-//   // 文件上传成功后的http返回码。默认：204
-//   successActionStatus: 200,
-//   // 获取oss签名方法
-//   signatureGetter () {
-//     // 假设你使用的是httpFetch来请求数据
-//     // 该方法必须返回Promise对象
-//     return new Promise((resolve) => {
-//       Vue.prototype.$ajax.get('electric/ossutil/interface/policy?user_dir=cmsContent')
-//         .then((res) => {
-//           // this.Token = res.data
-//           // this.Token.OSSAccessKeyId = res.data.accessid
-//           // console.log(this.Token)
-//           resolve()
-//         })
-//         .catch(err => {
-//           console.log(err)
-//         })
-//     })
-//   },
-//   // accessid: 'LTAIXtzzxKiWP3By',
-//   // policy: 'eyJleHBpcmF0aW9uIjoiMjAxNy0xMC0yMVQxMDo0MDowOS4xMzZaIiwiY29uZGl0aW9ucyI6W1siY29udGVudC1sZW5ndGgtcmFuZ2UiLDAsMTA0ODU3NjAwMF0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ6aGFuZyJdXX0=',
-//   // signature: 'cYfQ0ZUb8Wl8K6QLJ41XSG/FUwc=',
-//   // 文件上传方法
-//   uploader (formData) {
-//     // formData：文件上传所需的FormData对象
-//     // 假设使用httpFetch来上传文件
-//     // 该方法必须返回Promise对象
-//     return new Promise((resolve) => {
-//       Vue.prototype.$ajax.post('http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com', formData)
-//         .then((res) => {
-//           // this.Token = res.data
-//           // this.Token.OSSAccessKeyId = res.data.accessid
-//           // console.log(this.Token)
-//           resolve()
-//         })
-//         .catch(err => {
-//           console.log(err)
-//         })
-//     })
-//   }
-// })
-// Vue.prototype.$OssUpload = ossUpload
-
 // 富文本编辑器
 // 富文本编辑器引入
 import '../static/ueditor1_4_3_3/ueditor.config.js'
