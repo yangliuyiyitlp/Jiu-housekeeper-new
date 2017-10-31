@@ -32,7 +32,7 @@
             label: '锁状态明细表',
             name: 'state'
           }, {
-            label: '解绑失败明细',
+            label: '批量操作车辆',
             name: 'unbund'
           }]
         }, {

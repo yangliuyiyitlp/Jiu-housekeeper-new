@@ -343,17 +343,19 @@
 
 
           <el-form-item label="封面图片:">
-            <el-dialog v-if="form.imgPath" size="tiny">
-              <img width="100%" :src="form.imgPath">
-            </el-dialog>
-            <el-input v-model="form.imgPath" v-show='false'></el-input>
+            <el-input v-model="form.imgPath"  ></el-input>
+            <div v-if="form.imgPath" >
+              <img width="100%" :src="form.imgPath" alt="图片">
+            </div>
+
             <el-upload
-              ref="upload"
+              ref="uploadFile"
               list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
+              :on-remove="onRemove"
               :before-upload="beforeUploadImgPath">
-              <el-button type="primary" @click="clearUploadedImage">上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-button  type="primary" @click="clearUploadedImage" :disabled=show>上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-upload>
           </el-form-item>
 
@@ -407,13 +409,13 @@
               <el-input v-model="form.shareContent" :disabled=show></el-input>
             </el-form-item>
           </div>
-          <el-form-item label="是否默认:" :disabled=show>
-            <el-select v-model="form.state" clearable class="selectInput" :disabled=show
-                       @change="onActivityStateChange">
-              <el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]
-                         :value=key></el-option>
-            </el-select>
-          </el-form-item>
+          <!--<el-form-item label="是否默认:" :disabled=show>-->
+            <!--<el-select v-model="form.state" clearable class="selectInput" :disabled=show-->
+                       <!--@change="onActivityStateChange">-->
+              <!--<el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]-->
+                         <!--:value=key></el-option>-->
+            <!--</el-select>-->
+          <!--</el-form-item>-->
           <el-form-item label="城市名称:" prop="cityName">
             <el-input v-model="form.cityName" :disabled=show></el-input>
             <span v-if="add">添加模式下，城市的添加以《快速添加到城市》的选项为准</span>
@@ -423,7 +425,7 @@
               v-model="form.beginTime"
               type="datetime" :disabled=show>
             </el-date-picker>
-            -
+              -
             <el-date-picker
               v-model="form.endTime"
               type="datetime" :disabled=show>
@@ -434,7 +436,7 @@
               v-model="form.showTime"
               type="datetime" :disabled=show>
             </el-date-picker>
-            -
+              -
             <el-date-picker
               v-model="form.hideTime"
               type="datetime" :disabled=show>
@@ -837,7 +839,7 @@
         this.activeName2 = 'first'
         this.title = '赳赳乐享活动添加'
       }, // 详情返回按钮
-      modifyRecord: function (scope) {
+      modifyRecord (scope) {
         this.$refs['formA'].resetFields()
         this.activeName2 = 'second'
         this.show = false
@@ -849,6 +851,7 @@
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
+              console.log(this.form.imgPath)
               this.tempCityName = res.data.tActivitiesInfo.cityName
               if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
                 for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
@@ -1040,6 +1043,7 @@
           imgPath: ''
         }
         this.formList = []
+        this.$refs.uploadFile.clearFiles()
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
             if (res.data.code === 1) {
@@ -1055,6 +1059,11 @@
               type: 'error',
               message: '请求失败'
             })
+          }).catch(err => {
+            this.$message({
+              message: err.data.msg,
+              type: 'error'
+            })
           })
       }, // 新增
       onCheckboxChange (value) {
@@ -1066,10 +1075,9 @@
         }
       },
       // 上传组件获取oss相关
-//      todo
       beforeUploadImgPath (file) {
         return new Promise((resolve) => {
-          this.$ajax.get('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
+          this.$ajax.post('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
             .then((res) => {
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
@@ -1107,8 +1115,11 @@
       },
       // 上传之前 清除原有图片
       clearUploadedImage () {
-//        console.log(1)
-        this.$refs.upload.clearFiles()
+        this.$refs.uploadFile.clearFiles()
+        this.form.imgPath = ''
+      },
+      // 移除图片时清空form表单中的图片地址
+      onRemove () {
         this.form.imgPath = ''
       }
     }
@@ -1116,6 +1127,10 @@
 </script>
 <style scoped>
   /*图片开始*/
+  img{
+    width:148px;
+    height:148px;
+  }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

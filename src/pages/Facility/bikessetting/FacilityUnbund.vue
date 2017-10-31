@@ -4,6 +4,14 @@
       <el-form-item label="车辆编号：">
         <el-input v-model="requestParam.bikeid"></el-input>
       </el-form-item>
+      <el-form-item label="gprs编号：">
+        <el-input v-model="requestParam.gpsNo"></el-input>
+      </el-form-item>
+      <el-form-item label="操作标志：">
+        <el-select v-model="requestParam.operateFlag" clearable>
+          <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
+        </el-select>
+      </el-form-item>
       <el-form-item label="imei编号：">
         <el-input v-model="requestParam.imei"></el-input>
       </el-form-item>
@@ -23,7 +31,8 @@
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="downLoad">下载模板</el-button>
+        <el-button type="primary"><a
+          href="http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template">下载模板</a></el-button>
       </el-form-item>
     </el-form>
     <el-form class='importForm'>
@@ -33,13 +42,13 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
-          method="post" ref="FileForm">
+    <form style="display: none" action="" method="post" ref="FileForm">
       <input name="bikeid" v-model="exportParam.bikeid"/>
       <input name="imei" v-model="exportParam.imei"/>
       <input name="deviceid" v-model="exportParam.deviceid"/>
       <input name="blemac" v-model="exportParam.blemac"/>
       <input name="iccid" v-model="exportParam.iccid"/>
+      <input name="gpsNo" v-model="exportParam.gpsNo"/>
     </form>
     <el-table
       :data="tableData"
@@ -58,6 +67,14 @@
         <template scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.bikeid}}</span>
         </template>
+      </el-table-column>
+      <el-table-column
+        prop="gpsNo"
+        label="gprs编号">
+      </el-table-column>
+      <el-table-column
+        prop="operateFlag"
+        label="操作标志">
       </el-table-column>
       <el-table-column
         prop="imei"
@@ -138,19 +155,30 @@
         <el-button @click="cancelExport">取 消</el-button>
       </div>
     </el-dialog>
+    <!--导入批量操作-->
+    <el-dialog title="批量操作" custom-class="dialogClass" size="tiny" :visible.sync="exportAction" :show-close="false"
+               :close-on-press-escape="false" :close-on-click-modal="false" class="demo-ruleForm ">
+      <p class="title">小主，你想干啥？</p>
+      <el-button @click="ActionZero">锁厂解绑</el-button>
+      <el-button @click="ActionOne">车辆注销</el-button>
+      <el-button @click="ActionThree">城市绑定</el-button>
+      <el-button @click="ActionFour">城市解绑</el-button>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   export default {
     created: function () {
-      this.query()
+      this.list()
     },
     data: function () {
       return {
+        opFlag: {},
         tableData: [],
         moreFormVisible: false,   // 详情
         exportFormVisible: false,
+        exportAction: false,
         form: {
           id: '',
           bikeid: '',
@@ -158,7 +186,8 @@
           deviceid: '',
           blemac: '',
           iccid: '',
-          remarks: ''
+          remarks: '',
+          gpsNo: ''
         },
         formLabelWidth: '80px',
         requestParam: {
@@ -168,6 +197,7 @@
           deviceid: '',
           blemac: '',
           iccid: '',
+          operateFlag: '',
           pageSize: 30,
           pageNo: 1
         },
@@ -175,6 +205,7 @@
         ruleForm: {
           avatarTwo: ''
         },
+        action: '',
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
           bikeid: '',
@@ -182,29 +213,50 @@
           deviceid: '',
           blemac: '',
           iccid: '',
+          operateFlag: '',
           pageSize: 30,
           pageNo: 1
         }
       }
     },
     methods: {
+      list: function () {
+        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'bike_batch_operate_flag'}})
+          .then((res) => {
+            for (let i = 0; i < res.data.length; i++) {
+              this.opFlag[res.data[i].value] = res.data[i].label
+            }
+            this.query()
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取列表信息失败'
+            })
+          })
+      },
       query () {
         this.requestParam.bikeid = this.requestParam.bikeid.trim()
         this.requestParam.imei = this.requestParam.imei.trim()
         this.requestParam.deviceid = this.requestParam.deviceid.trim()
         this.requestParam.blemac = this.requestParam.blemac.trim()
         this.requestParam.iccid = this.requestParam.iccid.trim()
+//        this.requestParam.gpsNo = this.requestParam.gpsNo.trim()
         this.exportParam.bikeid = this.requestParam.bikeid
         this.exportParam.imei = this.requestParam.imei
         this.exportParam.deviceid = this.requestParam.deviceid
         this.exportParam.blemac = this.requestParam.blemac
         this.exportParam.iccid = this.requestParam.iccid
+        this.exportParam.gpsNo = this.requestParam.gpsNo
+        this.exportParam.operateFlag = this.requestParam.operateFlag
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
         this.$ajax.get('electric/tUnbangdingFail/interface/list', {params: this.requestParam}).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
+            for (let i = 0; i < response.data.page.list.length; i++) {
+              this.tableData[i].operateFlag = this.opFlag[response.data.page.list[i].operateFlag]
+            }
           } else {
             this.$message({
               type: 'error',
@@ -262,46 +314,31 @@
         this.exportFormVisible = false
       },
       exportCurrent () {
-        var r = confirm('确定导出么')
+        let r = confirm('确定导出么')
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/tUnbangdingFail/interface/export')
+          this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/export')
           this.$refs['FileForm'].submit()
         } else {
           return
         }
       },
       exportAll () {
-        var r = confirm('确定导出么')
+        let r = confirm('确定导出么')
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/tUnbangdingFail/interface/exportAll')
+          this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/exportAll')
           this.$refs['FileForm'].submit()
         } else {
           return
         }
       },
-      downLoad () {
-        var r = confirm('确定下载么')
-        if (r === true) {
-          this.$ajax.get('electric/tUnbangdingFail/interface/import/template').then((res) => {
-            console.log(res)
-          })
-        } else {
-          return
-        }
-      },
-      getFile: function ($event) {
-        this.ruleForm.avatarTwo = $event.target.files[0]
-      },
-      importFile ($event) {
-        $event.preventDefault()
+      actionForm () {
         let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
-        console.log(111, this.ruleForm.avatarTwo)
         formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
-        console.log(JSON.stringify(formData))
+        formData.append('operateFlag', this.action) // 其他的一些参数
         this.$ajax(
           {
             method: 'post',
@@ -314,19 +351,64 @@
         ).then((response) => {
           this.$message({
             message: response.data.msg,
-            type: 'success'
+            type: 'info'
           })
-          console.log(2222222)
           this.query()
-          console.log(response.data)
         }).catch((error) => {
-          console.log(error)
           this.$message({
             message: error.data.msg,
             type: 'error'
           })
         })
+        this.exportAction = false
 //        以上是文件上传功能
+      },
+      ActionZero () {
+        this.action = 0
+        this.actionForm()
+      },
+      ActionOne () {
+        this.action = 1
+        this.actionForm()
+      },
+      ActionThree () {
+        this.action = 2
+        this.actionForm()
+      },
+      ActionFour () {
+        this.action = 3
+        this.actionForm()
+      },
+      getFile: function ($event) {
+        this.ruleForm.avatarTwo = $event.target.files[0]
+      },
+      importFile ($event) {
+        this.exportAction = true
+        $event.preventDefault()
+//        let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
+//        formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
+//        formData.append('operateFlag', this.action) // 其他的一些参数
+//        this.$ajax(
+//          {
+//            method: 'post',
+//            url: 'electric/tUnbangdingFail/interface/import',
+//            data: formData,
+//            headers: {
+//              'Content-Type': 'multipart/form-data'
+//            }
+//          }
+//        ).then((response) => {
+//          this.$message({
+//            message: response.data.msg,
+//            type: 'info'
+//          })
+//          this.query()
+//        }).catch((error) => {
+//          this.$message({
+//            message: error.data.msg,
+//            type: 'error'
+//          })
+//        })
       }
     }
   }
@@ -336,9 +418,20 @@
     padding-left: 10px;
   }
 
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  p.title {
+    color: #317eac;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
   form {
     padding-top: 20px;
-    height: 75px;
+    height: 100px;
   }
 
   .importForm {
