@@ -38,14 +38,13 @@
               </el-form-item>
 
               <el-form-item label="状态：">
-                <el-radio-group v-model="formInline.delFlagName">
+                <el-radio-group v-model="formInline.delFlagName" @change="showForm">
                   <el-radio-button
                     v-for="(item,key) in statusRelation"
                     :label=item
                     :key=item.key>
                   </el-radio-button>
                 </el-radio-group>
-
               </el-form-item>
 
               <el-button type="primary" @click="showForm">查询</el-button>
@@ -85,12 +84,14 @@
               </el-table-column>
 
               <el-table-column
+                sortable
                 align="center"
                 prop="weight"
                 label="权重">
               </el-table-column>
 
               <el-table-column
+                sortable
                 align="center"
                 prop="hits"
                 label="点击数">
@@ -103,6 +104,7 @@
               </el-table-column>
 
               <el-table-column
+                sortable
                 align="center"
                 prop="update_date"
                 label="更新时间">
@@ -114,7 +116,11 @@
                 label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small">访问</el-button>
-                  <el-button type="text" size="small" @click="modifyRecord(scope.row.id,scope.row.categoryId)">修改
+                  <el-button
+                    type="text"
+                    size="small"
+                    @click="modifyRecord(scope.row.id,scope.row.categoryName)"
+                  >修改
                   </el-button>
                   <el-button @click="deleteRecord(scope.row.id,scope.row.categoryId)" type="text" size="small">删除
                   </el-button>
@@ -127,7 +133,7 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="pagination.index"
+              :current-page="pagination.pageNo"
               :page-sizes="pagination.pageSizes"
               :page-size="pagination.pageSize"
               layout="total, sizes, prev, pager, next, jumper"
@@ -140,22 +146,29 @@
 
       </el-tab-pane>
 
-      <el-tab-pane :label="second_name" name="second">
+      <el-tab-pane :label='second_name' name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
 
-          <el-form-item label="归属栏目:">
+          <el-form-item label="文章id:" v-if=0>
+            <el-input v-model="ruleForm.id"></el-input>
+          </el-form-item>
+
+          <el-form-item label="文章栏目分类编号:" v-if=0>
+            <el-input v-model="ruleForm.categoryId"></el-input>
+          </el-form-item>
+
+          <el-form-item label="归属栏目:" prop="categoryName">
             <el-input
               icon="search"
               :disabled="true"
               :on-icon-click="searchAttributionColumn"
-              @click="dialogVisible = true"
-              v-model="ruleForm.categoryId"
+              v-model="ruleForm.categoryName"
               placeholder="选择归属栏目">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="标题:">
-            <el-input v-model="ruleForm.title" placeholder="输入标题" ref="title"></el-input>
+          <el-form-item label="标题:" prop="title">
+            <el-input v-model="ruleForm.title" placeholder="输入标题"></el-input>
             <span>有无外部链接:</span>
             <el-switch
               v-model="isExternallink"
@@ -187,65 +200,65 @@
             </el-switch>
           </el-form-item>
 
-          <el-form-item label="过期时间:">
-            <el-date-picker
-              v-model="ruleForm.weightDate"
-              :editable=false
-              type="date"
-              placeholder="选择日期">
-            </el-date-picker>
-            <span>数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>
+          <!--<el-form-item label="过期时间:">-->
+          <!--<el-date-picker-->
+          <!--v-model="ruleForm.weightDate"-->
+          <!--:editable=false-->
+          <!--type="date"-->
+          <!--placeholder="选择日期">-->
+          <!--</el-date-picker>-->
+          <!--<span>数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>-->
+          <!--</el-form-item>-->
+
+          <el-form-item label="摘要:">
+            <el-input type="textarea" v-model="ruleForm.description" class="width"></el-input>
           </el-form-item>
 
-          <el-form-item label="摘要：" prop="desc">
-            <el-input type="textarea" v-model="ruleForm.description" class="width"
-                      v-bind:style="{color:fontcolor}"></el-input>
-          </el-form-item>
 
           <el-form-item label="缩略图:">
-            <el-input v-model="ruleForm.image" v-show='false'></el-input>
+            <!--<el-dialog v-if="ruleForm.image" size="tiny">-->
+            <el-dialog size="tiny">
+              <img width="100%" :src="ruleForm.image">
+            </el-dialog>
+            <!--<el-input v-model="ruleForm.image" v-show='false'></el-input>-->
+            <el-input v-model="ruleForm.image"></el-input>
             <el-upload
-              class="upload-demo"
               ref="upload"
+              list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
               :before-upload="beforeUpload">
-              <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+              <el-button type="primary" @click="clearUploadedImage">上传图片<i class="el-icon-upload el-icon--right"></i>
+              </el-button>
             </el-upload>
           </el-form-item>
 
           <el-form-item label="正文:">
-            <el-input v-model='ruleForm.main_text' v-show='false'></el-input>
+            <el-input v-model='ruleForm.content' v-show='false'></el-input>
             <VueUEditor @ready="editorReady">
             </VueUEditor>
           </el-form-item>
 
           <el-form-item label="推荐位:">
-            <el-checkbox-group v-model="ruleForm.posid">
+            <el-checkbox-group v-model="ruleForm.posName">
               <el-checkbox label="首页焦点图"></el-checkbox>
               <el-checkbox label="栏目页文章推荐"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="发布时间:">
-            <el-date-picker
-              v-model="ruleForm.updateDate"
-              :editable=false
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
-          </el-form-item>
-
           <el-form-item label="发布状态:">
-            <el-radio-group v-model="ruleForm.release_status">
-              <el-radio :label="3">发布</el-radio>
-              <el-radio :label="6">审核</el-radio>
-              <el-radio :label="9">删除</el-radio>
+            <el-radio-group v-model="ruleForm.delFlagName">
+              <el-radio-button
+                v-for="(item,key) in statusRelation"
+                :label='item'
+                :key='item.key'>
+              </el-radio-button>
             </el-radio-group>
           </el-form-item>
 
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+            <el-button type="primary" @click="resetForm" v-if="second_name=='文章添加'?1:0">重置</el-button>
             <el-button @click="returnBack">返回</el-button>
           </el-form-item>
 
@@ -254,10 +267,9 @@
 
     </el-tabs>
 
-
     <!--模态框-->
-    <!--栏目-->
     <!--columnVisible1-->
+    <!--查询时弹出的栏目树模型-->
     <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible1">
       <el-tree
         highlight-current
@@ -268,6 +280,7 @@
       </el-tree>
     </el-dialog>
     <!--columnVisible2-->
+    <!--添加时弹出的栏目树模型-->
     <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible2">
       <el-tree
         highlight-current
@@ -275,12 +288,7 @@
         :data="select_organization"
         @node-click="searchOneAttributionColumn"
         :props="defaultProps">
-
       </el-tree>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="columnVisible2 = false">取 消</el-button>
-        <el-button type="primary" @click="sureAttributionColumn">确 定</el-button>
-      </div>
     </el-dialog>
 
   </div>
@@ -293,6 +301,7 @@
   import arr2tree from '../../utils/arr2tree.js'
   import Tools from '../../utils/tools.js'
   import Moment from 'moment'
+  import qs from 'qs'
 
   export default {
     name: 'app',
@@ -303,8 +312,12 @@
       return {
         activeName2: 'first',
         second_name: '文章添加',
-        relation: {},
-        statusRelation: {},
+        relation: {}, // 树组件中id与name关系
+        statusRelation: {}, // 发布状态关系
+        posRelation: {
+          1: '首页焦点图',
+          2: '栏目页文章推荐'
+        }, // 推荐位状态关系
         select_organization: [],
         defaultProps: {
           children: 'children',
@@ -312,16 +325,9 @@
         },
         tableData: [],
         Token: {},
-        columnVisible1: false,
-        columnVisible2: false,
-        E: null,
-        isExternallink: '',
-        isTop: '',
-        editorContent: '',
-        fontcolor: '',
-        color1: '#20a0ff',
-        radio2: 3,
-        value6: '',
+        columnVisible1: false, // 筛选模态框
+        columnVisible2: false, // 文章修改添加 模态框
+        dialogVisibleImg: false,
         formInline: {
           categoryName: '',
           categoryId: '',
@@ -329,37 +335,24 @@
           delFlagName: '',
           delFlag: ''
         },
-        ruleForm: {
-          categoryId: '', // 分类编号
-          title: '', // 标题
-          link: '', // 外部链接
-          keywords: '', // 关键字
-          weight: 0, // 权重，越大越靠前
-          image: '', // 文章图片
-          description: '', // 描述、摘要
-          weightDate: '', // 权重期限，超过期限，将weight设置为0
-          hits: 0, // 点击数
-          posid: [],  // 推荐位，多选（1：首页焦点图；2：栏目页文章推荐；）
-          delFlag: '', // 发布状态
-          updateDate: '' // 发布,更新时间
-        },
+        E: null,
+        isExternallink: '',
+        isTop: '',
+        ruleForm: {},
+        editorContent: '',
         rules: {
-          name: [
-            {required: true, message: '请输入活动名称', trigger: 'blur'},
-            {min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur'}
+          title: [
+            {required: true, message: '标题不能为空', trigger: 'blur'}
           ],
-          region: [
-            {required: true, message: '请选择活动区域', trigger: 'change'}
+          categoryName: [
+            {required: true, message: '请选择归属栏目', trigger: 'change'}
           ]
         },
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [20, 50, 80, 100], pageSize: 20, total: 0, pageNo: 1}
       }
     },
     created: function () {
       this.query()
-    },
-    mounted () {
-      this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 160) + 'px'
     },
     methods: {
       // 侧边栏tree的点击查询
@@ -388,17 +381,15 @@
       delRecord (id) {
         this.$ajax.get('cms/comment/interface/delete?id=' + id)
           .then(res => {
-            console.log(res)
-//            if (res.status === 200) {
-//              // 删除成功
-//              this.open('success', res.data.msg)
-//              // 刷新页面
-//              this.query()
-//            } else {
-//              // 删除失败
-//              this.open('info', res.data.msg)
-//            }
-            this.showForm()
+            if (res.status === 200) {
+              // 删除成功
+              this.open('success', res.data.msg)
+              // 刷新页面
+              this.showForm()
+            } else {
+              // 删除失败
+              this.open('info', res.data.msg)
+            }
           })
           .catch(err => {
             console.log(err)
@@ -407,37 +398,65 @@
           })
       },
       // 根据id查看当前行的详细信息
-      modifyRecord (id, categoryId) {
-        this.activeName2 = 'second'
+      modifyRecord (id, categoryName) {
         this.second_name = '文章修改'
-//        this.modifyFormVisible = true
-//        this.$ajax.get('electric/tCouponInfo/interface/form?id=' + id)
-//          .then(res => {
-//            this.updateForm = res.data.tCouponInfo
-//            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
-//          })
-//          .catch(err => {
-//            console.log(err)
-//          })
+        this.activeName2 = 'second'
+        this.$ajax.get('cms/comment/interface/form?id=' + id)
+          .then(res => {
+            if (res.data.code === 200) {
+              let obj = res.data.data
+              console.log(obj)
+              this.ruleForm = {
+                id: obj.id,
+                categoryId: obj.categoryId, // 分类编号
+                categoryName: categoryName, // 分类名称
+                image: obj.image, // 文章图片
+                keywords: obj.keywords.split(',').join(' ') || '', // 关键字
+                title: obj.title, // 标题
+                link: obj.link, // 外部链接
+                weight: obj.weight, // 权重，越大越靠前
+                description: obj.description, // 描述、摘要
+                content: obj.content,
+                posName: obj.posid.split(',').map(i => {
+                  return Tools.k2value(this.posRelation, i)
+                }),
+                delFlagName: Tools.k2value(this.statusRelation, obj.delFlag)
+              }
+              this.E.setContent(this.ruleForm.content)
+              // 为何不能直接对象=对象?
+//              this.ruleForm = res.data.data
+//              this.ruleForm.categoryName = categoryName
+//              this.ruleForm.keywords = this.ruleForm.keywords.split(',').join(' ') || ''
+//              this.ruleForm.delFlagName = Tools.k2value(this.statusRelation, this.ruleForm.delFlag)
+//              this.ruleForm.posName = this.ruleForm.posid.split(',').map(i => {
+//                return Tools.k2value(this.posRelation, i)
+//              })
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
       },
       // 是否置顶相关
       isTopp (val) {
-        this.ruleForm.power = val
+        this.ruleForm.weight = val
       },
       searchAttributionColumn () {
         this.columnVisible2 = true
       },
+      // 点击表单中栏目归属模态框 选定栏目和categoryId
       searchOneAttributionColumn (data) {
-        // 获取树组件被选中的参数并保存在this.ruleForm.attribution_column中
-        this.ruleForm.attribution_column = data.name
-//        console.log(this.ruleForm.attribution_column)
-      },
-      sureAttributionColumn () {
+        // 模态框隐藏
         this.columnVisible2 = false
+        // 获取树组件被选中的参数并保存在this.ruleForm.categoryName中
+        this.ruleForm.categoryName = data.name
+        this.ruleForm.categoryId = data.id
       },
-      // 点击面包屑时的事件
-      handleClick (tab, event) {
-//        console.log(tab)
+      // 点击标签页时事件
+      handleClick () {
+        this.second_name = '文章添加'
+        // 并清空当前文章添加内列表内容
+        this.resetForm()
       },
       handleSizeChange: function (val) {
         this.formInline.pageSize = val
@@ -447,65 +466,76 @@
         this.formInline.index = val
         this.onSubmit('condition')
       },
+      // 确认添加新文章
       submitForm (formName) {
-        this.ruleForm.main_text = this.editorContent
-        console.log(JSON.stringify(this.ruleForm))
-//        this.$ajax.get('cms/comment/interface/save', {
-//          params: {
-//            ID: 12345
-//          }
-//        })
-//          .then(res => {
-//            console.log(res)
-//          })
-//          .catch(err => {
-//            console.log(err)
-//          })
-//        this.$refs[formName].validate((valid) => {
-//          if (valid) {
-//            alert('submit!')
-//          } else {
-//            console.log('error submit!!')
-//            return false
-//          }
-//        })
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
+            //        this.ruleForm.weightDate = Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss')
+            this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
+            this.ruleForm.posid = this.ruleForm.posName.map(i => {
+              return Tools.k2value(this.posRelation, i)
+            }).join(',')
+            //        console.log(this.ruleForm)
+            this.$ajax.post('cms/comment/interface/save', qs.stringify(this.ruleForm))
+              .then(res => {
+                if (res.code === 200) {
+                  open('success', res.data.msg)
+                }
+                // 根据查询字符串展示文章列表
+                this.formInline = {
+                  categoryId: this.ruleForm.categoryId,
+                  categoryName: this.ruleForm.categoryName,
+                  delFlagName: this.ruleForm.delFlagName
+                }
+                this.showForm()
+                // 返回第一个页面并显示相对应的栏目列表
+                this.activeName2 = 'first'
+                this.ruleForm = {}
+                open('info', res.data.msg)
+              })
+              .catch(err => {
+                this.open('info', err.data.msg)
+              })
+          } else {
+            return false
+          }
+        })
       },
       // 文章添加页面的重置功能
       resetForm () {
         this.E.setContent('')
+        this.clearUploadedImage()
         this.ruleForm = {
-          attribution_column: '',
-          abstract: '',
-          recommended_bit: [],
-          title: '',
-          external_link: '',
-          keyword: '',
-          power: '',
-          deadline: '',
-          pic: '',
-          main_text: '',
-          source: '',
-          release_time: '',
-          release_status: ''
+          categoryId: '', // 分类编号
+          categoryName: '', // 分类名称
+          image: '', // 文章图片
+          keywords: '', // 关键字
+          delFlag: '', // 发布状态
+          delFlagName: '', // 发布状态名称
+          title: '', // 标题
+          link: '', // 外部链接
+          weight: 0, // 权重，越大越靠前
+          description: '', // 描述、摘要
+//          weightDate: '', // 权重期限，超过期限，将weight设置为0
+          content: '',
+          posName: [],
+          posid: ''  // 推荐位，多选（1：首页焦点图；2：栏目页文章推荐；'1,2'）
         }
       },
-      // 添加页面的返回功能
+      // 添加页面的返回功能,返回时清空当前列表
       returnBack () {
         this.activeName2 = 'first'
-      },
-      handleRemove (file, fileList) {
-        console.log(file, fileList)
-      },
-      handlePreview (file) {
-        console.log(file)
+        this.second_name = '文章添加'
+        // 并清空当前列表内容
+        this.resetForm()
       },
       // 富文本编辑器相关
       editorReady (eidtorInstance) {
         this.E = eidtorInstance
         eidtorInstance.setContent('请在此输入正文')
         eidtorInstance.addListener('contentChange', () => {
-          this.ruleForm.main_text = eidtorInstance.getContent()
-          // console.log('发生的变化:', this.ruleForm.main_text)
+          this.ruleForm.content = eidtorInstance.getContent()
         })
       },
       // 封装小工具
@@ -517,16 +547,19 @@
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
               this.Token.OSSAccessKeyId = res.data.accessid
-//              console.log(this.Token)
               // oss上图片的路由
-              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
-              console.log(this.pic_url)
+              this.ruleForm.image = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })
             .catch(err => {
               console.log(err)
             })
         })
+      },
+      // 上传之前 清除原有图片
+      clearUploadedImage () {
+        this.$refs.upload.clearFiles()
+        this.ruleForm.image = ''
       },
       // 获取状态栏信息和树组件数据
       query () {
@@ -550,17 +583,17 @@
             console.log(err)
           })
       },
-      // 根据查询字符串展示列表
+      // 根据查询字符串展示文章列表
       showForm () {
+        // 分页功能
+        this.formInline.pageSize = 20
+        this.formInline.pageNo = 1
         this.formInline.delFlag = Tools.k2value(this.statusRelation, this.formInline.delFlagName) || '0'
-        console.log(this.formInline)
-        console.log('进去showform中')
-        this.$ajax.get('cms/comment/interface/list', {parmas: this.formInline})
+        this.$ajax.get('cms/comment/interface/list', {params: this.formInline})
           .then(res => {
-            console.log(res)
+            console.log(res.data)
             if (res.data.code === 200) {
               this.tableData = res.data.data
-              console.log(res.data.data)
               for (let i = 0; i < this.tableData.length; i++) {
                 this.tableData[i].categoryName = this.formInline.categoryName
                 this.tableData[i].update_date = Moment(this.tableData[i].updateDate).format('YYYY-MM-DD HH:mm:ss')
@@ -581,7 +614,6 @@
       },
       // 删除时的提醒信息
       deleteRecord (id, categoryId) {
-        console.log(id, categoryId)
         this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -627,5 +659,33 @@
 
   span {
     color: #888;
+  }
+
+  /*图片上传*/
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .avatar-uploader .el-upload:hover {
+    border-color: #20a0ff;
+  }
+
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
   }
 </style>
