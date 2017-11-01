@@ -41,6 +41,10 @@
         <button @click="importFile">导入</button>
       </el-form-item>
     </el-form>
+    <div v-if="message"class='errorMsg'>
+      <button @click='errorClose' class="errorIcon">关闭</button>
+      <div  v-html="msg"></div>
+    </div>
     <!--隐藏表单用于文件导出-->
     <form style="display: none" action="" method="post" ref="FileForm">
       <input name="bikeid" v-model="exportParam.bikeid"/>
@@ -70,6 +74,7 @@
       </el-table-column>
       <el-table-column
         prop="gpsNo"
+        show-overflow-tooltip
         label="gprs编号">
       </el-table-column>
       <el-table-column
@@ -95,7 +100,6 @@
       <el-table-column
         label="update_date">
         <template scope="scope">
-          <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.updateDate}}</span>
         </template>
       </el-table-column>
@@ -152,17 +156,17 @@
       <el-button @click="exportCurrent">导出当前页</el-button>
       <el-button @click="exportAll">导出所有</el-button>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="cancelExport">取 消</el-button>
+        <el-button type="primary" @click="cancelExport">取 消</el-button>
       </div>
     </el-dialog>
     <!--导入批量操作-->
     <el-dialog title="批量操作" custom-class="dialogClass" size="tiny" :visible.sync="exportAction" :show-close="false"
                :close-on-press-escape="false" :close-on-click-modal="false" class="demo-ruleForm ">
       <p class="title">小主，你想干啥？</p>
-      <el-button @click="ActionZero">锁厂解绑</el-button>
-      <el-button @click="ActionOne">车辆注销</el-button>
-      <el-button @click="ActionThree">城市绑定</el-button>
-      <el-button @click="ActionFour">城市解绑</el-button>
+      <div>
+        <el-button v-for="(val,key) in opFlag" :key="key" @click="importActionType(key)">{{val}}</el-button>
+      </div>
+      <el-button type="primary" class="button" @click="cancelImport">取 消</el-button>
     </el-dialog>
   </div>
 </template>
@@ -174,6 +178,8 @@
     },
     data: function () {
       return {
+        message: false,
+        msg: '',
         opFlag: {},
         tableData: [],
         moreFormVisible: false,   // 详情
@@ -221,6 +227,7 @@
     },
     methods: {
       list: function () {
+//        this.message = false
         this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'bike_batch_operate_flag'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
@@ -349,10 +356,12 @@
             }
           }
         ).then((response) => {
-          this.$message({
-            message: response.data.msg,
-            type: 'info'
-          })
+          this.msg = response.data.msg
+          this.message = true
+//          this.$message({
+//            message: response.data.msg,
+//            type: 'info'
+//          })
           this.query()
         }).catch((error) => {
           this.$message({
@@ -363,59 +372,47 @@
         this.exportAction = false
 //        以上是文件上传功能
       },
-      ActionZero () {
-        this.action = 0
-        this.actionForm()
-      },
-      ActionOne () {
-        this.action = 1
-        this.actionForm()
-      },
-      ActionThree () {
-        this.action = 2
-        this.actionForm()
-      },
-      ActionFour () {
-        this.action = 3
-        this.actionForm()
-      },
       getFile: function ($event) {
         this.ruleForm.avatarTwo = $event.target.files[0]
       },
       importFile ($event) {
         this.exportAction = true
         $event.preventDefault()
-//        let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
-//        formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
-//        formData.append('operateFlag', this.action) // 其他的一些参数
-//        this.$ajax(
-//          {
-//            method: 'post',
-//            url: 'electric/tUnbangdingFail/interface/import',
-//            data: formData,
-//            headers: {
-//              'Content-Type': 'multipart/form-data'
-//            }
-//          }
-//        ).then((response) => {
-//          this.$message({
-//            message: response.data.msg,
-//            type: 'info'
-//          })
-//          this.query()
-//        }).catch((error) => {
-//          this.$message({
-//            message: error.data.msg,
-//            type: 'error'
-//          })
-//        })
+      },
+      importActionType (actionType) {
+        this.action = actionType
+        let r = confirm('确定导入' + this.opFlag[actionType] + '?')
+        if (r === true) {
+          this.actionForm()
+        } else {
+          return false
+        }
+      },
+      cancelImport () {
+        this.exportAction = false
+      },
+      errorClose () {
+        this.message = false
       }
     }
   }
 </script>
 <style scoped>
+  .errorMsg{
+    margin-top:40px;
+    padding-left:10px;
+    background-color: #ccc;
+  }
+  .errorIcon{
+    top:0px;
+  }
   .left {
     padding-left: 10px;
+  }
+
+  .button {
+    float: right;
+    margin-top: 20px;
   }
 
   a {
