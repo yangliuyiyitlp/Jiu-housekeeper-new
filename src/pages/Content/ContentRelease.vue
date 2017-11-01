@@ -53,6 +53,7 @@
 
             <!--表格展示-->
             <el-table
+              @sort-change="sortChange"
               :data="tableData"
               border
               style="width: 100%">
@@ -200,15 +201,15 @@
             </el-switch>
           </el-form-item>
 
-          <!--<el-form-item label="过期时间:">-->
-          <!--<el-date-picker-->
-          <!--v-model="ruleForm.weightDate"-->
-          <!--:editable=false-->
-          <!--type="date"-->
-          <!--placeholder="选择日期">-->
-          <!--</el-date-picker>-->
-          <!--<span>数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>-->
-          <!--</el-form-item>-->
+          <el-form-item label="权重过期时间:">
+            <el-date-picker
+              v-model="ruleForm.weightDate"
+              :editable=false
+              type="datetime"
+              placeholder="选择日期时间">
+            </el-date-picker>
+            <span>权重数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>
+          </el-form-item>
 
           <el-form-item label="摘要:">
             <el-input type="textarea" v-model="ruleForm.description" class="width"></el-input>
@@ -216,7 +217,7 @@
 
 
           <el-form-item label="缩略图:">
-            <!--<el-dialog v-if="ruleForm.image" size="tiny">-->
+            <!--<el-dialog v-show="ruleForm.image" size="tiny">-->
             <el-dialog size="tiny">
               <img width="100%" :src="ruleForm.image">
             </el-dialog>
@@ -227,6 +228,7 @@
               list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
+              :on-remove="onRemove"
               :before-upload="beforeUpload">
               <el-button type="primary" @click="clearUploadedImage">上传图片<i class="el-icon-upload el-icon--right"></i>
               </el-button>
@@ -406,31 +408,30 @@
             if (res.data.code === 200) {
               let obj = res.data.data
               console.log(obj)
+              // 推荐位
+              if (obj.posid) {
+                obj.posName = obj.posid.split(',').map(i => {
+                  return Tools.k2value(this.posRelation, i)
+                })
+              }
               this.ruleForm = {
                 id: obj.id,
                 categoryId: obj.categoryId, // 分类编号
                 categoryName: categoryName, // 分类名称
                 image: obj.image, // 文章图片
-                keywords: obj.keywords.split(',').join(' ') || '', // 关键字
+                keywords: (obj.keywords || '').split(',').join(' '), // 关键字
                 title: obj.title, // 标题
                 link: obj.link, // 外部链接
                 weight: obj.weight, // 权重，越大越靠前
                 description: obj.description, // 描述、摘要
-                content: obj.content,
-                posName: obj.posid.split(',').map(i => {
-                  return Tools.k2value(this.posRelation, i)
-                }),
+                content: obj.content || '',
+                posName: obj.posName || [],
                 delFlagName: Tools.k2value(this.statusRelation, obj.delFlag)
               }
               this.E.setContent(this.ruleForm.content)
+              console.log(this.ruleForm)
               // 为何不能直接对象=对象?
 //              this.ruleForm = res.data.data
-//              this.ruleForm.categoryName = categoryName
-//              this.ruleForm.keywords = this.ruleForm.keywords.split(',').join(' ') || ''
-//              this.ruleForm.delFlagName = Tools.k2value(this.statusRelation, this.ruleForm.delFlag)
-//              this.ruleForm.posName = this.ruleForm.posid.split(',').map(i => {
-//                return Tools.k2value(this.posRelation, i)
-//              })
             }
           })
           .catch(err => {
@@ -458,25 +459,27 @@
         // 并清空当前文章添加内列表内容
         this.resetForm()
       },
+      // 改变请求条数功能
       handleSizeChange: function (val) {
         this.formInline.pageSize = val
-        this.onSubmit('condition')
+        this.showForm()
       },
+      // 翻页功能
       handleCurrentChange: function (val) {
         this.formInline.index = val
-        this.onSubmit('condition')
+        this.showForm()
       },
       // 确认添加新文章
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
-            //        this.ruleForm.weightDate = Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss')
+            this.ruleForm.weightDate = Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss') || null
             this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
             this.ruleForm.posid = this.ruleForm.posName.map(i => {
               return Tools.k2value(this.posRelation, i)
             }).join(',')
-            //        console.log(this.ruleForm)
+            console.log(this.ruleForm)
             this.$ajax.post('cms/comment/interface/save', qs.stringify(this.ruleForm))
               .then(res => {
                 if (res.code === 200) {
@@ -556,6 +559,10 @@
             })
         })
       },
+      // 移除图片时清空form表单中的图片地址
+      onRemove () {
+        this.ruleForm.image = ''
+      },
       // 上传之前 清除原有图片
       clearUploadedImage () {
         this.$refs.upload.clearFiles()
@@ -625,6 +632,21 @@
           .catch(() => {
             this.open('info', '已取消删除')
           })
+      },
+      sortChange () {
+//        console.log(arguments[0].prop)
+        if (!this.formInline.order) {
+          this.formInline.order = arguments[0].prop + ' DESC'
+          return
+        }
+
+        if (this.formInline.order.indexOf('DESC') === -1) {
+          this.formInline.order = arguments[0].prop + ' DESC'
+        } else {
+          this.formInline.order = arguments[0].prop + ' ASC'
+        }
+        console.log(this.formInline.order)
+        this.showForm()
       }
     }
   }

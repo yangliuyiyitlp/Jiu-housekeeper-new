@@ -6,7 +6,26 @@
 </template>
 
 <script>
-
+  export default {
+    data () {
+      return {}
+    },
+    created () {
+      this.query()
+    },
+    methods: {
+      // 请求数据
+      query () {
+        this.$ajax.get('cms/category/interface/list')
+          .then(res => {
+            console.log(res)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      }
+    }
+  }
 </script>
 
 <style scoped>
