@@ -7,7 +7,7 @@
       <el-form-item label="锁厂编号">
         <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
-      <el-form-item label="添加时间">
+      <el-form-item label="添加时间" >
         <el-date-picker
           v-model="requestParam.beginAddTime"
           type="datetime"
@@ -39,17 +39,18 @@
     <!--隐藏表单用于文件导出-->
     <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
           method="post" ref="FileForm">
-      <input name="factoryName" v-model="exportParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
-      <input name="pageSize" v-model="exportParam.pageSize"/>
-      <input name="pageNo" v-model="exportParam.pageNo"/>
+      <input name="factoryName" v-model="requestParam.factoryName"/>
+      <input name="lockFactoryNo" v-model="requestParam.lockFactoryNo"/>
+      <input name="addTimeStart" v-model="requestParam.addTimeStart"/>
+      <input name="pageSize" v-model="requestParam.pageSize"/>
+      <input name="pageNo" v-model="requestParam.pageNo"/>
     </form>
     <el-table
       :data="tableData"
       border
       show-header
       style="width: 100%"
+      stripe
       @cell-click="more">
       <el-table-column
         prop="id"
@@ -59,7 +60,7 @@
       <el-table-column
         label="锁厂名称"
         prop="factoryName">
-        <template slot-scope="scope">
+        <template scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
         </template>
       </el-table-column>
@@ -69,7 +70,7 @@
       </el-table-column>
       <el-table-column
         label="添加时间">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
         </template>
@@ -85,7 +86,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template slot-scope="scope">
+        <template scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -124,24 +125,24 @@
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px" :model="moreinfo" ref="formA" class="tbody">
+      <el-form label-width="150px" :model="moreInfo" ref="formA" class="tbody">
         <el-form-item label="锁厂名称" class="elform">
-          <el-input :value="moreinfo.factoryName" :disabled="true"></el-input>
+          <el-input :value="moreInfo.factoryName" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="锁厂家编号" class="elform">
-          <el-input :value="moreinfo.lockFactoryNo" :disabled="true"></el-input>
+          <el-input :value="moreInfo.lockFactoryNo" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="添加时间" class="elform">
-          <el-input :value="moreinfo.addTime" :disabled="true"></el-input>
+          <el-input :value="moreInfo.addTime" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="更新时间" class="elform">
-          <el-input :value="moreinfo.updateDate" :disabled="true"></el-input>
+          <el-input :value="moreInfo.updateDate" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="操作者" class="elform">
-          <el-input :value="moreinfo['createBy.id']" :disabled="true"></el-input>
+          <el-input :value="moreInfo['createBy.id']" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="备注" class="elform">
-          <el-input type="textarea" :row="3" :value="moreinfo.remarks" :disabled="true" style="resize:none"></el-input>
+          <el-input type="textarea" :row="3" :value="moreInfo.remarks" :disabled="true" style="resize:none"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -181,7 +182,7 @@
           'createBy.id': '',
           remarks: ''
         },
-        moreinfo: {
+        moreInfo: {
           factoryName: '',
           lockFactoryNo: '',
           'createBy.id': '',
@@ -191,7 +192,6 @@
         },
         formLabelWidth: '80px',
         requestParam: {
-//          selectTime: '',
           beginAddTime: '',
           endAddTime: '',
           factoryName: '',
@@ -207,30 +207,29 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
-        exportParam: {
-//          selectTime: '',
-          beginAddTime: '',
-          endAddTime: '',
-          factoryName: '',
-          lockFactoryNo: '',
-          pageSize: 30,
-          pageNo: 1
-        }
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
+//        exportParam: {
+//          beginAddTime: '',
+//          endAddTime: '',
+//          factoryName: '',
+//          lockFactoryNo: '',
+//          pageSize: 30,
+//          pageNo: 1
+//        }
       }
     },
     methods: {
       query () {
         this.requestParam.factoryName = this.requestParam.factoryName.trim()
         this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
-        this.exportParam.factoryName = this.requestParam.factoryName
-        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
+//        this.exportParam.factoryName = this.requestParam.factoryName
+//        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.exportParam.beginAddTime = this.requestParam.beginAddTime
-        this.exportParam.endAddTime = this.requestParam.endAddTime
-        this.exportParam.pageNo = this.requestParam.pageNo
-        this.exportParam.pageSize = this.requestParam.pageSize
+//        this.exportParam.beginAddTime = this.requestParam.beginAddTime
+//        this.exportParam.endAddTime = this.requestParam.endAddTime
+//        this.exportParam.pageNo = this.requestParam.pageNo
+//        this.exportParam.pageSize = this.requestParam.pageSize
 //        this.$ajax(
 //          {
 //            method: 'post',
@@ -380,11 +379,11 @@
           this.moreFormVisible = true
           this.$ajax.get('electric/lockfactoryinfo/interface/view_form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
-              this.moreinfo.remarks = res.data.tLockFactoryInfo.remarks
-              this.moreinfo.updateDate = res.data.tLockFactoryInfo.updateDate
-              this.moreinfo.factoryName = res.data.tLockFactoryInfo.factoryName
-              this.moreinfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
-              this.moreinfo.addTime = res.data.tLockFactoryInfo.addTime
+              this.moreInfo.remarks = res.data.tLockFactoryInfo.remarks
+              this.moreInfo.updateDate = res.data.tLockFactoryInfo.updateDate
+              this.moreInfo.factoryName = res.data.tLockFactoryInfo.factoryName
+              this.moreInfo.lockFactoryNo = res.data.tLockFactoryInfo.lockFactoryNo
+              this.moreInfo.addTime = res.data.tLockFactoryInfo.addTime
             }
           }).catch((err) => {
             this.$message({
@@ -399,10 +398,12 @@
       },
       handleSizeChange (val) {
         this.requestParam.pageSize = val
+        this.pagination.pageSize = val
         this.query()
       },
       handleCurrentChange (val) {
         this.requestParam.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       addNewRecord () {
@@ -424,8 +425,8 @@
       exportCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.exportParam.pageSize = this.pagination.pageNo
-          this.exportParam.pageSize = this.pagination.pageSize
+          this.requestParam.pageSize = this.pagination.pageNo
+          this.requestParam.pageSize = this.pagination.pageSize
           this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
           this.$refs['FileForm'].submit()
         } else {
@@ -435,8 +436,8 @@
       exportAll () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.exportParam.pageSize = ''
-          this.exportParam.pageNo = ''
+          this.requestParam.pageSize = ''
+          this.requestParam.pageNo = ''
           this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
           this.$refs['FileForm'].submit()
         } else {
@@ -447,10 +448,6 @@
   }
 </script>
 <style scoped>
-  #dataGrid {
-
-  }
-
   form {
     padding-top: 20px;
     height: 75px;

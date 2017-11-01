@@ -31,6 +31,9 @@
           }, {
             label: '锁状态明细表',
             name: 'state'
+          }, {
+            label: '批量操作车辆',
+            name: 'unbund'
           }]
         }, {
           label: '锁厂登记表',
