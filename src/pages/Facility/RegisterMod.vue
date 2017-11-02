@@ -7,7 +7,7 @@
       <el-form-item label="锁厂编号">
         <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
-      <el-form-item label="添加时间" >
+      <el-form-item label="添加时间">
         <el-date-picker
           v-model="requestParam.beginAddTime"
           type="datetime"
@@ -39,11 +39,11 @@
     <!--隐藏表单用于文件导出-->
     <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
           method="post" ref="FileForm">
-      <input name="factoryName" v-model="requestParam.factoryName"/>
-      <input name="lockFactoryNo" v-model="requestParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="requestParam.addTimeStart"/>
-      <input name="pageSize" v-model="requestParam.pageSize"/>
-      <input name="pageNo" v-model="requestParam.pageNo"/>
+      <input name="factoryName" v-model="exportParam.factoryName"/>
+      <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
+      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>
     <el-table
       :data="tableData"
@@ -60,7 +60,7 @@
       <el-table-column
         label="锁厂名称"
         prop="factoryName">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.factoryName}}</span>
         </template>
       </el-table-column>
@@ -70,7 +70,7 @@
       </el-table-column>
       <el-table-column
         label="添加时间">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.addTime}}</span>
         </template>
@@ -86,7 +86,7 @@
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -102,7 +102,8 @@
       :total="pagination.count">
     </el-pagination>
     <!--增加修改弹框-->
-    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible"size="small" :show-close="false" :close-on-press-escape="false"
+    <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" size="small" :show-close="false"
+               :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="addBody">
@@ -125,7 +126,7 @@
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
 
-      <el-form label-width="150px" :model="moreInfo" ref="formA" class="tbody">
+      <el-form label-width="150px" :model="moreInfo" ref="formB" class="tbody">
         <el-form-item label="锁厂名称" class="elform">
           <el-input :value="moreInfo.factoryName" :disabled="true"></el-input>
         </el-form-item>
@@ -164,6 +165,7 @@
 
 <script>
   import Moment from 'moment'
+
   export default {
     created: function () {
       this.query()
@@ -207,71 +209,46 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
-//        exportParam: {
-//          beginAddTime: '',
-//          endAddTime: '',
-//          factoryName: '',
-//          lockFactoryNo: '',
-//          pageSize: 30,
-//          pageNo: 1
-//        }
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        exportParam: {
+          beginAddTime: '',
+          endAddTime: '',
+          factoryName: '',
+          lockFactoryNo: '',
+          pageSize: 30,
+          pageNo: 1
+        }
       }
     },
     methods: {
       query () {
         this.requestParam.factoryName = this.requestParam.factoryName.trim()
         this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
-//        this.exportParam.factoryName = this.requestParam.factoryName
-//        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
+        this.exportParam.factoryName = this.requestParam.factoryName
+        this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
-//        this.exportParam.beginAddTime = this.requestParam.beginAddTime
-//        this.exportParam.endAddTime = this.requestParam.endAddTime
-//        this.exportParam.pageNo = this.requestParam.pageNo
-//        this.exportParam.pageSize = this.requestParam.pageSize
-//        this.$ajax(
-//          {
-//            method: 'post',
-//            url: 'electric/lockfactoryinfo/interface/list',
-//            data: this.requestParam,
-//            headers: {
-//              'Content-Type': 'multipart/form-data'
-//            }
-//          }
-//        )
-//        .then(function (response) {
-//          if (response.data.code === 0) {
-//            this.tableData = response.data.page.list
-//            this.pagination.count = response.data.page.count
-//          } else {
-//            this.$message({
-//              type: 'info',
-//              message: '获取列表信息失败'
-//            })
-//          }
-//        }, function (err) {
-//          this.$message({
-//            type: 'info',
-//            message: '获取列表信息失败' + err.status
-//          })
-//        })
-        this.$ajax.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam}).then(response => {
-          if (response.data.code === 0) {
-            this.tableData = response.data.page.list
-            this.pagination.count = response.data.page.count
-          } else {
+        this.exportParam.beginAddTime = this.requestParam.beginAddTime
+        this.exportParam.endAddTime = this.requestParam.endAddTime
+        this.exportParam.pageNo = this.requestParam.pageNo
+        this.exportParam.pageSize = this.requestParam.pageSize
+        this.$ajax.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam})
+          .then(response => {
+            if (response.data.code === 0) {
+              this.tableData = response.data.page.list
+              this.pagination.count = response.data.page.count
+            } else {
+              this.$message({
+                type: 'error',
+                message: response.data.msg
+              })
+            }
+          }).catch(() => {
             this.$message({
               type: 'error',
-              message: response.data.msg
+              message: '获取列表信息失败'
             })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: '获取列表信息失败'
           })
-        })
       },
       modifyRecord (scope) {
         this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
@@ -425,8 +402,8 @@
       exportCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.requestParam.pageSize = this.pagination.pageNo
-          this.requestParam.pageSize = this.pagination.pageSize
+          this.exportParam.pageSize = this.pagination.pageNo
+          this.exportParam.pageSize = this.pagination.pageSize
           this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
           this.$refs['FileForm'].submit()
         } else {
@@ -436,8 +413,8 @@
       exportAll () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.requestParam.pageSize = ''
-          this.requestParam.pageNo = ''
+          this.exportParam.pageSize = ''
+          this.exportParam.pageNo = ''
           this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
           this.$refs['FileForm'].submit()
         } else {

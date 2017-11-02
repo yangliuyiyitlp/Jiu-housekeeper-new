@@ -138,7 +138,7 @@
     </el-pagination>
     <!--增加修改弹框-->
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
-               :close-on-click-modal="false" class="demo-ruleForm ">
+               :close-on-click-modal="false" class="demo-ruleForm">
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
         <el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">
           <el-input v-model="form.cityName"></el-input>
@@ -162,7 +162,7 @@
         <el-form-item label="苹果inmobi编号：" prop="iosInmobiId" class="elform">
           <el-input v-model="form.iosInmobiId"></el-input>
         </el-form-item>
-        <el-form-item label="备注：" prop="remarks" class="elform">
+        <el-form-item label="备注："  class="elform">
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
         <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
@@ -182,8 +182,7 @@
     <!--详情弹框-->
     <el-dialog title="详情" :visible.sync="moreFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
-
-      <el-form label-width="150px" :model="moreInfo" ref="formA" class="tbody">
+      <el-form label-width="150px" :model="moreInfo" ref="formB" class="tbody">
         <el-form-item label="城市名称" class="elform">
           <el-input :value="moreInfo.cityName" :disabled="true"></el-input>
         </el-form-item>
@@ -281,10 +280,10 @@
             {required: true, message: '请输入显示顺序', trigger: 'blur'}
           ],
           type: [
-            {required: true, message: '请选择广告位置', trigger: 'change'}
+            {required: true, message: '请选择广告位置', trigger: 'blur'}
           ],
           displayType: [
-            {required: true, message: '请选择广告类型', trigger: 'change'}
+            {required: true, message: '请选择广告类型', trigger: 'blur'}
           ],
           androidInmobiId: [
             {required: true, message: '请输入安卓inmobi编号', trigger: 'blur'}
@@ -368,7 +367,7 @@
         this.vif = false
         this.dialogFormVisible = true
         this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
-          .then(function (res) {
+          .then((res) => {
             if (res.status === 200) {
               this.form.id = res.data.tDisplayType.id
               this.form.cityName = res.data.tDisplayType.cityName
@@ -378,8 +377,11 @@
               this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
               this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
               this.form.remarks = res.data.tDisplayType.remarks
+              console.log(JSON.stringify(res.data.tDisplayType))
             }
-          }.bind(this))
+          }).catch((err) => {
+            console.error(err)
+          })
       },
       deleteRecord: function (id) {
         this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
@@ -422,40 +424,47 @@
           })
         })
       },
-      doModify (formName) {       // 修改确定功能
+      doModify (formName) {       // 增加修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
             this.checkedCities = []
-            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form}).then(function (response) {
-              if (response.status === 200) {
-                // 更新成功
-                this.$message({
-                  type: 'success',
-                  message: '操作成功'
-                })
-                // 刷新页面
-                this.query()
-              } else {
+            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form})
+              .then(function (response) {
+                if (response.status === 200) {
+                  // 更新成功
+                  this.$message({
+                    type: 'success',
+                    message: '操作成功'
+                  })
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: response.data.msg
+                  })
+                }
+              }.bind(this), function () {
                 this.$message({
                   type: 'error',
-                  message: response.data.msg
+                  message: '操作失败'
                 })
-              }
-            }.bind(this), function () {
-              this.$message({
-                type: 'error',
-                message: '操作失败'
-              })
-            }.bind(this))
+              }.bind(this))
           } else {
             return false
           }
         })
       },
       cancelOperate: function () {
+        console.log('form', JSON.stringify(this.form))
         this.dialogFormVisible = false
+        this.$nextTick(function () {
+          if (this.$refs['formA'] !== undefined) {
+            this.$refs['formA'].resetFields()
+          }
+        })
         this.form = {
           cityName: '',
           rank: '',
@@ -466,7 +475,6 @@
           remarks: '',
           areaNames: ''
         }
-        this.$refs['formA'].resetFields()
       },
       more: function (row, column, cell, event) {
         if (column.property !== 'cityName') {
@@ -519,18 +527,23 @@
           remarks: '',
           areaNames: ''
         }
+        this.$nextTick(function () {
+          if (this.$refs['formA'] !== undefined) {
+            this.$refs['formA'].resetFields()
+          }
+        })
         this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
-          .then(function (res) {
-            console.log(res)
+          .then((res) => {
             if (res.status === 200) {
               this.form.rank = res.data.maxSort
+              console.log(res.data.maxSort)
             } else {
               this.$message({
                 type: 'error',
                 message: res.data.msg
               })
             }
-          }.bind(this), function () {
+          }, function () {
             this.$message({
               type: 'error',
               message: '获取失败'

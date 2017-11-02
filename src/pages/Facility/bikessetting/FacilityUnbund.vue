@@ -68,7 +68,7 @@
       <el-table-column
         label="车辆编号"
         prop="bikeid">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span v-bind:class="{active: true}">{{ scope.row.bikeid}}</span>
         </template>
       </el-table-column>
@@ -99,7 +99,7 @@
       </el-table-column>
       <el-table-column
         label="update_date">
-        <template scope="scope">
+        <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.updateDate}}</span>
         </template>
       </el-table-column>

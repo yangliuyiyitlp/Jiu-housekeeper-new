@@ -128,7 +128,7 @@
             fixed="left"
             show-overflow-tooltip
             width="100">
-            <template scope="scope">
+            <template slot-scope="scope">
               <span v-bind:class="{active: true}">{{ scope.row.cityName}}</span>
             </template>
           </el-table-column>
@@ -319,11 +319,11 @@
         <el-form ref="formA" :model="form" :rules="rules" label-width="150px">
 
           <el-form-item label="活动描述:" prop="description">
-            <el-input v-model="form.description" :disabled=show></el-input>
+            <el-input v-model="form.description" ></el-input>
           </el-form-item>
 
           <el-form-item label="活动类型:" prop='type'>
-            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange" :disabled=show>
+            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange" >
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
                          :value=key></el-option>
             </el-select>
@@ -331,13 +331,13 @@
 
           <el-form-item label="是否乐享活动:" prop='isLeXiang'>
             <el-select v-model="form.isLeXiang" clearable class="selectInput"
-                       :disabled=show>
+                       >
               <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
                          :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="限制信用分:" prop='creditLimit'>
-            <el-input v-model="form.creditLimit" :disabled=show></el-input>
+            <el-input v-model="form.creditLimit" ></el-input>
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
 
@@ -352,28 +352,29 @@
               ref="uploadFile"
               list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :disabled="pic"
               :data="Token"
               :on-remove="onRemove"
               :before-upload="beforeUploadImgPath">
-              <el-button  type="primary" @click="clearUploadedImage" :disabled=show>上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-button  type="primary" @click="clearUploadedImage" >上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
             </el-upload>
           </el-form-item>
 
           <el-form-item label="展示顺序:" prop='sort'>
-            <el-input v-model="form.sort" :disabled=show></el-input>
+            <el-input v-model="form.sort" ></el-input>
           </el-form-item>
           <el-form-item label="活动链接:" prop='activityPath'>
-            <el-input v-model="form.activityPath" :disabled=show></el-input>
+            <el-input v-model="form.activityPath" ></el-input>
           </el-form-item>
           <div v-if="video">
             <el-form-item label="视频链接:">
-              <el-input v-model="form.videoPath" :disabled=show></el-input>
+              <el-input v-model="form.videoPath" ></el-input>
             </el-form-item>
             <el-form-item label="视频封面:" prop='coverPath'>
               <el-input v-model="form.coverPath" v-show='false' ></el-input>
-              <img :src="form.coverPath" alt="视频封面" :disabled=show>
+              <img :src="form.coverPath" alt="视频封面" >
               <el-upload
-                :disabled=show
+
                 class="upload-demo"
                 ref="upload"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -383,7 +384,7 @@
               </el-upload>
             </el-form-item>
             <el-form-item label="有无红包:">
-              <el-select v-model="form.redPackage" clearable class="selectInput" :disabled=show>
+              <el-select v-model="form.redPackage" clearable class="selectInput" >
                 <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
                            :value=key></el-option>
               </el-select>
@@ -392,71 +393,71 @@
           <el-form-item label="分享平台:">
             <el-checkbox-group v-model="formList" @change="onCheckboxChange" ref='checkShare'>
               <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key
-                           :disabled=show></el-checkbox>
+                           ></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <div v-if='enjoy'>
             <el-form-item label="分享标题:" prop='shareTitle'>
-              <el-input v-model="form.shareTitle" :disabled=show></el-input>
+              <el-input v-model="form.shareTitle" ></el-input>
             </el-form-item>
             <el-form-item label="分享图片链接:" prop='sharePic'>
-              <el-input v-model="form.sharePic" :disabled=show></el-input>
+              <el-input v-model="form.sharePic" ></el-input>
             </el-form-item>
             <el-form-item label="分享链接:" prop='shareUrl'>
-              <el-input v-model="form.shareUrl" :disabled=show></el-input>
+              <el-input v-model="form.shareUrl" ></el-input>
             </el-form-item>
             <el-form-item label="分享内容:" prop='shareContent'>
-              <el-input v-model="form.shareContent" :disabled=show></el-input>
+              <el-input v-model="form.shareContent" ></el-input>
             </el-form-item>
           </div>
-          <!--<el-form-item label="是否默认:" :disabled=show>-->
-            <!--<el-select v-model="form.state" clearable class="selectInput" :disabled=show-->
-                       <!--@change="onActivityStateChange">-->
-              <!--<el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]-->
-                         <!--:value=key></el-option>-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
+          <el-form-item label="是否默认:" >
+            <el-select v-model="form.state" clearable class="selectInput"
+                       @change="onActivityStateChange">
+              <el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]
+                         :value=key></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="城市名称:" prop="cityName">
-            <el-input v-model="form.cityName" :disabled=show></el-input>
+            <el-input v-model="form.cityName" ></el-input>
             <span v-if="add">添加模式下，城市的添加以《快速添加到城市》的选项为准</span>
           </el-form-item>
           <el-form-item label="有效日期:">
             <el-date-picker
               v-model="form.beginTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
               -
             <el-date-picker
               v-model="form.endTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="展示日期:">
             <el-date-picker
               v-model="form.showTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
               -
             <el-date-picker
               v-model="form.hideTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="添加时间:">
             <el-date-picker
               v-model="form.addTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="更新时间:">
             <el-date-picker
               v-model="form.updateTime"
-              type="datetime" :disabled=show>
+              type="datetime" >
             </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
-            <el-input v-model="form.remarks" type="textarea" class='textarea' :disabled=show></el-input>
+            <el-input v-model="form.remarks" type="textarea" class='textarea' ></el-input>
           </el-form-item>
 
           <el-checkbox class='check-all' v-if='add' :indeterminate="isIndeterminate" v-model="checkAll"
@@ -488,12 +489,12 @@
     },
     data () {
       return {
+        pic: false,
         checkAll: true,
         checkedCities: [],
         cities: cityOptions,
         isIndeterminate: true,
         add: false,
-        show: true,
         saveUp: false,
         imgPathUrl: '',
         enjoy: false, //  分享
@@ -811,7 +812,7 @@
         } else {
           this.activeName2 = 'second'
           this.title = '赳赳乐享活动详情'
-          this.show = true
+          this.pic = true
           this.add = false
           this.saveUp = false
           this.bike = true
@@ -841,8 +842,8 @@
       }, // 详情返回按钮
       modifyRecord (scope) {
         this.$refs['formA'].resetFields()
+        this.pic = false
         this.activeName2 = 'second'
-        this.show = false
         this.saveUp = true
         this.add = false
         this.title = '赳赳乐享活动修改'
@@ -1012,8 +1013,8 @@
       },
       addNewRecord: function () {
         this.$refs['formA'].resetFields()
+        this.pic = false
         this.activeName2 = 'second'
-        this.show = false
         this.saveUp = true
         this.add = true
         this.title = '赳赳乐享活动添加'

@@ -22,57 +22,61 @@
           name: 'activity.message'
         }, {
           id: 2,
+          label: '短信推送',
+          name: 'activity.message.push'
+        }, {
+          id: 3,
           label: '消息推送计划',
           name: 'activity.message.plan'
         }, {
-          id: 3,
+          id: 4,
           label: '赳赳乐享',
           name: 'activity.enjoy'
         }, {
-          id: 4,
+          id: 5,
           label: 'APP展示页配置',
           name: 'activity.config'
         }, {
-          id: 5,
+          id: 6,
           label: '家乐福活动',
           children: [{
-            id: 6,
+            id: 7,
             label: '优惠券明细',
             name: 'activity.coupon'
           }, {
-            id: 7,
+            id: 8,
             label: '活动邀请明细',
             name: 'activity.invite.detail'
           }, {
-            id: 8,
+            id: 9,
             label: '优惠券领取明细',
             name: 'activity.coupon.receive'
           }, {
-            id: 9,
+            id: 10,
             label: '活动邀请统计',
             name: 'activity.invite.list'
           }]
         }, {
-          id: 10,
+          id: 11,
           label: '僵尸车活动',
           children: [{
-            id: 11,
+            id: 12,
             label: '车辆图标配置',
             name: 'activity.config.icon'
           }]
         }, {
-          id: 12,
+          id: 13,
           label: '广告中心',
           children: [{
-            id: 13,
+            id: 14,
             label: 'inmobi广告配置',
             name: 'activity.inmobi'
           }]
         }, {
-          id: 14,
+          id: 15,
           label: '饿了么活动',
           children: [{
-            id: 15,
+            id: 16,
             label: '优惠券管理',
             name: 'activity.ele.manage.coupon'
           }]

@@ -52,21 +52,21 @@
       </el-table-column>
       <el-table-column
         label="登录状态">
-        <template scope="scope">
+        <template slot-scope="scope">
           <div v-if="scope.row.loginStatus==='true'">是</div>
           <div v-else>否</div>
         </template>
       </el-table-column>
       <el-table-column
         label="添加时间">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-icon name="time"></el-icon>
           <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
         label="操作">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
