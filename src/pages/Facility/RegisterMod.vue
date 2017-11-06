@@ -37,8 +37,8 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form action="http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export" style="display: none"
-          method="post" ref="FileForm">
+    <form action="" v-show= false
+          method="post" ref="FileForm" >
       <input name="factoryName" v-model="exportParam.factoryName"/>
       <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
       <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
@@ -226,13 +226,13 @@
         this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
-        this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
+        this.requestParam.beginAddTime = Moment(new Date(this.requestParam.beginAddTime)).format('YYYY-MM-DD HH:mm:ss')
+        this.requestParam.endAddTime = Moment(new Date(this.requestParam.endAddTime)).format('YYYY-MM-DD HH:mm:ss')
         this.exportParam.beginAddTime = this.requestParam.beginAddTime
         this.exportParam.endAddTime = this.requestParam.endAddTime
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('electric/lockfactoryinfo/interface/list', {params: this.requestParam})
+        this.$ajax.get('http://localhost:3000/facilityregister', {params: this.requestParam})
           .then(response => {
             if (response.data.code === 0) {
               this.tableData = response.data.page.list
@@ -240,7 +240,7 @@
             } else {
               this.$message({
                 type: 'error',
-                message: response.data.msg
+                message: '获取列表信息失败'
               })
             }
           }).catch(() => {
@@ -251,7 +251,7 @@
           })
       },
       modifyRecord (scope) {
-        this.$ajax.get('electric/lockfactoryinfo/interface/form', {params: {id: scope.row.id}})
+        this.$ajax.get('http://localhost:3000/facilityregister/form', {params: {id: scope.row.id}})
           .then(res => {
             if (res.data.code === 0) {
               this.dialogFormVisible = true
@@ -272,14 +272,14 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('electric/lockfactoryinfo/interface/delete', {params: {'id': id}}).then(response => {
+            this.$ajax.post('http://localhost:3000/facilityregister/delete', {params: {'id': id}}).then(response => {
               if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
                   type: 'success',
                   message: '删除成功'
                 })
-                this.$refs['formA'].resetFields()
+//                this.$refs['formA'].resetFields()
                 // 刷新页面
                 this.query()
               } else {
@@ -307,9 +307,9 @@
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = 'electric/lockfactoryinfo/interface/save' // 新增功能
+              url = 'http://localhost:3000/facilityregister/save' // 新增功能
             } else {
-              url = 'electric/lockfactoryinfo/interface/save'
+              url = 'http://localhost:3000/facilityregister/save'
             }
             this.dialogFormVisible = false
             this.$ajax.get(url, {params: this.form}).then(response => {
@@ -354,7 +354,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('electric/lockfactoryinfo/interface/view_form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('http://localhost:3000/facilityregister/view_form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreInfo.remarks = res.data.tLockFactoryInfo.remarks
               this.moreInfo.updateDate = res.data.tLockFactoryInfo.updateDate
@@ -404,7 +404,7 @@
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/export')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facilityregister/export')
           this.$refs['FileForm'].submit()
         } else {
           return
@@ -415,7 +415,7 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/exportAll')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facilityregister/exportAll')
           this.$refs['FileForm'].submit()
         } else {
           return
