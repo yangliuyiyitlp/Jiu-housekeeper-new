@@ -134,7 +134,7 @@
             <el-pagination
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="pagination.pageNo"
+              :current-page="pagination.pageNum"
               :page-sizes="pagination.pageSizes"
               :page-size="pagination.pageSize"
               layout="total, sizes, prev, pager, next, jumper"
@@ -189,15 +189,14 @@
             <span>多个关键字，用空格分隔。</span>
           </el-form-item>
 
-          <el-form-item label="权重:">
+          <el-form-item label="权重:" prop="weight">
             <el-input ref="power" v-model="ruleForm.weight" placeholder="0"></el-input>
             <span>置顶:</span>
             <el-switch
               @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value="999" off-value="0"
-              on-text="On" off-text="Off">
+              on-value=999  off-value=0  on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -311,6 +310,19 @@
       VueUEditor
     },
     data () {
+      // 权重的范围判断
+      let weightRule = (rule, value, callback) => {
+        if (!Number.isInteger(+value)) {
+          callback(new Error('必须输入正整数'))
+          return
+        }
+        if (+value < 0 || +value > 999) {
+          callback(new Error('数值范围为0-998'))
+        } else {
+          callback()
+        }
+      }
+
       return {
         activeName2: 'first',
         second_name: '文章添加',
@@ -343,14 +355,11 @@
         ruleForm: {},
         editorContent: '',
         rules: {
-          title: [
-            {required: true, message: '标题不能为空', trigger: 'blur'}
-          ],
-          categoryName: [
-            {required: true, message: '请选择归属栏目', trigger: 'change'}
-          ]
+          weight: [{validator: weightRule, trigger: 'blur'}],
+          title: [{required: true, message: '标题不能为空', trigger: 'blur'}],
+          categoryName: [{required: true, message: '请选择归属栏目', trigger: 'change'}]
         },
-        pagination: {pageSizes: [20, 50, 80, 100], pageSize: 20, total: 0, pageNo: 1}
+        pagination: {pageSizes: [10, 20, 50, 80, 100], pageSize: 20, total: 0, pageNum: 1}
       }
     },
     created: function () {
@@ -381,9 +390,10 @@
       },
       // 根据id删除当前行的信息
       delRecord (id) {
-        this.$ajax.get('cms/comment/interface/delete?id=' + id)
+        this.$ajax.get(`http://localhost:3000/content/release/deleteArticle/${id}`)
           .then(res => {
             if (res.status === 200) {
+              console.log(res)
               // 删除成功
               this.open('success', res.data.msg)
               // 刷新页面
@@ -403,8 +413,9 @@
       modifyRecord (id, categoryName) {
         this.second_name = '文章修改'
         this.activeName2 = 'second'
-        this.$ajax.get('cms/comment/interface/form?id=' + id)
+        this.$ajax.get('http://localhost:3000/content/release/article/' + id)
           .then(res => {
+            console.log(res.data)
             if (res.data.code === 200) {
               let obj = res.data.data
               console.log(obj)
@@ -461,12 +472,14 @@
       },
       // 改变请求条数功能
       handleSizeChange: function (val) {
+        console.log(val)
         this.formInline.pageSize = val
         this.showForm()
       },
       // 翻页功能
       handleCurrentChange: function (val) {
-        this.formInline.index = val
+        console.log(val)
+        this.formInline.pageNum = val
         this.showForm()
       },
       // 确认添加新文章
@@ -474,14 +487,15 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
-            this.ruleForm.weightDate = Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss') || null
+            this.ruleForm.weightDate = (this.ruleForm.weightDate === undefined ? null : Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss'))
             this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
             this.ruleForm.posid = this.ruleForm.posName.map(i => {
               return Tools.k2value(this.posRelation, i)
             }).join(',')
             console.log(this.ruleForm)
-            this.$ajax.post('cms/comment/interface/save', qs.stringify(this.ruleForm))
+            this.$ajax.post('http://localhost:3000/content/release/update/article', qs.stringify(this.ruleForm))
               .then(res => {
+                console.log(res)
                 if (res.code === 200) {
                   open('success', res.data.msg)
                 }
@@ -571,7 +585,7 @@
       // 获取状态栏信息和树组件数据
       query () {
         // 查询发表状态
-        this.$ajax.get('sys/dictutils/interface/getDictList?type=cms_del_flag')
+        this.$ajax.get('http://localhost:3000/content/release/getDictList')
           .then(res => {
             this.statusRelation = Tools.nameRelation(res.data, 'value', 'label')
           })
@@ -579,7 +593,7 @@
             console.log(err)
           })
         // 获取栏目列表 树模型
-        this.$ajax.get('cms/category/interface/list')
+        this.$ajax.get('http://localhost:3000/content/release/category/getcategorys')
           .then(res => {
             if (res.data.code === 200) {
               this.relation = Tools.nameRelation(res.data.data, 'id', 'name')
@@ -592,15 +606,13 @@
       },
       // 根据查询字符串展示文章列表
       showForm () {
-        // 分页功能
-        this.formInline.pageSize = 20
-        this.formInline.pageNo = 1
         this.formInline.delFlag = Tools.k2value(this.statusRelation, this.formInline.delFlagName) || '0'
-        this.$ajax.get('cms/comment/interface/list', {params: this.formInline})
+        this.$ajax.get('http://localhost:3000/content/release/article/getarticles', {params: this.formInline})
           .then(res => {
             console.log(res.data)
             if (res.data.code === 200) {
-              this.tableData = res.data.data
+              this.pagination.total = res.data.data.total
+              this.tableData = res.data.data.result
               for (let i = 0; i < this.tableData.length; i++) {
                 this.tableData[i].categoryName = this.formInline.categoryName
                 this.tableData[i].update_date = Moment(this.tableData[i].updateDate).format('YYYY-MM-DD HH:mm:ss')
@@ -633,20 +645,22 @@
             this.open('info', '已取消删除')
           })
       },
+      // 根据排序的规则 远程调取数据列表
       sortChange () {
-//        console.log(arguments[0].prop)
-        if (!this.formInline.order) {
-          this.formInline.order = arguments[0].prop + ' DESC'
-          return
-        }
+        if (arguments[0].prop !== null) {
+          if (!this.formInline.order) {
+            this.formInline.order = arguments[0].prop + ' DESC'
+            return
+          }
 
-        if (this.formInline.order.indexOf('DESC') === -1) {
-          this.formInline.order = arguments[0].prop + ' DESC'
-        } else {
-          this.formInline.order = arguments[0].prop + ' ASC'
+          if (this.formInline.order.indexOf('DESC') === -1) {
+            this.formInline.order = arguments[0].prop + ' DESC'
+          } else {
+            this.formInline.order = arguments[0].prop + ' ASC'
+          }
+          console.log(this.formInline.order)
+          this.showForm()
         }
-        console.log(this.formInline.order)
-        this.showForm()
       }
     }
   }
