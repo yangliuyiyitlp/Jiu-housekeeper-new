@@ -37,8 +37,8 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form action="" v-show= false
-          method="post" ref="FileForm" >
+    <form action="" v-show=false
+          method="post" ref="FileForm">
       <input name="factoryName" v-model="exportParam.factoryName"/>
       <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
       <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
@@ -232,7 +232,7 @@
         this.exportParam.endAddTime = this.requestParam.endAddTime
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('http://localhost:3000/facilityregister', {params: this.requestParam})
+        this.$ajax.get('http://localhost:3000/facility/register', {params: this.requestParam})
           .then(response => {
             if (response.data.code === 0) {
               this.tableData = response.data.page.list
@@ -251,7 +251,7 @@
           })
       },
       modifyRecord (scope) {
-        this.$ajax.get('http://localhost:3000/facilityregister/form', {params: {id: scope.row.id}})
+        this.$ajax.get('http://localhost:3000/facility/register/form', {params: {id: scope.row.id}})
           .then(res => {
             if (res.data.code === 0) {
               this.dialogFormVisible = true
@@ -272,7 +272,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('http://localhost:3000/facilityregister/delete', {params: {'id': id}}).then(response => {
+            this.$ajax.post('http://localhost:3000/facility/register/delete', {params: {'id': id}}).then(response => {
               if (response.data.code === 0) {
                 // 删除成功
                 this.$message({
@@ -307,9 +307,9 @@
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = 'http://localhost:3000/facilityregister/save' // 新增功能
+              url = 'http://localhost:3000/facility/register/save' // 新增功能
             } else {
-              url = 'http://localhost:3000/facilityregister/save'
+              url = 'http://localhost:3000/facility/register/save'
             }
             this.dialogFormVisible = false
             this.$ajax.get(url, {params: this.form}).then(response => {
@@ -354,7 +354,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('http://localhost:3000/facilityregister/view_form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('http://localhost:3000/facility/register/view/form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreInfo.remarks = res.data.tLockFactoryInfo.remarks
               this.moreInfo.updateDate = res.data.tLockFactoryInfo.updateDate
@@ -404,7 +404,7 @@
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facilityregister/export')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/export')
           this.$refs['FileForm'].submit()
         } else {
           return
@@ -415,7 +415,7 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facilityregister/exportAll')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/exportAll')
           this.$refs['FileForm'].submit()
         } else {
           return

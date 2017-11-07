@@ -115,13 +115,13 @@ export default new Router({
       name: 'facility',
       component: Facility,
       children: [
-        {name: 'tabs', path: '/facilitytabs', component: TabsMod},
-        {name: 'info', path: '/facilityinfo', component: FacilityInfo},
-        {name: 'count', path: '/facilitycount', component: FacilityCount},
-        {name: 'detailed', path: '/facilitydetailed', component: FacilityDetailed},
-        {name: 'state', path: '/facilitystate', component: FacilityState},
-        {name: 'register', path: '/facilityregister', component: RegisterMod},
-        {name: 'unbund', path: '/facilityunbund', component: FacilityUnbund}
+        {name: 'tabs', path: '/facility/tabs', component: TabsMod},
+        {name: 'info', path: '/facility/info', component: FacilityInfo},
+        {name: 'count', path: '/facility/count', component: FacilityCount},
+        {name: 'detailed', path: '/facility/detailed', component: FacilityDetailed},
+        {name: 'state', path: '/facility/state', component: FacilityState},
+        {name: 'register', path: '/facility/register', component: RegisterMod},
+        {name: 'unbund', path: '/facility/unbund', component: FacilityUnbund}
       ]
     },
     {

@@ -228,7 +228,7 @@
     methods: {
       list: function () {
 //        this.message = false
-        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'bike_batch_operate_flag'}})
+        this.$ajax.get('http://localhost:3000/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.opFlag[res.data[i].value] = res.data[i].label
