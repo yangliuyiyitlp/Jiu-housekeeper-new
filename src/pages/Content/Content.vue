@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <el-row>
-      <el-col :span="3">
+  <div >
+    <el-row class="sidebar">
+      <el-col :span="3" class="sidebar">
         <content-bar></content-bar>
       </el-col>
       <el-col :span="21">
@@ -34,3 +34,8 @@
     }
   }
 </script>
+<style scoped>
+  html,body,.sidebar{
+    height:100%!important;
+  }
+</style>

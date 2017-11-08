@@ -107,9 +107,9 @@
 
 </script>
 <style scoped>
-  #NavBar {
-    margin-bottom: 10px;
-  }
+  /*#NavBar {*/
+    /*margin-bottom: 10px;*/
+  /*}*/
 
   .img {
     float: left;

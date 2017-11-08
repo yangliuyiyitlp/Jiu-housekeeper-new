@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="3">
+    <el-row class="sidebar">
+      <el-col :span="3" class="sidebar">
         <activity-bar></activity-bar>
       </el-col>
       <el-col :span="21">
@@ -36,5 +36,7 @@ export default {
 </script>
 
 <style scoped>
-
+html,body,.sidebar{
+  height:100%!important;
+}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-row>
-      <el-col :span="3">
+    <el-row class="sidebar">
+      <el-col :span="3" class="sidebar">
         <facility-bar></facility-bar>
       </el-col>
       <el-col :span="21">
@@ -35,5 +35,7 @@
 </script>
 
 <style scoped>
-
+  html,body,.sidebar{
+    height:100%!important;
+  }
 </style>

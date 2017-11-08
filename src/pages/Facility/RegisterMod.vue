@@ -215,8 +215,8 @@
           endAddTime: '',
           factoryName: '',
           lockFactoryNo: '',
-          pageSize: 30,
-          pageNo: 1
+          pageSize: '',
+          pageNo: ''
         }
       }
     },
@@ -402,10 +402,11 @@
       exportCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.exportParam.pageSize = this.pagination.pageNo
+          this.exportParam.pageNo = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
           this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/export')
           this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
         } else {
           return
         }
@@ -413,10 +414,12 @@
       exportAll () {
         var r = confirm('确定导出么')
         if (r === true) {
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/exportAll')
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/exportAll')
+          console.log(this.exportParam)
           this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
         } else {
           return
         }

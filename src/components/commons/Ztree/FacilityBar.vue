@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="sidebar">
     <el-tree
+      class="sidebar"
       :data="data"
       :props="defaultProps"
       default-expand-all
@@ -58,6 +59,8 @@
 
 
 <style scoped>
-
+  html,body,.sidebar{
+    height:100%!important;
+  }
 </style>
 
