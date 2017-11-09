@@ -140,8 +140,9 @@
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm">
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item v-if="!vif" label="城市名称：" prop="cityName" class="elform">
+        <el-form-item  label="城市名称：" ref='city' class="elform">
           <el-input v-model="form.cityName"></el-input>
+          <div class="red" v-show='vif'>添加模式下，城市的添加以《快速添加到城市》的选项为准</div>
         </el-form-item>
         <el-form-item label="显示顺序：" prop="rank" class="elform">
           <el-input v-model="form.rank"></el-input>
@@ -165,10 +166,10 @@
         <el-form-item label="备注：" class="elform">
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
-        <el-checkbox class='check-all' v-if="vif" :indeterminate="isIndeterminate" v-model="checkAll"
+        <el-checkbox class='check-all' v-show="vif" :indeterminate="isIndeterminate" v-model="checkAll"
                      @change="handleCheckAllChange">快速添加城市：
         </el-checkbox>
-        <el-form-item v-if="vif" style="text-align: left;">
+        <el-form-item style="text-align: left;" v-show="vif">
           <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
           </el-checkbox-group>
@@ -535,7 +536,7 @@
           remarks: '',
           areaNames: ''
         }
-        this.$nextTick(function () {
+        this.$nextTick(() => {
           if (this.$refs['formA'] !== undefined) {
             this.$refs['formA'].resetFields()
           }
@@ -674,7 +675,9 @@
   }
 </script>
 <style scoped>
-
+  .red{
+    color:red;
+  }
   .check-all {
     width: 150px;
     float: left;

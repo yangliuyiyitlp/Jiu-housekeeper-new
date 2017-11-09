@@ -31,8 +31,9 @@
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
+        <!--http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template-->
         <el-button type="primary"><a
-          href="http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template">下载模板</a></el-button>
+          href="http://localhost:3000/facility/unbund/import/template">下载模板</a></el-button>
       </el-form-item>
     </el-form>
     <el-form class='importForm'>
@@ -53,6 +54,8 @@
       <input name="blemac" v-model="exportParam.blemac"/>
       <input name="iccid" v-model="exportParam.iccid"/>
       <input name="gpsNo" v-model="exportParam.gpsNo"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>
     <el-table
       :data="tableData"
@@ -228,7 +231,7 @@
     methods: {
       list: function () {
 //        this.message = false
-        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'bike_batch_operate_flag'}})
+        this.$ajax.get('http://localhost:3000/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.opFlag[res.data[i].value] = res.data[i].label
@@ -257,7 +260,7 @@
         this.exportParam.operateFlag = this.requestParam.operateFlag
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('electric/tUnbangdingFail/interface/list', {params: this.requestParam}).then(response => {
+        this.$ajax.get('http://localhost:3000/facility/unbund/list', {params: this.requestParam}).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -282,7 +285,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('electric/tUnbangdingFail/interface/view_form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('http://localhost:3000/facility/unbund/view/form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreInfo.bikeid = res.data.tUnbangdingFail.bikeid
               this.moreInfo.imei = res.data.tUnbangdingFail.imei
@@ -292,7 +295,6 @@
               this.moreInfo.updateDate = res.data.tUnbangdingFail.updateDate
               this.moreInfo.remarks = res.data.tUnbangdingFail.remarks
             }
-            console.log(this.moreInfo)
           }).catch((err) => {
             this.$message({
               type: 'error',
@@ -325,8 +327,9 @@
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/export')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/unbund/export')
           this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
         } else {
           return
         }
@@ -336,8 +339,9 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/exportAll')
+          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/unbund/exportAll')
           this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
         } else {
           return
         }

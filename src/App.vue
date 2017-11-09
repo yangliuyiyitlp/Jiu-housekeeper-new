@@ -1,12 +1,15 @@
 <template>
-  <div id="app">
+  <div id="app" class="sidebar">
     <div v-if="this.$route.path === '/' || this.$route.path === '/login'">
 
     </div>
     <div v-else>
       <main-nav></main-nav>
     </div>
-    <router-view></router-view>
+    <!--<router-view class="sidebar"></router-view>-->
+    <router-view v-if="this.$route.path === '/' || this.$route.path === '/login'"></router-view>
+    <router-view v-else class="sidebar"></router-view>
+
   </div>
 </template>
 
@@ -25,6 +28,9 @@
 </script>
 
 <style>
+  html,body,.sidebar{
+    height:100%!important;
+  }
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

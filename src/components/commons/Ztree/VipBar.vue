@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div class="sidebar">
     <el-tree
+      class="sidebar"
       :data="data"
       :props="defaultProps"
       default-expand-all
       highlight-current
       @node-click="handleNodeClick">
     </el-tree>
-  
+
   </div>
 </template>
 <script>
@@ -41,5 +42,7 @@
   }
 </script>
 <style scoped>
-
+  html,body,.sidebar{
+    height:100%!important;
+  }
 </style>

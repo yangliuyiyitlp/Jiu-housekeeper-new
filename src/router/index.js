@@ -96,6 +96,7 @@ import ActivityInviteList from '@/pages/Activity/ActivityInviteList.vue'
 import ActivityConfigIcon from '@/pages/Activity/Zombie/ActivityConfigIcon.vue'
 import ActivityInMobi from '@/pages/Activity/ActivityInMobi.vue'
 import ActivityEleManageCoupon from '@/pages/Activity/ActivityEle/EleManageCoupon.vue'
+import ActivityHealth from '@/pages/Activity/ActivityHealth.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -115,13 +116,13 @@ export default new Router({
       name: 'facility',
       component: Facility,
       children: [
-        {name: 'tabs', path: '/facilitytabs', component: TabsMod},
-        {name: 'info', path: '/facilityinfo', component: FacilityInfo},
-        {name: 'count', path: '/facilitycount', component: FacilityCount},
-        {name: 'detailed', path: '/facilitydetailed', component: FacilityDetailed},
-        {name: 'state', path: '/facilitystate', component: FacilityState},
-        {name: 'register', path: '/facilityregister', component: RegisterMod},
-        {name: 'unbund', path: '/facilityunbund', component: FacilityUnbund}
+        {name: 'tabs', path: '/facility/tabs', component: TabsMod},
+        {name: 'info', path: '/facility/info', component: FacilityInfo},
+        {name: 'count', path: '/facility/count', component: FacilityCount},
+        {name: 'detailed', path: '/facility/detailed', component: FacilityDetailed},
+        {name: 'state', path: '/facility/state', component: FacilityState},
+        {name: 'register', path: '/facility/register', component: RegisterMod},
+        {name: 'unbund', path: '/facility/unbund', component: FacilityUnbund}
       ]
     },
     {
@@ -249,7 +250,8 @@ export default new Router({
         {path: '/activity/invite/list', name: 'activity.invite.list', component: ActivityInviteList},
         {path: '/activity/config/icon', name: 'activity.config.icon', component: ActivityConfigIcon},
         {path: '/activity/inmobi', name: 'activity.inmobi', component: ActivityInMobi},
-        {path: '/activity/ele/manage/coupon', name: 'activity.ele.manage.coupon', component: ActivityEleManageCoupon}
+        {path: '/activity/ele/manage/coupon', name: 'activity.ele.manage.coupon', component: ActivityEleManageCoupon},
+        {path: '/activity/health', name: 'activity.health', component: ActivityHealth}
       ]
     },
     {path: '*', component: NotFound}

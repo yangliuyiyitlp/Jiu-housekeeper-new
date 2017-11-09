@@ -1,6 +1,7 @@
 <template>
-  <div>
+  <div class="sidebar">
     <el-tree
+      class="sidebar"
       :data="data"
       :props="defaultProps"
       highlight-current
@@ -28,6 +29,10 @@
           id: 3,
           label: '消息推送计划',
           name: 'activity.message.plan'
+        }, {
+          id: 17,
+          label: '名流健康',
+          name: 'activity.health'
         }, {
           id: 4,
           label: '赳赳乐享',
@@ -99,6 +104,8 @@
 
 
 <style scoped>
-
+html,body,.sidebar{
+  height:100%!important;
+}
 </style>
 
