@@ -196,7 +196,7 @@
               @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999  off-value=0  on-text="On" off-text="Off">
+              on-value=999      off-value=0      on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -564,7 +564,7 @@
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
               this.Token.OSSAccessKeyId = res.data.accessid
-              // oss上图片的路由
+              // oss上图片的路径
               this.ruleForm.image = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })

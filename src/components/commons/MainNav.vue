@@ -108,7 +108,7 @@
 </script>
 <style scoped>
   #NavBar {
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
   }
 
   .img {

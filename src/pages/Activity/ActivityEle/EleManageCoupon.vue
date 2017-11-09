@@ -1,6 +1,6 @@
 <template>
   <div class="right">
-    <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <!--优惠券配置列表-->
       <el-tab-pane label="优惠券配置列表" name="first" style="padding-left:10px;">
 
@@ -391,7 +391,7 @@
 
     <!--模态框-->
     <!--修改弹框-->
-    <el-dialog title="添加/修改" :visible.sync="modifyFormVisible">
+    <el-dialog title="修改" :visible.sync="modifyFormVisible">
 
       <el-form ref="form" :model="updateForm" label-width="150px">
         <el-form-item label="id:" v-if=0>
@@ -466,7 +466,7 @@
   export default {
     data () {
       return {
-        activeName2: 'first',
+        activeName: 'first',
         modifyFormVisible: false,
         coupon_type: [],
         t_cup_state: [],
@@ -519,6 +519,7 @@
     },
     methods: {
       query () {
+        // 获取优惠券类型
         this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_type')
           .then(res => {
             this.coupon_type = res.data
@@ -526,6 +527,7 @@
               this.coupon_type_obj[this.coupon_type[i].value] = this.coupon_type[i].label
             }
           })
+          // 获取优惠券状态
           .then(this.$ajax.get('sys/dictutils/interface/getDictList?type=t_cup_state')
             .then(res => {
               this.t_cup_state = res.data
@@ -533,6 +535,7 @@
                 this.t_cup_state_obj[res.data[i].value] = res.data[i].label
               }
             }))
+          // 请求序列表
           .then(this.$ajax.get('electric/tCouponInfo/interface/list')
             .then(res => {
               this.tableData = res.data.page.list
