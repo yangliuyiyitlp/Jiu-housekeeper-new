@@ -163,7 +163,7 @@
         <el-form-item label="苹果inmobi编号：" prop="iosInmobiId" class="elform">
           <el-input v-model="form.iosInmobiId"></el-input>
         </el-form-item>
-        <el-form-item label="备注："  class="elform">
+        <el-form-item label="备注：" class="elform">
           <el-input type="textarea" :row="3" v-model="form.remarks"></el-input>
         </el-form-item>
         <el-checkbox class='check-all' v-show="vif" :indeterminate="isIndeterminate" v-model="checkAll"
@@ -324,21 +324,24 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_display_type'}})
+        // 获取inmobi广告类型
+        this.$ajax.get('http://localhost:3000/activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
-            for (var i = 0; i < res.data.length; i++) {
+            for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
-            this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'inmobi_type'}})
+            // 获取inmobi广告位置
+            this.$ajax.get('http://localhost:3000/activity/inmobi/display', {params: {type: 'inmobi_type'}})
               .then((res) => {
-                for (var i = 0; i < res.data.length; i++) {
+                for (let i = 0; i < res.data.length; i++) {
                   this.typeObj[res.data[i].value] = res.data[i].label
                 }
-                this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/list', {params: this.requestParam})
+                // 获取inmobi广告配置列表
+                this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/list', {params: this.requestParam})
                   .then((response) => {
                     if (response.data.code === 0) {
                       this.tableData = response.data.page.list
-                      for (var i = 0; i < response.data.page.list.length; i++) {
+                      for (let i = 0; i < response.data.page.list.length; i++) {
                         this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
                         this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
                       }
@@ -367,7 +370,8 @@
       modifyRecord: function (scope) {
         this.vif = false
         this.dialogFormVisible = true
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/form', {params: {id: scope.row.id}})
+        // 获取当前行的详细信息
+        this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.status === 200) {
               this.form.id = res.data.tDisplayType.id
@@ -380,7 +384,8 @@
               this.form.remarks = res.data.tDisplayType.remarks
               console.log(JSON.stringify(res.data.tDisplayType))
             }
-          }).catch((err) => {
+          })
+          .catch((err) => {
             console.error(err)
           })
       },
@@ -392,31 +397,32 @@
         }).then(() => {
           if (id !== undefined) {
             // 调用后台服务
-            // 删除元素
-            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/delete', {params: {'id': id}}).then(function (response) {
-              console.log(response)
-              if (response.data.code === 0) {
-                // 删除成功
-                this.$message({
-                  type: 'success',
-                  message: response.data.msg
-                })
+            // 删除当前信息
+            this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/delete', {params: {'id': id}})
+              .then(function (response) {
+                console.log(response)
+                if (response.data.code === 0) {
+                  // 删除成功
+                  this.$message({
+                    type: 'success',
+                    message: response.data.msg
+                  })
 //                this.$refs['formA'].resetFields()
-                // 刷新页面
-                this.query()
-              } else {
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: response.data.msg
+                  })
+                }
+              }.bind(this), function (err) {
+                console.log(err)
                 this.$message({
                   type: 'error',
-                  message: response.data.msg
+                  message: '操作失败'
                 })
-              }
-            }.bind(this), function (err) {
-              console.log(err)
-              this.$message({
-                type: 'error',
-                message: '操作失败'
-              })
-            }.bind(this))
+              }.bind(this))
           }
         }).catch(() => {
           this.$message({
@@ -431,7 +437,7 @@
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
             this.checkedCities = []
-            this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/save', {params: this.form})
+            this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/save', {params: this.form})
               .then(function (response) {
                 if (response.status === 200) {
                   // 更新成功
@@ -482,22 +488,24 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/view_form', {params: {id: row.id}}).then(function (res) {
-            if (res.data.code === 0) {
-              this.moreInfo.type = this.typeObj[res.data.tDisplayType.type]
-              this.moreInfo.displayType = this.disObj[res.data.tDisplayType.displayType]
-              this.moreInfo.cityName = res.data.tDisplayType.cityName
-              this.moreInfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
-              this.moreInfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
-              this.moreInfo.rank = res.data.tDisplayType.rank
-              this.moreInfo.remarks = res.data.tDisplayType.remarks
-            }
-          }.bind(this)).catch(function (err) {
-            this.$message({
-              type: 'error',
-              message: err.data.msg
+          this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/view_form', {params: {id: row.id}})
+            .then(res => {
+              if (res.data.code === 0) {
+                this.moreInfo.type = this.typeObj[res.data.tDisplayType.type]
+                this.moreInfo.displayType = this.disObj[res.data.tDisplayType.displayType]
+                this.moreInfo.cityName = res.data.tDisplayType.cityName
+                this.moreInfo.androidInmobiId = res.data.tDisplayType.androidInmobiId
+                this.moreInfo.iosInmobiId = res.data.tDisplayType.iosInmobiId
+                this.moreInfo.rank = res.data.tDisplayType.rank
+                this.moreInfo.remarks = res.data.tDisplayType.remarks
+              }
             })
-          })
+            .catch(err => {
+              this.$message({
+                type: 'error',
+                message: err.data.msg
+              })
+            })
         }
       },
       cancelMore: function () {
@@ -557,6 +565,7 @@
       cancelExport: function () {
         this.exportFormVisible = false
       },
+      // TODO node没更新
       exportCurrent: function () {
         this.exportParam.pageSize = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
@@ -564,6 +573,7 @@
         this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()
       },
+      // TODO node没更新
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
@@ -587,7 +597,7 @@
       modifyOrder (val) {
         this.modifyRank = val
         console.log(this.focusId, val)
-        var obj = this.modifyOrders.find(item => item.id === this.focusId)
+        let obj = this.modifyOrders.find(item => item.id === this.focusId)
         if (val !== undefined && val.trim() !== '') {
           if (this.focusRank === val) {  // 修改的值是原始的值
             // 判断该记录的id 是否已经存在
@@ -640,7 +650,8 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/updateSort', {
+        // 保存排序
+        this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/updateSort', {
           params: {
             'ids': newids,
             'sorts': newsorts
@@ -648,7 +659,7 @@
         })
           .then(function (res) {
             this.$message({
-              message: res.data.msg,
+              message: res.data.mesage,
               type: 'success'
             })
             this.query()
