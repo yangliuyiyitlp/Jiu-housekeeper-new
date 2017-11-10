@@ -107,16 +107,6 @@
 
 </script>
 <style scoped>
-<<<<<<< HEAD
-  #NavBar {
-    /*margin-bottom: 10px;*/
-  }
-=======
-  /*#NavBar {*/
-    /*margin-bottom: 10px;*/
-  /*}*/
->>>>>>> dbd268faf635e1d2d84927823663667d20d38695
-
   .img {
     float: left;
     margin: 0;
