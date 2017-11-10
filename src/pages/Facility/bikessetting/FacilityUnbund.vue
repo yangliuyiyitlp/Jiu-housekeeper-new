@@ -32,8 +32,8 @@
       </el-form-item>
       <el-form-item>
         <!--http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template-->
-        <el-button type="primary"><a
-          href="http://localhost:3000/facility/unbund/import/template">下载模板</a></el-button>
+        <el-button type="primary" ><a ref="aLink"
+          href='http://localhost:3000/facility/unbund/import/template'>下载模板</a></el-button>
       </el-form-item>
     </el-form>
     <el-form class='importForm'>
@@ -49,11 +49,12 @@
     <!--隐藏表单用于文件导出-->
     <form style="display: none" action="" method="post" ref="FileForm">
       <input name="bikeid" v-model="exportParam.bikeid"/>
+      <input name="gpsNo" v-model="exportParam.gpsNo"/>
+      <input name="operateFlag" v-model="exportParam.operateFlag"/>
       <input name="imei" v-model="exportParam.imei"/>
       <input name="deviceid" v-model="exportParam.deviceid"/>
       <input name="blemac" v-model="exportParam.blemac"/>
       <input name="iccid" v-model="exportParam.iccid"/>
-      <input name="gpsNo" v-model="exportParam.gpsNo"/>
       <input name="pageSize" v-model="exportParam.pageSize"/>
       <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>
@@ -218,6 +219,7 @@
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         exportParam: {
           bikeid: '',
+          gpsNo: '',
           imei: '',
           deviceid: '',
           blemac: '',
@@ -349,11 +351,11 @@
       actionForm () {
         let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
         formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
-        formData.append('operateFlag', this.action) // 其他的一些参数
+        formData.append('operateFlag', this.action) // 其他的一些参数  electric/tUnbangdingFail/interface/import
         this.$ajax(
           {
             method: 'post',
-            url: 'electric/tUnbangdingFail/interface/import',
+            url: 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import',
             data: formData,
             headers: {
               'Content-Type': 'multipart/form-data'
@@ -398,6 +400,18 @@
       errorClose () {
         this.message = false
       }
+//      downFile () {
+//        this.$ajax.get('http://localhost:3000/facility/unbund/import/template')
+//          .then((res) => {
+//            console.log(111)
+//           this.$refs.aLink.setAttribute('href', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template')
+//          }).catch(() => {
+//            this.$message({
+//              type: 'error',
+//              message: '下载模板失败'
+//            })
+//          })
+//      }
     }
   }
 </script>
