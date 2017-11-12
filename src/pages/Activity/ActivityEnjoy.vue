@@ -670,6 +670,7 @@
       getList () {
         this.$ajax.get('http://localhost:3000/activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
+            console.log(9999999)
             if (res.data.code === 0) {
               this.tableData = res.data.page.list
               this.pagination.count = res.data.page.count
