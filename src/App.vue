@@ -1,22 +1,22 @@
 <template>
   <div id="app" class="sidebar">
-    <!--<div v-if="this.$route.path === '/' || this.$route.path === '/login'">-->
+    <div v-if="this.$route.path === '/' || this.$route.path === '/login'">
 
-    <!--</div>-->
-    <!--<div v-else>-->
-      <!--<main-nav></main-nav>-->
-    <!--</div>-->
-    <!--<router-view v-if="this.$route.path === '/' || this.$route.path === '/login'"></router-view>-->
-    <!--<router-view v-else class="sidebar"></router-view>-->
+    </div>
+    <div v-else>
+      <main-nav></main-nav>
+    </div>
+    <router-view v-if="this.$route.path === '/' || this.$route.path === '/login'"></router-view>
+    <router-view v-else class="sidebar"></router-view>
     <!--名流健康上线只显示名流-->
-    <main-nav></main-nav>
-    <activity-nav class="sidebar"></activity-nav>
+    <!--<main-nav></main-nav>-->
+    <!--<activity-nav class="sidebar"></activity-nav>-->
   </div>
 </template>
 
 <script>
   import MainNav from '@/components/commons/MainNav.vue'
-  import ActivityNav from '@/pages/Activity/ActivityHealth.vue'
+//  import ActivityNav from '@/pages/Activity/ActivityHealth.vue'
 
   export default {
     name: 'app',
@@ -24,8 +24,8 @@
       return {male: false}
     },
     components: {
-      MainNav,
-      ActivityNav
+      MainNav
+//      ActivityNav
     }
   }
 </script>

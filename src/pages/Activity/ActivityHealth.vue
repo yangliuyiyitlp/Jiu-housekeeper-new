@@ -38,7 +38,7 @@
             <el-button type="primary" @click="inlineExport">导出</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="list"  class="color">生成中奖名单</el-button>
+            <el-button type="primary" @click="list" class="color">生成中奖名单</el-button>
           </el-form-item>
         </el-form>
         <!--隐藏表单用于文件导出-->
@@ -199,8 +199,10 @@
   </div>
 </template>
 <script>
-//  import Moment from 'moment'
-  import {convertDate2String} from '../../assets/js/convert'
+  //  import Moment from 'moment'
+  import { convertDate2String } from '../../assets/js/convert'
+  import baseUrl from '../../utils/baseUrl'
+
   export default {
     created: function () {
       this.getList()
@@ -246,13 +248,14 @@
         this.formInline.endTime = new Date(val).getTime()
       },
       getList () {
+        console.log(baseUrl)
         this.inlineExportParam.realName = this.formInline.realName
         this.inlineExportParam.phone = this.formInline.phone
         this.inlineExportParam.id = this.formInline.id
         this.inlineExportParam.count = this.formInline.count
         this.inlineExportParam.beginTime = this.formInline.beginTime
         this.inlineExportParam.endTime = this.formInline.endTime
-        this.$ajax.get('http://localhost:3000/activity/health', {params: this.formInline})
+        this.$ajax.get(baseUrl('/activity/health'), {params: this.formInline})
           .then(response => {
             if (response.data.code === 200) {
               this.tableData1 = response.data.data.result
@@ -291,7 +294,7 @@
         if (r === true) {
           this.inlineExportParam.pageNum = this.inlinePagination.pageNum
           this.inlineExportParam.pageSize = this.inlinePagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/health/export')
+          this.$refs['FileForm'].setAttribute('action', baseUrl('/activity/health/export'))
           this.$refs['FileForm'].submit()
           this.exportForm = false
         } else {
@@ -303,7 +306,7 @@
         if (r === true) {
           this.inlineExportParam.pageSize = ''
           this.inlineExportParam.pageNum = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/health/exportAll')
+          this.$refs['FileForm'].setAttribute('action', baseUrl('/activity/health/exportAll'))
           this.$refs['FileForm'].submit()
           this.exportForm = false
         } else {
@@ -319,7 +322,7 @@
         this.exportParam.phone = this.formPrize.phone
         this.exportParam.prizeTicket = this.formPrize.prizeTicket
         this.exportParam.prizeName = this.formPrize.prizeName
-        this.$ajax.get('http://localhost:3000/activity/health/prize', {params: this.formPrize})
+        this.$ajax.get(baseUrl('/activity/health/prize'), {params: this.formPrize})
           .then(response => {
             if (response.data.code === 200) {
               this.tableData2 = response.data.data.result
@@ -355,7 +358,7 @@
         if (r === true) {
           this.exportParam.pageNum = this.pagination.pageNum
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['Form'].setAttribute('action', 'http://localhost:3000/activity/health/prize/export')
+          this.$refs['Form'].setAttribute('action', baseUrl('/activity/health/prize/export'))
           this.$refs['Form'].submit()
           this.exportFormVisible = false
         } else {
@@ -367,7 +370,7 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNum = ''
-          this.$refs['Form'].setAttribute('action', 'http://localhost:3000/activity/health/prize/exportAll')
+          this.$refs['Form'].setAttribute('action', baseUrl('/activity/health/prize/exportAll'))
           this.$refs['Form'].submit()
           this.exportFormVisible = false
         } else {
@@ -378,7 +381,7 @@
         this.exportFormVisible = false
       },
       list () {
-        this.$ajax.get('http://localhost:3000/activity/health/raffle')
+        this.$ajax.get(baseUrl('/activity/health/raffle'))
           .then(response => {
             console.log(response)
             if (response.data.code === 200) {
@@ -411,9 +414,10 @@
     font-size: 20px !important;
     text-align: center;
   }
-  .color{
+
+  .color {
     background-color: hotpink;
     border: none;
-    color:#fff;
+    color: #fff;
   }
 </style>
