@@ -15,5 +15,8 @@ module.exports = {
   preLoaders: {
     i18n: 'yaml-loader'
   },
+  postcss: [
+    require('postcss-px2rem')({remUnit: 67.5}),
+  ],
   loaders: loaders
 }

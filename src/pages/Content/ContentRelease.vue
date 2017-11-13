@@ -234,11 +234,11 @@
             </el-upload>
           </el-form-item>
 
-          <!--<el-form-item label="正文:">-->
-            <!--<el-input v-model='ruleForm.content' v-show='false'></el-input>-->
-            <!--<VueUEditor @ready="editorReady">-->
-            <!--</VueUEditor>-->
-          <!--</el-form-item>-->
+          <el-form-item label="正文:">
+            <el-input v-model='ruleForm.content' v-show='false'></el-input>
+            <VueUEditor @ready="editorReady">
+            </VueUEditor>
+          </el-form-item>
 
           <el-form-item label="推荐位:">
             <el-checkbox-group v-model="ruleForm.posName">
@@ -297,7 +297,7 @@
 
 <script>
   // 富文本编辑器引入
-//  import VueUEditor from 'vue-ueditor'
+  import VueUEditor from 'vue-ueditor'
   // arr2tree引入
   import arr2tree from '../../utils/arr2tree.js'
   import Tools from '../../utils/tools.js'
@@ -306,9 +306,9 @@
 
   export default {
     name: 'app',
-//    components: {
-//      VueUEditor
-//    },
+    components: {
+      VueUEditor
+    },
     data () {
       // 权重的范围判断
       let weightRule = (rule, value, callback) => {
@@ -521,7 +521,7 @@
       },
       // 文章添加页面的重置功能
       resetForm () {
-//        this.E.setContent('')
+        this.E.setContent('')
         this.clearUploadedImage()
         this.ruleForm = {
           categoryId: '', // 分类编号
@@ -548,14 +548,14 @@
         this.resetForm()
       },
       // 富文本编辑器相关
-//      editorReady (eidtorInstance) {
-//        this.E = eidtorInstance
-// //        eidtorInstance.setOptions(ueConfig)
-//        eidtorInstance.setContent('请在此输入正文')
-//        eidtorInstance.addListener('contentChange', () => {
-//          this.ruleForm.content = eidtorInstance.getContent()
-//        })
-//      },
+      editorReady (eidtorInstance) {
+        this.E = eidtorInstance
+ //        eidtorInstance.setOptions(ueConfig)
+        eidtorInstance.setContent('请在此输入正文')
+        eidtorInstance.addListener('contentChange', () => {
+          this.ruleForm.content = eidtorInstance.getContent()
+        })
+      },
       // 封装小工具
       // 上传组件获取oss相关
       beforeUpload (file) {
