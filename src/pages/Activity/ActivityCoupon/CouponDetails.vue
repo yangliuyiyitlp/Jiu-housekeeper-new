@@ -32,6 +32,18 @@
             </el-input>
           </el-form-item>
 
+          <!--<el-form-item label="活动标签:">-->
+            <!--<el-select placeholder="选择活动标签" clearable>-->
+              <!--<el-option label="快买酒活动"></el-option>-->
+            <!--</el-select>-->
+          <!--</el-form-item>-->
+
+          <el-form-item label="奖项类型:">
+            <el-select v-model="formInline.coupon_status" placeholder="选择奖项类型" clearable>
+              <el-option v-for="item in t_cup_state" :label=item.label :value=item.value :key="item.id"></el-option>
+            </el-select>
+          </el-form-item>
+
           <el-form-item label="所属城市:">
             <el-input v-model="formInline.city" placeholder="输入所属城市">
             </el-input>
@@ -95,15 +107,6 @@
             prop="id"
             label="id"
             v-if=0>
-          </el-table-column>
-
-          <el-table-column
-            show-overflow-tooltip
-            header-align="center"
-            align="center"
-            prop="areaName"
-            label="所属城市"
-            width="150">
           </el-table-column>
 
           <el-table-column
@@ -235,15 +238,7 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="400">
         </el-pagination>
-        <!--<el-pagination-->
-        <!--@size-change="handleSizeChange"-->
-        <!--@current-change="handleCurrentChange"-->
-        <!--:current-page="pagination.pageNo"-->
-        <!--:page-sizes="pagination.pageSizes"-->
-        <!--:page-size="pagination.pageSize"-->
-        <!--layout="total, sizes, prev, pager, next, jumper"-->
-        <!--:total="pagination.count">-->
-        <!--</el-pagination>-->
+
 
       </el-tab-pane>
 

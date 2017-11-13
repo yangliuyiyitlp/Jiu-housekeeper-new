@@ -79,11 +79,11 @@
           }]
         }, {
           id: 15,
-          label: '饿了么活动',
+          label: '优惠券配置',
           children: [{
             id: 16,
-            label: '优惠券管理',
-            name: 'activity.ele.manage.coupon'
+            label: '优惠券获取明细',
+            name: 'activity.coupon.details'
           }]
         }],
         defaultProps: {
