@@ -1,9 +1,9 @@
 let tools = {
   // 将数组中所需要的两个值相互对应 如:{id:name,id:name...}
-  nameRelation: (arr, id, name) => {
+  nameRelation: (arr, k, val) => {
     let obj = {}
     for (let i = 0; i < arr.length; i++) {
-      obj[arr[i][id]] = arr[i][name]
+      obj[arr[i][k]] = arr[i][val]
     }
     return obj
   },

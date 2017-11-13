@@ -196,7 +196,7 @@
               @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999      off-value=0      on-text="On" off-text="Off">
+              on-value=999       off-value=0       on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -550,6 +550,7 @@
       // 富文本编辑器相关
       editorReady (eidtorInstance) {
         this.E = eidtorInstance
+ //        eidtorInstance.setOptions(ueConfig)
         eidtorInstance.setContent('请在此输入正文')
         eidtorInstance.addListener('contentChange', () => {
           this.ruleForm.content = eidtorInstance.getContent()
@@ -588,6 +589,7 @@
         this.$ajax.get('http://localhost:3000/content/release/getDictList')
           .then(res => {
             this.statusRelation = Tools.nameRelation(res.data, 'value', 'label')
+            console.log(this.statusRelation)
           })
           .catch(err => {
             console.log(err)
