@@ -16,7 +16,7 @@ module.exports = {
     i18n: 'yaml-loader'
   },
   postcss: [
-    require('postcss-px2rem')({remUnit: 67.5}),
+    require('postcss-px2rem')({remUnit: 15}),
   ],
   loaders: loaders
 }
