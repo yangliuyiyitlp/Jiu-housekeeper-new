@@ -41,7 +41,8 @@
           method="post" ref="FileForm">
       <input name="factoryName" v-model="exportParam.factoryName"/>
       <input name="lockFactoryNo" v-model="exportParam.lockFactoryNo"/>
-      <input name="addTimeStart" v-model="exportParam.addTimeStart"/>
+      <input name="beginAddTime" v-model="exportParam.beginAddTime"/>
+      <input name="endAddTime" v-model="exportParam.endAddTime"/>
       <input name="pageSize" v-model="exportParam.pageSize"/>
       <input name="pageNo" v-model="exportParam.pageNo"/>
     </form>

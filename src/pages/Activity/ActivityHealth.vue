@@ -6,44 +6,48 @@
       <el-tab-pane label="名流健康报名表" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline" style="padding-left:10px;">
           <el-form-item label="姓名：">
-            <el-input v-model="formInline.name"></el-input>
+            <el-input v-model.trim="formInline.realName"></el-input>
           </el-form-item>
           <el-form-item label="手机号：">
-            <el-input v-model="formInline.php"></el-input>
+            <el-input v-model.trim="formInline.phone"></el-input>
           </el-form-item>
-          <el-form-item label="ID：">
-            <el-input v-model="formInline.id"></el-input>
+          <el-form-item label="ID：" v-if=false>
+            <el-input v-model.trim="formInline.id"></el-input>
           </el-form-item>
           <el-form-item label="骑行次数：">
-            <el-input v-model="formInline.count"></el-input>
+            <el-input v-model.trim="formInline.count"></el-input>
           </el-form-item>
           <el-form-item label="报名时间：">
             <el-date-picker
               v-model="formInline.beginTime"
               type="datetime"
+              @change="onBeginTimeChange"
               placeholder="开始时间">
             </el-date-picker>
             <el-date-picker
               v-model="formInline.endTime"
               type="datetime"
+              @change="onEndTimeChange"
               placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="query">查询</el-button>
+            <el-button type="primary" @click="getList">查询</el-button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="inlineExport">导出</el-button>
           </el-form-item>
         </el-form>
         <!--隐藏表单用于文件导出-->
-        <form style="display: none" action="" method="post" ref="FileForm">
-          <input name="name" v-model="inlineExportParam.name"/>
-          <input name="php" v-model="inlineExportParam.php"/>
+        <form style="display: none" action="" method="get" ref="FileForm">
+          <input name="realName" v-model="inlineExportParam.realName"/>
+          <input name="phone" v-model="inlineExportParam.phone"/>
           <input name="id" v-model="inlineExportParam.id"/>
           <input name="count" v-model="inlineExportParam.count"/>
           <input name="beginTime" v-model="inlineExportParam.beginTime"/>
           <input name="endTime" v-model="inlineExportParam.endTime"/>
+          <input name="pageSize" v-model="inlineExportParam.pageSize"/>
+          <input name="pageNum" v-model="inlineExportParam.pageNum"/>
         </form>
         <!--表格-->
         <el-table
@@ -53,20 +57,21 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="name"
+            prop="realName"
             label="姓名"
             width="300">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="php"
+            prop="phone"
             label="手机号">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
             prop="id"
+            v-if=false
             label="ID">
           </el-table-column>
           <el-table-column
@@ -78,7 +83,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="date"
+            prop="addTime"
             label="报名时间">
           </el-table-column>
         </el-table>
@@ -86,7 +91,7 @@
         <el-pagination
           @size-change="inlineSizeChange"
           @current-change="inlineCurrentChange"
-          :current-page="inlinePagination.pageNo"
+          :current-page="inlinePagination.pageNum"
           :page-sizes="inlinePagination.pageSizes"
           :page-size="inlinePagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -98,16 +103,16 @@
       <el-tab-pane label="名流健康中奖表" name="second">
         <el-form :inline="true" :model="formPrize" class="demo-form-inline" style="padding-left:10px;">
           <el-form-item label="姓名：">
-            <el-input v-model="formPrize.name"></el-input>
+            <el-input v-model.trim="formPrize.name"></el-input>
           </el-form-item>
           <el-form-item label="手机号：">
-            <el-input v-model="formPrize.php"></el-input>
+            <el-input v-model.trim="formPrize.phone"></el-input>
           </el-form-item>
           <el-form-item label="劵码：">
-            <el-input v-model="formPrize.num"></el-input>
+            <el-input v-model.trim="formPrize.prizeTicket"></el-input>
           </el-form-item>
           <el-form-item label="劵的类型：">
-            <el-input v-model="formPrize.type"></el-input>
+            <el-input v-model.trim="formPrize.prizeName"></el-input>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="search">查询</el-button>
@@ -117,11 +122,13 @@
           </el-form-item>
         </el-form>
         <!--隐藏表单用于文件导出-->
-        <form style="display: none" action="" method="post" ref="Form">
+        <form style="display: none" action="" method="get" ref="Form">
           <input name="name" v-model="exportParam.name"/>
-          <input name="php" v-model="exportParam.php"/>
-          <input name="num" v-model="exportParam.num"/>
-          <input name="type" v-model="exportParam.type"/>
+          <input name="phone" v-model="exportParam.phone"/>
+          <input name="prizeTicket" v-model="exportParam.prizeTicket"/>
+          <input name="prizeName" v-model="exportParam.prizeName"/>
+          <input name="pageSize" v-model="exportParam.pageSize"/>
+          <input name="pageNum" v-model="exportParam.pageNum"/>
         </form>
         <!--表格-->
         <el-table
@@ -138,19 +145,19 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="php"
+            prop="phone"
             label="手机号">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="num"
+            prop="prizeTicket"
             label="劵码">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="type"
+            prop="prizeName"
             label="劵的类型">
           </el-table-column>
         </el-table>
@@ -158,7 +165,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNo"
+          :current-page="pagination.pageNum"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -167,7 +174,7 @@
       </el-tab-pane>
     </el-tabs>
     <!--导出弹框-->
-    <el-dialog title="导出" custom-class="dialogClass" size="tiny" :visible.sync="exportForm" :show-close="false"
+    <el-dialog title="导出" custom-class="dialogClass" center size="tiny" :visible.sync="exportForm"
                :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="inlineCurrent">导出当前页</el-button>
@@ -177,7 +184,7 @@
       </div>
     </el-dialog>
     <!--导出弹框-->
-    <el-dialog title="导出" custom-class="dialogClass" size="tiny" :visible.sync="exportFormVisible" :show-close="false"
+    <el-dialog title="导出" custom-class="dialogClass" center size="tiny" :visible.sync="exportFormVisible"
                :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-button @click="prizeCurrent">导出当前页</el-button>
@@ -189,11 +196,11 @@
   </div>
 </template>
 <script>
-  import Moment from 'moment'
-
+//  import Moment from 'moment'
+  import {convertDate2String} from '../../assets/js/convert'
   export default {
     created: function () {
-      this.query()
+      this.getList()
       this.search()
     },
     data () {
@@ -201,75 +208,77 @@
         activeName2: 'first',
         formInline: {},
         formPrize: {},
-        tableData1: [{name: '展示干', php: 222}, {name: '展示干', php: 222}, {name: '展示干', php: 222}],
-        tableData2: [{name: '展示干', php: 222}],
-        inlinePagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        tableData1: [],
+        tableData2: [],
+        inlinePagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         inlineExportParam: {
-          name: '',
-          php: '',
+          realName: '',
+          phone: '',
           id: '',
           count: '',
           beginTime: '',
           endTime: '',
           pageSize: 30,
-          pageNo: 1
+          pageNum: 1
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         exportParam: {
           name: '',
-          php: '',
-          num: '',
-          type: '',
+          phone: '',
+          prizeTicket: '',
+          prizeName: '',
           pageSize: 30,
-          pageNo: 1
+          pageNum: 1
         },
         exportForm: false,
         exportFormVisible: false
       }
     },
     methods: {
-      query () {
-//        this.formInline.name = this.formInline.name.trim()
-//        this.formInline.php = this.formInline.php.trim()
-//        this.formInline.id = this.formInline.id.trim()
-//        this.formInline.count = this.formInline.count.trim()
-        this.inlineExportParam.name = this.formInline.name
-        this.inlineExportParam.php = this.formInline.php
+      onBeginTimeChange (val) {
+        this.formInline.beginTime = new Date(val).getTime()
+//        this.formInline.beginTime = new Date(val)
+      },
+      onEndTimeChange (val) {
+        this.formInline.endTime = new Date(val).getTime()
+      },
+      getList () {
+        this.inlineExportParam.realName = this.formInline.realName
+        this.inlineExportParam.phone = this.formInline.phone
         this.inlineExportParam.id = this.formInline.id
         this.inlineExportParam.count = this.formInline.count
-        this.inlineExportParam.beginTime = Moment(new Date(this.formInline.beginTime)).format('YYYY-MM-DD HH:mm:ss')
-        this.inlineExportParam.endTime = Moment(new Date(this.formInline.endTime)).format('YYYY-MM-DD HH:mm:ss')
-//        for (let key in this.formInline) {
-//          this.formInline[key] = this.formInline[key].trim()
-//          this.inlineExportParam[key] = this.formInline[key]
-//        }
+        this.inlineExportParam.beginTime = this.formInline.beginTime
+        this.inlineExportParam.endTime = this.formInline.endTime
         this.$ajax.get('http://localhost:3000/activity/health', {params: this.formInline})
           .then(response => {
-            if (response.data.code === 0) {
-              this.tableData1 = response.data.page.list
-              this.inlinePagination.count = response.data.page.count
+            if (response.data.code === 200) {
+              this.tableData1 = response.data.data.result
+              for (let i = 0; i < response.data.data.result.length; i++) {
+                this.tableData1[i].addTime = convertDate2String(response.data.data.result[i].addTime)
+              }
+              this.inlinePagination.count = response.data.data.total
             } else {
               this.$message({
                 type: 'error',
-                message: '获取列表信息失败'
+                message: '获取列表信息失败0'
               })
             }
           }).catch(() => {
             this.$message({
               type: 'error',
-              message: '获取列表信息失败'
+              message: '获取列表信息失败1'
             })
           })
       },
       inlineSizeChange (val) {
         this.formInline.pageSize = val
         this.inlinePagination.pageSize = val
-        this.query()
+        this.getList()
       },
       inlineCurrentChange (val) {
-        this.formInline.pageNo = val
-        this.inlinePagination.pageNo = val
-        this.query()
+        this.formInline.pageNum = val
+        this.inlinePagination.pageNum = val
+        this.getList()
       },
       inlineExport () {
         this.exportForm = true
@@ -277,7 +286,7 @@
       inlineCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.inlineExportParam.pageSize = this.inlinePagination.pageNo
+          this.inlineExportParam.pageNum = this.inlinePagination.pageNum
           this.inlineExportParam.pageSize = this.inlinePagination.pageSize
           this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/health/export')
           this.$refs['FileForm'].submit()
@@ -290,7 +299,7 @@
         var r = confirm('确定导出么')
         if (r === true) {
           this.inlineExportParam.pageSize = ''
-          this.inlineExportParam.pageNo = ''
+          this.inlineExportParam.pageNum = ''
           this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/health/exportAll')
           this.$refs['FileForm'].submit()
           this.exportForm = false
@@ -303,19 +312,15 @@
       },
 //      中奖表
       search () {
-//        this.formPrize.name = this.formPrize.name.trim()
-//        this.formPrize.php = this.formPrize.php.trim()
-//        this.formPrize.num = this.formPrize.num.trim()
-//        this.formPrize.type = this.formPrize.type.trim()
         this.exportParam.name = this.formPrize.name
-        this.exportParam.php = this.formPrize.php
-        this.exportParam.num = this.formPrize.num
-        this.exportParam.type = this.formPrize.type
+        this.exportParam.phone = this.formPrize.phone
+        this.exportParam.prizeTicket = this.formPrize.prizeTicket
+        this.exportParam.prizeName = this.formPrize.prizeName
         this.$ajax.get('http://localhost:3000/activity/health/prize', {params: this.formPrize})
           .then(response => {
-            if (response.data.code === 0) {
-              this.tableData2 = response.data.page.list
-              this.pagination.count = response.data.page.count
+            if (response.data.code === 200) {
+              this.tableData2 = response.data.data.result
+              this.pagination.count = response.data.data.total
             } else {
               this.$message({
                 type: 'error',
@@ -335,8 +340,8 @@
         this.search()
       },
       handleCurrentChange (val) {
-        this.formPrize.pageNo = val
-        this.pagination.pageNo = val
+        this.formPrize.pageNum = val
+        this.pagination.pageNum = val
         this.search()
       },
       prizeExport () {
@@ -345,7 +350,7 @@
       prizeCurrent () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.exportParam.pageSize = this.pagination.pageNo
+          this.exportParam.pageNum = this.pagination.pageNum
           this.exportParam.pageSize = this.pagination.pageSize
           this.$refs['Form'].setAttribute('action', 'http://localhost:3000/activity/health/prize/export')
           this.$refs['Form'].submit()
@@ -358,7 +363,7 @@
         var r = confirm('确定导出么')
         if (r === true) {
           this.exportParam.pageSize = ''
-          this.exportParam.pageNo = ''
+          this.exportParam.pageNum = ''
           this.$refs['Form'].setAttribute('action', 'http://localhost:3000/activity/health/prize/exportAll')
           this.$refs['Form'].submit()
           this.exportFormVisible = false

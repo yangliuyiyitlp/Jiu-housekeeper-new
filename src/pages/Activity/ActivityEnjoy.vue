@@ -604,27 +604,27 @@
         }
       },
       list: function () {
-        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activity_state'}})
+        this.$ajax.get('http://localhost:3000/activity/enjoy/activeState', {params: {type: 'activity_state'}})
           .then((res) => {
             for (var i = 0; i < res.data.length; i++) {
               this.activeState[res.data[i].value] = res.data[i].label
             }
-            this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'black_list_is_executing'}})
+            this.$ajax.get('http://localhost:3000/activity/enjoy/executingState', {params: {type: 'black_list_is_executing'}})
               .then((res) => {
                 for (var i = 0; i < res.data.length; i++) {
                   this.executingState[res.data[i].value] = res.data[i].label
                 }
-                this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'activitys_type'}})
+                this.$ajax.get('http://localhost:3000/activity/enjoy/activityType', {params: {type: 'activitys_type'}})
                   .then((res) => {
                     for (var i = 0; i < res.data.length; i++) {
                       this.activityType[res.data[i].value] = res.data[i].label
                     }
-                    this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'yes_no'}})
+                    this.$ajax.get('http://localhost:3000/activity/enjoy/yesNo', {params: {type: 'yes_no'}})
                       .then((res) => {
                         for (var i = 0; i < res.data.length; i++) {
                           this.yesNo[res.data[i].value] = res.data[i].label
                         }
-                        this.$ajax.get('sys/dictutils/interface/getDictList', {params: {type: 'share_platform'}})
+                        this.$ajax.get('http://localhost:3000/activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
                           .then((res) => {
                             for (var i = 0; i < res.data.length; i++) {
                               this.sharePlat[res.data[i].value] = res.data[i].label
@@ -668,8 +668,9 @@
           })
       },
       getList () {
-        this.$ajax.get('/electric/tActivitiesInfo/interface/list', {params: this.requestParam})
+        this.$ajax.get('http://localhost:3000/activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
+            console.log(9999999)
             if (res.data.code === 0) {
               this.tableData = res.data.page.list
               this.pagination.count = res.data.page.count
@@ -746,7 +747,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('/electric/tActivitiesInfo/interface/delete', {params: {'id': id}})
+            this.$ajax.get('http://localhost:3000/activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -786,14 +787,17 @@
       exportCurrent: function () {
         this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/export')
+//        http://116.231.74.120:10001/a/electric/tActivitiesInfo/interface/export
+        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/export')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/tActivitiesInfo/interface/exportAll')
+        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/exportAll')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },     // 导出所有
       handleSizeChange: function (val) {
         this.requestParam.pageSize = val
@@ -816,7 +820,7 @@
           this.add = false
           this.saveUp = false
           this.bike = true
-          this.$ajax.get('/electric/tActivitiesInfo/interface/view_form', {params: {id: row.id}})
+          this.$ajax.get('http://localhost:3000/activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
                 this.form = res.data.tActivitiesInfo
@@ -848,7 +852,7 @@
         this.add = false
         this.title = '赳赳乐享活动修改'
         this.formList = []
-        this.$ajax.get('/electric/tActivitiesInfo/interface/form', {params: {id: scope.row.id}})
+        this.$ajax.get('http://localhost:3000/activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
@@ -896,7 +900,7 @@
           if (valid) {
             this.activeName2 = 'first'
             this.form.sharePlatformList = []
-            this.$ajax.get('/electric/tActivitiesInfo/interface/save', {params: this.form})
+            this.$ajax.get('http://localhost:3000/activity/enjoy/save', {params: this.form})
               .then(function (response) {
                 if (response.data.code === 0) {
                   // 更新成功

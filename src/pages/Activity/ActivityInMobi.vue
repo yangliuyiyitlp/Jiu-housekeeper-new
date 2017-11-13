@@ -327,6 +327,7 @@
         // 获取inmobi广告类型
         this.$ajax.get('http://localhost:3000/activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
+            console.log(999999)
             for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
