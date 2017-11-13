@@ -37,6 +37,9 @@
           <el-form-item>
             <el-button type="primary" @click="inlineExport">导出</el-button>
           </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="list"  class="color">生成中奖名单</el-button>
+          </el-form-item>
         </el-form>
         <!--隐藏表单用于文件导出-->
         <form style="display: none" action="" method="get" ref="FileForm">
@@ -260,13 +263,13 @@
             } else {
               this.$message({
                 type: 'error',
-                message: '获取列表信息失败0'
+                message: '获取列表信息失败'
               })
             }
           }).catch(() => {
             this.$message({
               type: 'error',
-              message: '获取列表信息失败1'
+              message: '获取列表信息失败'
             })
           })
       },
@@ -373,10 +376,44 @@
       },
       cancelExport () {
         this.exportFormVisible = false
+      },
+      list () {
+        this.$ajax.get('http://localhost:3000/activity/health/raffle')
+          .then(response => {
+            console.log(response)
+            if (response.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: response.data.msg
+              })
+              this.activeName2 = 'second'
+            } else {
+              this.$message({
+                type: 'error',
+                message: response.data.msg
+              })
+              this.activeName2 = 'first'
+            }
+          })
+          .catch(err => {
+            this.$message({
+              type: 'error',
+              message: err.data.msg
+            })
+            this.activeName2 = 'first'
+          })
       }
     }
   }
 </script>
 <style scoped>
-
+  .demo-ruleForm {
+    font-size: 20px !important;
+    text-align: center;
+  }
+  .color{
+    background-color: hotpink;
+    border: none;
+    color:#fff;
+  }
 </style>

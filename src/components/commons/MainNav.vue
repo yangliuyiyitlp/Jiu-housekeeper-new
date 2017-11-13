@@ -99,7 +99,8 @@
       },
       activity () {
         this.$router.push({
-          name: 'activity.message'
+//          name: 'activity.message'  一进来到名流健康页面
+          name: 'activity.health'
         })
       }
     }

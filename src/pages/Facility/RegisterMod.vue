@@ -2,10 +2,10 @@
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
       <el-form-item label="锁厂名称">
-        <el-input v-model="requestParam.factoryName" placeholder="锁厂名称"></el-input>
+        <el-input v-model.trim="requestParam.factoryName" placeholder="锁厂名称"></el-input>
       </el-form-item>
       <el-form-item label="锁厂编号">
-        <el-input v-model="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
+        <el-input v-model.trim="requestParam.lockFactoryNo" placeholder="锁厂编号"></el-input>
       </el-form-item>
       <el-form-item label="添加时间">
         <el-date-picker
@@ -19,13 +19,6 @@
           placeholder="结束时间">
         </el-date-picker>
       </el-form-item>
-      <!--<el-form-item label="添加时间">-->
-      <!--<el-date-picker-->
-      <!--v-model="requestParam.selectTime"-->
-      <!--type="datetimerange"-->
-      <!--placeholder="选择时间范围">-->
-      <!--</el-date-picker>-->
-      <!--</el-form-item>-->
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
@@ -59,6 +52,8 @@
       </el-table-column>
       // 返回的客户id
       <el-table-column
+        header-align="center"
+        align="center"
         label="锁厂名称"
         prop="factoryName">
         <template slot-scope="scope">
@@ -66,10 +61,14 @@
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="lockFactoryNo"
         label="锁厂家编号	">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="添加时间">
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
@@ -77,15 +76,21 @@
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="createBy.id"
         label="操作者	"> // 返回空就是没有
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="remarks"
         show-overflow-tooltip
         label="备注">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="操作">
         <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
@@ -223,8 +228,6 @@
     },
     methods: {
       query () {
-        this.requestParam.factoryName = this.requestParam.factoryName.trim()
-        this.requestParam.lockFactoryNo = this.requestParam.lockFactoryNo.trim()
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
         this.requestParam.beginAddTime = Moment(new Date(this.requestParam.beginAddTime)).format('YYYY-MM-DD HH:mm:ss')
@@ -273,28 +276,34 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('http://localhost:3000/facility/register/delete', {params: {'id': id}}).then(response => {
-              if (response.data.code === 0) {
-                // 删除成功
-                this.$message({
-                  type: 'success',
-                  message: '删除成功'
-                })
+            console.log(111)
+            this.$ajax.post('http://localhost:3000/facility/register/delete', {params: {'id': id}})
+              .then(response => {
+                console.log(response.data)
+                if (response.data.code === 0) {
+                  console.log(222)
+                  // 删除成功
+                  this.$message({
+                    type: 'success',
+                    message: response.data.message
+                  })
 //                this.$refs['formA'].resetFields()
-                // 刷新页面
-                this.query()
-              } else {
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: '删除失败'
+                  })
+                }
+              })
+              .catch((err) => {
+                console.log(err)
                 this.$message({
                   type: 'error',
-                  message: response.data.msg
+                  message: '删除异常'
                 })
-              }
-            }, () => {
-              this.$message({
-                type: 'error',
-                message: '删除记录失败'
               })
-            })
           }
         }).catch(() => {
           this.$message({
@@ -306,34 +315,36 @@
       doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            var url = ''
-            if (this.form.id === undefined || this.form.id === '') {
-              url = 'http://localhost:3000/facility/register/save' // 新增功能
-            } else {
-              url = 'http://localhost:3000/facility/register/save'
-            }
+            let url = 'http://localhost:3000/facility/register/save'
+//            if (this.form.id === undefined || this.form.id === '') {
+//              url = 'http://localhost:3000/facility/register/save' // 新增功能
+//            } else {
+//              url = 'http://localhost:3000/facility/register/save'
+//            }
             this.dialogFormVisible = false
-            this.$ajax.get(url, {params: this.form}).then(response => {
-              if (response.data.code === 0) {
-                // 更新成功
-                this.$message({
-                  type: 'success',
-                  message: '操作成功'
-                })
-                // 刷新页面
-                this.query()
-              } else {
+            this.$ajax.get(url, {params: this.form})
+              .then(response => {
+                if (response.data.code === 0) {
+                  // 更新成功
+                  this.$message({
+                    type: 'success',
+                    message: '操作成功'
+                  })
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: response.data.msg
+                  })
+                }
+              })
+              .catch((err) => {
                 this.$message({
                   type: 'error',
-                  message: response.data.msg
+                  message: err.data.msg
                 })
-              }
-            }, () => {
-              this.$message({
-                type: 'error',
-                message: '操作失败'
               })
-            })
           } else {
             return
           }
@@ -418,7 +429,6 @@
           this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/exportAll')
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          console.log(this.exportParam)
           this.$refs['FileForm'].submit()
           this.exportFormVisible = false
         } else {
