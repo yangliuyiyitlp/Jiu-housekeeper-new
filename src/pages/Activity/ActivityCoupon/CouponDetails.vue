@@ -32,15 +32,9 @@
             </el-input>
           </el-form-item>
 
-          <!--<el-form-item label="活动标签:">-->
-            <!--<el-select placeholder="选择活动标签" clearable>-->
-              <!--<el-option label="快买酒活动"></el-option>-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
-
           <el-form-item label="奖项类型:">
-            <el-select v-model="formInline.coupon_status" placeholder="选择奖项类型" clearable>
-              <el-option v-for="item in t_cup_state" :label=item.label :value=item.value :key="item.id"></el-option>
+            <el-select v-model="formInline.coupon_mode" placeholder="选择奖项类型" clearable>
+              <el-option v-for="(item,k) in coupon_mode_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
@@ -51,13 +45,13 @@
 
           <el-form-item label="优惠券状态:">
             <el-select v-model="formInline.coupon_status" placeholder="选择优惠券状态" clearable>
-              <el-option v-for="item in t_cup_state" :label=item.label :value=item.value :key="item.id"></el-option>
+              <el-option v-for="(item,k) in t_cup_state_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="优惠券类型:">
             <el-select v-model="formInline.coupon_type" placeholder="选择优惠券类型" clearable>
-              <el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>
+              <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
@@ -122,6 +116,24 @@
             show-overflow-tooltip
             header-align="center"
             align="center"
+            prop="tradeTag_name"
+            label="活动标签"
+            width="120">
+          </el-table-column>
+
+          <el-table-column
+            show-overflow-tooltip
+            header-align="center"
+            align="center"
+            prop="coupon_mode"
+            label="奖项类型"
+            width="120">
+          </el-table-column>
+
+          <el-table-column
+            show-overflow-tooltip
+            header-align="center"
+            align="center"
             prop="business"
             label="商户名"
             width="120">
@@ -150,7 +162,7 @@
             header-align="center"
             align="center"
             prop="content"
-            label="优惠内容"
+            label="优惠券内容"
             width="130">
           </el-table-column>
 
@@ -273,8 +285,7 @@
 
           <el-form-item label="优惠券类型:">
             <el-select v-model="form.coupon_type" placeholder="选择优惠券类型" clearable>
-              <el-option label="商户优惠券" value="1"></el-option>
-              <el-option label="骑行券" value="2"></el-option>
+              <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
@@ -340,8 +351,7 @@
 
           <el-form-item label="优惠券类型:">
             <el-select v-model="form_batch.coupon_type" placeholder="选择优惠券类型" clearable>
-              <el-option label="商户优惠券" value="1"></el-option>
-              <el-option label="骑行券" value="2"></el-option>
+              <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
@@ -409,15 +419,9 @@
 
         <el-form-item label="优惠券类型:">
           <el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>
-            <el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>
+            <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
           </el-select>
         </el-form-item>
-
-        <!--<el-form-item label="优惠券类型:">-->
-        <!--<el-select v-model="updateForm.type" placeholder="选择优惠券类型" clearable>-->
-        <!--<el-option v-for="item in coupon_type" :label=item.label :value=item.value :key="item.id"></el-option>-->
-        <!--</el-select>-->
-        <!--</el-form-item>-->
 
         <el-form-item label="优惠券内容:">
           <el-input v-model="updateForm.content" type="textarea" class='textarea'></el-input>
@@ -457,16 +461,19 @@
 
 <script>
   import Moment from 'moment'
+  import Tools from '../../../utils/tools.js'
 
   export default {
     data () {
       return {
         activeName: 'first',
         modifyFormVisible: false,
-        coupon_type: [],
-        t_cup_state: [],
-        coupon_type_obj: {},
-        t_cup_state_obj: {},
+//        coupon_type: [],
+//        t_cup_state: [],
+        coupon_type_obj: {}, // 优惠券类型关系
+        t_cup_state_obj: {}, // 优惠券领取状态
+        coupon_mode_obj: {}, // 奖项类型
+        coupon_trade_mode_obj: {}, // 活动标签
         tableData: [],
         updateForm: {},
         formInline: {
@@ -510,45 +517,16 @@
       }
     },
     created () {
-      this.query()
+      this.getList(this.getType)
     },
     methods: {
-      query () {
-        // 获取优惠券类型
-        this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_type')
-          .then(res => {
-            this.coupon_type = res.data
-            for (let i = 0; i < this.coupon_type.length; i++) {
-              this.coupon_type_obj[this.coupon_type[i].value] = this.coupon_type[i].label
-            }
-          })
-          // 获取优惠券状态
-          .then(this.$ajax.get('sys/dictutils/interface/getDictList?type=t_cup_state')
-            .then(res => {
-              this.t_cup_state = res.data
-              for (let i = 0; i < res.data.length; i++) {
-                this.t_cup_state_obj[res.data[i].value] = res.data[i].label
-              }
-            }))
-          // 请求序列表
-          .then(this.$ajax.get('electric/tCouponInfo/interface/list')
-            .then(res => {
-              this.tableData = res.data.page.list
-              for (let i = 0; i < this.tableData.length; i++) {
-                this.tableData[i].coupon_type = this.coupon_type_obj[this.tableData[i].type]
-                this.tableData[i].t_cup_state = this.t_cup_state_obj[this.tableData[i].state]
-              }
-            }))
-          .catch(err => {
-            console.log(err)
-          })
-      },
       modifyRecord (id) {
         this.modifyFormVisible = true
         this.$ajax.get('electric/tCouponInfo/interface/form?id=' + id)
           .then(res => {
             this.updateForm = res.data.tCouponInfo
-            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
+            console.log(this.updateForm)
+//            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
           })
           .catch(err => {
             console.log(err)
@@ -568,7 +546,7 @@
             .then(res => {
               this.open('success', res.data.msg)
               // 刷新页面
-              this.query()
+              this.getList(this.getType)
             })
             .catch(err => {
               this.open('info', err.data.msg)
@@ -580,7 +558,7 @@
           .then(res => {
             this.open('success', res.data.msg)
             // 刷新页面
-            this.query()
+            this.getList(this.getType)
           })
           .catch(err => {
             this.open('info', err.data.msg)
@@ -614,7 +592,7 @@
               // 删除成功
               this.open('success', res.data.msg)
               // 刷新页面
-              this.query()
+              this.getList(this.getType)
             } else {
               // 删除失败
               this.open('info', res.data.msg)
@@ -637,17 +615,89 @@
       handleSizeChange (val) {
         console.log(`每页 ${val} 条`)
 //        this.requestParam.pageSize = val
-//        this.query()
+//        this.getList(this.getType)
       },
       handleCurrentChange (val) {
         console.log(`当前页: ${val}`)
 //        this.requestParam.pageNo = val
-//        this.query()
+//        this.getList(this.getType)
       },
       saveData () {},
       selectFile () {},
       importData () {},
-      downloadTemplate () {}
+      downloadTemplate () {},
+      // 封装
+      // 获取优惠券类型
+      getCouponType () {
+        this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_type')
+          .then(res => {
+            let couponType = res.data
+            this.coupon_type_obj = Tools.nameRelation(couponType, 'value', 'label')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      },
+      // 获取优惠券状态
+      getCupState () {
+        this.$ajax.get('sys/dictutils/interface/getDictList?type=t_cup_state')
+          .then(res => {
+            let tCupState = res.data
+            this.t_cup_state_obj = Tools.nameRelation(tCupState, 'value', 'label')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      },
+      // 获取奖项类型
+      getCouponMode () {
+        this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_mode')
+          .then(res => {
+            let couponMode = res.data
+            this.coupon_mode_obj = Tools.nameRelation(couponMode, 'value', 'label')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      },
+      // 获取活动标签
+      tradeTag () {
+        this.$ajax.get('sys/dictutils/interface/getDictList?type=coupon_trade_mode')
+          .then(res => {
+            let couponTradeMode = res.data
+            this.coupon_trade_mode_obj = Tools.nameRelation(couponTradeMode, 'value', 'label')
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      },
+      // 获取各种类型
+      getType () {
+        this.getCouponType()
+        this.getCupState()
+        this.getCouponMode()
+        this.tradeTag()
+      },
+      // 请求序列表
+      getList (callback) {
+        callback()
+        this.$ajax.get('electric/tCouponInfo/interface/list')
+          .then(res => {
+            console.log(res.data.page.list)
+            this.tableData = res.data.page.list
+            for (let i = 0; i < this.tableData.length; i++) {
+              this.tableData[i].coupon_type = Tools.k2value(this.coupon_type_obj, this.tableData[i].type)
+              this.tableData[i].t_cup_state = Tools.k2value(this.t_cup_state_obj, this.tableData[i].state)
+              this.tableData[i].coupon_mode = Tools.k2value(this.coupon_mode_obj, this.tableData[i].tag)
+              this.tableData[i].tradeTag_name = Tools.k2value(this.coupon_trade_mode_obj, this.tableData[i].tradeTag)
+//              this.tableData[i].coupon_type = this.coupon_type_obj[this.tableData[i].type]
+//              this.tableData[i].t_cup_state = this.t_cup_state_obj[this.tableData[i].state]
+            }
+          })
+          .catch(err => {
+            console.error(err)
+          })
+      }
     }
   }
 </script>

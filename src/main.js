@@ -14,8 +14,7 @@ import VueMoment from 'vue-moment'
 import Axios from 'axios'
 
 Vue.prototype.$ajax = Axios
-// Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
-// Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
+Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
 // Axios.defaults.baseURL = 'http://localhost:3000'
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
