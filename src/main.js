@@ -14,8 +14,8 @@ import VueMoment from 'vue-moment'
 import Axios from 'axios'
 
 Vue.prototype.$ajax = Axios
-Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
-// Axios.defaults.baseURL = 'http://localhost:3000'
+// Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
+Axios.defaults.baseURL = 'http://localhost:3000'
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 Vue.use(VueMoment)
@@ -59,11 +59,10 @@ Vue.use(BaiduMap, {
 
 // 富文本编辑器
 // 富文本编辑器引入
-import '../static/ueditor1_4_3_3/ueditor.config.js'
-// import '../static/ueditor.config.js'
-import '../static/ueditor1_4_3_3/ueditor.all.min.js'
-import '../static/ueditor1_4_3_3/lang/zh-cn/zh-cn.js'
-import '../static/ueditor1_4_3_3/ueditor.parse.min.js'
+import '../static/ueditor/ueditor.config.js'
+import '../static/ueditor/ueditor.all.min.js'
+import '../static/ueditor/lang/zh-cn/zh-cn.js'
+import '../static/ueditor/ueditor.parse.min.js'
 
 const i18n = new VueI18n({
   locale: getLanguage()
