@@ -588,21 +588,21 @@
       cancelExport: function () {
         this.exportFormVisible = false
       },
-      // TODO node没更新
       exportCurrent: function () {
         this.exportParam.pageSize = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
         this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/inmobi/tDisplayType/export')
         this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
-      // TODO node没更新
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
         this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/inmobi/tDisplayType/exportAll')
         this.$refs['FileForm'].setAttribute('method', 'post')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
       handleCheckAllChange (event) {
         this.checkedCities = event.target.checked ? cityOptions : []

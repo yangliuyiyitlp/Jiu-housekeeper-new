@@ -1,6 +1,6 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" class="demo-form-inline">
       <el-form-item label="锁厂名称">
         <el-input v-model.trim="requestParam.factoryName" placeholder="锁厂名称"></el-input>
       </el-form-item>
@@ -443,7 +443,10 @@
     padding-top: 20px;
     height: 75px;
   }
-
+  .demo-form-inline{
+    padding-left:10px;
+    margin-bottom:20px;
+  }
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
