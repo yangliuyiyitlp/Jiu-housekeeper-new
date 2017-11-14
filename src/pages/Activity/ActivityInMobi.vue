@@ -243,6 +243,7 @@
 
 <script>
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.query()
@@ -339,19 +340,19 @@
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
         // 获取inmobi广告类型
-        this.$ajax.get('http://localhost:3000/activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
+        this.$ajax.get('/activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
             // 获取inmobi广告位置
-            this.$ajax.get('http://localhost:3000/activity/inmobi/display', {params: {type: 'inmobi_type'}})
+            this.$ajax.get('/activity/inmobi/display', {params: {type: 'inmobi_type'}})
               .then((res) => {
                 for (let i = 0; i < res.data.length; i++) {
                   this.typeObj[res.data[i].value] = res.data[i].label
                 }
                 // 获取inmobi广告配置列表
-                this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/list', {params: this.requestParam})
+                this.$ajax.get('/activity/inmobi/tDisplayType/list', {params: this.requestParam})
                   .then((response) => {
                     if (response.data.code === 0) {
                       this.tableData = response.data.page.list
@@ -392,7 +393,7 @@
         this.vif = false
         this.dialogFormVisible = true
         // 获取当前行的详细信息
-        this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/activity/inmobi/tDisplayType/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.status === 200) {
               this.form.id = res.data.tDisplayType.id
@@ -421,7 +422,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除当前信息
-            this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/delete', {params: {'id': id}})
+            this.$ajax.get('/activity/inmobi/tDisplayType/delete', {params: {'id': id}})
               .then((response) => {
                 if (response.data.code === 0) {
                   // 删除成功
@@ -459,7 +460,7 @@
             this.dialogFormVisible = false
             this.form.areaNames = this.checkedCities.join(',')
             this.checkedCities = []
-            this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/save', {params: this.form})
+            this.$ajax.get('/activity/inmobi/tDisplayType/save', {params: this.form})
               .then((response) => {
                 if (response.status === 200) {
                   // 更新成功
@@ -511,7 +512,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/view_form', {params: {id: row.id}})
+          this.$ajax.get('/activity/inmobi/tDisplayType/view_form', {params: {id: row.id}})
             .then(res => {
               if (res.data.code === 0) {
                 this.moreInfo.type = this.typeObj[res.data.tDisplayType.type]
@@ -564,7 +565,7 @@
             this.$refs['formA'].resetFields()
           }
         })
-        this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/findMaxSort')
+        this.$ajax.get('/activity/inmobi/tDisplayType/findMaxSort')
           .then((res) => {
             if (res.status === 200) {
               this.form.rank = res.data.maxSort
@@ -591,7 +592,7 @@
       exportCurrent: function () {
         this.exportParam.pageSize = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/inmobi/tDisplayType/export')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/export`)
         this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
@@ -599,7 +600,7 @@
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/inmobi/tDisplayType/exportAll')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/exportAll`)
         this.$refs['FileForm'].setAttribute('method', 'post')
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
@@ -674,7 +675,7 @@
           newsorts = sorts.join(',')
         })
         // 保存排序
-        this.$ajax.get('http://localhost:3000/activity/inmobi/tDisplayType/updateSort', {
+        this.$ajax.get('/activity/inmobi/tDisplayType/updateSort', {
           params: {
             'ids': newids,
             'sorts': newsorts

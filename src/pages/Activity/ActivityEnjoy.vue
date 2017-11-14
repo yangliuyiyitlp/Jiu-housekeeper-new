@@ -483,6 +483,7 @@
 <script>
   import Moment from 'moment'
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.list()
@@ -604,27 +605,27 @@
         }
       },
       list: function () {
-        this.$ajax.get('http://localhost:3000/activity/enjoy/activeState', {params: {type: 'activity_state'}})
+        this.$ajax.get('/activity/enjoy/activeState', {params: {type: 'activity_state'}})
           .then((res) => {
             for (var i = 0; i < res.data.length; i++) {
               this.activeState[res.data[i].value] = res.data[i].label
             }
-            this.$ajax.get('http://localhost:3000/activity/enjoy/executingState', {params: {type: 'black_list_is_executing'}})
+            this.$ajax.get('/activity/enjoy/executingState', {params: {type: 'black_list_is_executing'}})
               .then((res) => {
                 for (var i = 0; i < res.data.length; i++) {
                   this.executingState[res.data[i].value] = res.data[i].label
                 }
-                this.$ajax.get('http://localhost:3000/activity/enjoy/activityType', {params: {type: 'activitys_type'}})
+                this.$ajax.get('/activity/enjoy/activityType', {params: {type: 'activitys_type'}})
                   .then((res) => {
                     for (var i = 0; i < res.data.length; i++) {
                       this.activityType[res.data[i].value] = res.data[i].label
                     }
-                    this.$ajax.get('http://localhost:3000/activity/enjoy/yesNo', {params: {type: 'yes_no'}})
+                    this.$ajax.get('/activity/enjoy/yesNo', {params: {type: 'yes_no'}})
                       .then((res) => {
                         for (var i = 0; i < res.data.length; i++) {
                           this.yesNo[res.data[i].value] = res.data[i].label
                         }
-                        this.$ajax.get('http://localhost:3000/activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
+                        this.$ajax.get('/activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
                           .then((res) => {
                             for (var i = 0; i < res.data.length; i++) {
                               this.sharePlat[res.data[i].value] = res.data[i].label
@@ -668,7 +669,7 @@
           })
       },
       getList () {
-        this.$ajax.get('http://localhost:3000/activity/enjoy/list', {params: this.requestParam})
+        this.$ajax.get('/activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
             console.log(9999999)
             if (res.data.code === 0) {
@@ -747,7 +748,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('http://localhost:3000/activity/enjoy/delete', {params: {'id': id}})
+            this.$ajax.get('/activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -788,14 +789,14 @@
         this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
 //        http://116.231.74.120:10001/a/electric/tActivitiesInfo/interface/export
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/export')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/exportAll')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },     // 导出所有
@@ -820,7 +821,7 @@
           this.add = false
           this.saveUp = false
           this.bike = true
-          this.$ajax.get('http://localhost:3000/activity/enjoy/view/form', {params: {id: row.id}})
+          this.$ajax.get('/activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
                 this.form = res.data.tActivitiesInfo
@@ -852,7 +853,7 @@
         this.add = false
         this.title = '赳赳乐享活动修改'
         this.formList = []
-        this.$ajax.get('http://localhost:3000/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
@@ -900,7 +901,7 @@
           if (valid) {
             this.activeName2 = 'first'
             this.form.sharePlatformList = []
-            this.$ajax.get('http://localhost:3000/activity/enjoy/save', {params: this.form})
+            this.$ajax.get('/activity/enjoy/save', {params: this.form})
               .then(function (response) {
                 if (response.data.code === 0) {
                   // 更新成功
