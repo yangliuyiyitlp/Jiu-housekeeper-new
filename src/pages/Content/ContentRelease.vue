@@ -196,7 +196,7 @@
               @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999       off-value=0       on-text="On" off-text="Off">
+              on-value=999        off-value=0        on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -236,8 +236,7 @@
 
           <el-form-item label="正文:">
             <el-input v-model='ruleForm.content' v-show='false'></el-input>
-            <VueUEditor @ready="editorReady">
-            </VueUEditor>
+            <div id="ue"></div>
           </el-form-item>
 
           <el-form-item label="推荐位:">
@@ -297,7 +296,6 @@
 
 <script>
   // 富文本编辑器引入
-  import VueUEditor from 'vue-ueditor'
   // arr2tree引入
   import arr2tree from '../../utils/arr2tree.js'
   import Tools from '../../utils/tools.js'
@@ -305,10 +303,6 @@
   import qs from 'qs'
 
   export default {
-    name: 'app',
-    components: {
-      VueUEditor
-    },
     data () {
       // 权重的范围判断
       let weightRule = (rule, value, callback) => {
@@ -338,7 +332,7 @@
           label: 'name'
         },
         tableData: [],
-        Token: {},
+        Token: {}, // oss秘钥
         columnVisible1: false, // 筛选模态框
         columnVisible2: false, // 文章修改添加 模态框
         dialogVisibleImg: false,
@@ -365,6 +359,12 @@
     created: function () {
       this.query()
     },
+    mounted: function () {
+      this.E = window.UE.getEditor('ue', {
+//        BaseUrl: '',
+        UEDITOR_HOME_URL: 'static/ueditor/'
+      })
+    },
     methods: {
       // 侧边栏tree的点击查询
       selectOrganization (data) {
@@ -390,7 +390,7 @@
       },
       // 根据id删除当前行的信息
       delRecord (id) {
-        this.$ajax.get(`http://localhost:3000/content/release/deleteArticle/${id}`)
+        this.$ajax.get(`content/release/deleteArticle/${id}`)
           .then(res => {
             if (res.status === 200) {
               console.log(res)
@@ -413,12 +413,12 @@
       modifyRecord (id, categoryName) {
         this.second_name = '文章修改'
         this.activeName2 = 'second'
-        this.$ajax.get('http://localhost:3000/content/release/article/' + id)
+        this.$ajax.get('content/release/article/' + id)
           .then(res => {
             console.log(res.data)
             if (res.data.code === 200) {
               let obj = res.data.data
-              console.log(obj)
+//              console.log(obj)
               // 推荐位
               if (obj.posid) {
                 obj.posName = obj.posid.split(',').map(i => {
@@ -439,14 +439,14 @@
                 posName: obj.posName || [],
                 delFlagName: Tools.k2value(this.statusRelation, obj.delFlag)
               }
-              this.E.setContent(this.ruleForm.content)
+              window.UE.getEditor('ue').setContent(this.ruleForm.content)
               console.log(this.ruleForm)
               // 为何不能直接对象=对象?
 //              this.ruleForm = res.data.data
             }
           })
           .catch(err => {
-            console.log(err)
+            console.error(err)
           })
       },
       // 是否置顶相关
@@ -472,13 +472,13 @@
       },
       // 改变请求条数功能
       handleSizeChange: function (val) {
-        console.log(val)
+//        console.log(val)
         this.formInline.pageSize = val
         this.showForm()
       },
       // 翻页功能
       handleCurrentChange: function (val) {
-        console.log(val)
+//        console.log(val)
         this.formInline.pageNum = val
         this.showForm()
       },
@@ -486,6 +486,7 @@
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleForm.content = window.UE.getEditor('ue').getContent()
             this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
             this.ruleForm.weightDate = (this.ruleForm.weightDate === undefined ? null : Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss'))
             this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
@@ -493,7 +494,7 @@
               return Tools.k2value(this.posRelation, i)
             }).join(',')
             console.log(this.ruleForm)
-            this.$ajax.post('http://localhost:3000/content/release/update/article', qs.stringify(this.ruleForm))
+            this.$ajax.post('content/release/update/article', qs.stringify(this.ruleForm))
               .then(res => {
                 console.log(res)
                 if (res.code === 200) {
@@ -521,7 +522,7 @@
       },
       // 文章添加页面的重置功能
       resetForm () {
-        this.E.setContent('')
+        this.E.execCommand('cleardoc')
         this.clearUploadedImage()
         this.ruleForm = {
           categoryId: '', // 分类编号
@@ -546,15 +547,6 @@
         this.second_name = '文章添加'
         // 并清空当前列表内容
         this.resetForm()
-      },
-      // 富文本编辑器相关
-      editorReady (eidtorInstance) {
-        this.E = eidtorInstance
- //        eidtorInstance.setOptions(ueConfig)
-        eidtorInstance.setContent('请在此输入正文')
-        eidtorInstance.addListener('contentChange', () => {
-          this.ruleForm.content = eidtorInstance.getContent()
-        })
       },
       // 封装小工具
       // 上传组件获取oss相关
@@ -586,7 +578,7 @@
       // 获取状态栏信息和树组件数据
       query () {
         // 查询发表状态
-        this.$ajax.get('http://localhost:3000/content/release/getDictList')
+        this.$ajax.get('content/release/getDictList')
           .then(res => {
             this.statusRelation = Tools.nameRelation(res.data, 'value', 'label')
             console.log(this.statusRelation)
@@ -595,7 +587,7 @@
             console.log(err)
           })
         // 获取栏目列表 树模型
-        this.$ajax.get('http://localhost:3000/content/release/category/getcategorys')
+        this.$ajax.get('content/release/category/getcategorys')
           .then(res => {
             if (res.data.code === 200) {
               this.relation = Tools.nameRelation(res.data.data, 'id', 'name')
@@ -609,7 +601,7 @@
       // 根据查询字符串展示文章列表
       showForm () {
         this.formInline.delFlag = Tools.k2value(this.statusRelation, this.formInline.delFlagName) || '0'
-        this.$ajax.get('http://localhost:3000/content/release/article/getarticles', {params: this.formInline})
+        this.$ajax.get('content/release/article/getarticles', {params: this.formInline})
           .then(res => {
             console.log(res.data)
             if (res.data.code === 200) {

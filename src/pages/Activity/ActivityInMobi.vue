@@ -340,7 +340,7 @@
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
         // 获取inmobi广告类型
-        this.$ajax.get('/activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
+        this.$ajax.get('activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
@@ -424,6 +424,7 @@
             // 删除当前信息
             this.$ajax.get('/activity/inmobi/tDisplayType/delete', {params: {'id': id}})
               .then((response) => {
+                console.log(response)
                 if (response.data.code === 0) {
                   // 删除成功
                   this.$message({

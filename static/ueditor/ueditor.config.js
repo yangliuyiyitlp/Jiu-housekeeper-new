@@ -2,7 +2,7 @@
  * ueditor完整配置项
  * 可以在这里配置整个编辑器的特性
  */
-/**************************提示********************************
+/** ************************提示********************************
  * 所有被注释的配置项均为UEditor默认值。
  * 修改默认配置请首先确保已经完全明确该参数的真实用途。
  * 主要有两种修改方案，一种是取消此处注释，然后修改成对应参数；另一种是在实例化编辑器时传入对应参数。
@@ -10,7 +10,6 @@
  **************************提示********************************/
 
 (function () {
-
   /**
    * 编辑器资源文件根路径。它所表示的含义是：以编辑器实例化页面为当前路径，指向编辑器资源文件（即dialog等文件夹）的路径。
    * 鉴于很多同学在使用编辑器的时候出现的种种路径问题，此处强烈建议大家使用"相对于网站根目录的相对路径"进行配置。
@@ -19,6 +18,7 @@
    * 因此，UEditor提供了针对不同页面的编辑器可单独配置的根路径，具体来说，在需要实例化编辑器的页面最顶部写上如下代码即可。当然，需要令此处的URL等于对应的配置。
    * window.UEDITOR_HOME_URL = "/xxxx/xxxx/";
    */
+
   var URL = window.UEDITOR_HOME_URL || getUEBasePath()
 
   /**
@@ -27,13 +27,14 @@
   window.UEDITOR_CONFIG = {
 
     // 为编辑器实例添加一个路径，这个不能被注释
-    UEDITOR_HOME_URL: URL
+    UEDITOR_HOME_URL: URL,
 
     // 服务器统一请求接口路径
-    , serverUrl: URL + 'content/release/ue/upload'
+    // serverUrl: URL + 'content/release/ue/upload',
+    serverUrl: 'http://localhost:3000/' + 'content/release/ue/upload',
 
     // 工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
-    , toolbars: [[
+    toolbars: [[
       'fullscreen', 'source', '|', 'undo', 'redo', '|',
       'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
       'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
@@ -45,7 +46,7 @@
       'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
       'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
       'print', 'preview', 'searchreplace', 'drafts', 'help'
-    ]]
+    ]],
     // 当鼠标放在工具栏上时显示的tooltip提示,留空支持自动多语言配置，否则以配置值为准
     //,labelMap:{
     //    'anchor':'', 'undo':''
@@ -354,13 +355,13 @@
     //,rgb2Hex:true               //默认产出的数据中的color自动从rgb格式变成16进制格式
 
     // xss 过滤是否开启,inserthtml等操作
-    , xssFilterRules: true
+    xssFilterRules: true,
     //input xss过滤
-    , inputXssFilter: true
+    inputXssFilter: true,
     //output xss过滤
-    , outputXssFilter: true
+    outputXssFilter: true,
     // xss过滤白名单 名单来源: https://raw.githubusercontent.com/leizongmin/js-xss/master/lib/default.js
-    , whitList: {
+    whitList: {
       a: ['target', 'href', 'title', 'class', 'style'],
       abbr: ['title', 'class', 'style'],
       address: ['class', 'style'],
@@ -428,41 +429,30 @@
   }
 
   function getUEBasePath (docUrl, confUrl) {
-
     return getBasePath(docUrl || self.document.URL || self.location.href, confUrl || getConfigFilePath())
-
   }
 
   function getConfigFilePath () {
-
     var configPath = document.getElementsByTagName('script')
 
     return configPath[configPath.length - 1].src
-
   }
 
   function getBasePath (docUrl, confUrl) {
-
     var basePath = confUrl
 
     if (/^(\/|\\\\)/.test(confUrl)) {
-
       basePath = /^.+?\w(\/|\\\\)/.exec(docUrl)[0] + confUrl.replace(/^(\/|\\\\)/, '')
-
     } else if (!/^[a-z]+:/i.test(confUrl)) {
-
       docUrl = docUrl.split('#')[0].split('?')[0].replace(/[^\\\/]+$/, '')
 
       basePath = docUrl + '' + confUrl
-
     }
 
     return optimizationPath(basePath)
-
   }
 
   function optimizationPath (path) {
-
     var protocol = /^[a-z]+:\/\//.exec(path)[0],
       tmp = null,
       res = []
@@ -474,21 +464,17 @@
     path[path.length - 1] = ''
 
     while (path.length) {
-
-      if (( tmp = path.shift() ) === '..') {
+      if ((tmp = path.shift()) === '..') {
         res.pop()
       } else if (tmp !== '.') {
         res.push(tmp)
       }
-
     }
 
     return protocol + res.join('/')
-
   }
 
   window.UE = {
     getUEBasePath: getUEBasePath
   }
-
 })()
