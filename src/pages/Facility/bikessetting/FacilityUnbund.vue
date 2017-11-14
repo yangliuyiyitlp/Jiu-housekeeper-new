@@ -2,10 +2,10 @@
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" class="demo-form-inline left">
       <el-form-item label="车辆编号：">
-        <el-input v-model="requestParam.bikeid"></el-input>
+        <el-input v-model.trim="requestParam.bikeid"></el-input>
       </el-form-item>
       <el-form-item label="gprs编号：">
-        <el-input v-model="requestParam.gpsNo"></el-input>
+        <el-input v-model.trim="requestParam.gpsNo"></el-input>
       </el-form-item>
       <el-form-item label="操作标志：">
         <el-select v-model="requestParam.operateFlag" clearable>
@@ -13,16 +13,16 @@
         </el-select>
       </el-form-item>
       <el-form-item label="imei编号：">
-        <el-input v-model="requestParam.imei"></el-input>
+        <el-input v-model.trim="requestParam.imei"></el-input>
       </el-form-item>
       <el-form-item label="设备ID：">
-        <el-input v-model="requestParam.deviceid"></el-input>
+        <el-input v-model.trim="requestParam.deviceid"></el-input>
       </el-form-item>
       <el-form-item label="MAC地址：">
-        <el-input v-model="requestParam.blemac"></el-input>
+        <el-input v-model.trim="requestParam.blemac"></el-input>
       </el-form-item>
       <el-form-item label="iccid：">
-        <el-input v-model="requestParam.iccid"></el-input>
+        <el-input v-model.trim="requestParam.iccid"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="query">查询</el-button>
@@ -247,12 +247,6 @@
           })
       },
       query () {
-        this.requestParam.bikeid = this.requestParam.bikeid.trim()
-        this.requestParam.imei = this.requestParam.imei.trim()
-        this.requestParam.deviceid = this.requestParam.deviceid.trim()
-        this.requestParam.blemac = this.requestParam.blemac.trim()
-        this.requestParam.iccid = this.requestParam.iccid.trim()
-//        this.requestParam.gpsNo = this.requestParam.gpsNo.trim()
         this.exportParam.bikeid = this.requestParam.bikeid
         this.exportParam.imei = this.requestParam.imei
         this.exportParam.deviceid = this.requestParam.deviceid
@@ -446,13 +440,13 @@
 
   form {
     padding-top: 20px;
-    height: 100px;
   }
 
   .importForm {
     height: 0px;
     padding-left: 10px;
     padding-top: 0px !important;
+    margin-bottom:20px!important;
   }
 
   .demo-ruleForm {
@@ -460,9 +454,10 @@
     text-align: center;
   }
 
-  /*.demo-form-inline{*/
-  /*height:100px!important;*/
-  /*}*/
+  .demo-form-inline{
+    padding-left:10px;
+    /*margin-bottom:20px;*/
+  }
   .active {
     color: #20a0ff;
   }

@@ -1,7 +1,7 @@
 <script src="../../main.js"></script>
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
       <el-form-item label="账户：">
         <el-input v-model="requestParam.account" placeholder="账户"></el-input>
       </el-form-item>
@@ -327,7 +327,10 @@
   #dataGrid {
 
   }
-
+  .demo-form-inline{
+    padding-left:10px;
+    margin-bottom:20px;
+  }
   form {
     padding-top: 20px;
     height: 75px;

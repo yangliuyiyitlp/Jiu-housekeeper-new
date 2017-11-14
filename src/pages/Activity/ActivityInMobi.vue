@@ -2,11 +2,11 @@
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
       <el-form-item label="城市名称:">
-        <el-input v-model="requestParam.cityName">
+        <el-input v-model.trim="requestParam.cityName">
         </el-input>
       </el-form-item>
       <el-form-item label="显示顺序:">
-        <el-input v-model="requestParam.rank">
+        <el-input v-model.trim="requestParam.rank">
         </el-input>
       </el-form-item>
       <el-form-item label="广告位置:">
@@ -22,11 +22,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="安卓编号:">
-        <el-input v-model="requestParam.androidInmobiId">
+        <el-input v-model.trim="requestParam.androidInmobiId">
         </el-input>
       </el-form-item>
       <el-form-item label="苹果编号:">
-        <el-input v-model="requestParam.iosInmobiId">
+        <el-input v-model.trim="requestParam.iosInmobiId">
         </el-input>
       </el-form-item>
       <el-form-item>
@@ -67,6 +67,8 @@
       >
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="城市名称"
         prop="cityName">
         <template slot-scope="scope">
@@ -75,6 +77,8 @@
       </el-table-column>
 
       <el-table-column
+        header-align="center"
+        align="center"
         label="显示顺序"
         sortable
         prop="rank">
@@ -85,33 +89,47 @@
       </el-table-column>
 
       <el-table-column
+        header-align="center"
+        align="center"
         prop="type"
         label="广告位置">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="displayType"
         label="广告类型">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="androidInmobiId"
         label="安卓inmobi编号">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="iosInmobiId"
         label="苹果inmobi编号">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="更新时间"
         sortable
         prop="updateDate"
       >
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="remarks"
         show-overflow-tooltip
         label="备注">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="操作">
         <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
@@ -140,7 +158,7 @@
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm">
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item  label="城市名称：" ref='city' class="elform">
+        <el-form-item label="城市名称：" ref='city' class="elform">
           <el-input v-model="form.cityName"></el-input>
           <div class="red" v-show='vif'>添加模式下，城市的添加以《快速添加到城市》的选项为准</div>
         </el-form-item>
@@ -312,10 +330,6 @@
     },
     methods: {
       query: function () {
-        this.requestParam.cityName = this.requestParam.cityName.trim()
-        this.requestParam.rank = this.requestParam.rank.trim()
-        this.requestParam.androidInmobiId = this.requestParam.androidInmobiId.trim()
-        this.requestParam.iosInmobiId = this.requestParam.iosInmobiId.trim()
         this.exportParam.cityName = this.requestParam.cityName
         this.exportParam.rank = this.requestParam.rank
         this.exportParam.type = this.requestParam.type
@@ -327,7 +341,6 @@
         // 获取inmobi广告类型
         this.$ajax.get('activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
-            console.log(999999)
             for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
@@ -353,18 +366,25 @@
                         message: response.data.msg
                       })
                     }
-                  }, function () {
+                  })
+                  .catch(() => {
                     this.$message({
                       type: 'info',
-                      message: '获取失败'
+                      message: '获取广告配置列表异常'
                     })
-                  }.bind(this))
+                  })
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '获取广告位置异常'
+                })
               })
           })
           .catch(() => {
             this.$message({
               type: 'info',
-              message: '获取失败'
+              message: '获取广告类型失败'
             })
           })
       },
@@ -383,11 +403,13 @@
               this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
               this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
               this.form.remarks = res.data.tDisplayType.remarks
-              console.log(JSON.stringify(res.data.tDisplayType))
             }
           })
-          .catch((err) => {
-            console.error(err)
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '获取详细信息异常'
+            })
           })
       },
       deleteRecord: function (id) {
@@ -399,8 +421,9 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除当前信息
+
             this.$ajax.get('activity/inmobi/tDisplayType/delete', {params: {'id': id}})
-              .then(function (response) {
+              .then((response) => {
                 console.log(response)
                 if (response.data.code === 0) {
                   // 删除成功
@@ -414,16 +437,16 @@
                 } else {
                   this.$message({
                     type: 'error',
-                    message: response.data.msg
+                    message: '删除异常'
                   })
                 }
-              }.bind(this), function (err) {
-                console.log(err)
+              })
+              .catch(() => {
                 this.$message({
-                  type: 'error',
-                  message: '操作失败'
+                  type: 'info',
+                  message: '删除失败'
                 })
-              }.bind(this))
+              })
           }
         }).catch(() => {
           this.$message({
@@ -439,7 +462,7 @@
             this.form.areaNames = this.checkedCities.join(',')
             this.checkedCities = []
             this.$ajax.get('activity/inmobi/tDisplayType/save', {params: this.form})
-              .then(function (response) {
+              .then((response) => {
                 if (response.status === 200) {
                   // 更新成功
                   this.$message({
@@ -454,12 +477,13 @@
                     message: response.data.msg
                   })
                 }
-              }.bind(this), function () {
+              })
+              .catch(() => {
                 this.$message({
-                  type: 'error',
-                  message: '操作失败'
+                  type: 'info',
+                  message: '保存异常'
                 })
-              }.bind(this))
+              })
           } else {
             return false
           }
@@ -542,21 +566,21 @@
             this.$refs['formA'].resetFields()
           }
         })
-        this.$ajax.get('electric/inmobidisplay/tDisplayType/interface/findMaxSort')
+        this.$ajax.get('activity/inmobi/tDisplayType/findMaxSort')
           .then((res) => {
             if (res.status === 200) {
               this.form.rank = res.data.maxSort
-              console.log(res.data.maxSort)
             } else {
               this.$message({
                 type: 'error',
                 message: res.data.msg
               })
             }
-          }, function () {
+          })
+          .catch(() => {
             this.$message({
-              type: 'error',
-              message: '获取失败'
+              type: 'info',
+              message: '获取信息异常'
             })
           })
       },
@@ -566,21 +590,21 @@
       cancelExport: function () {
         this.exportFormVisible = false
       },
-      // TODO node没更新
       exportCurrent: function () {
         this.exportParam.pageSize = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/export')
+        this.$refs['FileForm'].setAttribute('action', 'activity/inmobi/tDisplayType/export')
         this.$refs['FileForm'].setAttribute('method', 'get')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
-      // TODO node没更新
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://172.16.20.235:10001/a/electric/inmobidisplay/tDisplayType/interface/exportAll')
+        this.$refs['FileForm'].setAttribute('action', 'activity/inmobi/tDisplayType/exportAll')
         this.$refs['FileForm'].setAttribute('method', 'post')
         this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
       handleCheckAllChange (event) {
         this.checkedCities = event.target.checked ? cityOptions : []
@@ -676,9 +700,14 @@
   }
 </script>
 <style scoped>
-  .red{
-    color:red;
+  #dataGrid {
+    padding-top: 20px;
   }
+
+  .red {
+    color: red;
+  }
+
   .check-all {
     width: 150px;
     float: left;
