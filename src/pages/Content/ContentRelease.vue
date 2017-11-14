@@ -521,7 +521,7 @@
       },
       // 文章添加页面的重置功能
       resetForm () {
-        this.E.setContent('')
+        this.E.execCommand('cleardoc')
         this.clearUploadedImage()
         this.ruleForm = {
           categoryId: '', // 分类编号
@@ -549,6 +549,7 @@
       },
       // 富文本编辑器相关
       editorReady (eidtorInstance) {
+//        UEDITOR_HOME_URL: 'static/ueditor/'
         this.E = eidtorInstance
  //        eidtorInstance.setOptions(ueConfig)
         eidtorInstance.setContent('请在此输入正文')
