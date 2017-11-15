@@ -241,7 +241,6 @@
         </el-table>
 
         <!--分页-->
-        <!--分页-->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -249,7 +248,7 @@
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
+          :total="pagination.count">
         </el-pagination>
 
 
@@ -539,42 +538,28 @@
         // 点击根据条件进行查询
         this.getList()
       },
+      // 获取当前行的详细信息
       modifyRecord (id) {
         this.modifyFormVisible = true
-        this.$ajax.get('electric/tCouponInfo/interface/form?id=' + id)
+        this.$ajax.get('activity/coupon/details/form?id=' + id)
           .then(res => {
             this.updateForm = res.data.tCouponInfo
             console.log(this.updateForm)
-//            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
           })
           .catch(err => {
             console.log(err)
           })
       },
+      // 更新 根据id更改某一条信息
       doUpdate () {
         this.modifyFormVisible = false
         this.updateForm.startTime = Moment(this.updateForm.startTime).format('YYYY-MM-DD HH:mm:ss')
         this.updateForm.endTime = Moment(this.updateForm.endTime).format('YYYY-MM-DD HH:mm:ss')
-        // 此时this.updateForm.type需要从汉字转化为数字
-        for (let k in this.coupon_type_obj) {
-          if (this.coupon_type_obj[k] === this.updateForm.type) {
-            console.log(k, this.updateForm.type)
-            this.updateForm.type = k
-          }
-          this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
-            .then(res => {
-              this.open('success', res.data.msg)
-              // 刷新页面
-              this.getList()
-            })
-            .catch(err => {
-              this.open('info', err.data.msg)
-              console.log(err)
-            })
-        }
-        // 数据类型转换完毕，发送save请求，保存数据
-        this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
+        console.log(this.updateForm)
+        // 发送save请求，保存数据
+        this.$ajax.get('activity/coupon/details/save', {params: this.updateForm})
           .then(res => {
+            console.log(res)
             this.open('success', res.data.msg)
             // 刷新页面
             this.getList()
@@ -584,28 +569,9 @@
             console.log(err)
           })
       },
-      open (type, msg) {
-        // 提示信息
-        this.$message({
-          type: type,
-          message: msg
-        })
-      },
-      deleteRecord (id) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.delRecord(id)
-          })
-          .catch(() => {
-            this.open('info', '已取消删除')
-          })
-      },
+      // 根据id删除当前行的信息
       delRecord (id) {
-        this.$ajax.get('electric/tCouponInfo/interface/delete?id=' + id)
+        this.$ajax.get('activity/coupon/details/delete?id=' + id)
           .then(res => {
             if (res.status === 200) {
               // 删除成功
@@ -614,12 +580,12 @@
               this.getList()
             } else {
               // 删除失败
-              this.open('info', res.data.msg)
+              this.open('warning', res.data.msg)
             }
           })
           .catch(err => {
             // 删除失败
-            this.open('info', err.data.msg)
+            this.open('warning', err.data.msg)
           })
       },
       handleClick (tab, event) {
@@ -688,8 +654,9 @@
       getList () {
         this.$ajax.get('activity/coupon/details/list', {params: this.formInline})
           .then(res => {
-            console.log(res.data.page.list)
+//            console.log(res.data.page)
             this.tableData = res.data.page.list
+            this.pagination.count = res.data.page.count
             for (let i = 0; i < this.tableData.length; i++) {
               this.tableData[i].coupon_type = Tools.k2value(this.coupon_type_obj, this.tableData[i].type)
               this.tableData[i].t_cup_state = Tools.k2value(this.t_cup_state_obj, this.tableData[i].state)
@@ -704,13 +671,30 @@
           })
       },
       // 上传组件获取oss相关
+//      beforeUpload (file) {
+//        return new Promise((resolve) => {
+//          this.$ajax.get('electric/ossutil/interface/policy?user_dir=couponBaseInfo')
+//            .then(res => {
+//              this.Token = res.data
+//              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+//              this.Token.OSSAccessKeyId = res.data.accessid
+//              // oss上图片的路径
+//              this.updateForm.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+//              resolve()
+//            })
+//            .catch(err => {
+//              console.log(err)
+//            })
+//        })
+//      },
+      // 上传组件获取oss相关 通过node
       beforeUpload (file) {
         return new Promise((resolve) => {
-          this.$ajax.get('electric/ossutil/interface/policy?user_dir=couponBaseInfo')
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'couponBaseInfo'}})
             .then(res => {
+//              console.log(res.data)
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
-              this.Token.OSSAccessKeyId = res.data.accessid
               // oss上图片的路径
               this.updateForm.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
@@ -733,13 +717,35 @@
       handleSizeChange: function (val) {
 //        console.log(val)
         this.formInline.pageSize = val
-        this.showForm()
+        this.getList()
       },
       // 翻页功能
       handleCurrentChange: function (val) {
 //        console.log(val)
         this.formInline.pageNum = val
-        this.showForm()
+        this.getList()
+      },
+      // 显示的提示设置
+      open (type, msg) {
+        // 提示信息
+        this.$message({
+          type: type,
+          message: msg
+        })
+      },
+      // 删除时的提醒信息
+      deleteRecord (id) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.delRecord(id)
+          })
+          .catch(() => {
+            this.open('info', '已取消删除')
+          })
       }
     }
   }

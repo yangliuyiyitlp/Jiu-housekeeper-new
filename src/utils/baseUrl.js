@@ -1,18 +1,12 @@
-let baseUrl = function (path) {
-  let url = ''
-  if (process.env === 'PRODUCTION') {
-    url = 'http://0.0.0.0:8180' + path
-  } else if (process.env === 'TEST') {
-    url = 'http://0.0.0.0:8180' + path
-  } else {
-    url = 'http://localhost:3000' + path
-  }
 
-  return url
+let baseUrl
+
+if (process.env === 'PRODUCTION') {
+  baseUrl = 'http://0.0.0.0:8180'
+} else if (process.env === 'TEST') {
+  baseUrl = 'http://0.0.0.0:8180'
+} else {
+  baseUrl = 'http://localhost:3000'
 }
-// let baseUrl = function (path) {
-//   let url = 'http://0.0.0.0:8180' + path
-//   return url
-// }
 
 module.exports = baseUrl
