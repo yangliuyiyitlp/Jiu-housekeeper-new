@@ -196,7 +196,7 @@
               @change='isTopp'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999        off-value=0        on-text="On" off-text="Off">
+              on-value=999         off-value=0         on-text="On" off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -216,12 +216,8 @@
 
 
           <el-form-item label="缩略图:">
-            <!--<el-dialog v-show="ruleForm.image" size="tiny">-->
-            <el-dialog size="tiny">
-              <img width="100%" :src="ruleForm.image">
-            </el-dialog>
-            <!--<el-input v-model="ruleForm.image" v-show='false'></el-input>-->
-            <el-input v-model="ruleForm.image"></el-input>
+            <img width="100%" :src="ruleForm.image">
+            <el-input v-model="ruleForm.image" v-show='false'></el-input>
             <el-upload
               ref="upload"
               list-type="picture-card"
@@ -486,6 +482,7 @@
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.ruleForm.trademark = (this.Token.key === undefined ? '' : 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key)
             this.ruleForm.content = window.UE.getEditor('ue').getContent()
             this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
             this.ruleForm.weightDate = (this.ruleForm.weightDate === undefined ? null : Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss'))
@@ -552,12 +549,11 @@
       // 上传组件获取oss相关
       beforeUpload (file) {
         return new Promise((resolve) => {
-          this.$ajax.get('electric/ossutil/interface/policy?user_dir=cmsContent')
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'cmsContent'}})
             .then((res) => {
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
-              this.Token.OSSAccessKeyId = res.data.accessid
-              // oss上图片的路径
+              // oss上图片的路径 在表单体提交之前拼接
               this.ruleForm.image = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })

@@ -319,11 +319,11 @@
         <el-form ref="formA" :model="form" :rules="rules" label-width="150px">
 
           <el-form-item label="活动描述:" prop="description">
-            <el-input v-model="form.description" ></el-input>
+            <el-input v-model="form.description"></el-input>
           </el-form-item>
 
           <el-form-item label="活动类型:" prop='type'>
-            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange" >
+            <el-select v-model="form.type" clearable class="selectInput" @change="onActivityTypeChange">
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
                          :value=key></el-option>
             </el-select>
@@ -331,60 +331,64 @@
 
           <el-form-item label="是否乐享活动:" prop='isLeXiang'>
             <el-select v-model="form.isLeXiang" clearable class="selectInput"
-                       >
+            >
               <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
                          :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="限制信用分:" prop='creditLimit'>
-            <el-input v-model="form.creditLimit" ></el-input>
+            <el-input v-model="form.creditLimit"></el-input>
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
 
 
           <el-form-item label="封面图片:">
-            <el-input v-model="form.imgPath"  ></el-input>
-            <div v-if="form.imgPath" >
-              <img width="100%" :src="form.imgPath" alt="图片">
-            </div>
-
+            <el-input v-model="form.imgPath" v-show='false'></el-input>
+            <img width="100%" :src="form.imgPath" alt="图片">
             <el-upload
               ref="uploadFile"
               list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-              :disabled="pic"
               :data="Token"
-              :on-remove="onRemove"
+              :on-remove="removeImgPath"
               :before-upload="beforeUploadImgPath">
-              <el-button  type="primary" @click="clearUploadedImage" >上传图片<i class="el-icon-upload el-icon--right"></i></el-button>
+              <el-button type="primary" @click="clearUploadedImgPath">上传图片
+                <i class="el-icon-upload el-icon--right"></i>
+              </el-button>
             </el-upload>
           </el-form-item>
 
           <el-form-item label="展示顺序:" prop='sort'>
-            <el-input v-model="form.sort" ></el-input>
+            <el-input v-model="form.sort"></el-input>
           </el-form-item>
           <el-form-item label="活动链接:" prop='activityPath'>
-            <el-input v-model="form.activityPath" ></el-input>
+            <el-input v-model="form.activityPath"></el-input>
           </el-form-item>
           <div v-if="video">
             <el-form-item label="视频链接:">
-              <el-input v-model="form.videoPath" ></el-input>
+              <el-input v-model="form.videoPath"></el-input>
             </el-form-item>
-            <el-form-item label="视频封面:" prop='coverPath'>
-              <el-input v-model="form.coverPath" v-show='false' ></el-input>
-              <img :src="form.coverPath" alt="视频封面" >
-              <el-upload
 
-                class="upload-demo"
+            <el-form-item label="视频封面:" prop='coverPath'>
+              <el-input v-model="form.coverPath" v-show='false'></el-input>
+              <div v-show="form.coverPath">
+                <img :src="form.coverPath" alt="视频封面">
+              </div>
+              <!--<img :src="form.coverPath" alt="视频封面">-->
+              <el-upload
                 ref="upload"
+                list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-                :data="Token"
+                :on-remove="removeCoverPath"
+                :data="Token1"
                 :before-upload="beforeUploadCoverPath">
-                <el-button slot="trigger" size="small" type="primary">选取图片</el-button>
+                <el-button type="primary" @click="clearUploadedCoverPath">上传图片
+                  <i class="el-icon-upload el-icon--right"></i>
+                </el-button>
               </el-upload>
             </el-form-item>
             <el-form-item label="有无红包:">
-              <el-select v-model="form.redPackage" clearable class="selectInput" >
+              <el-select v-model="form.redPackage" clearable class="selectInput">
                 <el-option v-for="(val,key) in yesNo" v-bind:key=key :label=yesNo[key]
                            :value=key></el-option>
               </el-select>
@@ -393,24 +397,24 @@
           <el-form-item label="分享平台:">
             <el-checkbox-group v-model="formList" @change="onCheckboxChange" ref='checkShare'>
               <el-checkbox v-for="(val,key) in sharePlat" v-bind:key=key :label=sharePlat[key] :value=key
-                           ></el-checkbox>
+              ></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <div v-if='enjoy'>
             <el-form-item label="分享标题:" prop='shareTitle'>
-              <el-input v-model="form.shareTitle" ></el-input>
+              <el-input v-model="form.shareTitle"></el-input>
             </el-form-item>
             <el-form-item label="分享图片链接:" prop='sharePic'>
-              <el-input v-model="form.sharePic" ></el-input>
+              <el-input v-model="form.sharePic"></el-input>
             </el-form-item>
             <el-form-item label="分享链接:" prop='shareUrl'>
-              <el-input v-model="form.shareUrl" ></el-input>
+              <el-input v-model="form.shareUrl"></el-input>
             </el-form-item>
             <el-form-item label="分享内容:" prop='shareContent'>
-              <el-input v-model="form.shareContent" ></el-input>
+              <el-input v-model="form.shareContent"></el-input>
             </el-form-item>
           </div>
-          <el-form-item label="是否默认:" >
+          <el-form-item label="是否默认:">
             <el-select v-model="form.state" clearable class="selectInput"
                        @change="onActivityStateChange">
               <el-option v-for="(val,key) in activeState" v-bind:key=key :label=activeState[key]
@@ -418,46 +422,46 @@
             </el-select>
           </el-form-item>
           <el-form-item label="城市名称:" prop="cityName">
-            <el-input v-model="form.cityName" ></el-input>
+            <el-input v-model="form.cityName"></el-input>
             <span v-if="add">添加模式下，城市的添加以《快速添加到城市》的选项为准</span>
           </el-form-item>
           <el-form-item label="有效日期:">
             <el-date-picker
               v-model="form.beginTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
-              -
+            -
             <el-date-picker
               v-model="form.endTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="展示日期:">
             <el-date-picker
               v-model="form.showTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
-              -
+            -
             <el-date-picker
               v-model="form.hideTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="添加时间:">
             <el-date-picker
               v-model="form.addTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="更新时间:">
             <el-date-picker
               v-model="form.updateTime"
-              type="datetime" >
+              type="datetime">
             </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
-            <el-input v-model="form.remarks" type="textarea" class='textarea' ></el-input>
+            <el-input v-model="form.remarks" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-checkbox class='check-all' v-if='add' :indeterminate="isIndeterminate" v-model="checkAll"
@@ -482,6 +486,8 @@
 
 <script>
   import Moment from 'moment'
+  import baseUrl from '../../utils/baseUrl.js'
+
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   export default {
     created: function () {
@@ -594,6 +600,7 @@
         focusRank: '',
         modifyRank: '',
         Token: {},
+        Token1: {},
         tempCityName: ''
       }
     },
@@ -604,54 +611,58 @@
         }
       },
       list: function () {
-        this.$ajax.get('http://localhost:3000/activity/enjoy/activeState', {params: {type: 'activity_state'}})
+        this.$ajax.get('activity/enjoy/activeState', {params: {type: 'activity_state'}})
           .then((res) => {
-            for (var i = 0; i < res.data.length; i++) {
+            for (let i = 0; i < res.data.length; i++) {
               this.activeState[res.data[i].value] = res.data[i].label
             }
-            this.$ajax.get('http://localhost:3000/activity/enjoy/executingState', {params: {type: 'black_list_is_executing'}})
+            this.$ajax.get('activity/enjoy/executingState', {params: {type: 'black_list_is_executing'}})
               .then((res) => {
-                for (var i = 0; i < res.data.length; i++) {
+                for (let i = 0; i < res.data.length; i++) {
                   this.executingState[res.data[i].value] = res.data[i].label
                 }
-                this.$ajax.get('http://localhost:3000/activity/enjoy/activityType', {params: {type: 'activitys_type'}})
+                this.$ajax.get('activity/enjoy/activityType', {params: {type: 'activitys_type'}})
                   .then((res) => {
-                    for (var i = 0; i < res.data.length; i++) {
+                    for (let i = 0; i < res.data.length; i++) {
                       this.activityType[res.data[i].value] = res.data[i].label
                     }
-                    this.$ajax.get('http://localhost:3000/activity/enjoy/yesNo', {params: {type: 'yes_no'}})
+                    this.$ajax.get('activity/enjoy/yesNo', {params: {type: 'yes_no'}})
                       .then((res) => {
-                        for (var i = 0; i < res.data.length; i++) {
+                        for (let i = 0; i < res.data.length; i++) {
                           this.yesNo[res.data[i].value] = res.data[i].label
                         }
-                        this.$ajax.get('http://localhost:3000/activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
+                        this.$ajax.get('activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
                           .then((res) => {
-                            for (var i = 0; i < res.data.length; i++) {
+                            for (let i = 0; i < res.data.length; i++) {
                               this.sharePlat[res.data[i].value] = res.data[i].label
                             }
                             this.getList()
-                          }).catch((error) => {
+                          })
+                          .catch((error) => {
                             console.error('查询share_platform失败', error)
                             this.$message({
                               type: 'info',
                               message: '获取列表失败'
                             })
                           }) // yes_no
-                      }).catch((error) => {
+                      })
+                      .catch((error) => {
                         console.error('查询yes_no失败', error)
                         this.$message({
                           type: 'info',
                           message: '获取列表失败'
                         })
                       })
-                  }).catch((error) => {
+                  })
+                  .catch((error) => {
                     console.error('查询activitys_type失败', error)
                     this.$message({
                       type: 'info',
                       message: '获取列表失败'
                     })
                   })
-              }).catch((error) => {
+              })
+              .catch((error) => {
                 console.error('查询black_list_is_executing失败', error)
                 this.$message({
                   type: 'info',
@@ -668,7 +679,7 @@
           })
       },
       getList () {
-        this.$ajax.get('http://localhost:3000/activity/enjoy/list', {params: this.requestParam})
+        this.$ajax.get('activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
             console.log(9999999)
             if (res.data.code === 0) {
@@ -747,7 +758,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('http://localhost:3000/activity/enjoy/delete', {params: {'id': id}})
+            this.$ajax.get('activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -788,14 +799,14 @@
         this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
 //        http://116.231.74.120:10001/a/electric/tActivitiesInfo/interface/export
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/export')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/activity/enjoy/exportAll')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },     // 导出所有
@@ -820,12 +831,12 @@
           this.add = false
           this.saveUp = false
           this.bike = true
-          this.$ajax.get('http://localhost:3000/activity/enjoy/view/form', {params: {id: row.id}})
+          this.$ajax.get('activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
                 this.form = res.data.tActivitiesInfo
                 if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
-                  for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                  for (let i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
                     this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
                   }
                 } else {
@@ -852,14 +863,14 @@
         this.add = false
         this.title = '赳赳乐享活动修改'
         this.formList = []
-        this.$ajax.get('http://localhost:3000/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
               console.log(this.form.imgPath)
               this.tempCityName = res.data.tActivitiesInfo.cityName
               if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
-                for (var i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
+                for (let i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
                   this.formList.push(this.sharePlat[res.data.tActivitiesInfo.sharePlatformList[i]])
                 }
                 this.enjoy = true
@@ -873,7 +884,8 @@
                 message: res.data.msg
               })
             }
-          }).catch((error) => {
+          })
+          .catch((error) => {
             console.log('点击修改报错:', error)
             this.$message({
               type: 'error',
@@ -900,7 +912,7 @@
           if (valid) {
             this.activeName2 = 'first'
             this.form.sharePlatformList = []
-            this.$ajax.get('http://localhost:3000/activity/enjoy/save', {params: this.form})
+            this.$ajax.get('activity/enjoy/save', {params: this.form})
               .then(function (response) {
                 if (response.data.code === 0) {
                   // 更新成功
@@ -1049,6 +1061,7 @@
         }
         this.formList = []
         this.$refs.uploadFile.clearFiles()
+        this.$refs.upload.clearFiles()
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
             if (res.data.code === 1) {
@@ -1064,7 +1077,8 @@
               type: 'error',
               message: '请求失败'
             })
-          }).catch(err => {
+          })
+          .catch(err => {
             this.$message({
               message: err.data.msg,
               type: 'error'
@@ -1082,12 +1096,11 @@
       // 上传组件获取oss相关
       beforeUploadImgPath (file) {
         return new Promise((resolve) => {
-          this.$ajax.post('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
             .then((res) => {
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
-              this.Token.OSSAccessKeyId = res.data.accessid
-              // oss上图片的路由
+              // oss上图片的路径 在表单体提交之前拼接
               this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })
@@ -1101,13 +1114,12 @@
       },
       beforeUploadCoverPath (file) {
         return new Promise((resolve) => {
-          this.$ajax.get('electric/ossutil/interface/policy?user_dir=tActivitiesInfo')
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
             .then((res) => {
-              this.Token = res.data
-              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
-              this.Token.OSSAccessKeyId = res.data.accessid
-              // oss上图片的路由
-//              this.pic_url = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              this.Token1 = res.data
+              this.Token1.key = this.Token1.dir + '/' + (+new Date()) + file.name
+              // oss上图片的路径 在表单体提交之前拼接
+              this.form.coverPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token1.key
               resolve()
             })
             .catch(err => {
@@ -1119,23 +1131,37 @@
         })
       },
       // 上传之前 清除原有图片
-      clearUploadedImage () {
-        this.$refs.uploadFile.clearFiles()
+      clearUploadedImgPath () {
+        // 如果有就清除
+        if (this.form.imgPath) {
+          this.$refs.uploadFile.clearFiles()
+        }
         this.form.imgPath = ''
       },
+      clearUploadedCoverPath () {
+        // 如果有就清除
+        if (this.form.coverPath) {
+          this.$refs.upload.clearFiles()
+        }
+        this.form.coverPath = ''
+      },
       // 移除图片时清空form表单中的图片地址
-      onRemove () {
+      removeImgPath () {
         this.form.imgPath = ''
+      },
+      removeCoverPath () {
+        this.form.coverPath = ''
       }
     }
   }
 </script>
 <style scoped>
   /*图片开始*/
-  img{
-    width:148px;
-    height:148px;
+  img {
+    width: 148px;
+    height: 148px;
   }
+
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -1143,9 +1169,11 @@
     position: relative;
     overflow: hidden;
   }
+
   .avatar-uploader .el-upload:hover {
     border-color: #20a0ff;
   }
+
   .avatar-uploader-icon {
     font-size: 28px;
     color: #8c939d;
@@ -1154,18 +1182,21 @@
     line-height: 178px;
     text-align: center;
   }
+
   .avatar {
     width: 178px;
     height: 178px;
     display: block;
   }
+
   /*图片结束 */
   .selectInput {
     width: 300px;
   }
+
   /*img{*/
-    /*width: 100px;*/
-    /*height:100px;*/
+  /*width: 100px;*/
+  /*height:100px;*/
   /*}*/
   .check-all {
     width: 150px;
