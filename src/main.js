@@ -9,15 +9,12 @@ import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
-// import 'jquery'
-
 import Axios from 'axios'
-import baseURL from './utils/baseUrl'
+import baseUrl from './utils/baseUrl'
 
 Vue.prototype.$ajax = Axios
-Axios.defaults.baseURL = baseURL
-// Axios.defaults.baseURL = 'http://116.231.74.120:10001/a'
-// Axios.defaults.baseURL = 'http://localhost:3000'
+
+Axios.defaults.baseURL = baseUrl
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 Vue.use(VueMoment)

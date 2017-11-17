@@ -17,6 +17,7 @@
         {{scope.row[column.dataIndex]}}
       </template>
     </el-table-column>
+
     <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
       <template slot-scope="scope">
         <button type="button" class="el-button el-button--default el-button--small">

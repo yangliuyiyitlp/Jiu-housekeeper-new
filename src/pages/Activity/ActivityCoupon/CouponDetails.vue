@@ -241,7 +241,6 @@
         </el-table>
 
         <!--分页-->
-        <!--分页-->
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -249,7 +248,7 @@
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
+          :total="pagination.count">
         </el-pagination>
 
 
@@ -261,64 +260,77 @@
         <el-form ref="form" :model="form" label-width="150px">
 
           <el-form-item label="优惠券编号:">
-            <el-input v-model="form.city_name" placeholder="填写优惠券编号"></el-input>
+            <el-input v-model="form.couponNo" placeholder="填写优惠券编号"></el-input>
           </el-form-item>
 
-          <el-form-item label="城市:">
-            <el-select v-model="form.city" placeholder="选择城市" clearable>
-              <el-option label="成都市" value="1"></el-option>
-              <el-option label="湖州市" value="2"></el-option>
-              <el-option label="上海市" value="3"></el-option>
-              <el-option label="北京市" value="4"></el-option>
-              <el-option label="深圳市" value="5"></el-option>
-            </el-select>
-          </el-form-item>
+          <!--<el-form-item label="城市:">-->
+          <!--<el-select v-model="form.city" placeholder="选择城市" clearable>-->
+          <!--<el-option label="成都市" value="1"></el-option>-->
+          <!--<el-option label="湖州市" value="2"></el-option>-->
+          <!--<el-option label="上海市" value="3"></el-option>-->
+          <!--<el-option label="北京市" value="4"></el-option>-->
+          <!--<el-option label="深圳市" value="5"></el-option>-->
+          <!--</el-select>-->
+          <!--</el-form-item>-->
 
           <el-form-item label="商标:">
-            <!--<el-input v-model="form.trademark"></el-input>-->
-            <el-button type="primary">选择文件</el-button>
-            <el-button type="primary">开始上传</el-button>
+            <el-input v-model="form.trademark"></el-input>
+            <!--<el-input v-model="form.trademark" v-show='false'></el-input>-->
+            <el-upload
+              ref="uploadAdd"
+              list-type="picture-card"
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token"
+              :on-success="successAddImg"
+              :on-remove="onRemove"
+              :before-upload="beforeUpload">
+              <el-button type="primary" @click="clearUploadedImage">上传图片
+                <!--<el-button type="primary" @click="clearAddImage">上传图片-->
+                <i class="el-icon-upload el-icon--right"></i>
+              </el-button>
+            </el-upload>
           </el-form-item>
 
           <el-form-item label="商户名:">
-            <el-input v-model="form.business_name"></el-input>
+            <el-input v-model="form.business"></el-input>
           </el-form-item>
 
           <el-form-item label="优惠券类型:">
-            <el-select v-model="form.coupon_type" placeholder="选择优惠券类型" clearable>
+            <el-select v-model="form.type" placeholder="选择优惠券类型" clearable>
               <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="优惠券内容:">
-            <el-input v-model="form.coupon_content" type="textarea" class='textarea'></el-input>
+            <el-input v-model="form.content" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item label="详情url:">
-            <el-input v-model="form.details_url" placeholder="填写详情url"></el-input>
+            <el-input v-model="form.detailsUrl" placeholder="填写详情url"></el-input>
           </el-form-item>
 
           <el-form-item label="有效时间:">
             <el-date-picker
-              v-model="form.effective_time_begin"
+              v-model="form.startTime"
               type="date"
               placeholder="开始时间">
             </el-date-picker>
             -
             <el-date-picker
-              v-model="form.effective_time_end"
+              v-model="form.endTime"
               type="date"
               placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
-            <el-input v-model="form.des" type="textarea" class='textarea'></el-input>
+            <el-input v-model="form.remarks" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item>
             <el-button type="primary" @click="saveData">保存</el-button>
-            <el-button>返回</el-button>
+            <el-button type="primary" @click="resetForm">重置</el-button>
+            <el-button @click="returnBack">返回</el-button>
           </el-form-item>
 
         </el-form>
@@ -328,65 +340,77 @@
       <!--优惠券批量导入-->
       <el-tab-pane label="优惠券批量导入" name="third" class="second">
 
-        <el-form ref="form" :model="form_batch" label-width="150px">
+        <el-form ref="form" :model="formBatch" label-width="150px">
 
           <el-form-item label="商标:">
-            <!--<el-input v-model="form_batch.trademark"></el-input>-->
-            <el-button type="primary">选择文件</el-button>
-            <el-button type="primary">开始上传</el-button>
+            <el-input v-model="formBatch.trademark" v-show='false'></el-input>
+            <el-upload
+              ref="uploadBatch"
+              list-type="picture-card"
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token"
+              :on-success="successBatchImg"
+              :on-remove="onRemove"
+              :before-upload="beforeUpload">
+              <el-button type="primary" @click="clearUploadedImage">上传图片
+                <!--<el-button type="primary" @click="clearBatchImage">上传图片-->
+                <i class="el-icon-upload el-icon--right"></i>
+              </el-button>
+            </el-upload>
           </el-form-item>
 
-          <el-form-item label="城市:">
-            <el-select v-model="form_batch.city" placeholder="选择城市" clearable>
-              <el-option label="成都市" value="1"></el-option>
-              <el-option label="湖州市" value="2"></el-option>
-              <el-option label="上海市" value="3"></el-option>
-              <el-option label="北京市" value="4"></el-option>
-              <el-option label="深圳市" value="5"></el-option>
-            </el-select>
-          </el-form-item>
+          <!--<el-form-item label="城市:">-->
+          <!--<el-select v-model="form_batch.city" placeholder="选择城市" clearable>-->
+          <!--<el-option label="成都市" value="1"></el-option>-->
+          <!--<el-option label="湖州市" value="2"></el-option>-->
+          <!--<el-option label="上海市" value="3"></el-option>-->
+          <!--<el-option label="北京市" value="4"></el-option>-->
+          <!--<el-option label="深圳市" value="5"></el-option>-->
+          <!--</el-select>-->
+          <!--</el-form-item>-->
 
           <el-form-item label="商户名:">
-            <el-input v-model="form_batch.business_name"></el-input>
+            <el-input v-model="formBatch.business"></el-input>
           </el-form-item>
 
           <el-form-item label="优惠券类型:">
-            <el-select v-model="form_batch.coupon_type" placeholder="选择优惠券类型" clearable>
+            <el-select v-model="formBatch.type" placeholder="选择优惠券类型" clearable>
               <el-option v-for="(item,k) in coupon_type_obj" :label=item :value=k :key=k></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="优惠券内容:">
-            <el-input v-model="form_batch.coupon_content" type="textarea" class='textarea'></el-input>
+            <el-input v-model="formBatch.content" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item label="详情url:">
-            <el-input v-model="form_batch.details_url" placeholder="填写详情url"></el-input>
+            <el-input v-model="formBatch.detailsUrl" placeholder="填写详情url"></el-input>
           </el-form-item>
 
           <el-form-item label="有效时间:">
             <el-date-picker
-              v-model="form_batch.effective_time_begin"
+              v-model="formBatch.startTime"
               type="date"
               placeholder="开始时间">
             </el-date-picker>
             -
             <el-date-picker
-              v-model="form_batch.effective_time_end"
+              v-model="formBatch.endTime"
               type="date"
               placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
 
           <el-form-item label="备注:">
-            <el-input v-model="form_batch.des" type="textarea" class='textarea'></el-input>
+            <el-input v-model="formBatch.remarks" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item>
             <el-button type="primary" @click="selectFile">选择文件</el-button>
             <el-button type="primary" @click="importData">导入</el-button>
             <el-button @click="downloadTemplate">下载模板</el-button>
-            <el-button>返回</el-button>
+            <!--<el-button type="primary" @click="resetForm">重置</el-button>-->
+            <el-button @click="returnBack">返回</el-button>
           </el-form-item>
 
         </el-form>
@@ -409,17 +433,14 @@
         </el-form-item>
 
         <el-form-item label="商标:">
-          <!--<el-dialog v-show="updateForm.trademark" size="tiny">-->
-          <el-dialog size="tiny">
-            <img width="100%" :src="updateForm.trademark">
-          </el-dialog>
-          <!--<el-input v-model="updateForm.trademark" v-show='false'></el-input>-->
-          <el-input v-model="updateForm.trademark"></el-input>
+          <img width="100%" :src="updateForm.trademark">
+          <el-input v-model="updateForm.trademark" v-show='false'></el-input>
           <el-upload
             ref="upload"
             list-type="picture-card"
             action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
             :data="Token"
+            :on-success="successUpdateImg"
             :on-remove="onRemove"
             :before-upload="beforeUpload">
             <el-button type="primary" @click="clearUploadedImage">上传图片
@@ -484,8 +505,6 @@
         Token: {}, // oss秘钥
         activeName: 'first',
         modifyFormVisible: false,
-//        coupon_type: [],
-//        t_cup_state: [],
         coupon_type_obj: {}, // 优惠券类型关系
         t_cup_state_obj: {}, // 优惠券领取状态
         coupon_mode_obj: {}, // 奖项类型
@@ -493,29 +512,8 @@
         tableData: [], // 所展示列表信息
         updateForm: {}, // 根据id更新某条数据
         formInline: {}, // 查询列表所需字段
-        form: {
-          city: '',
-//          trademark: '',
-          business_name: '',
-          coupon_type: '',
-          coupon_content: '',
-          details_url: '',
-          effective_time_begin: '',
-          effective_time_end: '',
-          des: ''
-        },
-        form_batch: {
-          city: '',
-//          trademark: '',
-          business_name: '',
-          coupon_type: '',
-          coupon_content: '',
-          details_url: '',
-          effective_time_begin: '',
-          effective_time_end: '',
-          des: ''
-        },
-        currentPage: 1,
+        form: {}, // 添加新优惠券配置表单
+        formBatch: {}, // 批量导入表单
         pagination: {pageSizes: [30, 50, 80, 100], pageSize: 30, total: 0, pageNum: 1}
       }
     },
@@ -539,42 +537,49 @@
         // 点击根据条件进行查询
         this.getList()
       },
+      // 添加新优惠券
+      saveData () {
+        // 有效时间转化
+        this.form.startTime = Moment(this.form.startTime).format('YYYY-MM-DD HH:mm:ss')
+        this.form.endTime = Moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss')
+        console.log(this.form)
+        // 发送save请求，保存数据
+        this.$ajax.get('activity/coupon/details/save', {params: this.form})
+          .then(res => {
+            this.open('success', res.data.msg)
+            // 跳转到第一页 并刷新页面
+            this.activeName = 'first'
+            this.getList()
+          })
+          .catch(err => {
+            this.open('info', err.data.msg)
+//            console.log(err)
+          })
+//        this.Token = {} // 清空秘钥
+      },
+      // 获取当前行的详细信息
       modifyRecord (id) {
+//        this.Token = {}
         this.modifyFormVisible = true
-        this.$ajax.get('electric/tCouponInfo/interface/form?id=' + id)
+        this.$ajax.get('activity/coupon/details/form?id=' + id)
           .then(res => {
             this.updateForm = res.data.tCouponInfo
             console.log(this.updateForm)
-//            this.updateForm.type = this.coupon_type_obj[this.updateForm.type]
           })
           .catch(err => {
             console.log(err)
           })
       },
+      // 更新 根据id更改某一条信息
       doUpdate () {
         this.modifyFormVisible = false
         this.updateForm.startTime = Moment(this.updateForm.startTime).format('YYYY-MM-DD HH:mm:ss')
         this.updateForm.endTime = Moment(this.updateForm.endTime).format('YYYY-MM-DD HH:mm:ss')
-        // 此时this.updateForm.type需要从汉字转化为数字
-        for (let k in this.coupon_type_obj) {
-          if (this.coupon_type_obj[k] === this.updateForm.type) {
-            console.log(k, this.updateForm.type)
-            this.updateForm.type = k
-          }
-          this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
-            .then(res => {
-              this.open('success', res.data.msg)
-              // 刷新页面
-              this.getList()
-            })
-            .catch(err => {
-              this.open('info', err.data.msg)
-              console.log(err)
-            })
-        }
-        // 数据类型转换完毕，发送save请求，保存数据
-        this.$ajax.get('electric/tCouponInfo/interface/save', {params: this.updateForm})
+//        console.log(this.updateForm)
+        // 发送save请求，保存数据
+        this.$ajax.get('activity/coupon/details/save', {params: this.updateForm})
           .then(res => {
+//            console.log(res)
             this.open('success', res.data.msg)
             // 刷新页面
             this.getList()
@@ -583,29 +588,11 @@
             this.open('info', err.data.msg)
             console.log(err)
           })
+//        this.Token = {} // 清空秘钥
       },
-      open (type, msg) {
-        // 提示信息
-        this.$message({
-          type: type,
-          message: msg
-        })
-      },
-      deleteRecord (id) {
-        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        })
-          .then(() => {
-            this.delRecord(id)
-          })
-          .catch(() => {
-            this.open('info', '已取消删除')
-          })
-      },
+      // 根据id删除当前行的信息
       delRecord (id) {
-        this.$ajax.get('electric/tCouponInfo/interface/delete?id=' + id)
+        this.$ajax.get('activity/coupon/details/delete?id=' + id)
           .then(res => {
             if (res.status === 200) {
               // 删除成功
@@ -614,21 +601,34 @@
               this.getList()
             } else {
               // 删除失败
-              this.open('info', res.data.msg)
+              this.open('warning', res.data.msg)
             }
           })
           .catch(err => {
             // 删除失败
-            this.open('info', err.data.msg)
+            this.open('warning', err.data.msg)
           })
       },
-      handleClick (tab, event) {
-//        console.log(tab, event)
+      // 重置功能
+      resetForm () {
+        this.clearUploadedImage()
+//        this.Token = {} // 清空秘钥
+        this.form = {} // 清空表单1
+        this.formBatch = {} // 清空表单2
+      },
+      // 返回至列表 并清空表单
+      returnBack () {
+        this.activeName = 'first'
+        // 并清空当前列表内容
+        this.resetForm()
+      },
+      // 点击标签页时事件
+      handleClick () {
+        this.resetForm()
       },
       exportData () {
         console.log('exportData!')
       },
-      saveData () {},
       selectFile () {},
       importData () {},
       downloadTemplate () {},
@@ -688,8 +688,9 @@
       getList () {
         this.$ajax.get('activity/coupon/details/list', {params: this.formInline})
           .then(res => {
-            console.log(res.data.page.list)
+//            console.log(res.data.page)
             this.tableData = res.data.page.list
+            this.pagination.count = res.data.page.count
             for (let i = 0; i < this.tableData.length; i++) {
               this.tableData[i].coupon_type = Tools.k2value(this.coupon_type_obj, this.tableData[i].type)
               this.tableData[i].t_cup_state = Tools.k2value(this.t_cup_state_obj, this.tableData[i].state)
@@ -703,16 +704,15 @@
             console.error(err)
           })
       },
-      // 上传组件获取oss相关
+      // 上传组件获取oss相关 通过node
       beforeUpload (file) {
         return new Promise((resolve) => {
-          this.$ajax.get('electric/ossutil/interface/policy?user_dir=couponBaseInfo')
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'couponBaseInfo'}})
             .then(res => {
+//              console.log(res.data)
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
-              this.Token.OSSAccessKeyId = res.data.accessid
-              // oss上图片的路径
-              this.updateForm.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+              // oss上图片的路径 在表单体提交之前拼接
               resolve()
             })
             .catch(err => {
@@ -720,32 +720,104 @@
             })
         })
       },
+      // 上传图片成功的话  将src拼接放入表单中
+      successAddImg () {
+        this.form.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
+      successUpdateImg () {
+        this.updateForm.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
+      successBatchImg () {
+        this.formBatch.trademark = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
       // 移除图片时清空form表单中的图片地址
       onRemove () {
         this.updateForm.trademark = ''
+        this.form.trademark = ''
+        this.formBatch.trademark = ''
       },
       // 上传之前 清除原有图片
       clearUploadedImage () {
-        this.$refs.upload.clearFiles()
+        // 如果有就清除
+        if (this.updateForm.trademark) {
+          this.$refs.upload.clearFiles()
+        }
+        if (this.form.trademark) {
+          this.$refs.uploadAdd.clearFiles()
+        }
+        if (this.formBatch.trademark) {
+          this.$refs.uploadBatch.clearFiles()
+        }
         this.updateForm.trademark = ''
+        this.form.trademark = ''
+        this.formBatch.trademark = ''
       },
       // 改变请求条数功能
       handleSizeChange: function (val) {
 //        console.log(val)
         this.formInline.pageSize = val
-        this.showForm()
+        this.getList()
       },
       // 翻页功能
       handleCurrentChange: function (val) {
 //        console.log(val)
         this.formInline.pageNum = val
-        this.showForm()
+        this.getList()
+      },
+      // 显示的提示设置
+      open (type, msg) {
+        // 提示信息
+        this.$message({
+          type: type,
+          message: msg
+        })
+      },
+      // 删除时的提醒信息
+      deleteRecord (id) {
+        this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            this.delRecord(id)
+          })
+          .catch(() => {
+            this.open('info', '已取消删除')
+          })
       }
     }
   }
 </script>
 
 <style scoped>
+  .avatar-uploader .el-upload {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .avatar-uploader .el-upload:hover {
+    border-color: #20a0ff;
+  }
+
+  .avatar-uploader-icon {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    line-height: 178px;
+    text-align: center;
+  }
+
+  .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+  }
+
   .right {
 
   }
