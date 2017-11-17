@@ -274,8 +274,7 @@
           <!--</el-form-item>-->
 
           <el-form-item label="商标:">
-            <el-input v-model="form.trademark"></el-input>
-            <!--<el-input v-model="form.trademark" v-show='false'></el-input>-->
+            <el-input v-model="form.trademark" v-show='false'></el-input>
             <el-upload
               ref="uploadAdd"
               list-type="picture-card"

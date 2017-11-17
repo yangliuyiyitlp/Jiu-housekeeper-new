@@ -486,8 +486,6 @@
 
 <script>
   import Moment from 'moment'
-  import baseUrl from '../../utils/baseUrl.js'
-
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   import baseUrl from '../../utils/baseUrl'
   export default {
