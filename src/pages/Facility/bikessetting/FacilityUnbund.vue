@@ -70,6 +70,8 @@
         label="id" v-if=0> // id 隐藏
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="车辆编号"
         prop="bikeid">
         <template slot-scope="scope">
@@ -77,37 +79,53 @@
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="gpsNo"
         show-overflow-tooltip
         label="gprs编号">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="operateFlag"
         label="操作标志">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="imei"
         label="imei编号">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="deviceid"
         label="设备ID">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="blemac"
         label="MAC地址">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="iccid"
         label="iccid">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="update_date">
         <template slot-scope="scope">
           <span style="margin-left: 10px">{{ scope.row.updateDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="remarks"
         show-overflow-tooltip
         label="备注">
@@ -177,6 +195,7 @@
 
 <script>
   import baseUrl from '../../../utils/baseUrl'
+
   export default {
     created: function () {
       this.list()
@@ -343,36 +362,6 @@
           return
         }
       },
-      actionForm () {
-        let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data这种请求头的请求
-        formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
-        formData.append('operateFlag', this.action) // 其他的一些参数  electric/tUnbangdingFail/interface/import
-        this.$ajax(
-          {
-            method: 'post',
-            url: 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import',
-            data: formData,
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }
-        ).then((response) => {
-          this.msg = response.data.msg
-          this.message = true
-//          this.$message({
-//            message: response.data.msg,
-//            type: 'info'
-//          })
-          this.query()
-        }).catch((error) => {
-          this.$message({
-            message: error.data.msg,
-            type: 'error'
-          })
-        })
-        this.exportAction = false
-//        以上是文件上传功能
-      },
       getFile: function ($event) {
         this.ruleForm.avatarTwo = $event.target.files[0]
       },
@@ -389,6 +378,45 @@
           return false
         }
       },
+      actionForm () {
+        let formData = new FormData() // 一个form表单的对象 然后可以设置表单的值模拟 multipart/form-data请求头
+        formData.append('file', this.ruleForm.avatarTwo) // 其他的一些参数
+        formData.append('operateFlag', this.action)
+        // 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import'  '/facility/unbund/import/file'
+//        this.$ajax(
+//          {
+//            method: 'post',
+//            url: '/facility/unbund/import/file',
+//            data: formData,
+//            headers: {
+//              'Content-Type': 'multipart/form-data'
+//            }
+//          }
+//        )
+        this.$ajax.post('/facility/unbund/import/file', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+          .then((response) => {
+            if (response.data.msg) {
+              this.msg = response.data.msg
+              this.message = true
+            }
+//          this.$message({
+//            message: response.data.msg,
+//            type: 'info'
+//          })
+            this.query()
+          }).catch((error) => {
+            this.$message({
+              message: error.data.msg,
+              type: 'error'
+            })
+          })
+        this.exportAction = false
+      },
+      //        以上是文件上传功能
       cancelImport () {
         this.exportAction = false
       },
@@ -435,10 +463,6 @@
     margin-bottom: 20px;
   }
 
-  form {
-    padding-top: 20px;
-  }
-
   .importForm {
     height: 0px;
     padding-left: 10px;
@@ -453,7 +477,6 @@
 
   .demo-form-inline {
     padding-left: 10px;
-    /*margin-bottom:20px;*/
   }
 
   .active {

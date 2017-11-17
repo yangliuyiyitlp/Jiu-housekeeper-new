@@ -38,7 +38,7 @@
           </el-form-item>
 
           <el-form-item label="城市名称:">
-            <el-input v-model="requestParam.cityName">
+            <el-input v-model.trim="requestParam.cityName">
             </el-input>
           </el-form-item>
 
@@ -702,7 +702,7 @@
             console.log('获取列表失败:', error)
             this.$message({
               type: 'error',
-              message: '列表获取失败'
+              message: error.data.msg
             })
           })
       },
@@ -713,7 +713,6 @@
         this.requestParam.endEndTime = Moment(this.requestParam.endEndTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.requestParam.cityName = this.requestParam.cityName.trim()
         this.exportParam.type = this.requestParam.type
         this.exportParam.redPackage = this.requestParam.redPackage
         this.exportParam.sharePlatform = this.requestParam.sharePlatform
@@ -748,7 +747,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('/activity/enjoy/delete', {params: {'id': id}})
+            this.$ajax.post('/activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -1050,6 +1049,7 @@
         }
         this.formList = []
         this.$refs.uploadFile.clearFiles()
+        // todo
         this.$ajax.get('/electric/tActivitiesInfo/interface/save')
           .then((res) => {
             if (res.data.code === 1) {
@@ -1065,10 +1065,10 @@
               type: 'error',
               message: '请求失败'
             })
-          }).catch(err => {
+          }).catch(() => {
             this.$message({
-              message: err.data.msg,
-              type: 'error'
+              message: '请求显示顺序失败',
+              type: 'info'
             })
           })
       }, // 新增

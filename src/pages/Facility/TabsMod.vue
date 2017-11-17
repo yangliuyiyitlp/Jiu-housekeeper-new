@@ -329,13 +329,7 @@
   }
   .demo-form-inline{
     padding-left:10px;
-    margin-bottom:20px;
   }
-  form {
-    padding-top: 20px;
-    height: 75px;
-  }
-
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
