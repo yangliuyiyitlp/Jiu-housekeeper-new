@@ -171,7 +171,7 @@
 
 <script>
   import Moment from 'moment'
-
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.query()
@@ -236,7 +236,7 @@
         this.exportParam.endAddTime = this.requestParam.endAddTime
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('http://localhost:3000/facility/register', {params: this.requestParam})
+        this.$ajax.get('/facility/register', {params: this.requestParam})
           .then(response => {
             if (response.data.code === 0) {
               this.tableData = response.data.page.list
@@ -255,7 +255,7 @@
           })
       },
       modifyRecord (scope) {
-        this.$ajax.get('http://localhost:3000/facility/register/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/facility/register/form', {params: {id: scope.row.id}})
           .then(res => {
             if (res.data.code === 0) {
               this.dialogFormVisible = true
@@ -277,7 +277,7 @@
             // 调用后台服务
             // 删除元素
             console.log(111)
-            this.$ajax.post('http://localhost:3000/facility/register/delete', {params: {'id': id}})
+            this.$ajax.post('/facility/register/delete', {params: {'id': id}})
               .then(response => {
                 console.log(response.data)
                 if (response.data.code === 0) {
@@ -315,11 +315,11 @@
       doModify (formName) {       // 修改确定功能
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let url = 'http://localhost:3000/facility/register/save'
+            let url = '/facility/register/save'
 //            if (this.form.id === undefined || this.form.id === '') {
-//              url = 'http://localhost:3000/facility/register/save' // 新增功能
+//              url = '/facility/register/save' // 新增功能
 //            } else {
-//              url = 'http://localhost:3000/facility/register/save'
+//              url = '/facility/register/save'
 //            }
             this.dialogFormVisible = false
             this.$ajax.get(url, {params: this.form})
@@ -366,7 +366,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('http://localhost:3000/facility/register/view/form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('/facility/register/view/form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreInfo.remarks = res.data.tLockFactoryInfo.remarks
               this.moreInfo.updateDate = res.data.tLockFactoryInfo.updateDate
@@ -416,7 +416,7 @@
         if (r === true) {
           this.exportParam.pageNo = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/export')
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/register/export`)
           this.$refs['FileForm'].submit()
           this.exportFormVisible = false
         } else {
@@ -426,7 +426,7 @@
       exportAll () {
         var r = confirm('确定导出么')
         if (r === true) {
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/register/exportAll')
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/register/exportAll`)
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
           this.$refs['FileForm'].submit()

@@ -489,6 +489,7 @@
   import baseUrl from '../../utils/baseUrl.js'
 
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.list()
@@ -626,12 +627,12 @@
                     for (let i = 0; i < res.data.length; i++) {
                       this.activityType[res.data[i].value] = res.data[i].label
                     }
-                    this.$ajax.get('activity/enjoy/yesNo', {params: {type: 'yes_no'}})
+                    this.$ajax.get('/activity/enjoy/yesNo', {params: {type: 'yes_no'}})
                       .then((res) => {
                         for (let i = 0; i < res.data.length; i++) {
                           this.yesNo[res.data[i].value] = res.data[i].label
                         }
-                        this.$ajax.get('activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
+                        this.$ajax.get('/activity/enjoy/sharePlat', {params: {type: 'share_platform'}})
                           .then((res) => {
                             for (let i = 0; i < res.data.length; i++) {
                               this.sharePlat[res.data[i].value] = res.data[i].label
@@ -679,7 +680,7 @@
           })
       },
       getList () {
-        this.$ajax.get('activity/enjoy/list', {params: this.requestParam})
+        this.$ajax.get('/activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
             console.log(9999999)
             if (res.data.code === 0) {
@@ -758,7 +759,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('activity/enjoy/delete', {params: {'id': id}})
+            this.$ajax.get('/activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -831,7 +832,7 @@
           this.add = false
           this.saveUp = false
           this.bike = true
-          this.$ajax.get('activity/enjoy/view/form', {params: {id: row.id}})
+          this.$ajax.get('/activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
                 this.form = res.data.tActivitiesInfo
@@ -863,7 +864,7 @@
         this.add = false
         this.title = '赳赳乐享活动修改'
         this.formList = []
-        this.$ajax.get('activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
@@ -912,7 +913,7 @@
           if (valid) {
             this.activeName2 = 'first'
             this.form.sharePlatformList = []
-            this.$ajax.get('activity/enjoy/save', {params: this.form})
+            this.$ajax.get('/activity/enjoy/save', {params: this.form})
               .then(function (response) {
                 if (response.data.code === 0) {
                   // 更新成功

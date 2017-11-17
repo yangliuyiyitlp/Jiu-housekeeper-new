@@ -1,10 +1,9 @@
-
 let baseUrl
 
 if (process.env === 'PRODUCTION') {
-  baseUrl = 'http://0.0.0.0:8180'
+  baseUrl = 'http://hk.99bicycle.com'
 } else if (process.env === 'TEST') {
-  baseUrl = 'http://0.0.0.0:8180'
+  baseUrl = 'http://operateweb.99bicycle.com:8180'
 } else {
   baseUrl = 'http://localhost:3000'
 }

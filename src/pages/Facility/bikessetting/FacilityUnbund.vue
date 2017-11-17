@@ -31,9 +31,9 @@
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
+        <!--/facility/unbund/import/template-->
         <!--http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template-->
-        <el-button type="primary" ><a ref="aLink"
-          href='http://localhost:3000/facility/unbund/import/template'>下载模板</a></el-button>
+        <el-button type="primary" @click="downFile">下载模板</el-button>
       </el-form-item>
     </el-form>
     <el-form class='importForm'>
@@ -42,9 +42,9 @@
         <button @click="importFile">导入</button>
       </el-form-item>
     </el-form>
-    <div v-if="message"class='errorMsg'>
+    <div v-if="message" class='errorMsg'>
       <button @click='errorClose' class="errorIcon">关闭</button>
-      <div  v-html="msg"></div>
+      <div v-html="msg"></div>
     </div>
     <!--隐藏表单用于文件导出-->
     <form style="display: none" action="" method="post" ref="FileForm">
@@ -176,6 +176,7 @@
 </template>
 
 <script>
+  import baseUrl from '../../../utils/baseUrl'
   export default {
     created: function () {
       this.list()
@@ -233,7 +234,7 @@
     methods: {
       list: function () {
 //        this.message = false
-        this.$ajax.get('http://localhost:3000/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})
+        this.$ajax.get('/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.opFlag[res.data[i].value] = res.data[i].label
@@ -256,7 +257,7 @@
         this.exportParam.operateFlag = this.requestParam.operateFlag
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
-        this.$ajax.get('http://localhost:3000/facility/unbund/list', {params: this.requestParam}).then(response => {
+        this.$ajax.get('/facility/unbund/list', {params: this.requestParam}).then(response => {
           if (response.data.code === 0) {
             this.tableData = response.data.page.list
             this.pagination.count = response.data.page.count
@@ -281,7 +282,7 @@
           return false
         } else {
           this.moreFormVisible = true
-          this.$ajax.get('http://localhost:3000/facility/unbund/view/form', {params: {id: row.id}}).then(res => {
+          this.$ajax.get('/facility/unbund/view/form', {params: {id: row.id}}).then(res => {
             if (res.data.code === 0) {
               this.moreInfo.bikeid = res.data.tUnbangdingFail.bikeid
               this.moreInfo.imei = res.data.tUnbangdingFail.imei
@@ -323,7 +324,7 @@
         if (r === true) {
           this.exportParam.pageSize = this.pagination.pageNo
           this.exportParam.pageSize = this.pagination.pageSize
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/unbund/export')
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/unbund/export`)
           this.$refs['FileForm'].submit()
           this.exportFormVisible = false
         } else {
@@ -335,7 +336,7 @@
         if (r === true) {
           this.exportParam.pageSize = ''
           this.exportParam.pageNo = ''
-          this.$refs['FileForm'].setAttribute('action', 'http://localhost:3000/facility/unbund/exportAll')
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/unbund/exportAll`)
           this.$refs['FileForm'].submit()
           this.exportFormVisible = false
         } else {
@@ -393,31 +394,27 @@
       },
       errorClose () {
         this.message = false
+      },
+      downFile () {
+        this.exportParam.pageSize = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/unbund/import/template`)
+        this.$refs['FileForm'].submit()
       }
-//      downFile () {
-//        this.$ajax.get('http://localhost:3000/facility/unbund/import/template')
-//          .then((res) => {
-//            console.log(111)
-//           this.$refs.aLink.setAttribute('href', 'http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template')
-//          }).catch(() => {
-//            this.$message({
-//              type: 'error',
-//              message: '下载模板失败'
-//            })
-//          })
-//      }
     }
   }
 </script>
 <style scoped>
-  .errorMsg{
-    margin-top:40px;
-    padding-left:10px;
+  .errorMsg {
+    margin-top: 40px;
+    padding-left: 10px;
     background-color: #ccc;
   }
-  .errorIcon{
-    top:0px;
+
+  .errorIcon {
+    top: 0px;
   }
+
   .left {
     padding-left: 10px;
   }
@@ -446,7 +443,7 @@
     height: 0px;
     padding-left: 10px;
     padding-top: 0px !important;
-    margin-bottom:20px!important;
+    margin-bottom: 20px !important;
   }
 
   .demo-ruleForm {
@@ -454,10 +451,11 @@
     text-align: center;
   }
 
-  .demo-form-inline{
-    padding-left:10px;
+  .demo-form-inline {
+    padding-left: 10px;
     /*margin-bottom:20px;*/
   }
+
   .active {
     color: #20a0ff;
   }
