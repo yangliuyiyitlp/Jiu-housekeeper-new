@@ -96,7 +96,8 @@ import ActivityInviteList from '@/pages/Activity/ActivityInviteList.vue'
 import ActivityConfigIcon from '@/pages/Activity/Zombie/ActivityConfigIcon.vue'
 import ActivityInMobi from '@/pages/Activity/ActivityInMobi.vue'
 import ActivityCouponDetails from '@/pages/Activity/ActivityCoupon/CouponDetails.vue'
-import ActivityHealth from '@/pages/Activity/ActivityHealth.vue'
+import ActivityHealth from '@/pages/Activity/ActivityMonth/ActivityHealth.vue'
+import ActivityRedrain from '@/pages/Activity/ActivityMonth/ActivityRedrain.vue'
 Vue.use(Router)
 
 export default new Router({
@@ -251,7 +252,8 @@ export default new Router({
         {path: '/activity/config/icon', name: 'activity.config.icon', component: ActivityConfigIcon},
         {path: '/activity/inmobi', name: 'activity.inmobi', component: ActivityInMobi},
         {path: '/activity/coupon/details', name: 'activity.coupon.details', component: ActivityCouponDetails},
-        {path: '/activity/health', name: 'activity.health', component: ActivityHealth}
+        {path: '/activity/health', name: 'activity.health', component: ActivityHealth},
+        {path: '/activity/red/rain', name: 'activity.red.rain', component: ActivityRedrain}
       ]
     },
     {path: '*', component: NotFound}

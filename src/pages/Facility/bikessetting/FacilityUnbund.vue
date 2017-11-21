@@ -216,8 +216,8 @@
           deviceid: '',
           blemac: '',
           iccid: '',
-          remarks: '',
-          gpsNo: ''
+          gpsNo: '',
+          remarks: ''
         },
         formLabelWidth: '80px',
         requestParam: {

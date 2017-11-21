@@ -13,7 +13,6 @@
 
 <script>
   import MainNav from '@/components/commons/MainNav.vue'
-//  import ActivityNav from '@/pages/Activity/ActivityHealth.vue'
 
   export default {
     name: 'app',

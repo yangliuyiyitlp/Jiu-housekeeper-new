@@ -3,7 +3,7 @@
     <el-tabs v-model="activeName2" type="card">
 
       <!--报名表-->
-      <el-tab-pane label="名流健康报名表" name="first">
+      <el-tab-pane label="红包雨报名表" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline" style="padding-left:10px;">
           <el-form-item label="姓名：">
             <el-input v-model.trim="formInline.realName"></el-input>
@@ -103,7 +103,7 @@
       </el-tab-pane>
 
       <!--中奖表-->
-      <el-tab-pane label="名流健康中奖表" name="second">
+      <el-tab-pane label="红包雨中奖表" name="second">
         <el-form :inline="true" :model="formPrize" class="demo-form-inline" style="padding-left:10px;">
           <el-form-item label="姓名：">
             <el-input v-model.trim="formPrize.name"></el-input>
@@ -199,8 +199,8 @@
   </div>
 </template>
 <script>
-  import { convertDate2String } from '../../assets/js/convert'
-  import baseUrl from '../../utils/baseUrl'
+  import { convertDate2String } from '../../../assets/js/convert'
+  import baseUrl from '../../../utils/baseUrl'
 
   export default {
     created: function () {
