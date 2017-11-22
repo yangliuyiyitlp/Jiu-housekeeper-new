@@ -38,7 +38,7 @@
           </el-form-item>
 
           <el-form-item label="城市名称:">
-            <el-input v-model="requestParam.cityName">
+            <el-input v-model.trim="requestParam.cityName">
             </el-input>
           </el-form-item>
 
@@ -276,7 +276,6 @@
           <el-table-column
             header-align="center"
             width="100"
-            fixed="right"
             label="操作">
             <template slot-scope="scope">
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
@@ -341,18 +340,19 @@
             <span>可以参与活动的最小信用分</span>
           </el-form-item>
 
-
           <el-form-item label="封面图片:">
             <el-input v-model="form.imgPath" v-show='false'></el-input>
-            <img width="100%" :src="form.imgPath" alt="图片">
+            <img width="100%" :src="form.imgPath" alt="封面图片">
             <el-upload
+              :disabled="saveUp"
               ref="uploadFile"
               list-type="picture-card"
               action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
               :data="Token"
               :on-remove="removeImgPath"
+              :on-success="successImgPath"
               :before-upload="beforeUploadImgPath">
-              <el-button type="primary" @click="clearUploadedImgPath">上传图片
+              <el-button :disabled="saveUp" type="primary" @click="clearUploadedImgPath">上传图片
                 <i class="el-icon-upload el-icon--right"></i>
               </el-button>
             </el-upload>
@@ -376,13 +376,15 @@
               </div>
               <!--<img :src="form.coverPath" alt="视频封面">-->
               <el-upload
+                :disabled="saveUp"
                 ref="upload"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
                 :on-remove="removeCoverPath"
                 :data="Token1"
+                :on-success="successCoverPath"
                 :before-upload="beforeUploadCoverPath">
-                <el-button type="primary" @click="clearUploadedCoverPath">上传图片
+                <el-button :disabled="saveUp" type="primary" @click="clearUploadedCoverPath">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
@@ -474,7 +476,7 @@
           </el-form-item>
         </el-form>
         <div class="footer">
-          <el-button type="primary" @click="doModify('formA')" v-if=saveUp>保存</el-button>
+          <el-button type="primary" @click="doModify('formA')" v-if=!saveUp>保存</el-button>
           <el-button type="primary" @click="back">返回</el-button>
         </div>
 
@@ -486,8 +488,8 @@
 
 <script>
   import Moment from 'moment'
+  import baseUrl from '../../utils/baseUrl.js'
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
-  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.list()
@@ -501,6 +503,7 @@
         isIndeterminate: true,
         add: false,
         saveUp: false,
+        img: true,
         imgPathUrl: '',
         enjoy: false, //  分享
         video: true, // 参与车辆状态 视屏链接 视屏封面 有无红包显示隐藏
@@ -605,6 +608,9 @@
     },
     methods: {
       handleClick (tab, event) {
+        if (this.activeName2 === 'first') {
+          this.title = '赳赳乐享活动添加'
+        }
         if (tab.label === '赳赳乐享活动添加') {
           this.addNewRecord()
         }
@@ -680,7 +686,6 @@
       getList () {
         this.$ajax.get('/activity/enjoy/list', {params: this.requestParam})
           .then((res) => {
-            console.log(9999999)
             if (res.data.code === 0) {
               this.tableData = res.data.page.list
               this.pagination.count = res.data.page.count
@@ -711,7 +716,7 @@
             console.log('获取列表失败:', error)
             this.$message({
               type: 'error',
-              message: '列表获取失败'
+              message: error.data.msg
             })
           })
       },
@@ -722,7 +727,6 @@
         this.requestParam.endEndTime = Moment(this.requestParam.endEndTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.beginAddTime = Moment(this.requestParam.beginAddTime).format('YYYY-MM-DD HH:mm:ss')
         this.requestParam.endAddTime = Moment(this.requestParam.endAddTime).format('YYYY-MM-DD HH:mm:ss')
-        this.requestParam.cityName = this.requestParam.cityName.trim()
         this.exportParam.type = this.requestParam.type
         this.exportParam.redPackage = this.requestParam.redPackage
         this.exportParam.sharePlatform = this.requestParam.sharePlatform
@@ -757,7 +761,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('/activity/enjoy/delete', {params: {'id': id}})
+            this.$ajax.post('/activity/enjoy/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 0) {
                   // 删除成功
@@ -774,12 +778,12 @@
                     message: res.data.msg
                   })
                 }
-              }, function () {
+              }).catch(() => {
                 this.$message({
                   type: 'error',
                   message: '操作失败'
                 })
-              }.bind(this))
+              })
           }
         }).catch(() => {
           this.$message({
@@ -828,8 +832,9 @@
           this.title = '赳赳乐享活动详情'
           this.pic = true
           this.add = false
-          this.saveUp = false
+          this.saveUp = true
           this.bike = true
+          this.rules = {}
           this.$ajax.get('/activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
@@ -844,7 +849,7 @@
               } else {
                 this.$message({
                   type: 'error',
-                  message: res.data.msg
+                  message: '获取列表失败'
                 })
               }
             })
@@ -855,10 +860,11 @@
         this.title = '赳赳乐享活动添加'
       }, // 详情返回按钮
       modifyRecord (scope) {
+        this.$refs.uploadFile.clearFiles()
         this.$refs['formA'].resetFields()
         this.pic = false
         this.activeName2 = 'second'
-        this.saveUp = true
+        this.saveUp = false
         this.add = false
         this.title = '赳赳乐享活动修改'
         this.formList = []
@@ -866,7 +872,6 @@
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
-              console.log(this.form.imgPath)
               this.tempCityName = res.data.tActivitiesInfo.cityName
               if (res.data.tActivitiesInfo.sharePlatformList !== undefined && res.data.tActivitiesInfo.sharePlatformList.length > 0) {
                 for (let i = 0; i < res.data.tActivitiesInfo.sharePlatformList.length; i++) {
@@ -912,7 +917,7 @@
             this.activeName2 = 'first'
             this.form.sharePlatformList = []
             this.$ajax.get('/activity/enjoy/save', {params: this.form})
-              .then(function (response) {
+              .then((response) => {
                 if (response.data.code === 0) {
                   // 更新成功
                   this.$message({
@@ -920,6 +925,7 @@
                     message: '操作成功'
                   })
                   // 刷新页面
+                  this.$refs.uploadFile.clearFiles()
                   this.query()
                 } else {
                   this.$message({
@@ -927,12 +933,14 @@
                     message: '操作失败'
                   })
                 }
-              }.bind(this), function () {
+              })
+              .catch((err) => {
                 this.$message({
                   type: 'error',
-                  message: '操作失败'
+                  message: err
                 })
-              }.bind(this))
+              }
+              )
           } else {
             return false
           }
@@ -997,7 +1005,7 @@
           newids = ids.join(',')
           newsorts = sorts.join(',')
         })
-        this.$ajax.get('/electric/tActivitiesInfo/interface/updateSort', {
+        this.$ajax.get('/activity/enjoy/updateSort', {
           params: {
             'ids': newids,
             'sorts': newsorts
@@ -1030,40 +1038,46 @@
         this.$refs['formA'].resetFields()
         this.pic = false
         this.activeName2 = 'second'
-        this.saveUp = true
+        this.saveUp = false
         this.add = true
         this.title = '赳赳乐享活动添加'
         this.checkedCities = []
-        this.form = {
-          type: '',
-          isLeXiang: '',
-          redPackage: '',
-          beginTime: '',
-          endTime: '',
-          showTime: '',
-          hideTime: '',
-          addTime: '',
-          description: '',
-          creditLimit: '',
-          sort: '',
-          activityPath: '',
-          videoPath: '',
-          formList: [],
-          shareTitle: '',
-          shareUrl: '',
-          shareContent: '',
-          state: '',
-          cityName: '',
-          updateTime: '',
-          remarks: '',
-          imgPath: ''
-        }
+//        this.form.cityName = ''
+//        for (let i = 0; i < this.form.length; i++) {
+//          this.form[i] = ''
+//          this.form.formList = []
+//        }
+//        this.form = {
+//          type: '',
+//          isLeXiang: '',
+//          redPackage: '',
+//          beginTime: '',
+//          endTime: '',
+//          showTime: '',
+//          hideTime: '',
+//          addTime: '',
+//          description: '',
+//          creditLimit: '',
+//          sort: '',
+//          activityPath: '',
+//          videoPath: '',
+//          formList: [],
+//          shareTitle: '',
+//          shareUrl: '',
+//          shareContent: '',
+//          state: '',
+//          cityName: '',
+//          updateTime: '',
+//          remarks: '',
+//          imgPath: ''
+//        }
         this.formList = []
         this.$refs.uploadFile.clearFiles()
-        this.$refs.upload.clearFiles()
-        this.$ajax.get('/electric/tActivitiesInfo/interface/save')
+//        this.$refs.upload.clearFiles()
+        this.$ajax.get('/activity/enjoy/sort')
           .then((res) => {
-            if (res.data.code === 1) {
+            if (res.data.code === 0) {
+              this.form = {}
               this.form.sort = res.data.tActivitiesInfo.sort
             } else {
               this.$message({
@@ -1071,19 +1085,13 @@
                 message: res.data.msg
               })
             }
-          }, function () {
+          }).catch(() => {
             this.$message({
-              type: 'error',
-              message: '请求失败'
+              message: '请求显示顺序失败',
+              type: 'info'
             })
           })
-          .catch(err => {
-            this.$message({
-              message: err.data.msg,
-              type: 'error'
-            })
-          })
-      }, // 新增
+      },   // 新增
       onCheckboxChange (value) {
         if (value.length >= 1) {
           console.log(value.length)
@@ -1098,9 +1106,9 @@
           this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
             .then((res) => {
               this.Token = res.data
-              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
               // oss上图片的路径 在表单体提交之前拼接
-              this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+//              this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })
             .catch(err => {
@@ -1111,6 +1119,9 @@
             })
         })
       },
+      successImgPath (response, file, fileList) {
+        this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
       beforeUploadCoverPath (file) {
         return new Promise((resolve) => {
           this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
@@ -1118,7 +1129,7 @@
               this.Token1 = res.data
               this.Token1.key = this.Token1.dir + '/' + (+new Date()) + file.name
               // oss上图片的路径 在表单体提交之前拼接
-              this.form.coverPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token1.key
+//              this.form.coverPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token1.key
               resolve()
             })
             .catch(err => {
@@ -1128,6 +1139,9 @@
               })
             })
         })
+      },
+      successCoverPath () {
+        this.form.coverPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token1.key
       },
       // 上传之前 清除原有图片
       clearUploadedImgPath () {
@@ -1192,11 +1206,6 @@
   .selectInput {
     width: 300px;
   }
-
-  /*img{*/
-  /*width: 100px;*/
-  /*height:100px;*/
-  /*}*/
   .check-all {
     width: 150px;
     float: left;

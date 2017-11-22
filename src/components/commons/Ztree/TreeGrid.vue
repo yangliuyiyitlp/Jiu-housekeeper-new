@@ -48,7 +48,7 @@
   //  import Vue from 'vue'
 
   export default {
-    name: 'tree-grid',
+//    name: 'tree-grid',
     props: {
 // 该属性是确认父组件传过来的数据是否已经是树形结构了，如果是，则不需要进行树形格式化
       treeStructure: {

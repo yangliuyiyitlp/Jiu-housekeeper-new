@@ -5,7 +5,7 @@
         <facility-bar></facility-bar>
       </el-col>
       <el-col :span="21">
-        <router-view></router-view>
+        <router-view class="top"></router-view>
       </el-col>
     </el-row>
   </div>
@@ -37,5 +37,8 @@
 <style scoped>
   html,body,.sidebar{
     height:100%!important;
+  }
+  .top{
+    padding-top:20px;
   }
 </style>

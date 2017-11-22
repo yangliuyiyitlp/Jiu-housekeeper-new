@@ -591,18 +591,18 @@
         this.exportFormVisible = false
       },
       exportCurrent: function () {
-        this.exportParam.pageSize = this.pagination.pageNo
+        this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
-        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/export`)
         this.$refs['FileForm'].setAttribute('method', 'get')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/export`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },
       exportAll: function () {
         this.exportParam.pageSize = ''
         this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/exportAll`)
         this.$refs['FileForm'].setAttribute('method', 'post')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/exportAll`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },

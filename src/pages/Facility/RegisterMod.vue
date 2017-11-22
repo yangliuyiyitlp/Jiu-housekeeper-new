@@ -439,23 +439,13 @@
   }
 </script>
 <style scoped>
-  form {
-    padding-top: 20px;
-    height: 75px;
-  }
   .demo-form-inline{
     padding-left:10px;
-    margin-bottom:20px;
   }
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
-
-  .el-dialog--small {
-
-  }
-
   .tbody[data-v-30c85a31] {
     height: 400px !important;
   }

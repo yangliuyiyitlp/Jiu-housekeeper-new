@@ -2,7 +2,7 @@
   <div>
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
 
-      <el-tab-pane label="文章列表" name="first" style="padding-left:10px;">
+      <el-tab-pane label="文章列表" name="first" class="padding">
 
         <el-row>
           <!--树的渲染-->
@@ -657,6 +657,9 @@
 </script>
 
 <style scoped>
+  .padding{
+    padding-left:10px;
+  }
   .search_bar {
     border: 1px solid #fff;
     overflow: auto;

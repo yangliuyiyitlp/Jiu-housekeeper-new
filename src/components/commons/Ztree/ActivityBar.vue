@@ -31,8 +31,16 @@
           name: 'activity.message.plan'
         }, {
           id: 17,
-          label: '名流健康',
-          name: 'activity.health'
+          label: '每月活动',
+          children: [{
+            id: 18,
+            label: '名流健康',
+            name: 'activity.health'
+          }, {
+            id: 19,
+            label: '红包雨',
+            name: 'activity.red.rain'
+          }]
         }, {
           id: 4,
           label: '赳赳乐享',
