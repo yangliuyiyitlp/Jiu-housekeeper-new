@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+// 这样可以通过数据转换方法，把每一条数据从它的父级中取出来，把树形结构数据转换成数组数据。
 function DataTransfer (data) {
   if (!(this instanceof DataTransfer)) {
     return new DataTransfer(data, null, null)

@@ -1,3 +1,4 @@
+<!--有了进行数据转换的方法之后，开始正式些数据TreeGrid.vue组件：-->
 <template>
   <el-table
     :data="data"
@@ -45,8 +46,6 @@
 </template>
 <script>
   import DataTransfer from '../../../utils/dataTranslate.js'
-  //  import Vue from 'vue'
-
   export default {
     name: 'tree-grid',
     props: {
