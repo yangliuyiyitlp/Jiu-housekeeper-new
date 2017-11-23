@@ -588,6 +588,7 @@
             console.log(err)
           })
 //        this.Token = {} // 清空秘钥
+        this.clearUploadedImage() // 清空上传组件中图片
       },
       // 根据id删除当前行的信息
       delRecord (id) {

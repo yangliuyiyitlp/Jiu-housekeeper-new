@@ -21,31 +21,27 @@
 
     <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
       <template slot-scope="scope">
-        <button type="button" class="el-button el-button--default el-button--small">
-          <router-link
-            :to="{ path: requestUrl, query: {id: scope.row.Oid} }"
-            tag="span">
-            编辑
-          </router-link>
+
+        <button type="button" class="el-button el-button--default el-button--small"
+                @click="handleUpdate(scope.row.id)">编辑
         </button>
-        <el-button
-          size="small"
-          type="danger"
-          @click="handleDelete()">
+
+        <el-button size="small" @click="handleDelete(scope.row.id)" type="info">
           删除
         </el-button>
-        <button type="button" class="el-button el-button--success el-button--small">
-          <router-link :to="{ path: requestUrl, query: {parentId: scope.row.parentOId} }"
-                       tag="span">
-            添加下级树结构
-          </router-link>
+
+        <button type="button" class="el-button el-button--primary el-button--small"
+                @click="handleAdd(scope.row.parentId)"> 添加下级树结构
         </button>
+
       </template>
     </el-table-column>
   </el-table>
 </template>
 <script>
   import DataTransfer from '../../../utils/dataTranslate.js'
+  //  import Vue from 'vue'
+  import bus from '@/assets/js/eventBus.js'
 
   export default {
 //    name: 'tree-grid',
@@ -75,7 +71,7 @@
       requestUrl: {
         type: String,
         default: function () {
-          return '/setting/user'
+          return ''
         }
       },
 // 这个是是否展示操作列
@@ -137,22 +133,17 @@
         }
         return false
       },
-      handleDelete () {
-        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'error'
-        }).then(() => {
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
+      // 编辑事件
+      handleUpdate (id) {
+        bus.$emit('updateBtn', id)
+      },
+      // 删除事件
+      handleDelete (id) {
+        bus.$emit('delBtn', id)
+      },
+      // 添加下级树结构
+      handleAdd (parentId) {
+        bus.$emit('addBtn', parentId)
       }
     }
   }
