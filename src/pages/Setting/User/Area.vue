@@ -148,6 +148,7 @@
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
   // arr2tree引入
   import arr2tree from '../../../utils/arr2tree.js'
+  import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
       return {
@@ -371,6 +372,18 @@
       this.query()
     },
     mounted () {
+      // 编辑
+      bus.$on('updateBtn', (id) => {
+        this.modifyRecord(id)
+      })
+      // 删除
+      bus.$on('delBtn', (id) => {
+        this.deleteRecord(id)
+      })
+      // 添加下一级
+      bus.$on('addBtn', (parentId) => {
+        this.addRecord()
+      })
     },
     watch: {
       filterText (val) {
@@ -411,14 +424,14 @@
                 } else {
                   this.$message({
                     type: 'error',
-                    message: res.data.msg
+                    message: '删除异常'
                   })
                 }
               })
               .catch(() => {
                 this.$message({
                   type: 'error',
-                  message: '操作失败'
+                  message: '删除失败'
                 })
               })
           }
@@ -429,19 +442,19 @@
           })
         })
       },
-      modifyRecord (scope) {
+      modifyRecord (id) {
         this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构修改'
         this.saveUp = false
-        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/activity/enjoy/form', {params: {id: id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '获取异常'
               })
             }
           })
@@ -466,7 +479,7 @@
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '请求显示顺序异常'
               })
             }
           })
