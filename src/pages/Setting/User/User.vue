@@ -4,6 +4,7 @@
 
       <el-col :span="3" class="search_bar" ref="search_bar">
         <el-tree
+          highlight-current
           :data="select_section"
           :props="defaultProps"
           @node-click="handleNodeClick"
@@ -15,7 +16,7 @@
         <div class="grid-content bg-purple-light">
           <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
             <!--用户列表-->
-            <el-tab-pane label="用户列表" name="first" style="padding-left:10px;">
+            <el-tab-pane label="用户列表" name="first" class="padding">
 
               <!--筛选条件-->
               <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -69,7 +70,7 @@
                 <div v-html="msg"></div>
               </div>
               <!--隐藏表单用于查询-->
-              <form style="display: none" action="" method="post" ref="FileForm">
+              <form v-show="false" action="" method="post" ref="FileForm">
                 <input name="attributionCompany" v-model="exportParam.attributionCompany"/>
                 <input name="attributionSection" v-model="exportParam.attributionSection"/>
                 <input name="loginName" v-model="exportParam.loginName"/>
@@ -81,7 +82,7 @@
               <!--表格-->
               <el-table
                 :data="tableData"
-                style="width: 100%"
+                width="100%"
                 border
                 @cell-click="more"
                 stripe>
@@ -184,53 +185,73 @@
             <el-tab-pane :label='titleSecond' name="second" class="second">
 
               <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-
-                <el-form-item label="头像:">
-                  <el-button>选择</el-button>
-                  <el-button>清除</el-button>
+                <el-form-item label="头像：">
+                  <el-input v-model="form.imgPath" v-show='false'></el-input>
+                  <img width="100%" :src="form.imgPath" alt="头像">
+                  <el-upload
+                    :disabled="saveUp"
+                    ref="uploadFile"
+                    list-type="picture-card"
+                    action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                    :data="Token"
+                    :on-remove="removeImgPath"
+                    :on-success="successImgPath"
+                    :before-upload="beforeUploadImgPath">
+                    <el-button :disabled="saveUp" type="primary" @click="clearUploadedImgPath">上传图片
+                      <i class="el-icon-upload el-icon--right"></i>
+                    </el-button>
+                  </el-upload>
+                </el-form-item>
+                <el-form-item label="归属公司：">
+                  <el-input
+                    :disabled="true"
+                    :on-icon-click="searchCompany"
+                    icon="search"
+                    v-model="form.attributionCompany">
+                  </el-input>
+                </el-form-item>
+                <el-form-item label="归属部门：">
+                  <el-input
+                    :disabled="true"
+                    :on-icon-click="searchSection"
+                    icon="search"
+                    v-model="form.attributionSection">
+                  </el-input>
                 </el-form-item>
 
-                <el-form-item label="归属公司:">
-                  <el-input v-model="form.attributionCompany"></el-input>
-                </el-form-item>
-
-                <el-form-item label="归属部门:">
-                  <el-input v-model="form.attributionSection"></el-input>
-                </el-form-item>
-
-                <el-form-item label="工号:" prop="number">
+                <el-form-item label="工号：" prop="number">
                   <el-input v-model="form.number"></el-input>
                 </el-form-item>
 
-                <el-form-item label="姓名:" prop="name">
+                <el-form-item label="姓名：" prop="name">
                   <el-input v-model="form.name"></el-input>
                 </el-form-item>
 
-                <el-form-item label="登录名:" prop="loginName">
+                <el-form-item label="登录名：" prop="loginName">
                   <el-input v-model="form.loginName"></el-input>
                 </el-form-item>
 
-                <el-form-item label="密码:" prop="psw">
+                <el-form-item label="密码：" prop="psw">
                   <el-input v-model="form.psw">></el-input>
                 </el-form-item>
 
-                <el-form-item label="确认密码:" prop="password">
+                <el-form-item label="确认密码：" prop="password">
                   <el-input v-model="form.password"></el-input>
                 </el-form-item>
 
-                <el-form-item label="邮箱:">
+                <el-form-item label="邮箱：">
                   <el-input v-model="form.email"></el-input>
                 </el-form-item>
 
-                <el-form-item label="电话:">
+                <el-form-item label="电话：">
                   <el-input v-model="form.tel"></el-input>
                 </el-form-item>
 
-                <el-form-item label="手机:">
+                <el-form-item label="手机：">
                   <el-input v-model="form.phone"></el-input>
                 </el-form-item>
 
-                <el-form-item label="是否允许登录:" prop="isLogin">
+                <el-form-item label="是否允许登录：" prop="isLogin">
                   <el-select v-model="form.isLogin" clearable>
                     <el-option label="是" value="1"></el-option>
                     <el-option label="否" value="2"></el-option>
@@ -238,7 +259,7 @@
                   <p>* “是”代表此账号允许登录，“否”则表示此账号不允许登录</p>
                 </el-form-item>
 
-                <el-form-item label="用户类型:">
+                <el-form-item label="用户类型：">
                   <el-select v-model="form.userType" placeholder="选择用户类型" clearable>
                     <el-option label="系统管理" value="1"></el-option>
                     <el-option label="部门管理" value="2"></el-option>
@@ -246,7 +267,7 @@
                   </el-select>
                 </el-form-item>
 
-                <el-form-item label="用户角色:" prop="userRole">
+                <el-form-item label="用户角色：" prop="userRole">
                   <el-radio-group v-model="form.userRole">
                     <el-radio label="本公司管理员"></el-radio>
                     <el-radio label="本部门管理员"></el-radio>
@@ -254,13 +275,13 @@
                   </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="备注:">
+                <el-form-item label="备注：">
                   <el-input v-model="form.remark" type="textarea" class='textarea'></el-input>
                 </el-form-item>
 
                 <el-form-item>
-                  <el-button type="primary" @click="saveData(form)">保存</el-button>
-                  <el-button>返回</el-button>
+                  <el-button type="primary" :disabled="saveUp" @click="saveData(form)">保存</el-button>
+                  <el-button @click="back">返回</el-button>
                 </el-form-item>
               </el-form>
 
@@ -268,16 +289,16 @@
 
           </el-tabs>
           <!--模态框-->
-          <el-dialog :title=title size="tiny" :visible.sync="cityVisible">
-            关键字：<input ref='keySearch' type='text' class='keySearch' v-model="formInline.key">
-            <button @click="keySearch" class='search'>搜索</button>
+          <el-dialog :title=title size="tiny" :visible.sync="cityVisible" center>
+            关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
             <el-tree
+              ref="tree2"
               highlight-current
-              default-expand-all
               :data="select"
               :props="defaultProps"
               class="searchTree"
               accordion
+              :filter-node-method="filterNode"
               @node-click="handleNode">
             </el-tree>
             <div slot="footer" class="dialog-footer">
@@ -305,7 +326,10 @@
         cityVisible: false,
         errMessage: false,
         exportFormVisible: false,
+        saveUp: false,
+        Token: {},
         msg: '',
+        filterText: '',
         activeName2: 'first',
         formInline: {
           attributionCompany: '',
@@ -501,27 +525,27 @@
         }], // 列表展示数据
         rules: {
           number: [
-            { required: true, message: '请输入工号', trigger: 'blur' }
+            {required: true, message: '请输入工号', trigger: 'blur'}
           ],
           name: [
-            { required: true, message: '请输入姓名', trigger: 'blur' }
+            {required: true, message: '请输入姓名', trigger: 'blur'}
           ],
           loginName: [
-            { required: true, message: '请输入登录名', trigger: 'blur' }
+            {required: true, message: '请输入登录名', trigger: 'blur'}
           ],
           psw: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 3, message: '长度在 3 以上', trigger: 'blur' }
+            {required: true, message: '请输入密码', trigger: 'blur'},
+            {min: 3, message: '长度在 3 以上', trigger: 'blur'}
           ],
           password: [
-            { required: true, message: '请确认密码', trigger: 'blur' },
-            { min: 3, message: '长度在 3 以上', trigger: 'blur' }
+            {required: true, message: '请确认密码', trigger: 'blur'},
+            {min: 3, message: '长度在 3 以上', trigger: 'blur'}
           ],
           isLogin: [
-            { required: true, message: '请选择', trigger: 'blur' }
+            {required: true, message: '请选择', trigger: 'blur'}
           ],
           userRole: [
-            { required: true, message: '请选择角色', trigger: 'blur' }
+            {required: true, message: '请选择角色', trigger: 'blur'}
           ]
         }
       }
@@ -532,7 +556,16 @@
     created () {
       this.query()
     },
+    watch: {
+      filterText (val) {
+        this.$refs.tree2.filter(val)
+      }
+    },
     methods: {
+      filterNode (value, data) {
+        if (!value) return true
+        return data.label.indexOf(value) !== -1
+      },
       handleClick (tab, event) {
         if (this.activeName2 === 'first') {
           this.titleSecond = '用户添加'
@@ -576,7 +609,8 @@
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          type: 'warning',
+          center: true
         }).then(() => {
           if (id !== undefined) {
             // 调用后台服务
@@ -617,6 +651,7 @@
         this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '用户修改'
+        this.saveUp = false
         this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
             if (res.data.code === 0) {
@@ -674,6 +709,7 @@
         this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '用户添加'
+        this.saveUp = false
         this.$ajax.get('/activity/enjoy/sort')
           .then((res) => {
             if (res.data.code === 0) {
@@ -700,7 +736,7 @@
         } else {
           this.activeName2 = 'second'
           this.titleSecond = '用户详情'
-          this.rules = {}
+          this.saveUp = true
           this.$ajax.get('/activity/enjoy/view/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 0) {
@@ -715,25 +751,25 @@
         }
       }, // 详情
       handleNode (data) {
-        this.formInline.key = data.label // 弹框树模型点击输入值
+        this.filterText = data.label // 弹框树模型点击输入值
       },
       searchCompany () {
         this.cityVisible = true
         this.title = '选择公司'
         this.select = this.select_city
-        this.formInline.key = ''
+        this.filterText = ''
       },
       searchSection () {
         this.cityVisible = true
         this.title = '选择部门'
         this.select = this.select_section
-        this.formInline.key = ''
+        this.filterText = ''
       },
       doModify () {
         if (this.title === '选择公司') {
-          this.formInline.attributionCompany = this.formInline.key
+          this.formInline.attributionCompany = this.filterText
         } else if (this.title === '选择部门') {
-          this.formInline.attributionSection = this.formInline.key
+          this.formInline.attributionSection = this.filterText
         }
         this.cityVisible = false
       },
@@ -777,12 +813,51 @@
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false
       },
-      keySearch () {}// 树模型中公司 部门搜索
+      // 上传之前 清除原有图片
+      clearUploadedImgPath () {
+        // 如果有就清除
+        if (this.form.imgPath) {
+          this.$refs.uploadFile.clearFiles()
+        }
+        this.form.imgPath = ''
+      },
+      // 移除图片时清空form表单中的图片地址
+      removeImgPath () {
+        this.form.imgPath = ''
+      },
+      // 上传组件获取oss相关
+      beforeUploadImgPath (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
+            .then((res) => {
+              this.Token = res.data
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
+              resolve()
+            })
+            .catch(err => {
+              this.$message({
+                message: err.data.msg,
+                type: 'error'
+              })
+            })
+        })
+      },
+      successImgPath (response, file, fileList) {
+        this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
+      back () {
+        this.activeName2 = 'first'
+        this.titleSecond = '用户添加'
+      }
     }
   }
 </script>
 
 <style scoped>
+  .padding {
+    padding-left: 10px;
+  }
+
   .importForm {
     height: 0px;
     padding-left: 10px;

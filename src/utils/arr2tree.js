@@ -1,3 +1,4 @@
+
 let arr2tree = {
   getTree: (data, root, idTxt, pidTxt, pushTxt) => {
     idTxt = idTxt || 'id'
