@@ -5,6 +5,7 @@
       :defaultExpandAll="true"
       :columns="columns"
       :tree-structure="true"
+      :requestUrl="requestUrl"
       :data-source="select_organization">
 
     </tree-grid>
@@ -15,6 +16,8 @@
   import TreeGrid from '../../components/commons/Ztree/TreeGrid.vue'
   // arr2tree引入
   import arr2tree from '../../utils/arr2tree.js'
+  //  import baseUrl from '../../utils/baseUrl'
+  import bus from '@/assets/js/eventBus.js'
 
   export default {
     components: {
@@ -54,20 +57,53 @@
             text: '展示方式',
             dataIndex: 'showModes'
           }
-        ]
+        ],
+        // 增删改查请求地址
+        requestUrl: `column`
       }
     },
     created () {
       this.query()
     },
+    mounted () {
+      // 编辑
+      bus.$on('updateBtn', (id) => {
+        console.log(id)
+        this.$router.push({
+          name: 'content.column.update', query: { id: id }
+        })
+      })
+      // 删除
+      bus.$on('delBtn', (id) => {
+        console.log(id)
+        console.log('删除')
+//        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+//          confirmButtonText: '确定',
+//          cancelButtonText: '取消',
+//          type: 'error'
+//        })
+//          .then(() => {
+//            this.open('success', '删除成功!')
+//          })
+//          .catch(() => {
+//            this.open('info', '已取消删除')
+//          })
+      })
+      // 添加下一级
+      bus.$on('addBtn', (parentId) => {
+        console.log(parentId)
+        console.log('添加')
+      })
+    },
     methods: {
 //       请求数据
       query () {
         // 请求栏目列表
-        this.$ajax.get('http://localhost:3000/content/column/getcategorys')
+        this.$ajax.get('content/column/getcategorys')
           .then(res => {
             console.log(res.data)
             if (res.data.code === 200) {
+              open('success', res.data.msg)
               console.log(res.data.data)
               let arr = res.data.data
               for (let i = 0; i < arr.length; i++) {
@@ -84,13 +120,22 @@
                   arr[i].inListName = '隐藏'
                 }
               }
-
               this.select_organization = arr2tree.getTree(arr, '1')
+            } else {
+              open('info', res.data.msg)
             }
           })
           .catch(err => {
-            console.log(err)
+            console.error(err)
           })
+      },
+      // 显示的提示设置
+      open (type, msg) {
+        // 提示信息
+        this.$message({
+          type: type,
+          message: msg
+        })
       }
     }
   }

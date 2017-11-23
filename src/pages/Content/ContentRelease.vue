@@ -211,9 +211,8 @@
           </el-form-item>
 
           <el-form-item label="摘要:">
-            <el-input type="textarea" v-model="ruleForm.description" class="width"></el-input>
+            <el-input type="textarea" v-model="ruleForm.description" class="txtWidth"></el-input>
           </el-form-item>
-
 
           <el-form-item label="缩略图:">
             <img width="100%" :src="ruleForm.image">
@@ -357,7 +356,6 @@
     },
     mounted: function () {
       this.E = window.UE.getEditor('ue', {
-//        BaseUrl: '',
         UEDITOR_HOME_URL: 'static/ueditor/'
       })
     },
@@ -516,6 +514,8 @@
             return false
           }
         })
+        // 清空图片列表
+        this.clearUploadedImage()
       },
       // 文章添加页面的重置功能
       resetForm () {
@@ -670,8 +670,8 @@
     height: 100%;
   }
 
-  .width {
-    width: 300px;
+  .txtWidth{
+    width: 350px;
   }
 
   .demo-ruleForm > .el-form-item > .el-form-item__label {

@@ -47,6 +47,7 @@ import ContentComment from '@/pages/Content/ContentComment.vue'
 import ContentPublicMessage from '@/pages/Content/ContentPublicMessage.vue'
 import ContentInformationTotal from '@/pages/Content/ContentInformationTotal.vue'
 import ContentColumn from '@/pages/Content/ContentColumn.vue'
+import ContentColumnUpdate from '@/pages/Content/ContentColumnUpdate.vue'
 import ContentSiteSetting from '@/pages/Content/ContentSiteSetting.vue'
 import ContentSiteSwitch from '@/pages/Content/ContentSiteSwitch.vue'
 // status相关
@@ -155,7 +156,8 @@ export default new Router({
         {path: '/content/information/total', name: 'content.information.total', component: ContentInformationTotal},
         {path: '/content/column', name: 'content.column', component: ContentColumn},
         {path: '/content/site/setting', name: 'content.site.setting', component: ContentSiteSetting},
-        {path: '/content/site/switch', name: 'content.site.switch', component: ContentSiteSwitch}
+        {path: '/content/site/switch', name: 'content.site.switch', component: ContentSiteSwitch},
+        {path: '/content/column/update', name: 'content.column.update', component: ContentColumnUpdate}
       ]
     },
     {
