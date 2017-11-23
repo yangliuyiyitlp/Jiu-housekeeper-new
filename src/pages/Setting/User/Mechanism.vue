@@ -16,7 +16,7 @@
           <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
             <!--机构列表-->
             <el-tab-pane label="机构列表" name="first">
-              <!--树表格-->
+              <!--树表格组件-->
               <div>
                 <tree-grid
                   :defaultExpandAll="true"
@@ -25,6 +25,9 @@
                   :data-source="dataSource">
                 </tree-grid>
               </div>
+
+
+
 
               <!--<el-table-->
                 <!--:data="tableData"-->

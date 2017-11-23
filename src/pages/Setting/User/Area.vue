@@ -4,67 +4,75 @@
           <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!--区域列表-->
       <el-tab-pane label="区域列表" name="first">
-        <el-table
-          :data="tableData"
-          width="100%"
-          border
-          stripe>
-          <el-table-column
-            prop="id"
-            label="id"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="name"
-            label="区域名称"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="area"
-            label="城市代码	"
-            width="180">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="number"
-            label="区域编码	">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="type"
-            label="区域类型	">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="remarks"
-            show-overflow-tooltip
-            label="区域推送码">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="remarks"
-            show-overflow-tooltip
-            label="电子围栏顶点">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            label="操作">
-            <template slot-scope="scope">
-              <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
-              <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
-              <el-button @click="addRecord(scope.row.id)" type="text" size="small">添加下级机构</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
+        <div>
+          <tree-grid
+            :defaultExpandAll="true"
+            :columns="columns"
+            :tree-structure="true"
+            :data-source="dataSource">
+          </tree-grid>
+        </div>
+        <!--<el-table-->
+          <!--:data="tableData"-->
+          <!--width="100%"-->
+          <!--border-->
+          <!--stripe>-->
+          <!--<el-table-column-->
+            <!--prop="id"-->
+            <!--label="id"-->
+            <!--width="180">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="name"-->
+            <!--label="区域名称"-->
+            <!--width="180">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="area"-->
+            <!--label="城市代码	"-->
+            <!--width="180">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="number"-->
+            <!--label="区域编码	">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="type"-->
+            <!--label="区域类型	">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="remarks"-->
+            <!--show-overflow-tooltip-->
+            <!--label="区域推送码">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="remarks"-->
+            <!--show-overflow-tooltip-->
+            <!--label="电子围栏顶点">-->
+          <!--</el-table-column>-->
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--label="操作">-->
+            <!--<template slot-scope="scope">-->
+              <!--<el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>-->
+              <!--<el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>-->
+              <!--<el-button @click="addRecord(scope.row.id)" type="text" size="small">添加下级机构</el-button>-->
+            <!--</template>-->
+          <!--</el-table-column>-->
+        <!--</el-table>-->
       </el-tab-pane>
 
       <!--区域添加 -->
@@ -137,6 +145,9 @@
 </template>
 
 <script>
+  import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
+  // arr2tree引入
+  import arr2tree from '../../../utils/arr2tree.js'
   export default {
     data () {
       return {
@@ -322,8 +333,42 @@
           name: [
             {required: true, message: '请输入姓名', trigger: 'blur'}
           ]
-        }
+        },
+        columns: [
+          {
+            text: '栏目名称',
+            dataIndex: 'name'
+          },
+          {
+            text: '归属机构',
+            dataIndex: 'officeId'
+          },
+          {
+            text: '栏目模型',
+            dataIndex: 'module'
+          },
+          {
+            text: '排序',
+            dataIndex: 'sort'
+          },
+          {
+            text: '导航菜单',
+            dataIndex: 'inMenuName'
+          },
+          {
+            text: '栏目列表',
+            dataIndex: 'inListName'
+          },
+          {
+            text: '展示方式',
+            dataIndex: 'showModes'
+          }
+        ], // 树表格
+        dataSource: [] // 树表格
       }
+    },
+    created () {
+      this.query()
     },
     mounted () {
     },
@@ -491,8 +536,24 @@
       },
       handleNode (data) {
         this.filterText = data.label // 弹框树模型点击输入值
-      }
-    }
+      },
+      query () {
+        // 请求栏目列表
+        this.$ajax.get('http://localhost:3000/content/column/getcategorys')
+          .then(res => {
+            if (res.data.code === 200) {
+              let arr = res.data.data
+              this.dataSource = arr2tree.getTree(arr, '1')
+            }
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } // 树表格
+    },
+    components: {
+      TreeGrid
+    }  // 树表格
   }
 </script>
 

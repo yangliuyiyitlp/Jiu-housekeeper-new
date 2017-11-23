@@ -23,7 +23,7 @@
       <template slot-scope="scope">
         <button type="button" class="el-button el-button--default el-button--small">
           <router-link
-            :to="{ path: requestUrl + 'edit', query: {id: scope.row.Oid} }"
+            :to="{ path: requestUrl, query: {id: scope.row.Oid} }"
             tag="span">
             编辑
           </router-link>
@@ -46,6 +46,7 @@
 </template>
 <script>
   import DataTransfer from '../../../utils/dataTranslate.js'
+
   export default {
 //    name: 'tree-grid',
     props: {
@@ -74,7 +75,7 @@
       requestUrl: {
         type: String,
         default: function () {
-          return ''
+          return '/setting/user'
         }
       },
 // 这个是是否展示操作列
