@@ -374,6 +374,7 @@
     mounted () {
       // 编辑
       bus.$on('updateBtn', (id) => {
+        this.$refs['form'].resetFields()
         this.modifyRecord(id)
       })
       // 删除
@@ -382,6 +383,7 @@
       })
       // 添加下一级
       bus.$on('addBtn', (parentId) => {
+        this.$refs['form'].resetFields()
         this.addRecord()
       })
     },
@@ -443,7 +445,8 @@
         })
       },
       modifyRecord (id) {
-        this.$refs['form'].resetFields()
+        console.log(this.$refs['form'])
+//        this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构修改'
         this.saveUp = false
@@ -467,7 +470,7 @@
           })
       }, // 修改
       addRecord () {
-        this.$refs['form'].resetFields()
+//        this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构添加'
         this.saveUp = false
