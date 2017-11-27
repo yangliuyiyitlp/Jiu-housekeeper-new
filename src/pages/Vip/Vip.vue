@@ -26,7 +26,6 @@
     mounted () {
       bus.$on('vipbar', (bar) => {
         this.bar = bar
-        console.log(this.bar)
         this.$router.push({
           name: this.bar
         })

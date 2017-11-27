@@ -9,11 +9,11 @@
                      :label="column.text">
       <template slot-scope="scope">
         <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level" class="ms-tree-space"></span>
-        <button class="button is-outlined is-primary is-small" v-if="toggleIconShow(index,scope.row)"
+        <a class="button is-outlined is-primary is-small" v-if="toggleIconShow(index,scope.row)"
                 @click="toggle(scope.$index)">
           <i v-if="!scope.row._expanded" class="el-icon-caret-right" aria-hidden="true"></i>
           <i v-if="scope.row._expanded" class="el-icon-caret-bottom" aria-hidden="true"></i>
-        </button>
+        </a>
         <span v-else-if="index===0" class="ms-tree-space"></span>
         {{scope.row[column.dataIndex]}}
       </template>

@@ -586,6 +586,8 @@
         this.exportParam.attributionSection = this.formInline.attributionSection
         this.exportParam.loginName = this.formInline.loginName
         this.exportParam.name = this.formInline.name
+        this.exportParam.pageNo = this.formInline.pageNo
+        this.exportParam.pageSize = this.formInline.pageSize
         this.$ajax.get('/list', {params: this.formInline})
           .then(response => {
             if (response.data.code === 200) {

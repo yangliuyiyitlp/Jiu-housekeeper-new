@@ -16,7 +16,7 @@
           <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
             <!--机构列表-->
             <el-tab-pane label="机构列表" name="first">
-              <!--树表格-->
+              <!--树表格组件-->
               <div>
                 <tree-grid
                   :defaultExpandAll="true"
@@ -25,6 +25,9 @@
                   :data-source="dataSource">
                 </tree-grid>
               </div>
+
+
+
 
               <!--<el-table-->
                 <!--:data="tableData"-->
@@ -229,6 +232,7 @@
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
   // arr2tree引入
   import arr2tree from '../../../utils/arr2tree.js'
+  import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
       return {
@@ -453,6 +457,20 @@
     },
     mounted () {
       this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
+      // 编辑
+      bus.$on('updateBtn', (id) => {
+        this.$refs['form'].resetFields()
+        this.modifyRecord(id)
+      })
+      // 删除
+      bus.$on('delBtn', (id) => {
+        this.deleteRecord(id)
+      })
+      // 添加下一级
+      bus.$on('addBtn', (parentId) => {
+        this.$refs['form'].resetFields()
+        this.addRecord()
+      })
     },
     watch: {
       filterText (val) {
@@ -487,7 +505,6 @@
                     type: 'success',
                     message: res.data.msg
                   })
-//                this.$refs['formA'].resetFields()
                   // 刷新页面
                   this.query()
                 } else {
@@ -511,19 +528,19 @@
           })
         })
       },
-      modifyRecord (scope) {
-        this.$refs['form'].resetFields()
+      modifyRecord (id) {
+//        this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构修改'
         this.saveUp = false
-        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/activity/enjoy/form', {params: {id: id}})
           .then((res) => {
             if (res.data.code === 0) {
               this.form = res.data.tActivitiesInfo
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '获取异常'
               })
             }
           })
@@ -536,7 +553,7 @@
           })
       }, // 修改
       addRecord () {
-        this.$refs['form'].resetFields()
+//        this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构添加'
         this.saveUp = false
@@ -548,7 +565,7 @@
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '请求显示顺序异常'
               })
             }
           })
