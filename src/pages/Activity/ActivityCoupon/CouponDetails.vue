@@ -89,6 +89,16 @@
           </el-form-item>
         </el-form>
 
+        <!--隐藏表格用于提交-->
+        <form action="" v-if="0"
+              method="post" ref="FileForm">
+          <input name="coupon_status" v-model="formInline.coupon_status"/>
+          <!--<input name="redPackage" v-model="exportParam.redPackage"/>-->
+          <!--<input name="pageSize" v-model="exportParam.pageSize"/>-->
+          <!--<input name="pageNo" v-model="exportParam.pageNo"/>-->
+        </form>
+        <!--表格-->
+
         <!--表格-->
         <el-table
           :data="tableData"
@@ -497,6 +507,7 @@
 <script>
   import Moment from 'moment'
   import Tools from '../../../utils/tools.js'
+  import baseUrl from '../../../utils/baseUrl.js'
 
   export default {
     data () {
@@ -517,8 +528,10 @@
       }
     },
     created () {
-      this.getType()
-      this.getList()
+      new Promise(() => {
+        this.getType()
+      })
+        .then(this.getList())
     },
     methods: {
       // 点击根据条件进行查询
@@ -688,7 +701,7 @@
       getList () {
         this.$ajax.get('activity/coupon/details/list', {params: this.formInline})
           .then(res => {
-//            console.log(res.data.page)
+//            console.log(res.data.page.list)
             this.tableData = res.data.page.list
             this.pagination.count = res.data.page.count
             for (let i = 0; i < this.tableData.length; i++) {
@@ -785,7 +798,22 @@
           .catch(() => {
             this.open('info', '已取消删除')
           })
-      }
+      },
+      // 导出功能
+      exportCurrent: function () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      exportAll: function () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      }     // 导出所有
     }
   }
 </script>

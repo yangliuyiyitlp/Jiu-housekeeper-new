@@ -84,7 +84,7 @@
       },
       city () {
         this.$router.push({
-          name: 'city.company.info'
+          name: 'city.bike.intervene.list'
         })
       },
       service () {

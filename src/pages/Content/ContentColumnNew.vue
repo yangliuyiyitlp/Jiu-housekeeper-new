@@ -2,22 +2,24 @@
   <div>
     <el-form :model="form" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
 
-      <el-form-item label="文章id:" v-if=0>
-        <el-input v-model="form.id"></el-input>
+      <el-form-item label=" 上级栏目ids:" v-if="0">
+        <el-input v-model="form.parentIds"></el-input>
       </el-form-item>
 
       <el-form-item label=" 上级栏目id:" v-if="0">
         <el-input v-model="form.parentId"></el-input>
       </el-form-item>
 
-      <el-form-item label="上级栏目:" prop="site">
+      <el-form-item label="上级栏目:">
         <el-input
-          icon="search"
           :disabled="true"
-          :on-icon-click="searchSite"
-          v-model="form.parentName"
-          placeholder="选择上级栏目">
+          v-model="form.parentName">
         </el-input>
+        <span>是否添加至顶级栏目?</span>
+        <el-radio-group v-model="isTop" @change="isT">
+          <el-radio :label="1">是</el-radio>
+          <el-radio :label="0">否</el-radio>
+        </el-radio-group>
       </el-form-item>
 
       <el-form-item label=" 栏目模型:">
@@ -31,7 +33,7 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item label="栏目名称:">
+      <el-form-item label="栏目名称:" prop="name">
         <el-input v-model="form.name"></el-input>
       </el-form-item>
 
@@ -126,18 +128,6 @@
 
     </el-form>
 
-    <!--模态框-->
-    <!--columnVisible2-->
-    <!--修改时弹出的上级栏目树模型-->
-    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible2">
-      <el-tree
-        highlight-current
-        default-expand-all
-        :data="selectSite"
-        @node-click="searchSiteColumn"
-        :props="defaultProps">
-      </el-tree>
-    </el-dialog>
   </div>
 </template>
 
@@ -162,39 +152,33 @@
           label: 'name'
         },
         columnRelation: {}, // 栏目中id与name之间的关系
-        columnVisible2: false, // 修改中上级栏目模态框
         Token: {}, // oss秘钥
         rules: {
-          title: [{required: true, message: '标题不能为空', trigger: 'blur'}],
-          categoryName: [{required: true, message: '请选择归属栏目', trigger: 'change'}]
-        }
+          name: [{required: true, message: '栏目名称不能为空', trigger: 'blur'}]
+        },
+        isTop: '0' // 是否在顶级栏目下
       }
     },
     created () {
-      new Promise(() => {
-        this.getCategory()
-      })
-        .then(this.show())
+      this.getCategory()
     },
     methods: {
-      // 根据id展示当前栏目详情
-      show () {
-//        console.log(this.$route.query)
-        this.$ajax.get(`content/column/show/${this.$route.query.id}`)
-          .then(res => {
-//            console.log(res)
-            if (res.data.code === 200) {
-              open('success', res.data.msg)
-              this.form = res.data.data
-              this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
-              console.log(this.form)
-            } else {
-              open('info', res.data.msg)
-            }
-          })
-          .catch(err => {
-            console.log(err)
-          })
+      // 有问题
+      isT (val) {
+        console.log(val)
+        if (val === 1) {
+          console.log(111)
+          this.form.parentId = '1'
+          this.form.parentIds = '0,1,'
+          this.form.parentName = '顶级栏目'
+        } else {
+          console.log(222)
+          this.form.parentId = this.$route.query.id
+          this.form.parentIds = this.$route.query.parentIds + this.form.parentId + ','
+          this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
+        }
+//        this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
+        console.log(this.form)
       },
       // 请求栏目树组件数据
       getCategory () {
@@ -202,40 +186,34 @@
         this.$ajax.get('content/column/getcategorys')
           .then(res => {
             if (res.data.code === 200) {
-              console.log(res.data.data)
+//              console.log(res.data.data)
               let arr = res.data.data
+              this.selectSite = arr2tree.getTree(arr, '0')
               this.columnRelation = Tools.nameRelation(arr, 'id', 'name')
-              this.selectSite = arr2tree.getTree(arr, '1')
             }
+          })
+          .then(() => {
+            // 进来设置好当前的parentId和parentIds
+            this.form.parentId = this.$route.query.id
+            this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
+            this.form.parentIds = this.$route.query.parentIds + this.form.parentId + ','
+            console.log(this.form)
           })
           .catch(err => {
             console.error(err)
           })
       },
-      // 点击显示 修改的上级栏目 模态框
-      searchSite () {
-        this.columnVisible2 = true
-      },
-      // 点击模态框 选择栏目
-      searchSiteColumn (data) {
-        console.log(data)
-        // 模态框隐藏
-        this.columnVisible2 = false
-        // 获取树组件被选中的参数并保存在this.form中
-        this.form.parentName = data.name
-        this.form.parentId = data.id
-        console.log(this.form)
-      },
-      // 保存更新数据
+      // 新增栏目
       submitForm (formName) {
         console.log(this.form)
-        this.$ajax.post(`content/column/update`, qs.stringify(this.form))
+        this.$ajax.post(`content/column/save`, qs.stringify(this.form))
           .then(res => {
             console.log(res)
             // 返回到栏目管理页面
             this.$router.push({
               name: 'content.column'
             })
+            this.open('success', '新增栏目成功')
           })
           .catch(err => {
             console.log(err)

@@ -48,6 +48,7 @@ import ContentPublicMessage from '@/pages/Content/ContentPublicMessage.vue'
 import ContentInformationTotal from '@/pages/Content/ContentInformationTotal.vue'
 import ContentColumn from '@/pages/Content/ContentColumn.vue'
 import ContentColumnUpdate from '@/pages/Content/ContentColumnUpdate.vue'
+import ContentColumnNew from '@/pages/Content/ContentColumnNew.vue'
 import ContentSiteSetting from '@/pages/Content/ContentSiteSetting.vue'
 import ContentSiteSwitch from '@/pages/Content/ContentSiteSwitch.vue'
 // status相关
@@ -68,6 +69,7 @@ import ReportTransactionNow from '@/pages/Report/ReportTransactionNow.vue'
 import ReportReplaceBattery from '@/pages/Report/ReportReplaceBattery.vue'
 import ReportRecharge from '@/pages/Report/ReportRecharge.vue'
 // city 相关
+import CityBikeInterveneList from '@/pages/City/CityBikeInterveneList.vue'
 import CityCompanyInfo from '@/pages/City/CityCompanyInfo.vue'
 import CityOperator from '@/pages/City/CityOperator.vue'
 import CityRemote from '@/pages/City/CityRemote.vue'
@@ -157,7 +159,8 @@ export default new Router({
         {path: '/content/column', name: 'content.column', component: ContentColumn},
         {path: '/content/site/setting', name: 'content.site.setting', component: ContentSiteSetting},
         {path: '/content/site/switch', name: 'content.site.switch', component: ContentSiteSwitch},
-        {path: '/content/column/update', name: 'content.column.update', component: ContentColumnUpdate}
+        {path: '/content/column/update', name: 'content.column.update', component: ContentColumnUpdate},
+        {path: '/content/column/new', name: 'content.column.new', component: ContentColumnNew}
       ]
     },
     {
@@ -204,6 +207,7 @@ export default new Router({
       component: City,
       children: [
         // city 相关
+        {path: '/city/bike/intervene/list', name: 'city.bike.intervene.list', component: CityBikeInterveneList},
         {path: '/city/company/info', name: 'city.company.info', component: CityCompanyInfo},
         {path: '/city/operator', name: 'city.operator', component: CityOperator},
         {path: '/city/remote', name: 'city.remote', component: CityRemote},

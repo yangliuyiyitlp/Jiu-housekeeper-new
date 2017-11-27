@@ -34,10 +34,6 @@
             dataIndex: 'name'
           },
           {
-            text: '归属机构',
-            dataIndex: 'officeId'
-          },
-          {
             text: '栏目模型',
             dataIndex: 'module'
           },
@@ -68,31 +64,43 @@
     mounted () {
       // 编辑
       bus.$on('updateBtn', (id) => {
-        console.log(id)
         this.$router.push({
-          name: 'content.column.update', query: { id: id }
+          name: 'content.column.update', query: {id: id}
         })
       })
       // 删除
       bus.$on('delBtn', (id) => {
-        console.log(id)
-        console.log('删除')
-//        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-//          confirmButtonText: '确定',
-//          cancelButtonText: '取消',
-//          type: 'error'
-//        })
-//          .then(() => {
-//            this.open('success', '删除成功!')
-//          })
-//          .catch(() => {
-//            this.open('info', '已取消删除')
-//          })
+//        console.log(id)
+        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'error'
+        })
+          .then(() => {
+            this.$ajax.get(`content/column/deleteColumn/${id}`)
+              .then(res => {
+                if (res.status === 200) {
+                  console.log(1)
+                  // 删除成功
+                  this.open('success', res.data.msg)
+                  // 刷新页面
+                  this.query()
+                } else {
+                  // 删除失败
+                  this.open('info', res.data.msg)
+                }
+              })
+          })
+          .catch(() => {
+            this.open('info', '已取消删除')
+          })
       })
       // 添加下一级
-      bus.$on('addBtn', (parentId) => {
-        console.log(parentId)
-        console.log('添加')
+      bus.$on('addBtn', (parentIds, id) => {
+        console.log(parentIds, id)
+        this.$router.push({
+          name: 'content.column.new', query: {parentIds: parentIds, id: id}
+        })
       })
     },
     methods: {
