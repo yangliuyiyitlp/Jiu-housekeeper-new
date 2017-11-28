@@ -2,7 +2,7 @@
   <div>
     <div class="right">
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-        <el-tab-pane label="红包提现明细列表" name="first"style="padding-left:10px;">
+        <el-tab-pane label="红包提现明细列表" name="first" class="padding">
           <!--筛选条件-->
           <el-form :inline="true" :model="formInline" class="demo-form-inline">
             <el-form-item label="姓名:">
@@ -285,7 +285,7 @@
   }
 </script>
 <style scoped>
-  .right {
-
+  .padding{
+    padding-left:10px;
   }
 </style>

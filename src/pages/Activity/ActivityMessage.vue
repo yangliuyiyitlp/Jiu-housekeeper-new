@@ -3,7 +3,7 @@
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
 
       <!--消息推送组列表部分-->
-      <el-tab-pane label="消息推送组列表" name="first"style="padding-left:10px;">
+      <el-tab-pane label="消息推送组列表" name="first"class="padding">
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="分组名称:">
@@ -284,7 +284,7 @@
   }
 </script>
 <style scoped>
-  .right {
-
+  .padding{
+    padding-left:10px;
   }
 </style>

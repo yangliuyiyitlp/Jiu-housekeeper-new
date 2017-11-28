@@ -1,6 +1,6 @@
 <template>
   <div class="info">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
       <el-form-item label="车辆编号：">
         <el-input v-model="requestParam.user"></el-input>
       </el-form-item>
@@ -280,6 +280,8 @@
 </script>
 <style scoped>
 
-
+  .demo-form-inline{
+    padding-left:10px;
+  }
 </style>
 

@@ -1,6 +1,6 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
       <el-form-item label="城市名称:">
         <el-input v-model.trim="requestParam.cityName">
         </el-input>
@@ -764,5 +764,8 @@
   .el-dialog__title {
     text-align: left;
     margin-left: 0%;
+  }
+  .demo-form-inline{
+    padding-left:10px;
   }
 </style>

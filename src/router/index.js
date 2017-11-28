@@ -1,11 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Mypanel from '@/components/Mypanel/Mypanel.vue'
 import NotFound from '@/components/commons/NotFound.vue'
-import Userinfo from '@/pages/User/Userinfo.vue'
-import Userpwd from '@/pages/User/Userpwd.vue'
-import Userdfinfo from '@/pages/User/UserDfinfo.vue'
-import Userdfpwd from '@/pages/User/UserDfpwd.vue'
+import UserInfo from '@/pages/User/Userinfo.vue'
+import UserPwd from '@/pages/User/Userpwd.vue'
 import User from '@/pages/User/User.vue'
 // 十大功能路由
 import Setting from '@/pages/Setting/Setting.vue'
@@ -99,20 +96,46 @@ import ActivityInMobi from '@/pages/Activity/ActivityInMobi.vue'
 import ActivityCouponDetails from '@/pages/Activity/ActivityCoupon/CouponDetails.vue'
 import ActivityHealth from '@/pages/Activity/ActivityMonth/ActivityHealth.vue'
 import ActivityRedrain from '@/pages/Activity/ActivityMonth/ActivityRedrain.vue'
+
 Vue.use(Router)
+
+// 权限开始初始路由
+// let baseRoute = [{
+//   path: '/login',
+//   name: 'login',
+//   component: (resolve) => require(['../pages/Login/login.vue'], resolve)
+// }, {
+//   path: '/404',
+//   name: '404',
+//   component: (resolve) => require(['../components/commons/NotFound.vue'], resolve)
+// }]
+//
+// let router = new Router({
+//   routes: baseRoute
+// })
+//
+// router.beforeEach((to, from, next) => {
+//   let routeName = to.meta.name || to.name
+//   window.document.title = (routeName ? routeName + ' - ' : '') + '赳赳后台管理系统'
+//   next()
+// })
+// 权限结束
 
 export default new Router({
   routes: [
-    { path: '/', redirect: {name: 'Login'} }, // 不能同名
+    {path: '/', redirect: {name: 'Login'}}, // 不能同名
     {path: '/login', name: 'Login', component: Login},
     {path: '/main', name: 'Main', component: Main},
     {path: '/home', name: 'Home', component: Home},
-    {path: '/mypanel', name: 'Mypanel', component: Mypanel},
-    {path: '/userinfo', name: 'Userinfo', component: Userinfo},
-    {path: '/userpwd', name: 'Userpwd', component: Userpwd},
-    {path: '/userdfinfo', name: 'Userdfinfo', component: Userdfinfo},
-    {path: '/userdfpwd', name: 'Userdfpwd', component: Userdfpwd},
-    {path: '/user', name: 'User', component: User},
+    {
+      path: '/user',
+      name: 'User',
+      component: User,
+      children: [
+        {name: 'user.info', path: '/user/info', component: UserInfo},
+        {name: 'user.pwd', path: '/user/pwd', component: UserPwd}
+      ]
+    },
     {
       path: '/facility',
       name: 'facility',

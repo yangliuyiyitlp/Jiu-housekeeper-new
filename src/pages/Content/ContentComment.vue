@@ -1,6 +1,6 @@
 <template>
   <div class="detailed">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline"style="padding-left:10px;">
+    <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="文档标题：">
         <el-input v-model="formInline.nub" ></el-input>
       </el-form-item>
@@ -117,9 +117,8 @@
   }
 </script>
 <style scoped>
-  .detailed {
-  
+  .demo-form-inline{
+    padding-left:10px;
   }
-
 
 </style>

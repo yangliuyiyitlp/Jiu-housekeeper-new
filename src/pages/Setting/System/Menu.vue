@@ -157,18 +157,23 @@
             <span>链接地址打开的目标窗口，默认：mainFrame</span>
           </el-form-item>
 
-          <!--<el-form-item label="图标：">-->
-            <!--<el-upload-->
-              <!--class="upload-demo"-->
-              <!--ref="upload"-->
-              <!--action="https://jsonplaceholder.typicode.com/posts/"-->
-              <!--:on-preview="handlePreview"-->
-              <!--:on-remove="handleRemove"-->
-              <!--:file-list="form.fileList"-->
-              <!--:auto-upload="false">-->
-              <!--<el-button slot="trigger" size="small" type="primary">选取图片</el-button>-->
-            <!--</el-upload>-->
-          <!--</el-form-item>-->
+          <el-form-item label="图标：">
+            <el-input v-model="form.imgPath" v-show='false'></el-input>
+            <img width="100%" :src="form.imgPath" alt="图标">
+            <el-upload
+              :disabled="saveUp"
+              ref="uploadFile"
+              list-type="picture-card"
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token"
+              :on-remove="removeImgPath"
+              :on-success="successImgPath"
+              :before-upload="beforeUploadImgPath">
+              <el-button :disabled="saveUp" type="primary" @click="clearUploadedImgPath">上传图片
+                <i class="el-icon-upload el-icon--right"></i>
+              </el-button>
+            </el-upload>
+          </el-form-item>
 
           <el-form-item label="排序：">
             <el-input v-model="form.sort"></el-input>
@@ -629,6 +634,38 @@
         this.formInline.pageNo = val
         this.pagination.pageNo = val
         this.query()
+      },
+      // 上传之前 清除原有图片
+      clearUploadedImgPath () {
+        // 如果有就清除
+        if (this.form.imgPath) {
+          this.$refs.uploadFile.clearFiles()
+        }
+        this.form.imgPath = ''
+      },
+      // 移除图片时清空form表单中的图片地址
+      removeImgPath () {
+        this.form.imgPath = ''
+      },
+      // 上传组件获取oss相关
+      beforeUploadImgPath (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'tActivitiesInfo'}})
+            .then((res) => {
+              this.Token = res.data
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
+              resolve()
+            })
+            .catch(err => {
+              this.$message({
+                message: err.data.msg,
+                type: 'error'
+              })
+            })
+        })
+      },
+      successImgPath (response, file, fileList) {
+        this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
       }
     },
     components: {

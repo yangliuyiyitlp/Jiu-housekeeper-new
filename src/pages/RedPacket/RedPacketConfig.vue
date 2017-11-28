@@ -4,7 +4,7 @@
       <!--表格-->
       <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
         <!--红包参数配置列表-->
-        <el-tab-pane label="红包参数配置列表" name="first"style="padding-left:10px;">
+        <el-tab-pane label="红包参数配置列表" name="first" class="padding">
           <!--筛选条件-->
           <el-form :inline="true" class="demo-form-inline">
             <el-form-item label="总个数:">
@@ -122,8 +122,8 @@
 </script>
 
 <style scoped>
-  .right {
-  
+  .padding{
+    padding-left:10px;
   }
 
   .el-input, .el-input__inner {

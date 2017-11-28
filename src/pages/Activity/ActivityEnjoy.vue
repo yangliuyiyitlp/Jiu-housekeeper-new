@@ -4,7 +4,7 @@
       <!--赳赳乐享活动列表-->
       <el-tab-pane label="赳赳乐享活动列表" name="first">
         <!--筛选条件-->
-        <el-form :inline="true" :model="requestParam" style="padding-left:10px;" class="demo-form-inline">
+        <el-form :inline="true" :model="requestParam" class="demo-form-inline">
           <el-form-item label="活动类型:">
             <el-select v-model="requestParam.type" clearable>
               <el-option v-for="(val,key) in activityType" v-bind:key=key :label=activityType[key]
@@ -1229,7 +1229,9 @@
     color: #20a0ff;
     cursor: pointer;
   }
-
+ .demo-form-inline{
+   padding-left:10px;
+ }
   .footer {
     margin-left: 200px;
   }
