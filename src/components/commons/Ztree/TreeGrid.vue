@@ -31,7 +31,7 @@
         </el-button>
 
         <button type="button" class="el-button el-button--primary el-button--small"
-                @click="handleAdd(scope.row.parentId)"> 添加下级树结构
+                @click="handleAdd(scope.row.parentIds,scope.row.id)"> 添加下级树结构
         </button>
 
       </template>
@@ -142,8 +142,8 @@
         bus.$emit('delBtn', id)
       },
       // 添加下级树结构
-      handleAdd (parentId) {
-        bus.$emit('addBtn', parentId)
+      handleAdd (parentIds, id) {
+        bus.$emit('addBtn', parentIds, id)
       }
     }
   }

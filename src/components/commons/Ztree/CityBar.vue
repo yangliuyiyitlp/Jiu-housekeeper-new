@@ -17,6 +17,9 @@
     data () {
       return {
         data: [{
+          label: '运维车辆干涉明细',
+          name: 'city.bike.intervene.list'
+        }, {
           label: '公司信息管理',
           name: 'city.company.info'
         }, {

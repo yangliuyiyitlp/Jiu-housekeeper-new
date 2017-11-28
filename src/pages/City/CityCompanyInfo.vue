@@ -162,22 +162,22 @@
         console.log(tab, event)
       },
       onSubmit: function (condition) {
-        var param = {}
+        let param = {}
         if (condition === 'condition') {
           param = this.formInline
         } else {
           param = condition
         }
         console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
+//        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+//          this.tableData = response.data.list
+//          this.pagination.total = response.data.total
+//        }, function (err) {
+//          this.$message({
+//            type: 'info',
+//            message: '获取列表信息失败' + err.status
+//          })
+//        })
       },
       handleSizeChange: function (val) {
         this.formInline.pageSize = val
