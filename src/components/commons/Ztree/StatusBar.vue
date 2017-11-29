@@ -16,22 +16,24 @@
   export default {
     data () {
       return {
-        data: [{
-          label: '自行车地图监控',
-          name: 'status.bike.map'
-        }, {
-          label: '热力图',
-          name: 'status.heatchart'
-        }, {
-          label: '行政区状态监控',
-          name: 'status.government'
-        }, {
-          label: '城市状态监控',
-          name: 'status.city'
-        }, {
-          label: '车辆区域热力图',
-          name: 'status.bike.area'
-        }],
+        data: [
+          {
+            label: '自行车地图监控',
+            name: 'status.bike.map'
+          }, {
+            label: '热力图',
+            name: 'status.heatchart'
+          }, {
+            label: '行政区状态监控',
+            name: 'status.government'
+          }, {
+            label: '城市状态监控',
+            name: 'status.city'
+          }, {
+            label: '车辆区域热力图',
+            name: 'status.bike.area'
+          }
+        ],
         defaultProps: {
           children: 'children',
           label:
@@ -50,8 +52,8 @@
 
 
 <style scoped>
-  html,body,.sidebar{
-    height:100%!important;
+  html, body, .sidebar {
+    height: 100% !important;
   }
 </style>
 

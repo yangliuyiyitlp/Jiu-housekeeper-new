@@ -13,19 +13,22 @@
 </template>
 <script>
   import bus from '@/assets/js/eventBus.js'
+
   export default {
     data () {
       return {
-        data: [{
-          label: '会员信息',
-          name: 'vip.info'
-        }, {
-          label: '会员邀请明细',
-          name: 'vip.invite.list'
-        }, {
-          label: '会员邀请统计',
-          name: 'vip.invite.total'
-        }],
+        data: [
+          {
+            label: '会员信息',
+            name: 'vip.info'
+          }, {
+            label: '会员邀请明细',
+            name: 'vip.invite.list'
+          }, {
+            label: '会员邀请统计',
+            name: 'vip.invite.total'
+          }
+        ],
         defaultProps: {
           children: 'children',
           label:
@@ -42,7 +45,7 @@
   }
 </script>
 <style scoped>
-  html,body,.sidebar{
-    height:100%!important;
+  html, body, .sidebar {
+    height: 100% !important;
   }
 </style>

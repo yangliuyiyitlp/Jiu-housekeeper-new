@@ -15,31 +15,33 @@
   export default {
     data () {
       return {
-        data: [{
-          label: '锁厂人员注册',
-          name: 'tabs'
-        }, {
-          label: '共享单车设备',
-          children: [{
-            label: '自行车信息表',
-            name: 'info'
+        data: [
+          {
+            label: '锁厂人员注册',
+            name: 'tabs'
           }, {
-            label: '车辆注册统计',
-            name: 'count'
+            label: '共享单车设备',
+            children: [{
+              label: '自行车信息表',
+              name: 'info'
+            }, {
+              label: '车辆注册统计',
+              name: 'count'
+            }, {
+              label: '车辆注册明细',
+              name: 'detailed'
+            }, {
+              label: '锁状态明细表',
+              name: 'state'
+            }, {
+              label: '批量操作车辆',
+              name: 'unbund'
+            }
+            ]
           }, {
-            label: '车辆注册明细',
-            name: 'detailed'
-          }, {
-            label: '锁状态明细表',
-            name: 'state'
-          }, {
-            label: '批量操作车辆',
-            name: 'unbund'
-          }]
-        }, {
-          label: '锁厂登记表',
-          name: 'register'
-        }],
+            label: '锁厂登记表',
+            name: 'register'
+          }],
         defaultProps: {
           children: 'children',
           label:
@@ -57,10 +59,9 @@
 </script>
 
 
-
 <style scoped>
-  html,body,.sidebar{
-    height:100%!important;
+  html, body, .sidebar {
+    height: 100% !important;
   }
 </style>
 

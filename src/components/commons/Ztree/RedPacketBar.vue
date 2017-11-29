@@ -16,16 +16,18 @@
   export default {
     data () {
       return {
-        data: [{
-          label: '红包点击记录明细',
-          name: 'redpacket.click'
-        }, {
-          label: '红包参数配置',
-          name: 'redpacket.config'
-        }, {
-          label: '红包提现明细',
-          name: 'redpacket.cash'
-        }],
+        data: [
+          {
+            label: '红包点击记录明细',
+            name: 'redpacket.click'
+          }, {
+            label: '红包参数配置',
+            name: 'redpacket.config'
+          }, {
+            label: '红包提现明细',
+            name: 'redpacket.cash'
+          }
+        ],
         defaultProps: {
           children: 'children',
           label:
@@ -44,8 +46,8 @@
 
 
 <style scoped>
-  html,body,.sidebar{
-    height:100%!important;
+  html, body, .sidebar {
+    height: 100% !important;
   }
 </style>
 
