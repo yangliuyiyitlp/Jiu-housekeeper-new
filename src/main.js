@@ -10,7 +10,7 @@ import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
 import Axios from 'axios'
-import baseUrl from './utils/baseUrl'
+import baseUrl from '../static/utils/baseUrl'
 
 Vue.prototype.$ajax = Axios
 
@@ -80,6 +80,15 @@ function getLanguage () {
 
   return 'cn'
 }
+
+// 权限指令
+Vue.directive('has', {
+  bind: function (el, binding) {
+    if (!Vue.prototype.$_has(binding.value)) {
+      el.parentNode.removeChild(el)
+    }
+  }
+})
 
 /* eslint-disable no-new */
 new Vue({

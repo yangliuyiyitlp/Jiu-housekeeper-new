@@ -101,26 +101,26 @@ import ActivityRedrain from '@/pages/Activity/ActivityMonth/ActivityRedrain.vue'
 
 Vue.use(Router)
 
-// 权限开始初始路由
-// let baseRoute = [{
-//   path: '/login',
-//   name: 'login',
-//   component: (resolve) => require(['../pages/Login/login.vue'], resolve)
-// }, {
-//   path: '/404',
-//   name: '404',
-//   component: (resolve) => require(['../components/commons/NotFound.vue'], resolve)
-// }]
-//
-// let router = new Router({
-//   routes: baseRoute
-// })
-//
-// router.beforeEach((to, from, next) => {
-//   let routeName = to.meta.name || to.name
-//   window.document.title = (routeName ? routeName + ' - ' : '') + '赳赳后台管理系统'
-//   next()
-// })
+// 权限开始 初始路由
+let baseRoute = [{
+  path: '/login',
+  name: 'login',
+  component: (resolve) => require(['../pages/Login/login.vue'], resolve)
+}, {
+  path: '/404',
+  name: '404',
+  component: (resolve) => require(['../components/commons/NotFound.vue'], resolve)
+}]
+
+let router = new Router({
+  routes: baseRoute
+})
+
+router.beforeEach((to, from, next) => {
+  let routeName = to.name
+  window.document.title = (routeName ? routeName + ' - ' : '') + '赳赳后台管理系统'
+  next()
+})
 // 权限结束
 
 export default new Router({

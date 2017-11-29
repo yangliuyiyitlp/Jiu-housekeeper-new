@@ -488,7 +488,7 @@
 
 <script>
   import Moment from 'moment'
-  import baseUrl from '../../utils/baseUrl.js'
+  import baseUrl from '../../../static/utils/baseUrl.js'
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   export default {
     created: function () {
@@ -689,7 +689,7 @@
             if (res.data.code === 0) {
               this.tableData = res.data.page.list
               this.pagination.count = res.data.page.count
-              for (var i = 0; i < res.data.page.list.length; i++) {
+              for (let i = 0; i < res.data.page.list.length; i++) {
                 this.tableData[i].state = this.activeState[res.data.page.list[i].state]
                 this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
                 this.tableData[i].type = this.activityType[res.data.page.list[i].type]

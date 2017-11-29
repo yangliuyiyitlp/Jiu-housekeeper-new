@@ -194,7 +194,7 @@
 </template>
 
 <script>
-  import baseUrl from '../../../utils/baseUrl'
+  import baseUrl from '../../../../static/utils/baseUrl'
 
   export default {
     created: function () {

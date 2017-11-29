@@ -13,7 +13,7 @@
       <el-menu-item index="10" @click="service">客服管理</el-menu-item>
       <el-menu-item index="11" @click="redpacket">红包管理</el-menu-item>
       <el-menu-item index="12" @click="activity">活动中心</el-menu-item>
-      <el-menu-item class="right left" @click="user"><i class="iconfont icon-anonymity"></i>个人信息</el-menu-item>
+      <el-menu-item index="13" class="right left" @click="user"><i class="iconfont icon-anonymity"></i>个人信息</el-menu-item>
 
 
       <!--<el-submenu index="13" class="right ">-->
