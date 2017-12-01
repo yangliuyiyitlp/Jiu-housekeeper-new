@@ -10,7 +10,7 @@ import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
 import Axios from 'axios'
-import baseUrl from './utils/baseUrl'
+import baseUrl from '../static/utils/baseUrl'
 
 Vue.prototype.$ajax = Axios
 
@@ -80,6 +80,17 @@ function getLanguage () {
 
   return 'cn'
 }
+
+router.beforeEach((to, from, next) => {
+  console.log(process.env.NODE_ENV)
+  console.log(Axios.defaults.baseURL)
+  // 权限校验
+  // let pass = valid(to);
+  // if(!pass){
+  //   return console.log('无权访问');
+  // }
+  next()
+})
 
 /* eslint-disable no-new */
 new Vue({

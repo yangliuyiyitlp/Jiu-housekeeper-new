@@ -15,7 +15,7 @@
 <script>
   import TreeGrid from '../../components/commons/Ztree/TreeGrid.vue'
   // arr2tree引入
-  import arr2tree from '../../utils/arr2tree.js'
+  import arr2tree from '../../../static/utils/arr2tree.js'
   //  import baseUrl from '../../utils/baseUrl'
   import bus from '@/assets/js/eventBus.js'
 
@@ -109,26 +109,45 @@
         // 请求栏目列表
         this.$ajax.get('content/column/getcategorys')
           .then(res => {
-            console.log(res.data)
+//            console.log(res.data)
             if (res.data.code === 200) {
               open('success', res.data.msg)
-              console.log(res.data.data)
-              let arr = res.data.data
-              for (let i = 0; i < arr.length; i++) {
+//              console.log(res.data.data)
+//              let arr = res.data.data
+//              for (let i = 0; i < arr.length; i++) {
+//                // 是否在导航中显示
+//                if (arr[i].inMenu === '1') {
+//                  arr[i].inMenuName = '显示'
+//                } else {
+//                  arr[i].inMenuName = '隐藏'
+//                }
+//                // 是否在分类页中显示列表
+//                if (arr[i].inList === '1') {
+//                  arr[i].inListName = '显示'
+//                } else {
+//                  arr[i].inListName = '隐藏'
+//                }
+//              }
+//              console.log(arr)
+//              this.select_organization = arr2tree.getTree(arr, '1')
+
+              for (let i = 0; i < res.data.data.length; i++) {
                 // 是否在导航中显示
-                if (arr[i].inMenu === '1') {
-                  arr[i].inMenuName = '显示'
+                if (res.data.data[i].inMenu === '1') {
+                  res.data.data[i].inMenuName = '显示'
                 } else {
-                  arr[i].inMenuName = '隐藏'
+                  res.data.data[i].inMenuName = '隐藏'
                 }
                 // 是否在分类页中显示列表
-                if (arr[i].inList === '1') {
-                  arr[i].inListName = '显示'
+                if (res.data.data[i].inList === '1') {
+                  res.data.data[i].inListName = '显示'
                 } else {
-                  arr[i].inListName = '隐藏'
+                  res.data.data[i].inListName = '隐藏'
                 }
               }
-              this.select_organization = arr2tree.getTree(arr, '1')
+//              console.log(res.data.data)
+              this.select_organization = arr2tree.getTree(res.data.data, '1')
+//              console.log(this.select_organization)
             } else {
               open('info', res.data.msg)
             }

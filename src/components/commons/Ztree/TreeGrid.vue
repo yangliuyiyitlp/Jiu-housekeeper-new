@@ -10,7 +10,7 @@
       <template slot-scope="scope">
         <span v-if="spaceIconShow(index)" v-for="(space, levelIndex) in scope.row._level" class="ms-tree-space"></span>
         <a class="button is-outlined is-primary is-small" v-if="toggleIconShow(index,scope.row)"
-                @click="toggle(scope.$index)">
+           @click="toggle(scope.$index)">
           <i v-if="!scope.row._expanded" class="el-icon-caret-right" aria-hidden="true"></i>
           <i v-if="scope.row._expanded" class="el-icon-caret-bottom" aria-hidden="true"></i>
         </a>
@@ -39,7 +39,7 @@
   </el-table>
 </template>
 <script>
-  import DataTransfer from '../../../utils/dataTranslate.js'
+  import DataTransfer from '../../../../static/utils/dataTranslate.js'
   //  import Vue from 'vue'
   import bus from '@/assets/js/eventBus.js'
 
@@ -98,7 +98,7 @@
         let me = this
         if (me.treeStructure) {
           let data = DataTransfer.treeToArray(me.dataSource, null, null, me.defaultExpandAll)
-          console.log(data)
+          // console.log(data)
           return data
         }
         return me.dataSource

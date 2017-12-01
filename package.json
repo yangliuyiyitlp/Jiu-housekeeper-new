@@ -13,7 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs"
   },
   "dependencies": {
-    "postcss-px2rem":"^0.3.0",
+    "postcss-px2rem": "^0.3.0",
     "axios": "^0.16.2",
     "babel-loader": "^6.4.1",
     "echarts": "^3.7.1",

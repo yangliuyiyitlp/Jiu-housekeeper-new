@@ -231,7 +231,7 @@
 <script>
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
   // arr2tree引入
-  import arr2tree from '../../../utils/arr2tree.js'
+  import arr2tree from '../../../../static/utils/arr2tree.js'
   import bus from '@/assets/js/eventBus.js'
   export default {
     data () {

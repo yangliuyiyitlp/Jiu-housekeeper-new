@@ -200,7 +200,7 @@
 </template>
 <script>
   import { convertDate2String } from '../../../assets/js/convert'
-  import baseUrl from '../../../utils/baseUrl'
+  import baseUrl from '../../../../static/utils/baseUrl'
 
   export default {
     created: function () {
