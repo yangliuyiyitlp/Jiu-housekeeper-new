@@ -184,12 +184,12 @@
           .then(res => {
 //            console.log(res)
             if (res.data.code === 200) {
-              open('success', res.data.msg)
+              this.open('success', res.data.msg)
               this.form = res.data.data
               this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
               console.log(this.form)
             } else {
-              open('info', res.data.msg)
+              this.open('info', res.data.msg)
             }
           })
           .catch(err => {

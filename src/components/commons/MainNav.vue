@@ -37,7 +37,7 @@
     },
     methods: {
       handleSelect (key, keyPath) {
-        console.log(key, keyPath)
+//        console.log(key, keyPath)
       },
       // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
       userinfo () {

@@ -111,7 +111,7 @@
           .then(res => {
 //            console.log(res.data)
             if (res.data.code === 200) {
-              open('success', res.data.msg)
+              this.open('success', res.data.msg)
 //              console.log(res.data.data)
 //              let arr = res.data.data
 //              for (let i = 0; i < arr.length; i++) {
@@ -149,7 +149,7 @@
               this.select_organization = arr2tree.getTree(res.data.data, '1')
 //              console.log(this.select_organization)
             } else {
-              open('info', res.data.msg)
+              this.open('info', res.data.msg)
             }
           })
           .catch(err => {

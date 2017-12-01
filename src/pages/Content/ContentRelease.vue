@@ -193,7 +193,7 @@
             <el-input ref="power" v-model="ruleForm.weight" placeholder="0"></el-input>
             <span>置顶:</span>
             <el-switch
-              @change='isTopp'
+              @change='isTopping'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
               on-value=999                                off-value=0                                on-text="On"
@@ -450,7 +450,7 @@
           })
       },
       // 是否置顶相关
-      isTopp (val) {
+      isTopping (val) {
         this.ruleForm.weight = val
       },
       searchAttributionColumn () {
@@ -469,6 +469,7 @@
         this.second_name = '文章添加'
         // 并清空当前文章添加内列表内容
         this.resetForm()
+        console.log(this.ruleForm)
       },
       // 改变请求条数功能
       handleSizeChange: function (val) {
@@ -505,7 +506,7 @@
               .then(res => {
                 console.log(res)
                 if (res.code === 200) {
-                  open('success', res.data.msg)
+                  this.open('success', res.data.msg)
                 }
                 // 根据查询字符串展示文章列表
                 this.formInline = {
@@ -517,7 +518,7 @@
                 // 返回第一个页面并显示相对应的栏目列表
                 this.activeName2 = 'first'
                 this.ruleForm = {}
-                open('info', res.data.msg)
+                this.open('info', res.data.msg)
               })
               .catch(err => {
                 this.open('info', err.data.msg)
@@ -538,8 +539,8 @@
           categoryName: '', // 分类名称
           image: '', // 文章图片
           keywords: '', // 关键字
-          delFlag: '', // 发布状态
-          delFlagName: '', // 发布状态名称
+          delFlag: '0', // 发布状态
+          delFlagName: '发布', // 发布状态名称
           title: '', // 标题
           link: '', // 外部链接
           weight: 0, // 权重，越大越靠前
@@ -610,10 +611,8 @@
       showForm () {
         this.formInline.delFlag = Tools.k2value(this.statusRelation, this.formInline.delFlagName) || '0'
         if (this.formInline.delFlagName === '删除') {
-          console.log(1111)
           this.operaShow = false
         } else {
-          console.log(2)
           this.operaShow = true
         }
         this.$ajax.get('content/release/article/getarticles', {params: this.formInline})
