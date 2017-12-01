@@ -4,7 +4,7 @@
 
       <!--报名表-->
       <el-tab-pane label="红包雨报名表" name="first">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline" style="padding-left:10px;">
+        <el-form :inline="true" :model="formInline" class="demo-form-inline" >
           <el-form-item label="姓名：">
             <el-input v-model.trim="formInline.realName"></el-input>
           </el-form-item>
@@ -104,7 +104,7 @@
 
       <!--中奖表-->
       <el-tab-pane label="红包雨中奖表" name="second">
-        <el-form :inline="true" :model="formPrize" class="demo-form-inline" style="padding-left:10px;">
+        <el-form :inline="true" :model="formPrize" class="demo-form-inline" >
           <el-form-item label="姓名：">
             <el-input v-model.trim="formPrize.name"></el-input>
           </el-form-item>
@@ -418,5 +418,8 @@
     background-color: hotpink;
     border: none;
     color: #fff;
+  }
+  .demo-form-inline{
+    padding-left:10px;
   }
 </style>

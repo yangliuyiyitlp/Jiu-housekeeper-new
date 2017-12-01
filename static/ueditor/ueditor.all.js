@@ -25641,7 +25641,7 @@ UE.ui = baidu.editor.ui = {};
             if (i && i%10 === 0) {
                 html += '</tr>'+(i==60?'<tr style="border-bottom: 1px solid #ddd;font-size: 13px;line-height: 25px;color:#39C;"><td colspan="10">'+editor.getLang("standardColor")+'</td></tr>':'')+'<tr'+(i==60?' class="edui-colorpicker-tablefirstrow"':'')+'>';
             }
-            html += i<70 ? '<td style="padding: 0 2px;"><a hidefocus title="'+COLORS[i]+'" onclick="return false;" href="javascript:" unselectable="on" class="edui-box edui-colorpicker-colorcell"' +
+            html += i<70 ? '<td style="padding: 0px;"><a hidefocus title="'+COLORS[i]+'" onclick="return false;" href="javascript:" unselectable="on" class="edui-box edui-colorpicker-colorcell"' +
                 ' data-color="#'+ COLORS[i] +'"'+
                 ' style="background-color:#'+ COLORS[i] +';border:solid #ccc;'+
                 (i<10 || i>=60?'border-width:1px;':

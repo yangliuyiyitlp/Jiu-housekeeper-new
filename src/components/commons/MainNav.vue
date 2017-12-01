@@ -13,11 +13,14 @@
       <el-menu-item index="10" @click="service">客服管理</el-menu-item>
       <el-menu-item index="11" @click="redpacket">红包管理</el-menu-item>
       <el-menu-item index="12" @click="activity">活动中心</el-menu-item>
-      <el-submenu index="13" class="right ">
-        <template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>
-        <el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>
-        <el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>
-      </el-submenu>
+      <el-menu-item index="13" class="right left" @click="user"><i class="iconfont icon-anonymity"></i>个人信息</el-menu-item>
+
+
+      <!--<el-submenu index="13" class="right ">-->
+        <!--<template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>-->
+        <!--<el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>-->
+        <!--<el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>-->
+      <!--</el-submenu>-->
       <li data-v-01c7fadb class="time right">{{this.date | convertDate}}</li>
     </el-menu>
   </div>
@@ -97,6 +100,11 @@
           name: 'redpacket.click'
         })
       },
+      user () {
+        this.$router.push({
+          name: 'user.info'
+        })
+      },
       activity () {
         this.$router.push({
 //          name: 'activity.message'  一进来到红包雨页面
@@ -108,10 +116,6 @@
 
 </script>
 <style scoped>
-  /*#NavBar {*/
-  /*margin-bottom: 10px;*/
-  /*}*/
-
   .img {
     float: left;
     margin: 0;
@@ -132,15 +136,20 @@
     font-family: Arial, "Microsoft YaHei";
     padding: 14px;
   }
-
+  .el-menu{
+    padding-bottom: 20px;
+  }
   .icon-anonymity {
     font-size: 14px !important;
   }
 
   .right {
     float: right;
+    font-size:14px!important;
   }
-
+  .left{
+    margin-left:20px;
+  }
   .time {
     float: right;
     height: 60px;
@@ -160,9 +169,5 @@
     margin: 0px;
     font-size: 14px !important;
   }
-
-  /*.el-menu--horizontal .el-submenu>.el-menu{*/
-  /*padding:0px!important;*/
-  /*}*/
 </style>
 

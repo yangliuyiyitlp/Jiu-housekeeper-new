@@ -2,7 +2,7 @@
   <div class="right">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!--消息推送计划列表-->
-      <el-tab-pane label="消息推送计划列表" name="first"style="padding-left:10px;">
+      <el-tab-pane label="消息推送计划列表" name="first" class="padding">
 
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -369,9 +369,9 @@
 </script>
 
 <style scoped>
-  .right {
-
-  }
+ .padding{
+   padding-left:10px;
+ }
 
   .second .textarea, .second .el-input, .second .el-input__inner{
     width: 220px;

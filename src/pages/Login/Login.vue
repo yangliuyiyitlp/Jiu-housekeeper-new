@@ -1,5 +1,5 @@
 <template>
-  <div class="login-wrap" >
+  <div class="login-wrap">
     <h3>赳管家</h3>
     <p v-show="showTishi">{{tishi}}</p>
     <input type="text" placeholder="请输入用户名" v-model="username">
@@ -22,68 +22,93 @@
         username: '',
         password: '',
         newUsername: '',
-        newPassword: ''
+        newPassword: '',
+        Token: {}
       }
     },
     mounted () {
       /* 页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录 */
       if (getCookie('username')) {
         this.$router.push('/home')
+      } else {
+        this.$router.push('/login/')
       }
     },
     methods: {
       login () {
+        let vm = this
         if (this.username === '' || this.password === '') {
           alert('请输入用户名或密码')
         } else {
           let data = {'username': this.username, 'password': this.password}
           /* 假的地址接口请求 */
-          this.$http.post('http://localhost/vueapi/index.php/Home/user/login', data).then((res) => {
-            console.log(res)
-            /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
-            if (res.data === -1) {
-              this.tishi = '该用户不存在'
-              this.showTishi = true
-            } else if (res.data === 0) {
-              this.tishi = '密码输入错误'
-              this.showTishi = true
-            } else if (res.data === 'admin') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
-              /* 路由跳转this.$router.push */
-              this.$router.push('/main')
-            } else {
-              this.tishi = '登录成功'
-              this.showTishi = true
-              setCookie('username', this.username, 1000 * 60)
-              setTimeout(function () {
-                this.$router.push('/home')
-              }.bind(this), 1000)
-            }
-          })
+          this.$ajax.post('/login/submit', {params: data})
+            .then((res) => {
+              console.log(res)
+              /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
+              if (res.data.code === -1) {
+                this.tishi = '该用户不存在'
+                this.showTishi = true
+              } else if (res.data.code === 0) {
+                this.tishi = '密码输入错误'
+                this.showTishi = true
+              } else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
+                /* 路由跳转this.$router.push */
+                this.$router.push('/main')
+              } else if (res.data.code === 200) {
+                this.Token = res.data
+                this.$ajax.post('/login/right', {Token: this.Token})
+                  .then((res) => {
+                    if (res.data.code === 200) {
+                      let extendsRoutes = res.data.menus
+                      console.log(res.data.menus)
+                      // 存菜单
+                      sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
+                      // 动态添加路由
+                      vm.$router.addRoutes(extendsRoutes)
+                      // 跳转界面
+                      vm.$router.push({path: '/home'})
+                      this.tishi = '登录成功'
+                      this.showTishi = true
+                      setCookie('username', this.username, 1000 * 60)
+//              setTimeout(function () {
+//                this.$router.push('/home')
+//              }.bind(this), 1000)
+                    }
+                  })
+                  .catch()
+              }
+            })
+            .catch()
         }
       }
     }
   }
 </script>
+
 <style scoped>
-  html,body{
+  html, body {
     width: 100%;
     text-align: center;
   }
-  .login-wrap{
+
+  .login-wrap {
     text-align: center;
-    margin:200px  auto;
+    margin: 200px auto;
     position: relative;
     width: 300px;
     padding: 25px 29px 29px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
   }
-  h3{
+
+  h3 {
     font-family: Helvetica, Georgia, Arial, sans-serif, 黑体;
     font-size: 36px;
     margin-bottom: 20px;
     color: #0663a2;
   }
+
   input {
     display: block;
     width: 250px;
@@ -96,9 +121,11 @@
     padding: 10px;
     box-sizing: border-box;
   }
+
   p {
     color: red;
   }
+
   button {
     display: block;
     width: 250px;
@@ -112,9 +139,11 @@
     margin-bottom: 5px;
     cursor: pointer;
   }
+
   span {
     cursor: pointer;
   }
+
   span:hover {
     color: #41b883;
   }

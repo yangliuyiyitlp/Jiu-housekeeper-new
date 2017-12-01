@@ -86,10 +86,10 @@
                :close-on-press-escape="false"
                :close-on-click-modal="false" class="demo-ruleForm ">
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
-        <el-form-item label="账户" prop="account" class="elform">
+        <el-form-item label="账户：" prop="account" class="elform">
           <el-input v-model="form.account"></el-input>
         </el-form-item>
-        <el-form-item label="厂家名称" prop="providerName" class="elform ">
+        <el-form-item label="厂家名称：" prop="providerName" class="elform ">
           <!--<el-input v-model="form.providerName"></el-input>-->
           <!--<el-select v-model="form.providerName">-->
           <!--&lt;!&ndash;动态获取锁厂登记表里面所有的厂家名称&ndash;&gt;-->
@@ -105,7 +105,7 @@
           </el-select>
         </el-form-item>
         <!--根据客户选择的厂家名称在锁厂登记表里匹配对应的锁厂编11号  -->
-        <el-form-item label="锁厂家编号" prop="providerNo" class="elform">
+        <el-form-item label="锁厂家编号：" prop="providerNo" class="elform">
           <el-input v-model="form.providerNo" :disabled="true"></el-input>
         </el-form-item>
       </el-form>
@@ -155,38 +155,38 @@
     },
     methods: {
       getSelectOptions: function () {
-//        this.$http.post('/provider/selectOptions').then(function (res) {
-//          this.providerOptions = res.data
-//          console.log(res.data)
-//        }, function (err) {
-//          this.$message({
-//            type: 'info',
-//            message: '获取列表信息失败' + err.status
-//          })
-//        })
+        this.$http.post('/provider/selectOptions').then(function (res) {
+          this.providerOptions = res.data
+          console.log(res.data)
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
       },
       query: function (condition) {
-//        var param = {}
-//        if (condition === 'condition') {
-//          param = this.requestParam
-//        } else {
-//          param = condition
-//        }
-//        console.log(param)
-//       console.log(this.$qs.stringify(param))
-//        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
-//          headers: {
-//            'Content-Type': 'application/x-www-form-urlencoded'
-//          }
-//        }).then(function (response) {
-//          this.tableData = response.page.list
-//          this.pagination.total = response.page.pageNo
-//        }, function (err) {
-//          this.$message({
-//            type: 'info',
-//            message: '获取列表信息失败' + err.status
-//          })
-//        })
+        var param = {}
+        if (condition === 'condition') {
+          param = this.requestParam
+        } else {
+          param = condition
+        }
+        console.log(param)
+        console.log(this.$qs.stringify(param))
+        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        }).then(function (response) {
+          this.tableData = response.page.list
+          this.pagination.total = response.page.pageNo
+        }, function (err) {
+          this.$message({
+            type: 'info',
+            message: '获取列表信息失败' + err.status
+          })
+        })
       },
       modifyRecord: function (scope) {
         console.log(scope)
@@ -324,9 +324,6 @@
   }
 </script>
 <style scoped>
-  #dataGrid {
-
-  }
   .demo-form-inline{
     padding-left:10px;
   }
@@ -334,7 +331,9 @@
     font-size: 20px !important;
     text-align: center;
   }
-
+ .tbody{
+   text-align: left!important;
+ }
   .common {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -356,10 +355,6 @@
   .module {
     height: 240px !important;
     width: 400px !important;
-  }
-
-  .tbody {
-    height: 240px !important;
   }
 
   .elform {

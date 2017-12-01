@@ -1,65 +1,42 @@
 <template>
-  <div class="mypanel">
-    <div class="row">
-      <div class="skillselect">
-        <ul>
-          <li v-for="(item,index) in items" :key="index" v-on:click="clickImg(item.icon)">{{item.name}}</li>
-        </ul>
-      </div>
-      <mycomponent :is="myicon"></mycomponent>
-    </div>
+  <div>
+    <el-row class="sidebar">
+      <el-col :span="3" class="sidebar">
+        <user-bar></user-bar>
+      </el-col>
+      <el-col :span="21">
+        <router-view></router-view>
+      </el-col>
+    </el-row>
   </div>
 </template>
-<script>
-  import Userinfo from '@/pages/User/Userinfo.vue'
-  import SiderBar from '@/components/Mypanel/SiderBar.vue'
-  import Userpwd from '@/pages/User/Userpwd.vue'
 
+<script>
+  import UserBar from '@/components/commons/Ztree/UserBar.vue'
+  import bus from '@/assets/js/eventBus.js'
   export default {
     data () {
       return {
-        parentMsg: 'skill',
-        items: [
-          {name: '个人信息', icon: 'Userinfo'},
-          {name: '修改密码', icon: 'Userpwd'}
-        ],
-        myicon: 'Userinfo'
+        bar: ''
       }
     },
     components: {
-      SiderBar,
-      Userinfo,
-      Userpwd
+      UserBar
     },
-    methods: {
-      clickImg: function (icon) {
-        this.myicon = icon
-      }
-    },
-    created () {
-      if (this.$route.query.module === 'userinfo') {
-        this.myicon = 'Userinfo'
-      } else if (this.$route.query.module === 'userpwd') {
-        this.myicon = 'Userpwd'
-      }
+    mounted () {
+      bus.$on('userbar', (bar) => {
+        this.bar = bar
+        this.$router.push({
+          name: this.bar
+        })
+      })
     }
   }
 </script>
-<style scoped>
-  html, body {
-    height: 100%;
-  }
-  .mypanel {
-    height: 100%;
-  }
-  .skillselect {
-      width: 200px;
-      height: 100% !important;
-      /*float: left;*/
-      border:1px solid #ccc;
-  }
-.row{
-  position: relative;
-}
 
+<style scoped>
+  html,body,.sidebar{
+    height:100%!important;
+  }
 </style>
+

@@ -2,7 +2,7 @@
   <div class="right">
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <!--优惠券配置列表-->
-      <el-tab-pane label="优惠券配置列表" name="first" style="padding-left:10px;">
+      <el-tab-pane label="优惠券配置列表" name="first" class="padding">
 
         <!--筛选条件-->
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
@@ -877,8 +877,8 @@
     display: block;
   }
 
-  .right {
-
+  .padding{
+    padding-left:10px;
   }
 
   .second .textarea, .second .el-input, .second .el-input__inner {

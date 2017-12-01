@@ -1,7 +1,7 @@
 <template>
   <div class="count">
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-      <el-tab-pane label="城市黑名单列表" name="first"style="padding-left:10px;">
+      <el-tab-pane label="城市黑名单列表" name="first"class="padding">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="姓名：">
             <el-input v-model="formInline.user" ></el-input>
@@ -297,8 +297,8 @@
   }
 </script>
 <style scoped>
-  .count {
-  
+  .padding{
+    padding-left:10px;
   }
 .width{
   width:300px;
