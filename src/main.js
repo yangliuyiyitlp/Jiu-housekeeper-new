@@ -11,9 +11,11 @@ import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
 import Axios from 'axios'
 import baseUrl from '../static/utils/baseUrl'
+import Vuex from 'vuex'
 
+Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
-
+Vue.prototype.$store = store
 Axios.defaults.baseURL = baseUrl
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 

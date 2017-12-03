@@ -186,10 +186,9 @@
   }
 </script>
 <style scoped>
-  .info {
-  
+  .demo-form-inline{
+    padding-left:10px;
   }
-
 
 </style>
 

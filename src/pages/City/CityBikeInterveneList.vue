@@ -376,5 +376,7 @@
   .count {
     margin-top: 10px;
   }
-
+.demo-form-inline{
+  padding-left:10px;
+}
 </style>

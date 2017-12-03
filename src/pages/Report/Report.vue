@@ -4,7 +4,7 @@
       <el-col :span="3" class="sidebar" >
         <report-bar></report-bar>
       </el-col>
-      <el-col :span="21">
+      <el-col :span="21" class="padding">
         <router-view></router-view>
       </el-col>
     </el-row>
@@ -37,5 +37,8 @@
 <style scoped>
   html,body,.sidebar{
     height:100%!important;
+  }
+  .padding{
+    padding-top:20px;
   }
 </style>

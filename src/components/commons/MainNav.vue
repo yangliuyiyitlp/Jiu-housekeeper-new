@@ -3,57 +3,58 @@
     <el-menu theme="dark" :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
       <li data-v-01c7fadb class="img"><img class='Mainimg' src="../../assets/images/99.png" alt=""></li>
       <li data-v-01c7fadb class="img">赳管家</li>
-      <el-menu-item index="3" @click="setting">系统设置</el-menu-item>
-      <el-menu-item index="4" @click="facility">设备管理</el-menu-item>
-      <el-menu-item index="5" @click="content">内容管理</el-menu-item>
-      <el-menu-item index="6" @click="status">状态监控</el-menu-item>
-      <el-menu-item index="7" @click="vip">会员管理</el-menu-item>
-      <el-menu-item index="8" @click="report">报表统计</el-menu-item>
-      <el-menu-item index="9" @click="city">城市运营</el-menu-item>
-      <el-menu-item index="10" @click="service">客服管理</el-menu-item>
-      <el-menu-item index="11" @click="redpacket">红包管理</el-menu-item>
-      <el-menu-item index="12" @click="activity">活动中心</el-menu-item>
-      <el-menu-item index="13" class="right left" @click="user"><i class="iconfont icon-anonymity"></i>个人信息</el-menu-item>
+      <el-menu-item index="3" @click="setting" v-if="menus.setting">系统设置</el-menu-item>
+      <el-menu-item index="4" @click="facility" v-if="menus.facility">设备管理</el-menu-item>
+      <el-menu-item index="5" @click="content" v-if="menus.content">内容管理</el-menu-item>
+      <el-menu-item index="6" @click="status" v-if="menus.status">状态监控</el-menu-item>
+      <el-menu-item index="7" @click="vip" v-if="menus.vip">会员管理</el-menu-item>
+      <el-menu-item index="8" @click="report" v-if="menus.report">报表统计</el-menu-item>
+      <el-menu-item index="9" @click="city" v-if="menus.city">城市运营</el-menu-item>
+      <el-menu-item index="10" @click="service" v-if="menus.service">客服管理</el-menu-item>
+      <el-menu-item index="11" @click="redpacket" v-if="menus.redpacket">红包管理</el-menu-item>
+      <el-menu-item index="12" @click="activity" v-if="menus.activity">活动中心</el-menu-item>
+      <li data-v-01c7fadb class="time right left">{{this.date | convertDate}}
+        <a class='exit' href="#" @click="quit">退出</a>
+      </li>
+      <el-menu-item index="13" class="right " @click="user" v-if="menus.user">
+        <i class="iconfont icon-anonymity"></i>个人信息({{name}})
+      </el-menu-item>
 
-
-      <!--<el-submenu index="13" class="right ">-->
-        <!--<template slot="title"><i class="iconfont icon-anonymity"></i>个人信息</template>-->
-        <!--<el-menu-item index="2-1" class="user" @click="userinfo">个人信息</el-menu-item>-->
-        <!--<el-menu-item index="2-2" class="user" @click="userpwd">修改密码</el-menu-item>-->
-      <!--</el-submenu>-->
-      <li data-v-01c7fadb class="time right">{{this.date | convertDate}}</li>
     </el-menu>
+
   </div>
 </template>
 
 <script>
-
+  import { getCookie, delCookie } from '../../assets/js/cookie.js'
   export default {
     data () {
       return {
         activeIndex: '1',
-        date: new Date()
+        date: new Date(),
+        menus: {},
+        name: ''
+      }
+    },
+    mounted () {
+      let menu = sessionStorage.getItem('menus')
+      this.menus = JSON.parse(menu)
+      /* 页面挂载获取保存的cookie值，渲染到页面上 */
+      let uname = getCookie('username')
+      this.name = uname
+      /* 如果cookie不存在，则跳转到登录页 */
+      if (uname === '') {
+        this.$router.push('/login')
       }
     },
     methods: {
+      quit () {
+        /* 删除cookie */
+        delCookie('username')
+        this.$router.push('/login')
+      },
       handleSelect (key, keyPath) {
 //        console.log(key, keyPath)
-      },
-      // 跳转侧边栏页面，根据传的值展示对应模块侧边栏
-      userinfo () {
-        this.$router.push({
-          name: 'Userdfinfo', query: {module: 'userinfo'}
-        })
-      },
-      mypanel () {
-        this.$router.push({
-          name: 'Mypanel', query: {module: 'mypanel'}
-        })
-      },
-      userpwd () {
-        this.$router.push({
-          name: 'Userdfpwd', query: {module: 'userpwd'}
-        })
       },
       setting () {
         this.$router.push({
@@ -158,10 +159,12 @@
     position: relative;
     box-sizing: border-box;
     color: #bfcbd9;
-    margin-right: -40px;
     font-size: 14px;
   }
-
+ .exit{
+   color:#bfcbd9;
+   text-decoration:none;
+ }
   .user {
     /*background-color: #eef1f6 !important;*/
     padding: 0 !important;
