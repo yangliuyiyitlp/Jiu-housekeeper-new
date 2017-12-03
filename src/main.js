@@ -94,36 +94,73 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-// // http请求拦截器
-// let loadinginstace
-// Axios.interceptors.request.use(config => {
-//   console.log('http请求拦截器comming')
-//   // element ui Loading方法
-//   loadinginstace = this.$Loading.service({fullscreen: true})
-//   return config
-// }, error => {
-//   console.log(1)
-//   loadinginstace.close()
-//   this.$message.error('加载超时')
-//   // Message.error({
-//   //   message: '加载超时'
-//   // })
-//   return Promise.reject(error)
+// Vue.http.interceptors.push((request, next) => {
+//   // 这里对请求体进行处理
+//   request.headers = request.headers || {}
+//   if (isLogin()) {
+//     request.headers.set('Authorization', 'Bearer ' + get('token').replace(/(^\")|(\"$)/g, ''))
+//   }
+//   var loadingInstance = Loading.service({target: document.querySelector('.my_table')})
+//   request.url = store.state.homeUrl + request.url
+//   next((response) => {
+//     loadingInstance.close()
+//     // 这里可以对响应的结果进行处理
+//     if (response.status === 401) {
+//       signOut()
+//       window.location.hash = '/login'
+//     }
+//     if (!response.ok) {
+//       console.log('error', response.data)
+//     } else {
+//       sessionStorage.setItem('login', 1)
+//     }
+//   })
 // })
-// // http响应拦截器
-// Axios.interceptors.response.use(data => { // 响应成功关闭loading
-//   console.log('http响应拦截器comming')
-//   loadinginstace.close()
-//   return data
-// }, error => {
-//   console.log(2)
-//   loadinginstace.close()
-//   this.$message.error('加载失败')
-//   // Message.error({
-//   //   message: '加载失败'
-//   // })
-//   return Promise.reject(error)
-// })
+
+// http请求拦截器
+class GLoading {
+  instance = null
+  refs = 0
+
+  attach (ins) {
+    this.instance = ins
+    this.refs++
+  }
+
+  detach () {
+    if (this.refs > 0) {
+      this.refs--
+    }
+    if (this.refs === 0) {
+      this.instance.close()
+    }
+  }
+}
+
+let loading = new GLoading()
+Axios.interceptors.request.use(config => {
+  // element ui Loading方法
+  let ins = ElementUI.Loading.service({
+    fullscreen: true,
+    'element-loading-background': 'rgba(0, 0, 0, 0.8)'
+  })
+
+  loading.attach(ins)
+  return config
+}, error => {
+  loading.detach()
+  ElementUI.message.error('加载超时')
+  return Promise.reject(error)
+})
+// http响应拦截器
+Axios.interceptors.response.use(data => { // 响应成功关闭loading
+  loading.detach()
+  return data
+}, error => {
+  loading.detach()
+  ElementUI.message.error('加载失败')
+  return Promise.reject(error)
+})
 
 /* eslint-disable no-new */
 new Vue({
