@@ -196,7 +196,7 @@
               @change='isTopping'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999                                off-value=0                                on-text="On"
+              on-value=999                                 off-value=0                                 on-text="On"
               off-text="Off">
             </el-switch>
           </el-form-item>
@@ -314,7 +314,7 @@
       }
 
       return {
-        operaShow: true,
+        operaShow: true, // 操作功能在删除状态下隐藏
         activeName2: 'first',
         second_name: '文章添加',
         relation: {}, // 树组件中id与name关系
