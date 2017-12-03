@@ -16,26 +16,36 @@
   export default {
     data () {
       return {
-        data: [{
-          label: '信用积分变更明细',
-          name: 'service.change.credit'
-        }, {
-          label: '会员手机变更工单',
-          name: 'service.change.phone'
-        }, {
-          label: '用户反馈管理',
-          name: 'service.feedback'
-        }, {
-          label: '用户违规工单',
-          name: 'service.violation'
-        }, {
-          label: '运维反馈工单',
-          name: 'service.operation'
-        }],
+//        data: [{
+//          label: '信用积分变更明细',
+//          name: 'service.change.credit'
+//        }, {
+//          label: '会员手机变更工单',
+//          name: 'service.change.phone'
+//        }, {
+//          label: '用户反馈管理',
+//          name: 'service.feedback'
+//        }, {
+//          label: '用户违规工单',
+//          name: 'service.violation'
+//        }, {
+//          label: '运维反馈工单',
+//          name: 'service.operation'
+//        }],
+        data: [],
         defaultProps: {
           children: 'children',
           label:
             'label'
+        }
+      }
+    },
+    mounted () {
+      let menu = sessionStorage.getItem('menus')
+      this.menus = JSON.parse(menu)
+      for (let key in this.menus) {
+        if (key === 'service') {
+          this.data = this.menus[key]
         }
       }
     },

@@ -10,5 +10,11 @@ export default {
   },
   [AUTH_UPDATE] (state, value) {
     state.grantedAuthorities = value
+  },
+  setToken (state, token) {
+    state.accessToken = token
+  },
+  setAuth (state, value) {
+    state.grantedAuthorities = value
   }
 }
