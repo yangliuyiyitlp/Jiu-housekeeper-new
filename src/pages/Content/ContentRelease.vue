@@ -111,10 +111,10 @@
                 label="更新时间">
               </el-table-column>
 
-              <el-table-column
-                header-align="center"
-                align="center"
-                label="操作">
+              <el-table-column v-if="operaShow"
+                               header-align="center"
+                               align="center"
+                               label="操作">
                 <template slot-scope="scope">
                   <el-button type="text" size="small">访问</el-button>
                   <el-button
@@ -147,7 +147,7 @@
 
       </el-tab-pane>
 
-      <el-tab-pane :label='second_name' name="second">
+      <el-tab-pane :label='second_name' name="second" class='second'>
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
 
           <el-form-item label="文章id:" v-if=0>
@@ -193,10 +193,11 @@
             <el-input ref="power" v-model="ruleForm.weight" placeholder="0"></el-input>
             <span>置顶:</span>
             <el-switch
-              @change='isTopp'
+              @change='isTopping'
               v-model="isTop"
               on-color="#13ce66" off-color="#ff4949"
-              on-value=999         off-value=0         on-text="On" off-text="Off">
+              on-value=999                                 off-value=0                                 on-text="On"
+              off-text="Off">
             </el-switch>
           </el-form-item>
 
@@ -207,7 +208,7 @@
               type="datetime"
               placeholder="选择日期时间">
             </el-date-picker>
-            <span>权重数值越大排序越靠前，过期时间可为空，过期后取消置顶。</span>
+            <span>权重数值越大排序越靠前，过期时间默认为当前时间，过期后取消置顶。</span>
           </el-form-item>
 
           <el-form-item label="摘要:">
@@ -231,8 +232,8 @@
 
           <el-form-item label="正文:">
             <el-input v-model='ruleForm.content' v-show='false'></el-input>
-            <div id="ue"></div>
           </el-form-item>
+          <div id="ue"></div>
 
           <el-form-item label="推荐位:">
             <el-checkbox-group v-model="ruleForm.posName">
@@ -313,6 +314,7 @@
       }
 
       return {
+        operaShow: true, // 操作功能在删除状态下隐藏
         activeName2: 'first',
         second_name: '文章添加',
         relation: {}, // 树组件中id与name关系
@@ -356,6 +358,9 @@
     },
     mounted: function () {
       this.E = window.UE.getEditor('ue', {
+        initialFrameWidth: 800,   // 设置宽度为500px
+        initialFrameHeight: 500,  // 设置高度为500px
+        scaleEnabled: true,        // 设置当内容超出控件高度时出现滚动条，而不是越撑越高
         UEDITOR_HOME_URL: 'static/ueditor/'
       })
     },
@@ -409,7 +414,7 @@
         this.activeName2 = 'second'
         this.$ajax.get('content/release/article/' + id)
           .then(res => {
-            console.log(res.data)
+//            console.log(res.data)
             if (res.data.code === 200) {
               let obj = res.data.data
 //              console.log(obj)
@@ -431,10 +436,11 @@
                 description: obj.description, // 描述、摘要
                 content: obj.content || '',
                 posName: obj.posName || [],
-                delFlagName: Tools.k2value(this.statusRelation, obj.delFlag)
+                delFlagName: Tools.k2value(this.statusRelation, obj.delFlag),
+                weightDate: obj.weightDate === null ? '' : Moment(new Date(obj.weightDate)).format('YYYY-MM-DD HH:mm:ss')
               }
               window.UE.getEditor('ue').setContent(this.ruleForm.content)
-              console.log(this.ruleForm)
+//              console.log(this.ruleForm)
               // 为何不能直接对象=对象?
 //              this.ruleForm = res.data.data
             }
@@ -444,7 +450,7 @@
           })
       },
       // 是否置顶相关
-      isTopp (val) {
+      isTopping (val) {
         this.ruleForm.weight = val
       },
       searchAttributionColumn () {
@@ -463,6 +469,7 @@
         this.second_name = '文章添加'
         // 并清空当前文章添加内列表内容
         this.resetForm()
+        console.log(this.ruleForm)
       },
       // 改变请求条数功能
       handleSizeChange: function (val) {
@@ -483,7 +490,13 @@
             this.ruleForm.trademark = (this.Token.key === undefined ? '' : 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key)
             this.ruleForm.content = window.UE.getEditor('ue').getContent()
             this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
-            this.ruleForm.weightDate = (this.ruleForm.weightDate === undefined ? null : Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss'))
+            if (isNaN(this.ruleForm.weightDate)) {
+              this.ruleForm.weightDate = +new Date()
+            } else if (this.ruleForm.weightDate) {
+              this.ruleForm.weightDate = +this.ruleForm.weightDate
+            } else {
+              this.ruleForm.weightDate = +new Date()
+            }
             this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
             this.ruleForm.posid = this.ruleForm.posName.map(i => {
               return Tools.k2value(this.posRelation, i)
@@ -493,7 +506,7 @@
               .then(res => {
                 console.log(res)
                 if (res.code === 200) {
-                  open('success', res.data.msg)
+                  this.open('success', res.data.msg)
                 }
                 // 根据查询字符串展示文章列表
                 this.formInline = {
@@ -505,7 +518,7 @@
                 // 返回第一个页面并显示相对应的栏目列表
                 this.activeName2 = 'first'
                 this.ruleForm = {}
-                open('info', res.data.msg)
+                this.open('info', res.data.msg)
               })
               .catch(err => {
                 this.open('info', err.data.msg)
@@ -526,8 +539,8 @@
           categoryName: '', // 分类名称
           image: '', // 文章图片
           keywords: '', // 关键字
-          delFlag: '', // 发布状态
-          delFlagName: '', // 发布状态名称
+          delFlag: '0', // 发布状态
+          delFlagName: '发布', // 发布状态名称
           title: '', // 标题
           link: '', // 外部链接
           weight: 0, // 权重，越大越靠前
@@ -597,9 +610,14 @@
       // 根据查询字符串展示文章列表
       showForm () {
         this.formInline.delFlag = Tools.k2value(this.statusRelation, this.formInline.delFlagName) || '0'
+        if (this.formInline.delFlagName === '删除') {
+          this.operaShow = false
+        } else {
+          this.operaShow = true
+        }
         this.$ajax.get('content/release/article/getarticles', {params: this.formInline})
           .then(res => {
-            console.log(res.data)
+//            console.log(res.data)
             if (res.data.code === 200) {
               this.pagination.total = res.data.data.total
               this.tableData = res.data.data.result
@@ -657,9 +675,19 @@
 </script>
 
 <style scoped>
-  .padding{
-    padding-left:10px;
+  #ue {
+    margin-left: 200px;
+    margin-bottom: 50px;
   }
+
+  .second {
+    /*margin-bottom: 50px;*/
+  }
+
+  .padding {
+    padding-left: 10px;
+  }
+
   .search_bar {
     border: 1px solid #fff;
     overflow: auto;
@@ -670,7 +698,7 @@
     height: 100%;
   }
 
-  .txtWidth{
+  .txtWidth {
     width: 350px;
   }
 

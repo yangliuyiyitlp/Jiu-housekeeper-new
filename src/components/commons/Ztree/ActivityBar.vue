@@ -121,8 +121,8 @@
 </script>
 
 <style scoped>
-html,body,.sidebar{
-  height:100%!important;
-}
+  html, body, .sidebar {
+    height: 100% !important;
+  }
 </style>
 

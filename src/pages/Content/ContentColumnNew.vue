@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="form" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
+    <el-form :model="form" :rules="rules" ref="form" label-width="200px" class="demo-ruleForm">
 
       <el-form-item label=" 上级栏目ids:" v-if="0">
         <el-input v-model="form.parentIds"></el-input>
@@ -12,14 +12,11 @@
 
       <el-form-item label="上级栏目:">
         <el-input
+          icon="search"
           :disabled="true"
+          :on-icon-click="searchColumn"
           v-model="form.parentName">
         </el-input>
-        <span>是否添加至顶级栏目?</span>
-        <el-radio-group v-model="isTop" @change="isT">
-          <el-radio :label="1">是</el-radio>
-          <el-radio :label="0">否</el-radio>
-        </el-radio-group>
       </el-form-item>
 
       <el-form-item label=" 栏目模型:">
@@ -38,7 +35,7 @@
       </el-form-item>
 
       <el-form-item label="缩略图:">
-        <img width="100%" :src="form.image" v-show="form.image" alt="图无法展示">
+        <!--<img width="100%" :src="form.image" v-show="form.image" alt="图无法展示">-->
         <el-input v-model="form.image" v-show='false'></el-input>
         <el-upload
           ref="upload"
@@ -128,6 +125,18 @@
 
     </el-form>
 
+    <!--columnVisible1-->
+    <!--添加时弹出的栏目树组件-->
+    <el-dialog title="选择栏目" size="tiny" :visible.sync="columnVisible">
+      <el-tree
+        highlight-current
+        default-expand-all
+        :data="selectSite"
+        @node-click="searchOneColumn"
+        :props="defaultProps">
+      </el-tree>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -151,6 +160,7 @@
           children: 'children',
           label: 'name'
         },
+        columnVisible: false,
         columnRelation: {}, // 栏目中id与name之间的关系
         Token: {}, // oss秘钥
         rules: {
@@ -163,23 +173,6 @@
       this.getCategory()
     },
     methods: {
-      // 有问题
-      isT (val) {
-        console.log(val)
-        if (val === 1) {
-          console.log(111)
-          this.form.parentId = '1'
-          this.form.parentIds = '0,1,'
-          this.form.parentName = '顶级栏目'
-        } else {
-          console.log(222)
-          this.form.parentId = this.$route.query.id
-          this.form.parentIds = this.$route.query.parentIds + this.form.parentId + ','
-          this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
-        }
-//        this.form.parentName = Tools.k2value(this.columnRelation, this.form.parentId)
-        console.log(this.form)
-      },
       // 请求栏目树组件数据
       getCategory () {
         // 请求栏目列表
@@ -190,6 +183,7 @@
               let arr = res.data.data
               this.selectSite = arr2tree.getTree(arr, '0')
               this.columnRelation = Tools.nameRelation(arr, 'id', 'name')
+//              console.log(this.selectSite)
             }
           })
           .then(() => {
@@ -203,59 +197,42 @@
             console.error(err)
           })
       },
+      // 点击筛选项的栏目出现tree的模态框
+      searchColumn () {
+        this.columnVisible = true
+      },
+      // 点击栏目树 选定栏目
+      searchOneColumn (data) {
+//        console.log(data)
+        // 模态框隐藏
+        this.columnVisible = false
+        // 获取树组件被选中的参数并保存在this.form中
+        this.form.parentId = data.id
+        this.form.parentIds = data.parentIds + data.id + ','
+        this.form.parentName = data.name
+        console.log(this.form)
+      },
       // 新增栏目
       submitForm (formName) {
         console.log(this.form)
-        this.$ajax.post(`content/column/save`, qs.stringify(this.form))
-          .then(res => {
-            console.log(res)
-            // 返回到栏目管理页面
-            this.$router.push({
-              name: 'content.column'
-            })
-            this.open('success', '新增栏目成功')
-          })
-          .catch(err => {
-            console.log(err)
-          })
-//        this.$refs[formName].validate((valid) => {
-//          if (valid) {
-//            this.ruleForm.trademark = (this.Token.key === undefined ? '' : 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key)
-//            this.ruleForm.content = window.UE.getEditor('ue').getContent()
-//            this.ruleForm.keywords = (this.ruleForm.keywords === '' ? '' : this.ruleForm.keywords.split(' ').join(','))
-//            this.ruleForm.weightDate = (this.ruleForm.weightDate === undefined ? null : Moment(this.ruleForm.weightDate).format('YYYY-MM-DD HH:mm:ss'))
-//            this.ruleForm.delFlag = Tools.k2value(this.statusRelation, this.ruleForm.delFlagName) || '0'
-//            this.ruleForm.posid = this.ruleForm.posName.map(i => {
-//              return Tools.k2value(this.posRelation, i)
-//            }).join(',')
-//            console.log(this.ruleForm)
-//            this.$ajax.post('content/release/update/article', qs.stringify(this.ruleForm))
-//              .then(res => {
-//                console.log(res)
-//                if (res.code === 200) {
-//                  open('success', res.data.msg)
-//                }
-//                // 根据查询字符串展示文章列表
-//                this.formInline = {
-//                  categoryId: this.ruleForm.categoryId,
-//                  categoryName: this.ruleForm.categoryName,
-//                  delFlagName: this.ruleForm.delFlagName
-//                }
-//                this.showForm()
-//                // 返回第一个页面并显示相对应的栏目列表
-//                this.activeName2 = 'first'
-//                this.ruleForm = {}
-//                open('info', res.data.msg)
-//              })
-//              .catch(err => {
-//                this.open('info', err.data.msg)
-//              })
-//          } else {
-//            return false
-//          }
-//        })
-//        // 清空图片列表
-//        this.clearUploadedImage()
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.$ajax.post(`content/column/save`, qs.stringify(this.form))
+              .then(res => {
+                console.log(res)
+                // 返回到栏目管理页面
+                this.$router.push({
+                  name: 'content.column'
+                })
+                this.open('success', '新增栏目成功')
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          } else {
+            return false
+          }
+        })
       },
       // 直接返回到栏目管理页面
       returnBack () {

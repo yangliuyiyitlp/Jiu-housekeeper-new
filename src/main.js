@@ -83,14 +83,47 @@ function getLanguage () {
   return 'cn'
 }
 
-// 权限指令
-Vue.directive('has', {
-  bind: function (el, binding) {
-    if (!Vue.prototype.$_has(binding.value)) {
-      el.parentNode.removeChild(el)
-    }
-  }
+router.beforeEach((to, from, next) => {
+  console.log(process.env.NODE_ENV)
+  // console.log(Axios.defaults.baseURL)
+  // 权限校验
+  // let pass = valid(to);
+  // if(!pass){
+  //   return console.log('无权访问');
+  // }
+  next()
 })
+
+// // http请求拦截器
+// let loadinginstace
+// Axios.interceptors.request.use(config => {
+//   console.log('http请求拦截器comming')
+//   // element ui Loading方法
+//   loadinginstace = this.$Loading.service({fullscreen: true})
+//   return config
+// }, error => {
+//   console.log(1)
+//   loadinginstace.close()
+//   this.$message.error('加载超时')
+//   // Message.error({
+//   //   message: '加载超时'
+//   // })
+//   return Promise.reject(error)
+// })
+// // http响应拦截器
+// Axios.interceptors.response.use(data => { // 响应成功关闭loading
+//   console.log('http响应拦截器comming')
+//   loadinginstace.close()
+//   return data
+// }, error => {
+//   console.log(2)
+//   loadinginstace.close()
+//   this.$message.error('加载失败')
+//   // Message.error({
+//   //   message: '加载失败'
+//   // })
+//   return Promise.reject(error)
+// })
 
 /* eslint-disable no-new */
 new Vue({

@@ -12,6 +12,7 @@
 </template>
 <script>
   import bus from '@/assets/js/eventBus.js'
+
   export default {
     data () {
       return {
@@ -73,8 +74,8 @@
 </script>
 
 <style scoped>
-  html,body,.sidebar{
-    height:100%!important;
+  html, body, .sidebar {
+    height: 100% !important;
   }
 </style>
 

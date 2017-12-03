@@ -90,12 +90,20 @@
         </el-form>
 
         <!--隐藏表格用于提交-->
-        <form action="" v-if="0"
-              method="post" ref="FileForm">
-          <input name="coupon_status" v-model="formInline.coupon_status"/>
-          <!--<input name="redPackage" v-model="exportParam.redPackage"/>-->
-          <!--<input name="pageSize" v-model="exportParam.pageSize"/>-->
-          <!--<input name="pageNo" v-model="exportParam.pageNo"/>-->
+        <form action="" v-if="0" method="post" ref="FileForm">
+        <input name="activityDes" v-model="exportParam.activityDes"/>
+        <input name="beginEndTime" v-model="exportParam.beginEndTime"/>
+        <input name="beginStartTime" v-model="exportParam.beginStartTime"/>
+        <input name="business" v-model="exportParam.business"/>
+        <input name="couponNo" v-model="exportParam.couponNo"/>
+        <input name="coupon_mode" v-model="exportParam.coupon_mode"/>
+        <input name="coupon_status" v-model="exportParam.coupon_status"/>
+        <input name="coupon_type" v-model="exportParam.coupon_type"/>
+        <input name="endEndTime" v-model="exportParam.endEndTime"/>
+        <input name="endStartTime" v-model="exportParam.endStartTime"/>
+        <input name="fuserPhone" v-model="exportParam.fuserPhone"/>
+        <input name="pageSize" v-model="exportParam.pageSize"/>
+        <input name="pageNo" v-model="exportParam.pageNo"/>
         </form>
         <!--表格-->
 
@@ -260,7 +268,6 @@
           layout="total, sizes, prev, pager, next, jumper"
           :total="pagination.count">
         </el-pagination>
-
 
       </el-tab-pane>
 
@@ -501,6 +508,17 @@
       </div>
     </el-dialog>
 
+    <!--导出-->
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+      <el-button @click="exportCurrent">导出当前页</el-button>
+      <el-button @click="exportAll">导出所有</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelExport">取 消</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -514,6 +532,7 @@
       return {
         Token: {}, // oss秘钥
         activeName: 'first',
+        exportFormVisible: false, // 导出模态框
         modifyFormVisible: false,
         coupon_type_obj: {}, // 优惠券类型关系
         t_cup_state_obj: {}, // 优惠券领取状态
@@ -524,7 +543,8 @@
         formInline: {}, // 查询列表所需字段
         form: {}, // 添加新优惠券配置表单
         formBatch: {}, // 批量导入表单
-        pagination: {pageSizes: [30, 50, 80, 100], pageSize: 30, total: 0, pageNum: 1}
+        pagination: {pageSizes: [30, 50, 80, 100], pageSize: 30, total: 0, pageNum: 1},
+        exportParam: {}
       }
     },
     created () {
@@ -536,16 +556,17 @@
     methods: {
       // 点击根据条件进行查询
       search () {
-//        this.formInline.beginStartTime = (this.formInline.beginStartTime === undefined ? null : Moment(this.formInline.beginStartTime).format('YYYY-MM-DD HH:mm:ss'))
-        this.formInline.endStartTime = (this.formInline.endStartTime === undefined ? null : Moment(this.formInline.endStartTime).format('YYYY-MM-DD HH:mm:ss'))
-        this.formInline.beginEndTime = (this.formInline.beginEndTime === undefined ? null : Moment(this.formInline.beginEndTime).format('YYYY-MM-DD HH:mm:ss'))
-        this.formInline.endEndTime = (this.formInline.endEndTime === undefined ? null : Moment(this.formInline.endEndTime).format('YYYY-MM-DD HH:mm:ss'))
-        if (!this.formInline.beginStartTime) {
-          this.formInline.beginStartTime = null
-        } else {
-          this.formInline.beginStartTime = Moment(this.formInline.beginStartTime).format('YYYY-MM-DD HH:mm:ss')
-        }
-        console.log(this.formInline)
+        this.formInline.beginStartTime = (this.formInline.beginStartTime === undefined ? null : Moment(new Date(this.formInline.beginStartTime)).format('YYYY-MM-DD HH:mm:ss'))
+        this.formInline.endStartTime = (this.formInline.endStartTime === undefined ? null : Moment(new Date(this.formInline.endStartTime)).format('YYYY-MM-DD HH:mm:ss'))
+        this.formInline.beginEndTime = (this.formInline.beginEndTime === undefined ? null : Moment(new Date(this.formInline.beginEndTime)).format('YYYY-MM-DD HH:mm:ss'))
+        this.formInline.endEndTime = (this.formInline.endEndTime === undefined ? null : Moment(new Date(this.formInline.endEndTime)).format('YYYY-MM-DD HH:mm:ss'))
+//        if (!this.formInline.beginStartTime) {
+//          this.formInline.beginStartTime = null
+//        } else {
+//          this.formInline.beginStartTime = Moment(this.formInline.beginStartTime).format('YYYY-MM-DD HH:mm:ss')
+//        }
+        this.exportParam = this.formInline
+        console.log(this.exportParam)
         // 点击根据条件进行查询
         this.getList()
       },
@@ -639,8 +660,29 @@
       handleClick () {
         this.resetForm()
       },
+      // 导出功能
       exportData () {
-        console.log('exportData!')
+        this.exportFormVisible = true
+      },
+      // 取消导出
+      cancelExport () {
+        this.exportFormVisible = false
+      },
+      // 导出当前
+      exportCurrent () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/coupon/details/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      // 导出所有
+      exportAll () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/coupon/details/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
       selectFile () {},
       importData () {},
@@ -704,13 +746,17 @@
 //            console.log(res.data.page.list)
             this.tableData = res.data.page.list
             this.pagination.count = res.data.page.count
-            for (let i = 0; i < this.tableData.length; i++) {
-              this.tableData[i].coupon_type = Tools.k2value(this.coupon_type_obj, this.tableData[i].type)
-              this.tableData[i].t_cup_state = Tools.k2value(this.t_cup_state_obj, this.tableData[i].state)
-              this.tableData[i].coupon_mode = Tools.k2value(this.coupon_mode_obj, this.tableData[i].tag)
-              this.tableData[i].tradeTag_name = Tools.k2value(this.coupon_trade_mode_obj, this.tableData[i].tradeTag)
+            if (res.data.page.list) {
+              for (let i = 0; i < this.tableData.length; i++) {
+                this.tableData[i].coupon_type = Tools.k2value(this.coupon_type_obj, this.tableData[i].type)
+                this.tableData[i].t_cup_state = Tools.k2value(this.t_cup_state_obj, this.tableData[i].state)
+                this.tableData[i].coupon_mode = Tools.k2value(this.coupon_mode_obj, this.tableData[i].tag)
+                this.tableData[i].tradeTag_name = Tools.k2value(this.coupon_trade_mode_obj, this.tableData[i].tradeTag)
 //              this.tableData[i].coupon_type = this.coupon_type_obj[this.tableData[i].type]
 //              this.tableData[i].t_cup_state = this.t_cup_state_obj[this.tableData[i].state]
+              }
+            } else {
+              this.open('info', '没有符合此条件的相关信息')
             }
           })
           .catch(err => {
@@ -798,22 +844,7 @@
           .catch(() => {
             this.open('info', '已取消删除')
           })
-      },
-      // 导出功能
-      exportCurrent: function () {
-        this.exportParam.pageNo = this.pagination.pageNo
-        this.exportParam.pageSize = this.pagination.pageSize
-        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
-        this.$refs['FileForm'].submit()
-        this.exportFormVisible = false
-      },
-      exportAll: function () {
-        this.exportParam.pageSize = ''
-        this.exportParam.pageNo = ''
-        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
-        this.$refs['FileForm'].submit()
-        this.exportFormVisible = false
-      }     // 导出所有
+      }
     }
   }
 </script>
