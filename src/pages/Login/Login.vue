@@ -12,7 +12,7 @@
 <script>
   import { setCookie, getCookie } from '../../assets/js/cookie.js'
   //  import { getRouterPath } from '../../router/index.js'
-  import store from '../../store/store'
+//  import store from '../../store/store'
 
   export default {
     data () {
@@ -58,18 +58,13 @@
                 this.$router.push('/main')
               } else if (res.data.code === 200) {
                 this.token = res.data.token
-//                document.cookie = 'token=' + this.token
-//                store.dispatch('setAuthorities', [])
-//                console.log(store.state().grantedAuthorities)
-                console.log('我问问', JSON.stringify(res))
-                store.dispatch('setToken', this.token)
+                setCookie('token', this.token, 4000)
                 this.$ajax.post('/login/right', {token: this.token})
                   .then((res) => {
                     if (res.data.code === 200) {
                       let extendsRoutes = res.data.menus
                       // 存菜单
                       sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-                      console.log(111)
                       // 动态添加路由
 //                      vm.$router.addRoutes(routerArr)
                       // 跳转界面

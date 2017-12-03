@@ -17,12 +17,14 @@ const asyncRouter = [
   {
     path: '/user',
     name: 'User',
-    component: r => require.ensure([], () => r(require('../pages/User/User.vue')), 'User')
+    component: r => require.ensure([], () => r(require('../pages/User/User.vue')), 'User'),
+    children: []
   },
   {
     path: '/facility',
     name: 'facility',
-    component: r => require.ensure([], () => r(require('../pages/Facility/Facility.vue')), 'Facility')
+    component: r => require.ensure([], () => r(require('../pages/Facility/Facility.vue')), 'Facility'),
+    children: []
   },
   {
     path: '/facility/tabs',
@@ -63,7 +65,8 @@ const asyncRouter = [
   {
     path: '/setting',
     name: 'setting',
-    component: r => require.ensure([], () => r(require('../pages/Setting/Setting.vue')), 'Setting')
+    component: r => require.ensure([], () => r(require('../pages/Setting/Setting.vue')), 'Setting'),
+    children: []
   },
   {
     path: '/setting/user',
@@ -113,7 +116,8 @@ const asyncRouter = [
   {
     path: '/content',
     name: 'content',
-    component: r => require.ensure([], () => r(require('../pages/Content/Content.vue')), 'Content')
+    component: r => require.ensure([], () => r(require('../pages/Content/Content.vue')), 'Content'),
+    children: []
   },
   // content相关
   {
@@ -164,7 +168,8 @@ const asyncRouter = [
   {
     path: '/status',
     name: 'status',
-    component: r => require.ensure([], () => r(require('../pages/Status/Status.vue')), 'Status')
+    component: r => require.ensure([], () => r(require('../pages/Status/Status.vue')), 'Status'),
+    children: []
   },
   // status相关
   {
@@ -195,7 +200,8 @@ const asyncRouter = [
   {
     path: '/vip',
     name: 'vip',
-    component: r => require.ensure([], () => r(require('../pages/Vip/Vip.vue')), 'Vip')
+    component: r => require.ensure([], () => r(require('../pages/Vip/Vip.vue')), 'Vip'),
+    children: []
   },
   // vip相关
   {
@@ -216,7 +222,8 @@ const asyncRouter = [
   {
     path: '/report',
     name: 'report',
-    component: r => require.ensure([], () => r(require('../pages/Report/Report.vue')), 'Report')
+    component: r => require.ensure([], () => r(require('../pages/Report/Report.vue')), 'Report'),
+    children: []
   },
   // report相关
   {
@@ -252,7 +259,8 @@ const asyncRouter = [
   {
     path: '/city',
     name: 'city',
-    component: r => require.ensure([], () => r(require('../pages/City/City.vue')), 'City')
+    component: r => require.ensure([], () => r(require('../pages/City/City.vue')), 'City'),
+    children: []
   },
   // city 相关
   {
@@ -298,7 +306,8 @@ const asyncRouter = [
   {
     path: '/service',
     name: 'service',
-    component: r => require.ensure([], () => r(require('../pages/Service/Service.vue')), 'Service')
+    component: r => require.ensure([], () => r(require('../pages/Service/Service.vue')), 'Service'),
+    children: []
   },
   // 客服管理相关
   {
@@ -329,7 +338,8 @@ const asyncRouter = [
   {
     path: '/redpacket',
     name: 'redpacket',
-    component: r => require.ensure([], () => r(require('../pages/RedPacket/RedPacket.vue')), 'RedPacket')
+    component: r => require.ensure([], () => r(require('../pages/RedPacket/RedPacket.vue')), 'RedPacket'),
+    children: []
   },
   // 红包管理相关
   {
@@ -350,7 +360,8 @@ const asyncRouter = [
   {
     path: '/activity',
     name: 'activity',
-    component: r => require.ensure([], () => r(require('../pages/Activity/Activity.vue')), 'Activity')
+    component: r => require.ensure([], () => r(require('../pages/Activity/Activity.vue')), 'Activity'),
+    children: []
   },
   // 活动中心
   {

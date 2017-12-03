@@ -27,6 +27,7 @@
 
 <script>
   import { getCookie, delCookie } from '../../assets/js/cookie.js'
+
   export default {
     data () {
       return {
@@ -49,14 +50,19 @@
     },
     methods: {
       quit () {
+        alert(11)
         /* 删除cookie */
         delCookie('username')
+        delCookie('token')
+        sessionStorage.removeItem('menus')
+        sessionStorage.removeItem('authList')
         this.$router.push('/login')
       },
       handleSelect (key, keyPath) {
 //        console.log(key, keyPath)
       },
       setting () {
+        alert(22)
         this.$router.push({
           name: 'setting.user'
         })
@@ -137,20 +143,24 @@
     font-family: Arial, "Microsoft YaHei";
     padding: 14px;
   }
-  .el-menu{
+
+  .el-menu {
     padding-bottom: 20px;
   }
+
   .icon-anonymity {
     font-size: 14px !important;
   }
 
   .right {
     float: right;
-    font-size:14px!important;
+    font-size: 14px !important;
   }
-  .left{
-    margin-left:20px;
+
+  .left {
+    margin-left: 20px;
   }
+
   .time {
     float: right;
     height: 60px;
@@ -161,10 +171,12 @@
     color: #bfcbd9;
     font-size: 14px;
   }
- .exit{
-   color:#bfcbd9;
-   text-decoration:none;
- }
+
+  .exit {
+    color: #bfcbd9;
+    text-decoration: none;
+  }
+
   .user {
     /*background-color: #eef1f6 !important;*/
     padding: 0 !important;

@@ -155,7 +155,7 @@
     },
     methods: {
       getSelectOptions: function () {
-        this.$http.post('/provider/selectOptions').then(function (res) {
+        this.ajax.post('/provider/selectOptions').then(function (res) {
           this.providerOptions = res.data
           console.log(res.data)
         }, function (err) {
@@ -166,27 +166,27 @@
         })
       },
       query: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.requestParam
-        } else {
-          param = condition
-        }
-        console.log(param)
-        console.log(this.$qs.stringify(param))
-        this.$http.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-          }
-        }).then(function (response) {
-          this.tableData = response.page.list
-          this.pagination.total = response.page.pageNo
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
+//        var param = {}
+//        if (condition === 'condition') {
+//          param = this.requestParam
+//        } else {
+//          param = condition
+//        }
+//        console.log(param)
+//        console.log(qsqs.stringify(param))
+//        this.ajax.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
+//          headers: {
+//            'Content-Type': 'application/x-www-form-urlencoded'
+//          }
+//        }).then(function (response) {
+//          this.tableData = response.page.list
+//          this.pagination.total = response.page.pageNo
+//        }, function (err) {
+//          this.$message({
+//            type: 'info',
+//            message: '获取列表信息失败' + err.status
+//          })
+//        })
       },
       modifyRecord: function (scope) {
         console.log(scope)
@@ -205,7 +205,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$http.post('/dataGrid/delete', {'id': id}).then(function (response) {
+            this.ajax.post('/dataGrid/delete', {'id': id}).then(function (response) {
               if (response.data.code === '1') {
                 // 删除成功
                 this.$message({
@@ -255,7 +255,7 @@
               url = '/dataGrid/modify'
             }
             this.dialogFormVisible = false
-            this.$http.post(url, {params: this.form}).then(function (response) {
+            this.ajax.post(url, {params: this.form}).then(function (response) {
               if (response.data.code === '1') {
                 // 更新成功
                 this.$message({
