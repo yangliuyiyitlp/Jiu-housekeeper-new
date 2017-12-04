@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-  import { setCookie, getCookie } from '../../assets/js/cookie.js'
+  import { setCookie, getCookie, delCookie } from '../../assets/js/cookie.js'
   //  import { getRouterPath } from '../../router/index.js'
   //  import store from '../../store/store'
 
@@ -58,6 +58,7 @@
                 this.$router.push('/main')
               } else if (res.data.code === 200) {
                 this.token = res.data.token
+                delCookie('token')
                 setCookie('token', this.token)
                 this.$ajax.post('/login/right', {token: this.token})
                   .then((res) => {
@@ -71,6 +72,7 @@
                       vm.$router.push({path: '/home'})
                       this.tip = '登录成功'
                       this.showTip = true
+                      delCookie('username')
                       setCookie('username', this.username)
                     }
                   })

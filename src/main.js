@@ -13,14 +13,53 @@ import Axios from 'axios'
 import baseUrl from '../static/utils/baseUrl'
 import Vuex from 'vuex'
 
+let Cookie = require('./assets/js/cookie.js')
 Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
 Vue.prototype.$store = store
 Axios.defaults.baseURL = baseUrl
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
+// 超时设置
+const service = Axios.create({
+  timeout: 5000                  // 请求超时时间
+})
+
+// http request 拦截器
+// 每次请求都为http头增加Authorization字段，其内容为token
+service.interceptors.request.use(
+  config => {
+    if (store.state.user.token) {
+      // config.headers.Authorization = `token ${store.state.user.token}`
+      config.headers.Authorization = Cookie.getCookie('token')
+    }
+    return config
+  },
+  err => {
+    return Promise.reject(err)
+  })
+
+// http response 拦截器
+// 针对响应代码确认跳转到对应页面
+service.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          router.push('error/401')
+          break
+        case 403:
+          router.push('error/403')
+          break
+      }
+    }
+    // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
+    return Promise.reject(error.response.data)
+  }
+)
+
 Vue.use(VueMoment)
-// global.$ = global.jQuery = $
 
 Vue.config.productionTip = false
 
@@ -83,40 +122,6 @@ function getLanguage () {
   return 'cn'
 }
 
-router.beforeEach((to, from, next) => {
-  console.log(process.env.NODE_ENV)
-  // console.log(Axios.defaults.baseURL)
-  // 权限校验
-  // let pass = valid(to);
-  // if(!pass){
-  //   return console.log('无权访问');
-  // }
-  next()
-})
-
-// Vue.http.interceptors.push((request, next) => {
-//   // 这里对请求体进行处理
-//   request.headers = request.headers || {}
-//   if (isLogin()) {
-//     request.headers.set('Authorization', 'Bearer ' + get('token').replace(/(^\")|(\"$)/g, ''))
-//   }
-//   var loadingInstance = Loading.service({target: document.querySelector('.my_table')})
-//   request.url = store.state.homeUrl + request.url
-//   next((response) => {
-//     loadingInstance.close()
-//     // 这里可以对响应的结果进行处理
-//     if (response.status === 401) {
-//       signOut()
-//       window.location.hash = '/login'
-//     }
-//     if (!response.ok) {
-//       console.log('error', response.data)
-//     } else {
-//       sessionStorage.setItem('login', 1)
-//     }
-//   })
-// })
-
 // http请求拦截器
 class GLoading {
   instance = null
@@ -167,6 +172,7 @@ new Vue({
   el: '#app',
   router,
   store,
+  service,
   i18n,
   template: '<App/>',
   components: {App}

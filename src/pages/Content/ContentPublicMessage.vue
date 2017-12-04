@@ -111,9 +111,9 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
+        this.$ajax.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+//          this.tableData = response.data.list
+//          this.pagination.total = response.data.total
         }, function (err) {
           this.$message({
             type: 'info',

@@ -155,8 +155,8 @@
     },
     methods: {
       getSelectOptions: function () {
-        this.ajax.post('/provider/selectOptions').then(function (res) {
-          this.providerOptions = res.data
+        this.$ajax.post('/provider/selectOptions').then(function (res) {
+//          this.providerOptions = res.data
           console.log(res.data)
         }, function (err) {
           this.$message({
@@ -205,7 +205,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.ajax.post('/dataGrid/delete', {'id': id}).then(function (response) {
+            this.$ajax.post('/dataGrid/delete', {'id': id}).then(function (response) {
               if (response.data.code === '1') {
                 // 删除成功
                 this.$message({
@@ -255,7 +255,7 @@
               url = '/dataGrid/modify'
             }
             this.dialogFormVisible = false
-            this.ajax.post(url, {params: this.form}).then(function (response) {
+            this.$ajax.post(url, {params: this.form}).then(function (response) {
               if (response.data.code === '1') {
                 // 更新成功
                 this.$message({
@@ -301,8 +301,8 @@
         this.query('condition')
       },
       onSelected: function (val) {
-        var obj = this.providerOptions.find(item => item.no === val)
-        this.form.providerName = obj.name
+//        var obj = this.providerOptions.find(item => item.no === val)
+//        this.form.providerName = obj.name
       },
       export2Excel: function () {
         alert('下载吗')
