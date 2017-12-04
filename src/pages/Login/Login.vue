@@ -33,7 +33,7 @@
       if (getCookie('username')) {
         this.$router.push('/home')
       } else {
-        this.$router.push('/login/')
+        this.$router.push('/login')
       }
     },
     methods: {
@@ -58,7 +58,7 @@
                 this.$router.push('/main')
               } else if (res.data.code === 200) {
                 this.token = res.data.token
-                setCookie('token', this.token, 4000)
+                setCookie('token', this.token)
                 this.$ajax.post('/login/right', {token: this.token})
                   .then((res) => {
                     if (res.data.code === 200) {
@@ -71,7 +71,7 @@
                       vm.$router.push({path: '/home'})
                       this.tip = '登录成功'
                       this.showTip = true
-                      setCookie('username', this.username, 1000 * 60)
+                      setCookie('username', this.username)
                     }
                   })
                   .catch()

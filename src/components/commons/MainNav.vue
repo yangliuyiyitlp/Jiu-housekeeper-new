@@ -17,7 +17,7 @@
         <a class='exit' href="#" @click="quit">退出</a>
       </li>
       <el-menu-item index="13" class="right " @click="user" v-if="menus.user">
-        <i class="iconfont icon-anonymity"></i>个人信息({{name}})
+        <i class="iconfont icon-anonymity"></i>个人信息({{username}})
       </el-menu-item>
 
     </el-menu>
@@ -34,23 +34,21 @@
         activeIndex: '1',
         date: new Date(),
         menus: {},
-        name: ''
+        username: ''
       }
     },
     mounted () {
       let menu = sessionStorage.getItem('menus')
       this.menus = JSON.parse(menu)
       /* 页面挂载获取保存的cookie值，渲染到页面上 */
-      let uname = getCookie('username')
-      this.name = uname
+      this.username = getCookie('username')
       /* 如果cookie不存在，则跳转到登录页 */
-      if (uname === '') {
+      if (getCookie('username') === '' || getCookie('username') === 'undefined') {
         this.$router.push('/login')
       }
     },
     methods: {
       quit () {
-        alert(11)
         /* 删除cookie */
         delCookie('username')
         delCookie('token')
@@ -62,7 +60,6 @@
 //        console.log(key, keyPath)
       },
       setting () {
-        alert(22)
         this.$router.push({
           name: 'setting.user'
         })

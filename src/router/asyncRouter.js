@@ -16,7 +16,7 @@ const asyncRouter = [
   },
   {
     path: '/user',
-    name: 'User',
+    name: 'user',
     component: r => require.ensure([], () => r(require('../pages/User/User.vue')), 'User'),
     children: []
   },
@@ -266,7 +266,7 @@ const asyncRouter = [
   {
     path: '/city/bike/intervene/list',
     name: 'city.bike.intervene.list',
-    component: r => require.ensure([], () => r(require('../pages/City/City.vue')), 'CityBikeInterveneList')
+    component: r => require.ensure([], () => r(require('../pages/City/CityBikeInterveneList.vue')), 'CityBikeInterveneList')
   },
   {
     path: '/city/company/info',
