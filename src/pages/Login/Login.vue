@@ -12,7 +12,7 @@
 <script>
   import { setCookie, getCookie } from '../../assets/js/cookie.js'
   //  import { getRouterPath } from '../../router/index.js'
-//  import store from '../../store/store'
+  //  import store from '../../store/store'
 
   export default {
     data () {

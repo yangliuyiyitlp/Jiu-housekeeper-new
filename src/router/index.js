@@ -24,7 +24,7 @@ const routes = [
   {path: '/404', component: NotFound}
 ]
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   routes: routes
   // routes: asyncRouter
 })
@@ -35,7 +35,7 @@ router.beforeEach((to, from, next) => {
   // NProgress.start()
   // 判断用户是否登录
   // Cookie.delCookie('token')
-  // console.log('token:', Cookie.getCookie('token'))
+  console.log('token:', Cookie.getCookie('token'))
   if (Cookie.getCookie('token') !== '' && Cookie.getCookie('token') !== undefined) {
     // 这种情况出现在手动修改地址栏地址时
     // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
@@ -45,9 +45,9 @@ router.beforeEach((to, from, next) => {
       router.replace('/home')
     } else {
       // 页面跳转前先判断是否存在权限列表，如果存在则直接跳转，如果没有则请求一次
-      let authList = sessionStorage.getItem('authList')
-      // console.log('sessionStorage.getItem(\'authList\')', authList)
-      if (authList === null || JSON.parse(authList).length === 0) {
+      let authList = store.state.grantedAuthorities
+      console.log('authList', authList)
+      if (authList === null || authList.length === 0) {
         console.log('没有权限list')
         // 获取权限列表，如果失败则跳回登录页重新登录
         store.dispatch('getPermission', Cookie.getCookie('token')).then(result => {
@@ -55,9 +55,10 @@ router.beforeEach((to, from, next) => {
           // console.log('获取到menus', result)
           generateAuthList(result, asyncRouter).then(res => {
             // console.log('匹配出路由', res)
-            sessionStorage.setItem('authList', JSON.stringify(res))
+            // sessionStorage.setItem('authList', JSON.stringify(res))
+            // store.dispatch('authList', JSON.stringify(res))
+            // console.log('res是', res)
             router.addRoutes(res)
-            console.log('router是' + router)
             next(to.path)
           })
         }).catch((err) => {
@@ -76,12 +77,6 @@ router.beforeEach((to, from, next) => {
           }
           next()
         } else {
-          /* 删除cookie */
-          // delCookie('username')
-          // delCookie('token')
-          // sessionStorage.removeItem('menus')
-          // sessionStorage.removeItem('authList')
-          // router.push('/login')
           router.replace('/404')
         }
       }
@@ -114,21 +109,39 @@ function routerMatch (parent, permission, asyncRouter) {
 
     // 创建路由
     function createRouter (permission) {
-      permission.forEach((item) => {
-        if (item.children && item.children.length) {
+      // permission.forEach((item) => {
+      //   console.log('item', JSON.stringify(item))
+      //   if (item.children && item.children.length > 0) {
+      //     // 递归
+      //     createRouter(item.children)
+      //   }
+      //   let path = item.path
+      //   // 循环异步路由，将符合权限列表的路由加入到routers中
+      //   asyncRouter.find(function (s) {
+      //     if (s.path === path) {
+      //       console.log('s', s)
+      //       s.meta.permission = item.permission  // 按钮权限
+      //       routers.children.push(s)
+      //     }
+      //   })
+      //   console.log('find结束', JSON.stringify(routers))
+      // })
+      for (let i = 0; i < permission.length; i++) {
+        let item = permission[i]
+        if (item.children !== undefined && item.children.length > 0) {
           // 递归
           createRouter(item.children)
         }
         let path = item.path
-        // 循环异步路由，将符合权限列表的路由加入到routers中
-        asyncRouter.find(function (s) {
+        for (let j = 0; j < asyncRouter.length; j++) {
+          let s = asyncRouter[j]
           if (s.path === path) {
-            // s.meta.permission = item.permission
+            s.meta.permission = item.permission  // 按钮权限
             routers.children.push(s)
-            return
+            break
           }
-        })
-      })
+        }
+      }
     }
 
     createRouter(permission)

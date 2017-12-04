@@ -50,11 +50,12 @@
     methods: {
       quit () {
         /* 删除cookie */
-        delCookie('username')
-        delCookie('token')
+        while (getCookie('token') !== '') {
+          delCookie('username')
+          delCookie('token')
+        }
         sessionStorage.removeItem('menus')
-        sessionStorage.removeItem('authList')
-        this.$router.push('/login')
+        this.$router.replace('/login')
       },
       handleSelect (key, keyPath) {
 //        console.log(key, keyPath)

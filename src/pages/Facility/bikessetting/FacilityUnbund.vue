@@ -25,10 +25,10 @@
         <el-input v-model.trim="requestParam.iccid"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="query">查询</el-button>
+        <el-button type="primary" @click="query" v-if="hasPermission('view')">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="exportFile">导出</el-button>
+        <el-button type="primary" @click="exportFile" v-if="hasPermission('outport')">导出</el-button>
       </el-form-item>
       <el-form-item>
         <!--/facility/unbund/import/template-->
@@ -251,6 +251,14 @@
       }
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        console.log(permissionList)
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       list: function () {
 //        this.message = false
         this.$ajax.get('/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})

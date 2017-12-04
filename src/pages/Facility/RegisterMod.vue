@@ -20,13 +20,13 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="query">查询</el-button>
+        <el-button type="primary" @click="query" v-if="hasPermission('view')">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="addNewRecord">新增</el-button>
+        <el-button type="primary" @click="addNewRecord" v-if="hasPermission('create')">新增</el-button>
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
