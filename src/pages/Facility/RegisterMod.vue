@@ -19,14 +19,14 @@
           placeholder="结束时间">
         </el-date-picker>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="query" v-if="hasPermission('view')">查询</el-button>
+      <el-form-item v-if="hasPermission('view')">
+        <el-button type="primary" @click="query" >查询</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasPermission('outPort')">
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="addNewRecord" v-if="hasPermission('create')">新增</el-button>
+      <el-form-item v-if="hasPermission('create')">
+        <el-button type="primary" @click="addNewRecord" >新增</el-button>
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
@@ -91,8 +91,9 @@
       <el-table-column
         header-align="center"
         align="center"
+        v-if="hasPermission('updateDelete')"
         label="操作">
-        <template slot-scope="scope">
+        <template slot-scope="scope" >
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
           <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
         </template>
@@ -227,6 +228,13 @@
       }
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       query () {
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
