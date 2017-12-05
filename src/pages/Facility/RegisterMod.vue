@@ -172,7 +172,7 @@
 
 <script>
   import Moment from 'moment'
-  import baseUrl from '../../../static/utils/baseUrl'
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.query()

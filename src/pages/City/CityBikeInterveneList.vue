@@ -226,7 +226,7 @@
   </div>
 </template>
 <script>
-  import Tools from '../../../static/utils/tools.js'
+  import Tools from '../../utils/tools.js'
   import Moment from 'moment'
 
   export default {

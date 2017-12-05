@@ -29,8 +29,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/dataGrid': 'http://47.94.109.245:8080/blog/',
-      '/provider': 'http://47.94.109.245:8080/blog/',
       // '/tDisplayType': 'http://172.16.20.235:10001/a/electric/inmobidisplay/',
       // '/a': 'http://172.16.20.235:10001',
     }, //后面添加

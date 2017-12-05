@@ -8,8 +8,6 @@ import asyncRouter from './asyncRouter'
 // import NProgress from 'nprogress'
 // import 'nprogress/nprogress.css'
 import store from '../store/store'
-// import { session } from '../assets/util'
-// import { delCookie } from '../assets/js/cookie.js'
 var Cookie = require('../assets/js/cookie.js')
 Vue.use(VueRouter)
 // 默认路由
@@ -24,7 +22,7 @@ const routes = [
   {path: '/404', component: NotFound}
 ]
 const router = new VueRouter({
-  // mode: 'history',
+  mode: 'history',
   routes: routes
   // routes: asyncRouter
 })
@@ -34,7 +32,6 @@ router.beforeEach((to, from, next) => {
   // 开启进度条
   // NProgress.start()
   // 判断用户是否登录
-  // Cookie.delCookie('token')
   console.log('token:', Cookie.getCookie('token'))
   if (Cookie.getCookie('token') !== '' && Cookie.getCookie('token') !== undefined) {
     // 这种情况出现在手动修改地址栏地址时
@@ -54,10 +51,6 @@ router.beforeEach((to, from, next) => {
           // 匹配并生成需要添加的路由对象
           // console.log('获取到menus', result)
           generateAuthList(result, asyncRouter).then(res => {
-            // console.log('匹配出路由', res)
-            // sessionStorage.setItem('authList', JSON.stringify(res))
-            // store.dispatch('authList', JSON.stringify(res))
-            // console.log('res是', res)
             router.addRoutes(res)
             next(to.path)
           })

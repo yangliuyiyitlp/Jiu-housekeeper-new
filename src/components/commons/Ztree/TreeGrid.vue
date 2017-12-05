@@ -39,7 +39,7 @@
   </el-table>
 </template>
 <script>
-  import DataTransfer from '../../../../static/utils/dataTranslate.js'
+  import DataTransfer from '../../../utils/dataTranslate.js'
   //  import Vue from 'vue'
   import bus from '@/assets/js/eventBus.js'
 

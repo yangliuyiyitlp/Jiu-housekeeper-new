@@ -194,7 +194,7 @@
 </template>
 
 <script>
-  import baseUrl from '../../../../static/utils/baseUrl'
+  import baseUrl from '../../../utils/baseUrl'
 //  import isPermission from '../../../components/platformCom/hasPermission/index'
 
   export default {

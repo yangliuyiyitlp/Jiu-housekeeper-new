@@ -62,63 +62,85 @@
       },
       setting () {
         this.$router.push({
-          name: 'setting.user'
+//          name: 'setting.user'
+          name: getdefaultMenu('setting', this.menus)
         })
       },
       facility () {
         this.$router.push({
-          name: 'tabs'
+//          name: 'tabs'
+          name: getdefaultMenu('facility', this.menus)
         })
       },
       content () {
         this.$router.push({
-          name: 'content.release'
+//          name: 'content.release'
+          name: getdefaultMenu('content', this.menus)
         })
       },
       status () {
         this.$router.push({
-          name: 'status.bike.map'
+//          name: 'status.bike.map'
+          name: getdefaultMenu('status', this.menus)
         })
       },
       vip () {
         this.$router.push({
-          name: 'vip.info'
+//          name: 'vip.info'
+          name: getdefaultMenu('vip', this.menus)
         })
       },
       report () {
         this.$router.push({
-          name: 'report.vip'
+//          name: 'report.vip'
+          name: getdefaultMenu('report', this.menus)
         })
       },
       city () {
         this.$router.push({
-          name: 'city.bike.intervene.list'
+//          name: 'city.bike.intervene.list'
+          name: getdefaultMenu('city', this.menus)
         })
       },
       service () {
         this.$router.push({
-          name: 'service.change.credit'
+//          name: 'service.change.credit'
+          name: getdefaultMenu('service', this.menus)
         })
       },
       redpacket () {
         this.$router.push({
-          name: 'redpacket.click'
+//          name: 'redpacket.click'
+          name: getdefaultMenu('redpacket', this.menus)
         })
       },
       user () {
         this.$router.push({
-          name: 'user.info'
+//          name: 'user.info'
+          name: getdefaultMenu('user', this.menus)
         })
       },
       activity () {
         this.$router.push({
-//          name: 'activity.message'  一进来到红包雨页面
-          name: 'activity.red.rain'
+//          name: 'activity.red.rain'
+          name: getdefaultMenu('activity', this.menus)
         })
       }
     }
   }
 
+  // 找到第一个name值作为默认页面
+  function getdefaultMenu (menu, menus) {
+    for (let key in menus) {
+      if (key === menu) {
+        if (menus[key][0].name) {
+          return menus[key][0].name
+        } else if (menus[key][0].children) {
+          return menus[key][0].children[0].name
+        }
+      }
+    }
+  }
 </script>
 <style scoped>
   .img {
@@ -149,7 +171,9 @@
   .icon-anonymity {
     font-size: 14px !important;
   }
-
+  li.el-menu-item.right {
+    float: right;
+  }
   .right {
     float: right;
     font-size: 14px !important;

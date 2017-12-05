@@ -1,34 +1,27 @@
 <template>
-  <div class="login-wrap">
+  <div class="wrap">
     <h3>赳管家</h3>
     <p v-show="showTip">{{tip}}</p>
     <input type="text" placeholder="请输入用户名" v-model="username">
     <input type="password" placeholder="请输入密码" v-model="password">
-    <button v-on:click="login">登录</button>
-
-
+    <button @click="login">登录</button>
   </div>
 </template>
 <script>
-  import { setCookie, getCookie, delCookie } from '../../assets/js/cookie.js'
-  //  import { getRouterPath } from '../../router/index.js'
-  //  import store from '../../store/store'
+  import { getCookie, setCookie, delCookie } from '../../assets/js/cookie.js'
 
   export default {
     data () {
       return {
-        showLogin: true,
-        showRegister: false,
         showTip: false,
         tip: '',
         username: '',
-        password: '',
-        newUsername: '',
-        newPassword: '',
-        token: {}
+        password: ''
       }
     },
     mounted () {
+      delCookie('a')
+      setCookie('a', 1)
       /* 页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录 */
       if (getCookie('username')) {
         this.$router.push('/home')
@@ -57,29 +50,34 @@
                 /* 路由跳转this.$router.push */
                 this.$router.push('/main')
               } else if (res.data.code === 200) {
-                this.token = res.data.token
-                delCookie('token')
-                setCookie('token', this.token)
-                this.$ajax.post('/login/right', {token: this.token})
+//                delCookie('token')
+//                setCookie('token', this.token)
+                this.$ajax.post('/login/right', {token: res.data.token})
                   .then((res) => {
                     if (res.data.code === 200) {
                       let extendsRoutes = res.data.menus
                       // 存菜单
                       sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-                      // 动态添加路由
-//                      vm.$router.addRoutes(routerArr)
                       // 跳转界面
                       vm.$router.push({path: '/home'})
                       this.tip = '登录成功'
                       this.showTip = true
-                      delCookie('username')
-                      setCookie('username', this.username)
+//                      delCookie('username')
+//                      setCookie('username', this.username)
                     }
                   })
-                  .catch()
+                  .catch(() => {
+                    this.$message({
+                      type: 'error',
+                      message: '获取权限失败'
+                    })
+                  })
               }
             })
-            .catch()
+            .catch(() => {
+              this.tip = '登录失败'
+              this.showTip = true
+            })
         }
       }
     }
@@ -92,7 +90,7 @@
     text-align: center;
   }
 
-  .login-wrap {
+  .wrap {
     text-align: center;
     margin: 200px auto;
     position: relative;

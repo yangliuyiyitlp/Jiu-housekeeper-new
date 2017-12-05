@@ -10,7 +10,7 @@ import 'element-ui/lib/theme-default/index.css'
 import '@/assets/icon_font/iconfont.css'
 import VueMoment from 'vue-moment'
 import Axios from 'axios'
-import baseUrl from '../static/utils/baseUrl'
+import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
 
 let Cookie = require('./assets/js/cookie.js')
