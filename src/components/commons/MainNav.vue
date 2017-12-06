@@ -26,7 +26,7 @@
 </template>
 
 <script>
-  import { getCookie, delCookie } from '../../assets/js/cookie.js'
+  import Cookie from 'js-cookie'
 
   export default {
     data () {
@@ -41,21 +41,21 @@
       let menu = sessionStorage.getItem('menus')
       this.menus = JSON.parse(menu)
       /* 页面挂载获取保存的cookie值，渲染到页面上 */
-      this.username = getCookie('username')
+      this.username = Cookie.get('username')
       /* 如果cookie不存在，则跳转到登录页 */
-      if (getCookie('username') === '' || getCookie('username') === 'undefined') {
+      if (!Cookie.get('username')) {
         this.$router.push('/login')
       }
     },
     methods: {
       quit () {
         /* 删除cookie */
-        while (getCookie('token') !== '') {
-          delCookie('username')
-          delCookie('token')
+        while (Cookie.get('token') !== '' && Cookie.get('token') !== undefined) {
+          Cookie.remove('username')
+          Cookie.remove('token')
         }
         sessionStorage.removeItem('menus')
-        this.$router.replace('/login')
+        this.$router.push('/login')
       },
       handleSelect (key, keyPath) {
 //        console.log(key, keyPath)

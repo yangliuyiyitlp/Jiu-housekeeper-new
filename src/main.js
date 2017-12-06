@@ -12,8 +12,7 @@ import VueMoment from 'vue-moment'
 import Axios from 'axios'
 import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
-
-let Cookie = require('./assets/js/cookie.js')
+// import Cookie from 'js-cookie'
 Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
 Vue.prototype.$store = store
@@ -27,37 +26,36 @@ const service = Axios.create({
 
 // http request 拦截器
 // 每次请求都为http头增加Authorization字段，其内容为token
-service.interceptors.request.use(
-  config => {
-    if (store.state.user.token) {
-      // config.headers.Authorization = `token ${store.state.user.token}`
-      config.headers.Authorization = Cookie.getCookie('token')
-    }
-    return config
-  },
-  err => {
-    return Promise.reject(err)
-  })
+// service.interceptors.request.use(
+//   config => {
+//     if (store.state.user.token) {
+//       // config.headers.Authorization = `token ${store.state.user.token}`
+//       config.headers.Authorization = Cookie.get('token')
+//     }
+//     return config
+//   },
+//   err => {
+//     return Promise.reject(err)
+//   })
 
 // http response 拦截器
 // 针对响应代码确认跳转到对应页面
-service.interceptors.response.use(
-  response => response,
-  error => {
-    if (error.response) {
-      switch (error.response.status) {
-        case 401:
-          router.push('error/401')
-          break
-        case 403:
-          router.push('error/403')
-          break
-      }
-    }
-    // console.log(JSON.stringify(error));//console : Error: Request failed with status code 402
-    return Promise.reject(error.response.data)
-  }
-)
+// service.interceptors.response.use(
+//   response => response,
+//   error => {
+//     if (error.response) {
+//       switch (error.response.status) {
+//         case 401:
+//           router.push('error/401')
+//           break
+//         case 403:
+//           router.push('error/403')
+//           break
+//       }
+//     }
+//     return Promise.reject(error.response.data)
+//   }
+// )
 
 Vue.use(VueMoment)
 

@@ -8,7 +8,7 @@ import asyncRouter from './asyncRouter'
 // import NProgress from 'nprogress'
 // import 'nprogress/nprogress.css'
 import store from '../store/store'
-var Cookie = require('../assets/js/cookie.js')
+import Cookie from 'js-cookie'
 Vue.use(VueRouter)
 // 默认路由
 const routes = [
@@ -32,8 +32,8 @@ router.beforeEach((to, from, next) => {
   // 开启进度条
   // NProgress.start()
   // 判断用户是否登录
-  console.log('token:', Cookie.getCookie('token'))
-  if (Cookie.getCookie('token') !== '' && Cookie.getCookie('token') !== undefined) {
+  // Cookie.delCookie('token')
+  if (Cookie.get('token') !== '' && Cookie.get('token') !== undefined) {
     // 这种情况出现在手动修改地址栏地址时
     // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
     console.log('to.path', to.path)
@@ -43,14 +43,17 @@ router.beforeEach((to, from, next) => {
     } else {
       // 页面跳转前先判断是否存在权限列表，如果存在则直接跳转，如果没有则请求一次
       let authList = store.state.grantedAuthorities
-      console.log('authList', authList)
       if (authList === null || authList.length === 0) {
         console.log('没有权限list')
         // 获取权限列表，如果失败则跳回登录页重新登录
-        store.dispatch('getPermission', Cookie.getCookie('token')).then(result => {
+        store.dispatch('getPermission', Cookie.get('token')).then(result => {
           // 匹配并生成需要添加的路由对象
           // console.log('获取到menus', result)
           generateAuthList(result, asyncRouter).then(res => {
+            // console.log('匹配出路由', res)
+            // sessionStorage.setItem('authList', JSON.stringify(res))
+            // store.dispatch('authList', JSON.stringify(res))
+            // console.log('res是', res)
             router.addRoutes(res)
             next(to.path)
           })

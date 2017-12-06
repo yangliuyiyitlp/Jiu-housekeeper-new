@@ -8,7 +8,7 @@
   </div>
 </template>
 <script>
-  import { getCookie, setCookie, delCookie } from '../../assets/js/cookie.js'
+  import Cookie from 'js-cookie'
 
   export default {
     data () {
@@ -20,10 +20,8 @@
       }
     },
     mounted () {
-      delCookie('a')
-      setCookie('a', 1)
       /* 页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录 */
-      if (getCookie('username')) {
+      if (Cookie.get('username')) {
         this.$router.push('/home')
       } else {
         this.$router.push('/login')
@@ -39,6 +37,8 @@
           /* 假的地址接口请求 */
           this.$ajax.post('/login/submit', data)
             .then((res) => {
+//              Cookie.remove('token')
+//              Cookie.set('token', data)
               /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
               if (res.data.code === -1) {
                 this.tip = '该用户不存在'
@@ -49,21 +49,21 @@
               } else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
                 /* 路由跳转this.$router.push */
                 this.$router.push('/main')
-              } else if (res.data.code === 200) {
-//                delCookie('token')
-//                setCookie('token', this.token)
+              } else if (res.data.code === 200 && res.data.token !== '' && res.data.token !== undefined) {
+                Cookie.remove('token')
+                Cookie.set('token', res.data.token)
                 this.$ajax.post('/login/right', {token: res.data.token})
                   .then((res) => {
                     if (res.data.code === 200) {
                       let extendsRoutes = res.data.menus
                       // 存菜单
                       sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
+                      this.showTip = true
+                      Cookie.remove('username')
+                      Cookie.set('username', this.username)
                       // 跳转界面
                       vm.$router.push({path: '/home'})
                       this.tip = '登录成功'
-                      this.showTip = true
-//                      delCookie('username')
-//                      setCookie('username', this.username)
                     }
                   })
                   .catch(() => {
@@ -72,6 +72,9 @@
                       message: '获取权限失败'
                     })
                   })
+              } else {
+                this.tip = '登录失败'
+                this.showTip = true
               }
             })
             .catch(() => {
