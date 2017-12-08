@@ -1,11 +1,11 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" class="demo-form-inline">
       <el-form-item label="账户：">
         <el-input v-model="requestParam.account"></el-input>
       </el-form-item>
       <el-form-item label="厂家名称：">
-        <el-input v-model="requestParam.providerName" ></el-input>
+        <el-input v-model="requestParam.providerName"></el-input>
       </el-form-item>
       <el-form-item label="锁厂家编号：">
         <el-input v-model="requestParam.providerNo"></el-input>
@@ -40,26 +40,34 @@
     <el-table
       :data="tableData"
       border
-      fit
-      style="width: 100%">
+      fit>
       <el-table-column
         prop="id"
+        v-show=false
         label="ID">
       </el-table-column>
       // 返回的客户id
       <el-table-column
+        header-align="center"
+        align="center"
         prop="account"
         label="账户">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="providerName"
         label="厂家名称">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         prop="providerNo"
         label="锁厂家编号	">
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="登录状态">
         <template slot-scope="scope">
           <div v-if="scope.row.loginStatus==='true'">是</div>
@@ -67,13 +75,17 @@
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="添加时间">
         <template slot-scope="scope">
           <el-icon name="time"></el-icon>
-          <span style="margin-left: 10px">{{ scope.row.createTime | AddDate}}</span>
+          <span>{{ scope.row.createTime | AddDate}}</span>
         </template>
       </el-table-column>
       <el-table-column
+        header-align="center"
+        align="center"
         label="操作">
         <template slot-scope="scope">
           <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
@@ -120,9 +132,19 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
-        <el-button type="primary" @click="doModify('formA')" >确 定</el-button>
+        <el-button type="primary" @click="doModify('formA')">确 定</el-button>
       </div>
 
+    </el-dialog>
+    <!--导出弹框-->
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+      <el-button @click="exportCurrent">导出当前页</el-button>
+      <el-button @click="exportAll">导出所有</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelExport">取 消</el-button>
+      </div>
     </el-dialog>
 
   </div>
@@ -130,15 +152,19 @@
 
 <script>
   import baseUrl from '../../utils/baseUrl'
+
   export default {
     created: function () {
-      this.query('condition')
-      this.getSelectOptions()
+      this.query()
     },
     data: function () {
       return {
-        tableData: [],
+        tableData: [{ account: '发发发',
+          providerName: '方法',
+          providerNo: 'ff',
+          id: '1'}],
         dialogFormVisible: false,  // 模态框是否显示
+        exportFormVisible: false,
         form: {
           account: '',
           providerName: '',
@@ -171,94 +197,47 @@
       }
     },
     methods: {
-      getSelectOptions: function () {
-        this.$ajax.post('/provider/selectOptions').then(function (res) {
-//          this.providerOptions = res.data
-          console.log(res.data)
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
-      },
       query: function () {
-        this.exportParam.cityName = this.requestParam.cityName
-        this.exportParam.rank = this.requestParam.rank
-        this.exportParam.type = this.requestParam.type
-        this.exportParam.displayType = this.requestParam.displayType
-        this.exportParam.androidInmobiId = this.requestParam.androidInmobiId
-        this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
+        this.exportParam.account = this.requestParam.account
+        this.exportParam.providerName = this.requestParam.providerName
+        this.exportParam.providerNo = this.requestParam.providerNo
+        this.exportParam.loginStatus = this.requestParam.loginStatus
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
 
-//        function sendMsg (url, callback) {
-//          var p = new Promise(function (resolve, reject) {
-//            // 包含整件事的执行
-//            var xhr = new XMLHttpRequest()
-//            xhr.open('get', url)
-//            xhr.onreadystatechange = function () {
-//              if (xhr.readyState != 4) return
-//              if (xhr.status === 200) {
-//                // 成功后的操作
-//                alert(xhr.responseText)
-//                resolve('牛逼了')
-//              } else {
-//                reject('出错啦，哈哈')
-//              }
-//            }
-//            xhr.send()
-//          })
-//          return p// 返回p对象外部then||catch
-//        }
-
-        // 获取inmobi广告类型
-        this.$ajax.get('activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
+        // 获取登录状态
+        this.$ajax.get('/facility/tabs/status', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
             for (let i = 0; i < res.data.length; i++) {
               this.disObj[res.data[i].value] = res.data[i].label
             }
-            // 获取inmobi广告位置
-            this.$ajax.get('/activity/inmobi/display', {params: {type: 'inmobi_type'}})
-              .then((res) => {
-                for (let i = 0; i < res.data.length; i++) {
-                  this.typeObj[res.data[i].value] = res.data[i].label
+            // 获取列表
+            this.$ajax.get('/facility/tabs/list', {params: this.requestParam})
+              .then((response) => {
+                if (response.data.code === 0) {
+                  this.tableData = response.data.page.list
+                  for (let i = 0; i < response.data.page.list.length; i++) {
+                    this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
+                  }
+                  this.pagination.count = response.data.page.count
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: '获取列表异常'
+                  })
                 }
-                // 获取inmobi广告配置列表
-                this.$ajax.get('/activity/inmobi/tDisplayType/list', {params: this.requestParam})
-                  .then((response) => {
-                    if (response.data.code === 0) {
-                      this.tableData = response.data.page.list
-                      for (let i = 0; i < response.data.page.list.length; i++) {
-                        this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
-                        this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
-                      }
-                      this.pagination.count = response.data.page.count
-                    } else {
-                      this.$message({
-                        type: 'error',
-                        message: response.data.msg
-                      })
-                    }
-                  })
-                  .catch(() => {
-                    this.$message({
-                      type: 'info',
-                      message: '获取广告配置列表异常'
-                    })
-                  })
               })
               .catch(() => {
                 this.$message({
-                  type: 'info',
-                  message: '获取广告位置异常'
+                  type: 'error',
+                  message: '获取列表异常'
                 })
               })
           })
           .catch(() => {
             this.$message({
-              type: 'info',
-              message: '获取广告类型失败'
+              type: 'error',
+              message: '获取锁厂人员注册表失败'
             })
           })
       },
@@ -276,10 +255,10 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          if (id !== undefined) {
+          if (id !== undefined && id !== '') {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('/dataGrid/delete', {'id': id}).then(function (response) {
+            this.$ajax.post('/facility/tabs/delete', {'id': id}).then(function (response) {
               if (response.data.code === '1') {
                 // 删除成功
                 this.$message({
@@ -287,23 +266,24 @@
                   message: '删除成功'
                 })
                 // 刷新页面
-                this.query(this.requestParam)
+                this.query()
               } else {
                 this.$message({
                   type: 'error',
-                  message: '删除记录失败:' + response.data.msg
+                  message: '删除失败:' + response.data.msg
                 })
               }
-            }, function (err) {
-              this.$message({
-                type: 'info',
-                message: '操作失败' + err.status
-              })
             })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '删除异常'
+                })
+              })
           }
           this.$message({
             type: 'success',
-            message: '删除成功!'
+            message: '删除异常,没有对应id!'
           })
         }).catch(() => {
           this.$message({
@@ -316,7 +296,7 @@
         if (this.form === null || this.form === '' || this.form.account === undefined) {
           this.$message({
             message: '请选择一条记录进行操作!',
-            type: 'error'
+            type: 'warn'
           })
           return false
         }
@@ -324,9 +304,9 @@
           if (valid) {
             var url = ''
             if (this.form.id === undefined || this.form.id === '') {
-              url = '/dataGrid/add'
+              url = '/facility/tabs/add'
             } else {
-              url = '/dataGrid/modify'
+              url = '/facility/tabs/modify'
             }
             this.dialogFormVisible = false
             this.$ajax.post(url, {params: this.form}).then(function (response) {
@@ -378,6 +358,12 @@
 //        var obj = this.providerOptions.find(item => item.no === val)
 //        this.form.providerName = obj.name
       },
+      exportFile: function () {
+        this.exportFormVisible = true
+      },
+      cancelExport: function () {
+        this.exportFormVisible = false
+      },
       exportCurrent: function () {
         this.exportParam.pageNo = this.pagination.pageNo
         this.exportParam.pageSize = this.pagination.pageSize
@@ -398,16 +384,19 @@
   }
 </script>
 <style scoped>
-  .demo-form-inline{
-    padding-left:10px;
+  .demo-form-inline {
+    padding-left: 10px;
   }
+
   .demo-ruleForm {
     font-size: 20px !important;
     text-align: center;
   }
- .tbody{
-   text-align: left!important;
- }
+
+  .tbody {
+    text-align: left !important;
+  }
+
   .common {
     -webkit-appearance: none;
     -moz-appearance: none;

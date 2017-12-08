@@ -80,8 +80,8 @@
           type="daterange">
         </el-date-picker>
       </el-form-item>
-      <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
-      <el-button type="primary" @click="onExport">导出</el-button>
+      <el-button type="primary" @click="query">查询</el-button>
+      <el-button type="primary" @click="exportFile">导出</el-button>
     </el-form>
     <el-table
       :data="tableData"
@@ -156,9 +156,10 @@
   </div>
 </template>
 <script>
+  import baseUrl from '../../../utils/baseUrl'
   export default {
     created: function () {
-      this.onSubmit('condition')
+      this.query()
     },
     data () {
       return {
@@ -218,34 +219,70 @@
       }
     },
     methods: {
-      onSubmit: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.formInline
-        } else {
-          param = condition
-        }
-        console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
+      query () {
+        this.exportParam.num = this.formInline.num
+        this.exportParam.state = this.formInline.state
+        this.exportParam.electricstart = this.formInline.electricstart
+        this.exportParam.voltagestart = this.formInline.voltagestart
+        this.exportParam.pageNo = this.formInline.pageNo
+        this.exportParam.pageSize = this.formInline.pageSize
+        this.$ajax.get('/facility/info', {params: this.formInline})
+          .then(response => {
+            if (response.data.code === 0) {
+              this.tableData = response.data.page.list
+              this.pagination.count = response.data.page.count
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取列表信息异常'
+              })
+            }
+          }).catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取列表信息失败'
+            })
           })
-        })
       },
-      handleSizeChange: function (val) {
+      handleSizeChange (val) {
         this.formInline.pageSize = val
-        this.onSubmit('condition')
+        this.pagination.pageSize = val
+        this.query()
       },
-      handleCurrentChange: function (val) {
-        this.formInline.index = val
-        this.onSubmit('condition')
+      handleCurrentChange (val) {
+        this.formInline.pageNo = val
+        this.pagination.pageNo = val
+        this.query()
       },
-      onExport () {
-        console.log('onexport!')
+      exportFile () {
+        this.exportFormVisible = true
+      },
+      cancelExport () {
+        this.exportFormVisible = false
+      },
+      exportCurrent () {
+        var r = confirm('确定导出么')
+        if (r === true) {
+          this.exportParam.pageNo = this.pagination.pageNo
+          this.exportParam.pageSize = this.pagination.pageSize
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/register/export`)
+          this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
+        } else {
+          return
+        }
+      },
+      exportAll () {
+        var r = confirm('确定导出么')
+        if (r === true) {
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/register/exportAll`)
+          this.exportParam.pageSize = ''
+          this.exportParam.pageNo = ''
+          this.$refs['FileForm'].submit()
+          this.exportFormVisible = false
+        } else {
+          return
+        }
       }
     }
   }
