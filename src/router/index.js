@@ -90,6 +90,70 @@ router.beforeEach((to, from, next) => {
   }
 })
 
+//  login页面存token后 添加路由
+// import { getCookie } from '../assets/js/cookie.js'
+// 获取动态路由
+// import { getRouterPath } from '../assets/js/getRouter'
+// let routerArr = getRouterPath(JSON.parse(sessionStorage.getItem('menus')))
+// export function getRouterPath (menus) {
+//   if (menus === undefined) {
+//     return null
+//   } else {
+//     let routers = []
+//     // 拿到每个一级菜单,类型是数组
+//     for (let key in menus) {
+//       let router = {}
+//       router.path = '/' + key
+//       router.name = key
+//       router.component = firstUpperCase(key)
+//       router.children = []
+//       let firstMenuArr = menus[key]
+//       if (firstMenuArr instanceof Array && firstMenuArr.length > 0) {
+//         // 遍历一级菜单数组
+//         for (let i = 0; i < firstMenuArr.length; i++) {
+//           let firstMenu = firstMenuArr[i]
+//           // 遍历一级菜单的每个属性
+//           for (let firstMenuKey in firstMenu) {
+//             if (firstMenuKey === 'name') {
+//               let childRouter = {}
+//               // 说明没有children
+//               childRouter.name = firstMenu[firstMenuKey]
+//               childRouter.path = '/' + firstMenu[firstMenuKey].replace('.', '/')
+//               childRouter.component = firstUpperCase(dotConvert2Camel(firstMenu[firstMenuKey]))
+//               router.children.push(childRouter)
+//               continue
+//             } else if (firstMenuKey === 'children') {
+//               let secMenuArr = firstMenu.children
+//               // 二级菜单数组
+//               if (secMenuArr instanceof Array && secMenuArr.length > 0) {
+//                 for (let j = 0; j < secMenuArr.length; j++) {
+//                   let secMenu = secMenuArr[j]
+//                   if (secMenu.name !== undefined && secMenu.name !== '') {
+//                     let childRouter = {}
+//                     childRouter.name = secMenu.name
+//                     childRouter.path = '/' + secMenu.name.replace('.', '/')
+//                     childRouter.component = firstUpperCase(dotConvert2Camel(secMenu.name))
+//                     router.children.push(childRouter)
+//                     continue
+//                   }
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       } else {
+//         // 一级目录对应的不是数组的情况
+//       }
+//       routers.push(router)
+//     }
+//     console.log(JSON.stringify(routers))
+//     // let router1 = new Router({
+//     //   routes: routers
+//     // })
+//     // console.log(JSON.stringify(router1))
+//     return null
+//   }
+// }
 router.afterEach(() => {
   // NProgress.done() // 结束Progress
 })
