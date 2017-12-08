@@ -68,11 +68,11 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="pagination.index"
+      :current-page="pagination.pageNo"
       :page-sizes="pagination.pageSizes"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="pagination.total">
+      :total="pagination.count">
     </el-pagination>
     <!--弹框-->
     <el-dialog
@@ -160,9 +160,9 @@
           param = condition
         }
         console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
+        this.$ajax.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
+//          this.tableData = response.data.list
+//          this.pagination.total = response.data.total
         }, function (err) {
           this.$message({
             type: 'info',

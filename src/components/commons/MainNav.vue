@@ -17,7 +17,7 @@
         <a class='exit' href="#" @click="quit">退出</a>
       </li>
       <el-menu-item index="13" class="right " @click="user" v-if="menus.user">
-        <i class="iconfont icon-anonymity"></i>个人信息({{name}})
+        <i class="iconfont icon-anonymity"></i>个人信息({{username}})
       </el-menu-item>
 
     </el-menu>
@@ -26,31 +26,35 @@
 </template>
 
 <script>
-  import { getCookie, delCookie } from '../../assets/js/cookie.js'
+  import Cookie from 'js-cookie'
+
   export default {
     data () {
       return {
         activeIndex: '1',
         date: new Date(),
         menus: {},
-        name: ''
+        username: ''
       }
     },
     mounted () {
       let menu = sessionStorage.getItem('menus')
       this.menus = JSON.parse(menu)
       /* 页面挂载获取保存的cookie值，渲染到页面上 */
-      let uname = getCookie('username')
-      this.name = uname
+      this.username = Cookie.get('username')
       /* 如果cookie不存在，则跳转到登录页 */
-      if (uname === '') {
+      if (!Cookie.get('username')) {
         this.$router.push('/login')
       }
     },
     methods: {
       quit () {
         /* 删除cookie */
-        delCookie('username')
+        while (Cookie.get('token') !== '' && Cookie.get('token') !== undefined) {
+          Cookie.remove('username')
+          Cookie.remove('token')
+        }
+        sessionStorage.removeItem('menus')
         this.$router.push('/login')
       },
       handleSelect (key, keyPath) {
@@ -58,63 +62,85 @@
       },
       setting () {
         this.$router.push({
-          name: 'setting.user'
+//          name: 'setting.user'
+          name: getdefaultMenu('setting', this.menus)
         })
       },
       facility () {
         this.$router.push({
-          name: 'tabs'
+//          name: 'tabs'
+          name: getdefaultMenu('facility', this.menus)
         })
       },
       content () {
         this.$router.push({
-          name: 'content.release'
+//          name: 'content.release'
+          name: getdefaultMenu('content', this.menus)
         })
       },
       status () {
         this.$router.push({
-          name: 'status.bike.map'
+//          name: 'status.bike.map'
+          name: getdefaultMenu('status', this.menus)
         })
       },
       vip () {
         this.$router.push({
-          name: 'vip.info'
+//          name: 'vip.info'
+          name: getdefaultMenu('vip', this.menus)
         })
       },
       report () {
         this.$router.push({
-          name: 'report.vip'
+//          name: 'report.vip'
+          name: getdefaultMenu('report', this.menus)
         })
       },
       city () {
         this.$router.push({
-          name: 'city.bike.intervene.list'
+//          name: 'city.bike.intervene.list'
+          name: getdefaultMenu('city', this.menus)
         })
       },
       service () {
         this.$router.push({
-          name: 'service.change.credit'
+//          name: 'service.change.credit'
+          name: getdefaultMenu('service', this.menus)
         })
       },
       redpacket () {
         this.$router.push({
-          name: 'redpacket.click'
+//          name: 'redpacket.click'
+          name: getdefaultMenu('redpacket', this.menus)
         })
       },
       user () {
         this.$router.push({
-          name: 'user.info'
+//          name: 'user.info'
+          name: getdefaultMenu('user', this.menus)
         })
       },
       activity () {
         this.$router.push({
-//          name: 'activity.message'  一进来到红包雨页面
-          name: 'activity.red.rain'
+//          name: 'activity.red.rain'
+          name: getdefaultMenu('activity', this.menus)
         })
       }
     }
   }
 
+  // 找到第一个name值作为默认页面
+  function getdefaultMenu (menu, menus) {
+    for (let key in menus) {
+      if (key === menu) {
+        if (menus[key][0].name) {
+          return menus[key][0].name
+        } else if (menus[key][0].children) {
+          return menus[key][0].children[0].name
+        }
+      }
+    }
+  }
 </script>
 <style scoped>
   .img {
@@ -137,20 +163,26 @@
     font-family: Arial, "Microsoft YaHei";
     padding: 14px;
   }
-  .el-menu{
+
+  .el-menu {
     padding-bottom: 20px;
   }
+
   .icon-anonymity {
     font-size: 14px !important;
   }
-
+  li.el-menu-item.right {
+    float: right;
+  }
   .right {
     float: right;
-    font-size:14px!important;
+    font-size: 14px !important;
   }
-  .left{
-    margin-left:20px;
+
+  .left {
+    margin-left: 20px;
   }
+
   .time {
     float: right;
     height: 60px;
@@ -161,10 +193,12 @@
     color: #bfcbd9;
     font-size: 14px;
   }
- .exit{
-   color:#bfcbd9;
-   text-decoration:none;
- }
+
+  .exit {
+    color: #bfcbd9;
+    text-decoration: none;
+  }
+
   .user {
     /*background-color: #eef1f6 !important;*/
     padding: 0 !important;

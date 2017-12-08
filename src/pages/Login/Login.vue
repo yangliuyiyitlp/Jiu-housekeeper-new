@@ -1,39 +1,30 @@
 <template>
-  <div class="login-wrap">
+  <div class="wrap">
     <h3>赳管家</h3>
     <p v-show="showTip">{{tip}}</p>
     <input type="text" placeholder="请输入用户名" v-model="username">
     <input type="password" placeholder="请输入密码" v-model="password">
-    <button v-on:click="login">登录</button>
-
-
+    <button @click="login">登录</button>
   </div>
 </template>
 <script>
-  import { setCookie, getCookie } from '../../assets/js/cookie.js'
-  //  import { getRouterPath } from '../../router/index.js'
-  import store from '../../store/store'
+  import Cookie from 'js-cookie'
 
   export default {
     data () {
       return {
-        showLogin: true,
-        showRegister: false,
         showTip: false,
         tip: '',
         username: '',
-        password: '',
-        newUsername: '',
-        newPassword: '',
-        token: {}
+        password: ''
       }
     },
     mounted () {
       /* 页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录 */
-      if (getCookie('username')) {
+      if (Cookie.get('username')) {
         this.$router.push('/home')
       } else {
-        this.$router.push('/login/')
+        this.$router.push('/login')
       }
     },
     methods: {
@@ -46,6 +37,8 @@
           /* 假的地址接口请求 */
           this.$ajax.post('/login/submit', data)
             .then((res) => {
+//              Cookie.remove('token')
+//              Cookie.set('token', data)
               /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
               if (res.data.code === -1) {
                 this.tip = '该用户不存在'
@@ -56,33 +49,38 @@
               } else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
                 /* 路由跳转this.$router.push */
                 this.$router.push('/main')
-              } else if (res.data.code === 200) {
-                this.token = res.data.token
-//                document.cookie = 'token=' + this.token
-//                store.dispatch('setAuthorities', [])
-//                console.log(store.state().grantedAuthorities)
-                console.log('我问问', JSON.stringify(res))
-                store.dispatch('setToken', this.token)
-                this.$ajax.post('/login/right', {token: this.token})
+              } else if (res.data.code === 200 && res.data.token !== '' && res.data.token !== undefined) {
+                Cookie.remove('token')
+                Cookie.set('token', res.data.token)
+                this.$ajax.post('/login/right', {token: res.data.token})
                   .then((res) => {
                     if (res.data.code === 200) {
                       let extendsRoutes = res.data.menus
                       // 存菜单
                       sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-                      console.log(111)
-                      // 动态添加路由
-//                      vm.$router.addRoutes(routerArr)
+                      this.showTip = true
+                      Cookie.remove('username')
+                      Cookie.set('username', this.username)
                       // 跳转界面
                       vm.$router.push({path: '/home'})
                       this.tip = '登录成功'
-                      this.showTip = true
-                      setCookie('username', this.username, 1000 * 60)
                     }
                   })
-                  .catch()
+                  .catch(() => {
+                    this.$message({
+                      type: 'error',
+                      message: '获取权限失败'
+                    })
+                  })
+              } else {
+                this.tip = '登录失败'
+                this.showTip = true
               }
             })
-            .catch()
+            .catch(() => {
+              this.tip = '登录失败'
+              this.showTip = true
+            })
         }
       }
     }
@@ -95,7 +93,7 @@
     text-align: center;
   }
 
-  .login-wrap {
+  .wrap {
     text-align: center;
     margin: 200px auto;
     position: relative;

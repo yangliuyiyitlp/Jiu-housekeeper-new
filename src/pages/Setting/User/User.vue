@@ -315,7 +315,7 @@
 </template>
 
 <script>
-  import baseUrl from '../../../../static/utils/baseUrl.js'
+  import baseUrl from '../../../utils/baseUrl.js'
 
   export default {
     data () {

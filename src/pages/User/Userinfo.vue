@@ -1,4 +1,3 @@
-
 <template>
 <div class="container">
 <label>头像：</label>
@@ -14,27 +13,27 @@ action="https://jsonplaceholder.typicode.com/posts/"
 </el-upload>
 <br/>
 <div class="el-form-item__content">
-<div class="el-input">
+<div class="input">
 <label>归属公司：</label><span></span><br/>
 <label>归属部门：</label><span></span><br/>
 <label>姓名：</label><input class='width' id="inp5"><span></span><br/>
 <label>邮箱：</label><input class='width' id="inp3"><span></span><br/>
 <label>座机：</label><input class='width' id="inp4"><span></span><br/>
 <label>手机：</label><input class='width' id="inp2"><span></span><br/>
-<el-form-item label="备注">
-<el-input type="textarea" ></el-input>
-</el-form-item>
+<!--<el-form-item label="备注">-->
+<!--<el-input type="textarea" ></el-input>-->
+<!--</el-form-item>-->
+  <label>备注：</label><input type='textarea' class='width height' id="in6"><span></span><br/>
 <label>用户类型：</label><span></span><br/>
 <label>用户角色：</label><span></span><br/>
 <label>上次登录：</label><span></span><br/>
   <input type="button" value="保存" class="submit" @click="keep">
 </div>
 </div>
-
 </div>
 </template>
 <script>
-  import {checkReg} from '../../assets/js/userinfo.js'
+  import {checkReg} from '../../assets/js/userinfo'
   export default {
     data () {
       return {
@@ -78,6 +77,9 @@ margin-top: 50px;
 }
 .width{
   width:300px;
+}
+.height{
+  height:100px;
 }
 /*上传头像开始*/
 .avatar-uploader .el-upload {
@@ -136,11 +138,11 @@ transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
 margin-bottom: 5px;
 margin-left:20px;
 }
-.el-input{
+.input{
 font-size:14px;
 }
 .submit{
-margin-top:20px;
+margin-top:60px;
 background-color: #20a0ff;
 color:#fff;
 position: absolute;

@@ -1,10 +1,13 @@
 /* 用export把方法暴露出来 */
 /* 设置cookie */
-export function setCookie (cname, value, expire) {
-  var date = new Date()
-  date.setSeconds(date.getSeconds() + expire)
-  document.cookie = cname + '=' + escape(value) + '; expires=' + date.toGMTString()
-  console.log(document.cookie)
+// export function setCookie (cname, value, expire) {
+//   var date = new Date()
+//   date.setSeconds(date.getSeconds() + expire)
+//   document.cookie = cname + '=' + escape(value) + '; expires=' + date.toGMTString()
+// }
+
+export function setCookie (name, value) {
+  document.cookie = name + '=' + escape(value)
 }
 
 /* 获取cookie */
@@ -20,9 +23,8 @@ export function getCookie (cname) {
   }
   return ''
 }
-
 /* 删除cookie */
 export function delCookie (cname) {
-  setCookie(cname, '', -1)
+  setCookie(cname, '')
 }
 

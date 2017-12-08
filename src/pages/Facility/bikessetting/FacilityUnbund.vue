@@ -24,19 +24,19 @@
       <el-form-item label="iccid：">
         <el-input v-model.trim="requestParam.iccid"></el-input>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="query">查询</el-button>
+      <el-form-item v-if="hasPermission('view')">
+        <el-button type="primary" @click="query" >查询</el-button>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="exportFile">导出</el-button>
+      <el-form-item v-if="hasPermission('outPort')">
+        <el-button type="primary" @click="exportFile" >导出</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasPermission('downFile')">
         <!--/facility/unbund/import/template-->
         <!--http://172.16.20.235:10001/a/electric/tUnbangdingFail/interface/import/template-->
         <el-button type="primary" @click="downFile">下载模板</el-button>
       </el-form-item>
     </el-form>
-    <el-form class='importForm'>
+    <el-form class='importForm' v-if="hasPermission('inPort')">
       <el-form-item label="点击上传：">
         <input ref='upload' type="file" @change="getFile">
         <button @click="importFile">导入</button>
@@ -194,7 +194,8 @@
 </template>
 
 <script>
-  import baseUrl from '../../../../static/utils/baseUrl'
+  import baseUrl from '../../../utils/baseUrl'
+//  import isPermission from '../../../components/platformCom/hasPermission/index'
 
   export default {
     created: function () {
@@ -251,6 +252,14 @@
       }
     },
     methods: {
+      hasPermission (data) {
+//        isPermission(data)
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       list: function () {
 //        this.message = false
         this.$ajax.get('/facility/unbund', {params: {type: 'bike_batch_operate_flag'}})

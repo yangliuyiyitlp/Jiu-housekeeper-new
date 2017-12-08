@@ -524,8 +524,8 @@
 
 <script>
   import Moment from 'moment'
-  import Tools from '../../../../static/utils/tools.js'
-  import baseUrl from '../../../../static/utils/baseUrl.js'
+  import Tools from '../../../utils/tools.js'
+  import baseUrl from '../../../utils/baseUrl.js'
 
   export default {
     data () {

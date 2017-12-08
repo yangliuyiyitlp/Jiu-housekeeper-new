@@ -20,7 +20,8 @@ const store = new Vuex.Store({
         Axios.post('/login/right', {token: token}).then((res) => {
           // 存储权限列表
           context.commit('setAuth', res.data.menus)
-          resolve(res.data)
+          sessionStorage.setItem('menus', JSON.stringify(res.data.menus))
+          resolve(res.data.menus)
         }).catch(() => {
           reject()
         })
