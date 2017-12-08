@@ -142,7 +142,8 @@ Axios.interceptors.request.use(config => {
   // element ui Loading方法
   let ins = ElementUI.Loading.service({
     fullscreen: true,
-    'element-loading-background': 'rgba(0, 0, 0, 0.8)'
+    'element-loading-background': 'rgba(0, 0, 0, 0.8)',
+    'element-loading-text': '拼命加载中'
   })
 
   loading.attach(ins)

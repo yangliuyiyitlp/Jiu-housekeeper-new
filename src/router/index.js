@@ -101,7 +101,7 @@ import ActivityRedrain from '@/pages/Activity/ActivityMonth/ActivityRedrain.vue'
 Vue.use(Router)
 
 //  login页面存token后 添加路由
-import { getCookie } from '../assets/js/cookie.js'
+// import { getCookie } from '../assets/js/cookie.js'
 // 获取动态路由
 // import { getRouterPath } from '../assets/js/getRouter'
 // let routerArr = getRouterPath(JSON.parse(sessionStorage.getItem('menus')))
