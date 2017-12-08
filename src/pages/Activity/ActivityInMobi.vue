@@ -1,6 +1,6 @@
 <template>
   <div id="dataGrid">
-    <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
+    <el-form :inline="true" :model="requestParam" class="demo-form-inline">
       <el-form-item label="城市名称:">
         <el-input v-model.trim="requestParam.cityName">
         </el-input>
@@ -244,6 +244,7 @@
 <script>
   const cityOptions = ['成都市', '湖州市', '北京市', '深圳市', '厦门市', '佛山市', '珠海市']
   import baseUrl from '../../utils/baseUrl'
+
   export default {
     created: function () {
       this.query()
@@ -339,6 +340,27 @@
         this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
         this.exportParam.pageNo = this.requestParam.pageNo
         this.exportParam.pageSize = this.requestParam.pageSize
+
+//        function sendMsg (url, callback) {
+//          var p = new Promise(function (resolve, reject) {
+//            // 包含整件事的执行
+//            var xhr = new XMLHttpRequest()
+//            xhr.open('get', url)
+//            xhr.onreadystatechange = function () {
+//              if (xhr.readyState != 4) return
+//              if (xhr.status === 200) {
+//                // 成功后的操作
+//                alert(xhr.responseText)
+//                resolve('牛逼了')
+//              } else {
+//                reject('出错啦，哈哈')
+//              }
+//            }
+//            xhr.send()
+//          })
+//          return p// 返回p对象外部then||catch
+//        }
+
         // 获取inmobi广告类型
         this.$ajax.get('activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
           .then((res) => {
@@ -698,6 +720,7 @@
       }
     }
   }
+
 </script>
 <style scoped>
   #dataGrid {
@@ -765,7 +788,8 @@
     text-align: left;
     margin-left: 0%;
   }
-  .demo-form-inline{
-    padding-left:10px;
+
+  .demo-form-inline {
+    padding-left: 10px;
   }
 </style>

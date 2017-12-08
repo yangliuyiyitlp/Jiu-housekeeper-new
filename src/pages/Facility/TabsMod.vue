@@ -1,33 +1,42 @@
-<script src="../../main.js"></script>
 <template>
   <div id="dataGrid">
     <el-form :inline="true" :model="requestParam"  class="demo-form-inline">
       <el-form-item label="账户：">
-        <el-input v-model="requestParam.account" placeholder="账户"></el-input>
+        <el-input v-model="requestParam.account"></el-input>
       </el-form-item>
       <el-form-item label="厂家名称：">
-        <el-input v-model="requestParam.providerName" placeholder="厂家名称"></el-input>
+        <el-input v-model="requestParam.providerName" ></el-input>
       </el-form-item>
       <el-form-item label="锁厂家编号：">
-        <el-input v-model="requestParam.providerNo" placeholder="锁厂家编号"></el-input>
+        <el-input v-model="requestParam.providerNo"></el-input>
       </el-form-item>
       <el-form-item label="登录状态：">
-        <el-select v-model="requestParam.loginStatus" placeholder="登录状态">
+        <el-select v-model="requestParam.loginStatus">
           <el-option label="全部" value=""></el-option>
           <el-option label="是" value="true"></el-option>
           <el-option label="否" value="false"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="query('condition')">查询</el-button>
+        <el-button type="primary" @click="query">查询</el-button>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click='export2Excel'>导出</el-button>
+        <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
       </el-form-item>
     </el-form>
+    <!--隐藏表单用于文件导出-->
+    <form action="" style="display: none"
+          method=" " ref="FileForm">
+      <input name="account" v-model="exportParam.account"/>
+      <input name="providerName" v-model="exportParam.providerName"/>
+      <input name="providerNo" v-model="exportParam.providerNo"/>
+      <input name="loginStatus" v-model="exportParam.loginStatus"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
+    </form>
     <el-table
       :data="tableData"
       border
@@ -111,7 +120,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancelOperate">取 消</el-button>
-        <el-button type="primary" @click="doModify('formA')" :loading="addLoading">确 定</el-button>
+        <el-button type="primary" @click="doModify('formA')" >确 定</el-button>
       </div>
 
     </el-dialog>
@@ -120,6 +129,7 @@
 </template>
 
 <script>
+  import baseUrl from '../../utils/baseUrl'
   export default {
     created: function () {
       this.query('condition')
@@ -129,15 +139,22 @@
       return {
         tableData: [],
         dialogFormVisible: false,  // 模态框是否显示
-        addLoading: false,       // 是否显示loading
         form: {
           account: '',
           providerName: '',
           providerNo: '',
           id: ''
         },
+        exportParam: {
+          account: '',
+          providerName: '',
+          providerNo: '',
+          loginStatus: '',
+          pageSize: 30,
+          pageNo: 1
+        },
         formLabelWidth: '80px',
-        requestParam: {account: '', providerName: '', providerNo: '', loginStatus: '', pageSize: 10, index: 1},
+        requestParam: {account: '', providerName: '', providerNo: '', loginStatus: '', pageSize: 30, index: 1},
         rules: {
           account: [
             {required: true, message: '请输入账户名称', trigger: 'blur'}
@@ -149,7 +166,7 @@
             {required: true, message: '请输入锁厂家编号', trigger: 'blur'}
           ]
         },
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, total: 0, index: 1},
         providerOptions: []
       }
     },
@@ -165,28 +182,85 @@
           })
         })
       },
-      query: function (condition) {
-//        var param = {}
-//        if (condition === 'condition') {
-//          param = this.requestParam
-//        } else {
-//          param = condition
-//        }
-//        console.log(param)
-//        console.log(qsqs.stringify(param))
-//        this.ajax.get('http://116.231.72.55:10001/a/electric/lockfactoryinfo/interface/list', this.$qs.stringify(param), {
-//          headers: {
-//            'Content-Type': 'application/x-www-form-urlencoded'
-//          }
-//        }).then(function (response) {
-//          this.tableData = response.page.list
-//          this.pagination.total = response.page.pageNo
-//        }, function (err) {
-//          this.$message({
-//            type: 'info',
-//            message: '获取列表信息失败' + err.status
+      query: function () {
+        this.exportParam.cityName = this.requestParam.cityName
+        this.exportParam.rank = this.requestParam.rank
+        this.exportParam.type = this.requestParam.type
+        this.exportParam.displayType = this.requestParam.displayType
+        this.exportParam.androidInmobiId = this.requestParam.androidInmobiId
+        this.exportParam.iosInmobiId = this.requestParam.iosInmobiId
+        this.exportParam.pageNo = this.requestParam.pageNo
+        this.exportParam.pageSize = this.requestParam.pageSize
+
+//        function sendMsg (url, callback) {
+//          var p = new Promise(function (resolve, reject) {
+//            // 包含整件事的执行
+//            var xhr = new XMLHttpRequest()
+//            xhr.open('get', url)
+//            xhr.onreadystatechange = function () {
+//              if (xhr.readyState != 4) return
+//              if (xhr.status === 200) {
+//                // 成功后的操作
+//                alert(xhr.responseText)
+//                resolve('牛逼了')
+//              } else {
+//                reject('出错啦，哈哈')
+//              }
+//            }
+//            xhr.send()
 //          })
-//        })
+//          return p// 返回p对象外部then||catch
+//        }
+
+        // 获取inmobi广告类型
+        this.$ajax.get('activity/inmobi/display', {params: {type: 'inmobi_display_type'}})
+          .then((res) => {
+            for (let i = 0; i < res.data.length; i++) {
+              this.disObj[res.data[i].value] = res.data[i].label
+            }
+            // 获取inmobi广告位置
+            this.$ajax.get('/activity/inmobi/display', {params: {type: 'inmobi_type'}})
+              .then((res) => {
+                for (let i = 0; i < res.data.length; i++) {
+                  this.typeObj[res.data[i].value] = res.data[i].label
+                }
+                // 获取inmobi广告配置列表
+                this.$ajax.get('/activity/inmobi/tDisplayType/list', {params: this.requestParam})
+                  .then((response) => {
+                    if (response.data.code === 0) {
+                      this.tableData = response.data.page.list
+                      for (let i = 0; i < response.data.page.list.length; i++) {
+                        this.tableData[i].displayType = this.disObj[response.data.page.list[i].displayType]
+                        this.tableData[i].type = this.typeObj[response.data.page.list[i].type]
+                      }
+                      this.pagination.count = response.data.page.count
+                    } else {
+                      this.$message({
+                        type: 'error',
+                        message: response.data.msg
+                      })
+                    }
+                  })
+                  .catch(() => {
+                    this.$message({
+                      type: 'info',
+                      message: '获取广告配置列表异常'
+                    })
+                  })
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '获取广告位置异常'
+                })
+              })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '获取广告类型失败'
+            })
+          })
       },
       modifyRecord: function (scope) {
         console.log(scope)
@@ -304,22 +378,22 @@
 //        var obj = this.providerOptions.find(item => item.no === val)
 //        this.form.providerName = obj.name
       },
-      export2Excel: function () {
-        alert('下载吗')
+      exportCurrent: function () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('method', 'get')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      exportAll: function () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('method', 'post')
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/inmobi/tDisplayType/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       }
-//      export2Excel () {
-//        require.ensure([], () => {
-//          const { export_json_to_excel } = require('../../assets/vendor/Export2Excel')
-//          const tHeader = ['序号', '账号', '厂家名称', '锁厂家编号']  // '登录状态', '添加时间'
-//          const filterVal = ['ID', 'account', 'providerName', 'providerNo']
-//          const list = this.tableData
-//          const data = this.formatJson(filterVal, list)
-//          export_json_to_excel(tHeader, data, '列表excel')
-//        })
-//      },
-//      formatJson (filterVal, jsonData) {
-//        return jsonData.map(v => filterVal.map(j => v[j]))
-//      }
     }
   }
 </script>
