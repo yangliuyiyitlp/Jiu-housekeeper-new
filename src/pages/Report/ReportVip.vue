@@ -16,21 +16,28 @@
           <el-option label="认证审核未通过" value="useing"></el-option>
         </el-select>
       </el-form-item>
+      <!--数模型-->
       <el-form-item label="创建者：">
-        <!--数模型-->
         <el-input
+          :disabled="true"
+          :on-icon-click="searchSection"
           icon="search"
-          v-model="formInline.search"
-          :on-icon-click="handleIconClick" @click="dialogVisible = true">
+          v-model="formInline.attributionSection">
         </el-input>
       </el-form-item>
-      <el-form-item label="更新时间：">
+
+      <el-form-item label="添加时间:">
         <el-date-picker
-          v-model="value6"
-          type="daterange">
+          v-model="formInline.beginAddTime"
+          type="datetime">
+        </el-date-picker>
+        <el-date-picker
+          v-model="formInline.endAddTime"
+          type="datetime">
         </el-date-picker>
       </el-form-item>
-      <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
+
+      <el-button type="primary" @click="query">查询</el-button>
     </el-form>
     <el-table
       :data="tableData"
@@ -74,34 +81,35 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.count">
     </el-pagination>
-    <!--弹框-->
-    <el-dialog
-      title="选择区域"
-      :visible.sync="dialogVisible"
-      size="tiny"
-      :before-close="handleClose">
-      <el-form ref="formInline" :model="formInline" label-width="80px">
-        <el-form-item label="关键字:">
-          <el-input v-model="formInline.key" style="width:150px;"></el-input>
-        </el-form-item>
-        <el-button   @click="onsearch">搜索</el-button>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
+    <!--模态框-->
+    <el-dialog title='创建者' size="tiny" :visible.sync="cityVisible" center>
+      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+      <el-tree
+        ref="tree2"
+        highlight-current
+        :data="select"
+        :props="defaultProps"
+        class="searchTree"
+        accordion
+        :filter-node-method="filterNode"
+        @node-click="handleNode">
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyCancel">取 消</el-button>
+        <el-button type="primary" @click="doModify">确 定</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
 <script>
   export default {
-    created: function () {
-      this.onSubmit('condition')
-    },
     data () {
       return {
         value6: '',
+        select: '',
         dialogVisible: false,
+        cityVisible: false,
+        filterText: '',
         formInline: {
           user: '',
           region: '',
@@ -127,21 +135,153 @@
           person: '李四',
           date: '2016-05-02',
           remark: 'aaa'
-        }, {
-          number: '0009',
-          status: '正常',
-          code: '01',
-          pressure: '0',
-          state: '锁开',
-          edition: '0',
-          version: '0',
-          line: 'ddd',
-          addtime: '2017-09-09 19:00:38',
-          person: '张三',
-          date: '2016-05-02',
-          remark: 'aaa'
         }],
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        select_section: [{
+          id: 1,
+          label: '上海市总公司',
+          children: [{
+            id: 4,
+            label: '厦门分公司'
+          }, {
+            id: 4,
+            label: '佛山分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }, {
+            id: 4,
+            label: '珠海分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }, {
+            id: 4,
+            label: '运营部'
+          }, {
+            id: 4,
+            label: '北京分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }, {
+            id: 4,
+            label: '客服部',
+            children: [{
+              id: 9,
+              label: '红包管理员'
+            }, {
+              id: 9,
+              label: '客服部'
+            }]
+          }, {
+            id: 4,
+            label: '上海分公司',
+            children: [{
+              id: 9,
+              label: '黄浦区政府'
+            }, {
+              id: 9,
+              label: '城市运营'
+            }, {
+              id: 9,
+              label: '虹口区政府'
+            }, {
+              id: 9,
+              label: '普陀区政府'
+            }, {
+              id: 9,
+              label: '静安区政府'
+            }, {
+              id: 9,
+              label: '嘉定区政府'
+            }, {
+              id: 9,
+              label: '浦东新区政府'
+            }, {
+              id: 9,
+              label: '闵行区政府'
+            }, {
+              id: 9,
+              label: '宝山区政府'
+            }, {
+              id: 9,
+              label: '松江区政府'
+            }, {
+              id: 9,
+              label: '杨浦区政府'
+            }, {
+              id: 9,
+              label: '徐汇区政府'
+            }, {
+              id: 9,
+              label: '长宁区政府'
+            }, {
+              id: 9,
+              label: '青浦区政府'
+            }, {
+              id: 9,
+              label: '奉贤区政府'
+            }, {
+              id: 9,
+              label: '金山区政府'
+            }]
+          }, {
+            id: 4,
+            label: '生产部'
+          }, {
+            id: 4,
+            label: '成都分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }, {
+            id: 4,
+            label: '湖州分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }, {
+            id: 4,
+            label: '公司领导'
+          }, {
+            id: 4,
+            label: '综合部'
+          }, {
+            id: 4,
+            label: '市场部'
+          }, {
+            id: 4,
+            label: '技术部'
+          }, {
+            id: 4,
+            label: '研发部'
+          }, {
+            id: 4,
+            label: '深圳分公司',
+            children: [{
+              id: 9,
+              label: '城市运营'
+            }]
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        }
+      }
+    },
+    created () {
+      this.query()
+    },
+    watch: {
+      filterText (val) {
+        this.$refs.tree2.filter(val)
       }
     },
     methods: {
@@ -151,24 +291,6 @@
             done()
           })
           .catch(_ => {})
-      },
-      onSubmit: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.formInline
-        } else {
-          param = condition
-        }
-        console.log(param)
-        this.$ajax.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-//          this.tableData = response.data.list
-//          this.pagination.total = response.data.total
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
       },
       handleSizeChange: function (val) {
         this.formInline.pageSize = val
@@ -181,14 +303,44 @@
       handleIconClick (ev) {
         console.log(ev)
       },
-      onsearch: function () {}
+      query: function () {},
+      filterNode (value, data) {
+        if (!value) return true
+        return data.label.indexOf(value) !== -1
+      },
+      handleNode (data) {
+        this.filterText = data.label // 弹框树模型点击输入值
+      },
+      handleNodeClick (data) {
+        this.formInline.attributionSection = data.label
+      },
+      doModify () {
+        this.formInline.attributionSection = this.filterText
+        this.cityVisible = false
+      },
+      modifyCancel () {
+        this.cityVisible = false
+        this.formInline.attributionSection = ''
+      },
+      searchSection () {
+        this.cityVisible = true
+        this.select = this.select_section
+        this.filterText = ''
+      }
     }
   }
 </script>
 <style scoped>
+  @import'../../assets/css/common.css';
   .demo-form-inline{
     padding-left:10px;
   }
-
+  /*.keySearch {*/
+    /*width: 140px;*/
+    /*height: 20px;*/
+    /*outline-style: none;*/
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 5px;*/
+  /*}*/
 </style>
 

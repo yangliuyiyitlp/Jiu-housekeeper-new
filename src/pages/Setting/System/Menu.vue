@@ -1,5 +1,5 @@
 <template>
-  <div class="right">
+  <div >
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!--菜单列表-->
       <el-tab-pane label="菜单列表" name="first">
@@ -457,9 +457,9 @@
     methods: {
       handleClick (tab, event) {
         if (this.activeName2 === 'first') {
-          this.titleSecond = '机构添加'
+          this.titleSecond = '菜单添加'
         }
-        if (tab.label === '机构添加') {
+        if (tab.label === '菜单添加') {
           this.addRecord()
         }
       },

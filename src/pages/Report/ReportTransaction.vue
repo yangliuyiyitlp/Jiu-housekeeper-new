@@ -2,13 +2,13 @@
   <div class="info">
     <el-form :inline="true" :model="formInline" class="demo-form-inline">
       <el-form-item label="用户姓名：">
-        <el-input v-model="formInline.user" placeholder="模糊查询"></el-input>
+        <el-input v-model="formInline.user"></el-input>
       </el-form-item>
       <el-form-item label="手机号：">
-        <el-input v-model="formInline.user" placeholder="模糊查询"></el-input>
+        <el-input v-model="formInline.user"></el-input>
       </el-form-item>
       <el-form-item label="车辆编号：">
-        <el-input v-model="formInline.user" placeholder="模糊查询"></el-input>
+        <el-input v-model="formInline.user"></el-input>
       </el-form-item>
       <el-form-item label="用户类型：">
         <el-select v-model="formInline.status">
@@ -40,8 +40,51 @@
         </el-select>
       </el-form-item>
 
-      <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
-      <el-button type="primary" @click="onExport">导出</el-button>
+      <el-button type="primary" @click="query">查询</el-button>
+      <el-button type="primary" @click="exportFile">导出</el-button>
+      <!--更多-->
+      <span type="primary" @click="more" class="moreStyle">更多查询</span>
+      <div ref=" more" v-if="showMore" class="moreFloat">
+        <el-form-item label="订单号：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="里程数：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+          -
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="消费卡路里：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+          -
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="借车时间:">
+          <el-date-picker
+            class="timeInput"
+            v-model="formInline.beginAddTime"
+            type="datetime">
+          </el-date-picker>
+          -
+          <el-date-picker
+            class="timeInput"
+            v-model="formInline.endAddTime"
+            type="datetime">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="还车时间:">
+          <el-date-picker
+            class="timeInput"
+            v-model="formInline.beginAddTime"
+            type="datetime">
+          </el-date-picker>
+          -
+          <el-date-picker
+            class="timeInput"
+            v-model="formInline.endAddTime"
+            type="datetime">
+          </el-date-picker>
+        </el-form-item>
+      </div>
     </el-form>
     <el-table
       :data="tableData"
@@ -133,33 +176,19 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-    <!--弹框-->
-    <el-dialog
-      title="选择区域"
-      :visible.sync="dialogVisible"
-      size="tiny"
-      :before-close="handleClose">
-      <el-form ref="formInline" :model="formInline" label-width="80px">
-        <el-form-item label="关键字:">
-          <el-input v-model="formInline.key" style="width:150px;"></el-input>
-        </el-form-item>
-        <el-button   @click="onsearch">搜索</el-button>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 <script>
+  import baseUrl from '../../utils/baseUrl.js'
+
   export default {
     created: function () {
-      this.onSubmit('condition')
+      this.query()
     },
     data () {
       return {
         dialogVisible: false,
+        showMore: false,
         formInline: {
           user: '',
           region: '',
@@ -185,49 +214,11 @@
           person: '李四',
           date: '2016-05-02',
           remark: 'aaa'
-        }, {
-          number: '0009',
-          status: '正常',
-          code: '01',
-          pressure: '0',
-          state: '锁开',
-          edition: '0',
-          version: '0',
-          line: 'ddd',
-          addtime: '2017-09-09 19:00:38',
-          person: '张三',
-          date: '2016-05-02',
-          remark: 'aaa'
         }],
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
       }
     },
     methods: {
-      handleClose (done) {
-        this.$confirm('确认关闭？')
-          .then(_ => {
-            done()
-          })
-          .catch(_ => {})
-      },
-      onSubmit: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.formInline
-        } else {
-          param = condition
-        }
-        console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
-        }, function (err) {
-          this.$message({
-            type: 'info',
-            message: '获取列表信息失败' + err.status
-          })
-        })
-      },
       handleSizeChange: function (val) {
         this.formInline.pageSize = val
         this.onSubmit('condition')
@@ -236,20 +227,54 @@
         this.formInline.index = val
         this.onSubmit('condition')
       },
-      onExport () {
-        console.log('onexport!')
-      },
       handleIconClick (ev) {
         console.log(ev)
       },
-      onsearch: function () {}
+      query: function () {},
+      exportFile () {
+        this.exportFormVisible = true
+      },
+      cancelExport () {
+        this.exportFormVisible = false
+      },
+      exportCurrent () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      exportAll () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      more () {
+        if (this.showMore === true) {
+          this.showMore = false
+        } else {
+          this.showMore = true
+        }
+      }
     }
   }
 </script>
 <style scoped>
-  .demo-form-inline{
-    padding-left:10px;
-  }
+  @import '../../assets/css/common.css';
 
+  .demo-form-inline {
+    padding-left: 10px;
+  }
+  .moreStyle {
+    font-size: 14px;
+    color: #20a0ff;
+    cursor: pointer;
+    folat:left;
+  }
+  .el-form-item__content .el-input .el-input__inner{
+    width:100px!important;
+  }
 </style>
 

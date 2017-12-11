@@ -856,9 +856,10 @@
 </script>
 
 <style scoped>
-  .padding {
-    padding-left: 10px;
-  }
+  @import'../../../assets/css/common.css';
+  /*.padding {*/
+    /*padding-left: 10px;*/
+  /*}*/
 
   .importForm {
     height: 0px;
@@ -877,18 +878,18 @@
     top: 0px;
   }
 
-  .demo-ruleForm {
-    font-size: 20px !important;
-    text-align: center;
-  }
+  /*.demo-ruleForm {*/
+    /*font-size: 20px !important;*/
+    /*text-align: center;*/
+  /*}*/
 
-  .keySearch {
-    width: 140px;
-    height: 20px;
-    outline-style: none;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
+  /*.keySearch {*/
+    /*width: 140px;*/
+    /*height: 20px;*/
+    /*outline-style: none;*/
+    /*border: 1px solid #ccc;*/
+    /*border-radius: 5px;*/
+  /*}*/
 
   .search {
     height: 20px;

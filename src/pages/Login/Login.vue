@@ -124,7 +124,7 @@
               resolve(res)
             })
               .catch(err => {
-                reject(vm.tip = err.data.msg)
+                reject(vm.tip = '登录失败' + err)
               })
           })
         }

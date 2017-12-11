@@ -6,16 +6,16 @@
           <!--筛选-->
           <el-form :inline="true" :model="formInline" class="form-fisrt">
             <el-form-item label="姓名:">
-              <el-input v-model="formInline.user" placeholder="姓名"></el-input>
+              <el-input v-model="formInline.user"></el-input>
             </el-form-item>
             <el-form-item label="昵称">
-              <el-input v-model="formInline.nickname" placeholder="昵称"></el-input>
+              <el-input v-model="formInline.nickname" ></el-input>
             </el-form-item>
             <el-form-item label="手机号:">
-              <el-input v-model="formInline.phone" placeholder="手机号"></el-input>
+              <el-input v-model="formInline.phone" ></el-input>
             </el-form-item>
             <el-form-item label="身份证:">
-              <el-input v-model="formInline.id_card" placeholder="身份证"></el-input>
+              <el-input v-model="formInline.id_card"></el-input>
             </el-form-item>
 
             <el-form-item label="信用积分:">
@@ -65,7 +65,7 @@
             </el-form-item>
 
             <el-form-item label="注册状态:">
-              <el-select v-model="formInline.region1" placeholder="选择注册状态">
+              <el-select v-model="formInline.region1" placeholder="选择注册状态"  class='timeInput'>
                 <el-option label="押金充值" value="1"></el-option>
                 <el-option label="无身份证验证审核" value="2"></el-option>
                 <el-option label="手机认证" value="3"></el-option>
@@ -76,24 +76,42 @@
             </el-form-item>
 
             <el-form-item label="借车状态:">
-              <el-select v-model="formInline.region2" placeholder="选择借车状态">
+              <el-select v-model="formInline.region2" placeholder="选择借车状态"  class='timeInput'>
                 <el-option label="借车处理中" value="1"></el-option>
                 <el-option label="借车中" value="2"></el-option>
                 <el-option label="还车" value="3"></el-option>
                 <el-option label="未确认还车" value="4"></el-option>
               </el-select>
             </el-form-item>
-
             <el-form-item label="最近借车:">
-              <date-pickers></date-pickers>
+              <el-date-picker
+                class='timeInput'
+                v-model="formInline.beginTime"
+                type="datetime">
+              </el-date-picker>
+              -
+              <el-date-picker
+                class='timeInput'
+                v-model="formInline.endTime"
+                type="datetime">
+              </el-date-picker>
             </el-form-item>
 
             <el-form-item label="注册时间:">
-              <date-pickers></date-pickers>
+              <el-date-picker
+                class='timeInput'
+                v-model="formInline.beginTime"
+                type="datetime">
+              </el-date-picker>
+              -
+              <el-date-picker
+                class='timeInput'
+                v-model="formInline.endTime"
+                type="datetime">
+              </el-date-picker>
             </el-form-item>
-
             <el-form-item>
-              <el-button type="primary" @click="search">查询</el-button>
+              <el-button type="primary" @click="query">查询</el-button>
             </el-form-item>
           </el-form>
 
@@ -239,27 +257,35 @@
           </el-table>
 
           <!--分页-->
-          <paginations></paginations>
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="pagination.pageNo"
+            :page-sizes="pagination.pageSizes"
+            :page-size="pagination.pageSize"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pagination.count">
+          </el-pagination>
         </el-tab-pane>
 
-        <el-tab-pane label="会员管理添加" name="second">
-          <el-form ref="form" :model="form" label-width="100px">
-            <el-form-item label="用户积分">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="信用分">
-              <el-input v-model="form.name"></el-input>
-            </el-form-item>
-            <el-form-item label="备注">
-              <el-input v-model="form.name" type="textarea" class='textarea'></el-input>
-            </el-form-item>
+        <!--<el-tab-pane label="会员管理添加" name="second">-->
+          <!--<el-form ref="formA" :model="form" label-width="100px">-->
+            <!--<el-form-item label="用户积分">-->
+              <!--<el-input v-model="form.name"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="信用分">-->
+              <!--<el-input v-model="form.name"></el-input>-->
+            <!--</el-form-item>-->
+            <!--<el-form-item label="备注">-->
+              <!--<el-input v-model="form.name" type="textarea" class='textarea'></el-input>-->
+            <!--</el-form-item>-->
 
-            <el-form-item>
-              <el-button type="primary" @click="saveData">保存</el-button>
-              <el-button>返回</el-button>
-            </el-form-item>
-          </el-form>
-        </el-tab-pane>
+            <!--<el-form-item>-->
+              <!--<el-button type="primary" @click="doModify">保存</el-button>-->
+              <!--<el-button @click="back">返回</el-button>-->
+            <!--</el-form-item>-->
+          <!--</el-form>-->
+        <!--</el-tab-pane>-->
       </el-tabs>
 
     </div>
@@ -272,13 +298,10 @@
       return {
         activeName2: 'first',
         formInline: {
-          user: '',
-          nickname: '',
-          phone: '',
-          id_card: '',
-          region1: '',
-          region2: ''
-        },
+          type: '',
+          pageNo: '',
+          pageSize: ''
+        }, // 查询值
         labelPosition: 'right',
         form: {
           name: '',
@@ -289,7 +312,7 @@
           type: [],
           resource: '',
           desc: ''
-        },
+        }, // 会员管理添加
         tableData: [{
           name: '99王小虎',
           nickname: '99王小虎',
@@ -310,250 +333,122 @@
           total_distance: '100',
           update_time: '2016-05-04 00:00:00',
           des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }, {
-          name: '99王小虎',
-          nickname: '99王小虎',
-          country: 'china',
-          phone: '13788947105',
-          id_card: '354852884585245852',
-          deposit: '100',
-          credit_points: '',
-          money: '10',
-          register_time: '2017-2-5 21:52:45',
-          log_status: '登录',
-          log_time: '2016-05-04 00:00:00',
-          bicycle_status: '借车中',
-          last_time: '2016-05-04 00:00:00',
-          account_status: '手机认证用户',
-          total_calories: '200',
-          total_time: '25',
-          total_distance: '100',
-          update_time: '2016-05-04 00:00:00',
-          des: '你还有什么想说的'
-        }]
+        }], // 列表
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
       }
+    },
+    created () {
+      this.query()
     },
     methods: {
       handleClick (tab, event) {
         console.log(tab, event)
       },
-      search () {
-        console.log('search!')
+      getList () {
+        this.$ajax.get('/activity/enjoy/list', {params: this.requestParam})
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.tableData = res.data.page.list
+              this.pagination.count = res.data.page.count
+              for (let i = 0; i < res.data.page.list.length; i++) {
+                this.tableData[i].state = this.activeState[res.data.page.list[i].state]
+                this.tableData[i].isExecuting = this.executingState[res.data.page.list[i].isExecuting]
+                this.tableData[i].type = this.activityType[res.data.page.list[i].type]
+                this.tableData[i].isLeXiang = this.yesNo[res.data.page.list[i].isLeXiang]
+                this.tableData[i].redPackage = this.yesNo[res.data.page.list[i].redPackage]
+                let sharePlatform = res.data.page.list[i].sharePlatform
+                if (sharePlatform !== '' && sharePlatform !== undefined) {
+                  let arr = res.data.page.list[i].sharePlatform.split(',')
+                  let newArr = []
+                  for (let j = 0; j < arr.length; j++) {
+                    newArr.push(this.sharePlat[arr[j]])
+                  }
+                  this.tableData[i].sharePlatform = newArr.join(',')
+                }
+              }
+            } else {
+              this.$message({
+                type: 'error',
+                message: res.data.msg
+              })
+            }
+          })
+          .catch((error) => {
+            console.log('获取列表失败:', error)
+            this.$message({
+              type: 'error',
+              message: error.data.msg
+            })
+          })
+      },
+      query () {
+//        let arr = []
+//        for (let k in this.sharePlat) {
+//          for (let i = 0; i < this.requestParam.share.length; i++) {
+//            if (this.requestParam.share[i] === this.sharePlat[k]) {
+//              arr.push(k)
+//            }
+//          }
+//        }
+//        this.requestParam.sharePlatform = arr.join(',')
+        this.getList()
       },
       saveData () {
         console.log('saveData!')
+      },
+      handleSizeChange (val) {
+        this.requestParam.pageSize = val
+        this.pagination.pageSize = val
+        this.query()
+      },   // 分页
+      handleCurrentChange (val) {
+        this.requestParam.pageNo = val
+        this.pagination.pageNo = val
+        this.query()
+      },
+      back () {
+        this.activeName2 = 'first'
+      },
+      doModify (formA) {       // 保存确定功能
+        this.$refs[formA].validate((valid) => {
+          if (valid) {
+            this.activeName2 = 'first'
+            this.form.sharePlatformList = []
+            this.$ajax.get('/activity/enjoy/save', {params: this.form})
+              .then((response) => {
+                if (response.data.code === 0) {
+                  // 更新成功
+                  this.$message({
+                    type: 'success',
+                    message: '操作成功'
+                  })
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: '操作失败'
+                  })
+                }
+              })
+              .catch((err) => {
+                this.$message({
+                  type: 'error',
+                  message: err
+                })
+              }
+              )
+          } else {
+            return false
+          }
+        })
       }
     }
   }
 </script>
 
 <style scoped>
-  .padding{
-    padding-left:10px;
-  }
-  .textarea, .el-input, .el-input__inner{
-    width: 300px;
-  }
+  @import'../../assets/css/common.css';
   .form-fisrt .el-input, .form-fisrt .el-input__inner{
     width: 100px;
   }
