@@ -97,7 +97,7 @@
 
         <h1>暂停服务</h1>
         <!--表单-->
-        <!--<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">-->
+        <!--<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" ruleForm>-->
           <!--<el-form-item label="分组名称:" prop="name">-->
             <!--<el-input v-model="ruleForm.name"></el-input>-->
           <!--</el-form-item>-->

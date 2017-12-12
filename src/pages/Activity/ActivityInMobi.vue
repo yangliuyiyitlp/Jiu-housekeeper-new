@@ -156,7 +156,7 @@
     </el-pagination>
     <!--增加修改弹框-->
     <el-dialog title="添加/修改" :visible.sync="dialogFormVisible" :show-close="false" :close-on-press-escape="false"
-               :close-on-click-modal="false" class="demo-ruleForm">
+               :close-on-click-modal="false" ruleForm>
       <el-form label-width="150px" :model="form" :rules="rules" ref="formA" class="tbody">
         <el-form-item label="城市名称：" ref='city' class="elform">
           <el-input v-model="form.cityName"></el-input>

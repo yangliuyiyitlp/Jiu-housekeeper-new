@@ -1,18 +1,27 @@
 .padding {
   padding-left: 10px;
 }
-
+.demo-form-inline {
+  padding-left: 10px;
+}
+ /*表单宽度*/
 .timeInput {
   width: 170px !important;
 }
+ /*树模型模态框样式*/
 .demo-ruleForm {
   font-size: 20px !important;
   text-align: center;
 }
+/*// 树模型模态框样式*/
 .keySearch {
   width: 140px;
   height: 20px;
   outline-style: none;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+/*表单最小的宽度*/
+.smallWidth.el-input{
+  width:100px;
 }

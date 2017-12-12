@@ -52,8 +52,8 @@
           <el-form-item label="违法原因：">
             <el-input v-model="formInline.user" ></el-input>
           </el-form-item>
-          <el-button type="primary" @click="onSubmit('condition')">查询</el-button>
-          <el-button type="primary" @click="onExport">导出</el-button>
+          <el-button type="primary" @click="query">查询</el-button>
+          <el-button type="primary" @click="exportFile">导出</el-button>
         </el-form>
         <el-table
           :data="tableData"
@@ -115,6 +115,15 @@
             prop="date"
             label="备注">
           </el-table-column>
+          <el-table-column
+            header-align="center"
+            width="100"
+            label="操作">
+            <template slot-scope="scope">
+              <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
+              <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
+            </template>
+          </el-table-column>
         </el-table>
         <el-pagination
           @size-change="handleSizeChange"
@@ -128,25 +137,33 @@
 
       </el-tab-pane>
       <el-tab-pane label="城市黑名单添加" name="second">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" ruleForm>
           <el-form-item label="姓名：" prop="num">
             <el-input v-model="ruleForm.name"class="width"></el-input>
           </el-form-item>
           <el-form-item label="身份证：" prop="num">
             <el-input v-model="ruleForm.name"class="width"></el-input>
           </el-form-item>
-          <el-form-item label="所属城市：" prop="num">
-
+          <el-form-item label="所属城市：">
+            <el-input
+              class="width"
+              :disabled="true"
+              :on-icon-click="searchCompany"
+              icon="search"
+              v-model="ruleForm.attributionCompany">
+            </el-input>
           </el-form-item>
-          <el-form-item label="有效时间：" prop="num">
-            <div class="block ">
-              <el-date-picker
-                class="width"
-                v-model="value6"
-                type="daterange"
-                placeholder="选择日期范围">
-              </el-date-picker>
-            </div>
+          <el-form-item label="有效时间：">
+            <el-date-picker
+              class="timeInput"
+              v-model="ruleForm.Begin_addTime"
+              type="datetime">
+            </el-date-picker> -
+            <el-date-picker
+              class="timeInput"
+              v-model="ruleForm.End_addTime"
+              type="datetime">
+            </el-date-picker>
           </el-form-item>
           <el-form-item label="违法时间：" prop="num">
             <div class="block ">
@@ -168,44 +185,80 @@
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
             <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
+          <div class="tip">
           <div>点击《保存》将添加一条记录；点击《导入》将根据execel批量添加；</div>
           <div>点击《下载模板》，根据模板将需要导入的数据填充进去；</div>
           <div>注意：1.execel列的顺序不能改变，2.只需要填充 当事人、身份证号、违法时间、违法原因 四列，其他列可以删除或者不填</div>
+          </div>
         </el-form>
+        <!--模态框-->
+        <el-dialog title="选择城市" size="tiny" :visible.sync="cityVisible" center>
+          关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+          <el-tree
+            ref="tree2"
+            highlight-current
+            :data="select"
+            :props="defaultProps"
+            class="searchTree"
+            accordion
+            :filter-node-method="filterNode"
+            @node-click="handleNode">
+          </el-tree>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="modifyCancel">取 消</el-button>
+            <el-button type="primary" @click="doModify">确 定</el-button>
+          </div>
+        </el-dialog>
       </el-tab-pane>
       <el-tab-pane label="黑名单导入" name="three">
-        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="所属城市：" prop="num">
-
-        </el-form-item>
-        <el-form-item label="有效时间：" prop="num">
-          <div class="block">
-            <el-date-picker
+        <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" ruleForm>
+          <el-form-item label="所属城市：">
+            <el-input
               class="width"
-              v-model="value6"
-              type="daterange"
-              placeholder="选择日期范围">
+              :disabled="true"
+              :on-icon-click="searchCompany"
+              icon="search"
+              v-model="ruleForm.attributionCompany">
+            </el-input>
+          </el-form-item>
+          <el-form-item label="有效时间：">
+            <el-date-picker
+              class="timeInput"
+              v-model="ruleForm.Begin_addTime"
+              type="datetime">
+            </el-date-picker> -
+            <el-date-picker
+              class="timeInput"
+              v-model="ruleForm.End_addTime"
+              type="datetime">
             </el-date-picker>
-          </div>
-        </el-form-item>
+          </el-form-item>
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
             <el-button @click="resetForm('ruleForm')">重置</el-button>
           </el-form-item>
+          <div class="tip">
           <div>每晚12点更新黑名单状态,所以生效时间设置必须在添加日之后；如今天是9月14日，生效时间必须是15日或之后</div>
           <div>点击《下载模板》，根据模板将需要导入的数据填充进去；</div>
           <div>注意：1.execel列的顺序不能改变，2.只需要填充 当事人、身份证号、违法时间、违法原因等四列，其他列可以删除或者不填</div>
+          </div>
+          <!--todo 导入-->
         </el-form>
       </el-tab-pane>
     </el-tabs>
   </div>
 </template>
 <script>
+  import baseUrl from '../../utils/baseUrl.js'
+
   export default {
     data () {
       return {
         activeName2: 'first',
         value6: '',
+        select: '',
+        cityVisible: false,
+        filterText: '',
         ruleForm: {
           name: '',
           area: '',
@@ -234,58 +287,164 @@
           number: '0',
           city: '上海',
           date: '2017-09-12 10:28:35'
-        }, {
-          admin: '0008',
-          adminphone: '12345678999',
-          number: '0',
-          city: '北京',
-          date: '2017-09-12 10:28:35'
         }],
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        select_city: [{
+          id: 1,
+          label: '上海市总公司',
+          children: [{
+            id: 2,
+            label: '厦门分公司'
+          }, {
+            id: 3,
+            label: '佛山分公司'
+          }, {
+            id: 4,
+            label: '珠海分公司'
+          }, {
+            id: 5,
+            label: '北京分公司'
+          }, {
+            id: 6,
+            label: '上海分公司'
+          }, {
+            id: 7,
+            label: '成都分公司'
+          }, {
+            id: 8,
+            label: '湖州分公司'
+          }, {
+            id: 9,
+            label: '深圳分公司'
+          }]
+        }],
+        defaultProps: {
+          children: 'children',
+          label: 'label'
+        },
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
       }
     },
     created: function () {
-      this.onSubmit('condition')
+      this.query('condition')
     },
     methods: {
-      onSubmit: function (condition) {
-        var param = {}
-        if (condition === 'condition') {
-          param = this.formInline
-        } else {
-          param = condition
-        }
-        console.log(param)
-        this.$http.post('/dataGrid/query', JSON.stringify(param)).then(function (response) {
-          this.tableData = response.data.list
-          this.pagination.total = response.data.total
-        }, function (err) {
+      filterNode (value, data) {
+        if (!value) return true
+        return data.label.indexOf(value) !== -1
+      },
+      handleNodeClick (data) {
+        this.formInline.attributionCompany = data.label
+      },
+      handleNode (data) {
+        this.filterText = data.label // 弹框树模型点击输入值
+      },
+      searchCompany () {
+        this.cityVisible = true
+        this.select = this.select_city
+        this.filterText = ''
+      },
+      doModify () {
+        this.formInline.attributionCompany = this.filterText
+        this.cityVisible = false
+      },
+      modifyCancel () {
+        this.cityVisible = false
+        this.formInline.attributionCompany = ''
+      },
+      handleSizeChange (val) {
+        this.formInline.pageSize = val
+        this.query()
+      },
+      handleCurrentChange (val) {
+        this.formInline.index = val
+        this.query()
+      },
+      query () {},
+      modifyRecord: function (scope) {
+        this.vif = false
+        this.dialogFormVisible = true
+        // 获取当前行的详细信息
+        this.$ajax.get('/activity/inmobi/tDisplayType/form', {params: {id: scope.row.id}})
+          .then((res) => {
+            if (res.status === 200) {
+              this.form.id = res.data.tDisplayType.id
+              this.form.cityName = res.data.tDisplayType.cityName
+              this.form.rank = res.data.tDisplayType.rank
+              this.form.type = res.data.tDisplayType.type
+              this.form.displayType = res.data.tDisplayType.displayType
+              this.form.androidInmobiId = res.data.tDisplayType.androidInmobiId
+              this.form.iosInmobiId = res.data.tDisplayType.iosInmobiId
+              this.form.remarks = res.data.tDisplayType.remarks
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '获取详细信息异常'
+            })
+          })
+      },
+      deleteRecord: function (id) {
+        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          if (id !== undefined) {
+            // 调用后台服务
+            // 删除当前信息
+            this.$ajax.get('/activity/inmobi/tDisplayType/delete', {params: {'id': id}})
+              .then((response) => {
+                console.log(response)
+                if (response.data.code === 0) {
+                  // 删除成功
+                  this.$message({
+                    type: 'success',
+                    message: response.data.msg
+                  })
+//                this.$refs['formA'].resetFields()
+                  // 刷新页面
+                  this.query()
+                } else {
+                  this.$message({
+                    type: 'error',
+                    message: '删除异常'
+                  })
+                }
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '删除失败'
+                })
+              })
+          }
+        }).catch(() => {
           this.$message({
             type: 'info',
-            message: '获取列表信息失败' + err.status
+            message: '取消删除'
           })
         })
       },
-      handleSizeChange: function (val) {
-        this.formInline.pageSize = val
-        this.onSubmit('condition')
+      exportFile () {
+        this.exportFormVisible = true
       },
-      handleCurrentChange: function (val) {
-        this.formInline.index = val
-        this.onSubmit('condition')
+      cancelExport () {
+        this.exportFormVisible = false
       },
-      onExport () {
-        console.log('onexport!')
+      exportCurrent () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
-      submitForm (formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!')
-          } else {
-            console.log('error submit!!')
-            return false
-          }
-        })
+      exportAll () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
@@ -303,4 +462,11 @@
 .width{
   width:300px;
 }
+  .timeInput {
+    width: 145px !important;
+  }
+  .tip{
+    font-size: 14px;
+    margin-left:20px;
+  }
 </style>

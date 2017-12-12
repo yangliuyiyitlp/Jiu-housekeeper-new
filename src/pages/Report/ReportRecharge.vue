@@ -46,20 +46,10 @@
       <el-button type="primary" @click="exportFile">导出</el-button>
       <span type="primary" @click="more" class="moreStyle">更多查询</span>
       <div ref=" more" v-if="showMore" class="moreFloat">
-        <el-form-item label="订单号：">
+        <el-form-item label="证件号：">
           <el-input v-model="formInline.user" class="timeInput"></el-input>
         </el-form-item>
-        <el-form-item label="里程数：">
-          <el-input v-model="formInline.user" class="timeInput"></el-input>
-          -
-          <el-input v-model="formInline.user" class="timeInput"></el-input>
-        </el-form-item>
-        <el-form-item label="消费卡路里：">
-          <el-input v-model="formInline.user" class="timeInput"></el-input>
-          -
-          <el-input v-model="formInline.user" class="timeInput"></el-input>
-        </el-form-item>
-        <el-form-item label="借车时间:">
+        <el-form-item label="添加时间:">
           <el-date-picker
             class="timeInput"
             v-model="formInline.beginAddTime"
@@ -72,21 +62,37 @@
             type="datetime">
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="还车时间:">
-          <el-date-picker
-            class="timeInput"
-            v-model="formInline.beginAddTime"
-            type="datetime">
-          </el-date-picker>
+        <el-form-item label="充值订单：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="退款单号：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="交易号：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="转账单号：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="押金：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
           -
-          <el-date-picker
-            class="timeInput"
-            v-model="formInline.endAddTime"
-            type="datetime">
-          </el-date-picker>
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
+        </el-form-item>
+        <el-form-item label="回调信息：">
+          <el-input v-model="formInline.user" class="timeInput"></el-input>
         </el-form-item>
       </div>
     </el-form>
+    <!--隐藏表单用于查询-->
+    <form v-show="false" action="" method="post" ref="FileForm">
+      <input name="attributionCompany" v-model="exportParam.attributionCompany"/>
+      <input name="attributionSection" v-model="exportParam.attributionSection"/>
+      <input name="loginName" v-model="exportParam.loginName"/>
+      <input name="name" v-model="exportParam.name"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
+    </form>
     <el-table
       :data="tableData"
       border
@@ -169,6 +175,16 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
+    <!--导出-->
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+      <el-button @click="exportCurrent">导出当前页</el-button>
+      <el-button @click="exportAll">导出所有</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelExport">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -182,6 +198,7 @@
       return {
         dialogVisible: false,
         showMore: false,
+        exportFormVisible: false,
         formInline: {
           user: '',
           region: '',
@@ -194,6 +211,7 @@
           pageSize: 10,
           index: 1
         },
+        exportParam: {},
         tableData: [{
           number: '0008',
           status: '正常',
@@ -257,9 +275,7 @@
 <style scoped>
   @import '../../assets/css/common.css';
 
-  .demo-form-inline {
-    padding-left: 10px;
-  }
+
   .moreStyle {
     font-size: 14px;
     color: #20a0ff;

@@ -3,97 +3,65 @@
     <el-form :inline="true" :model="form" class="demo-form-inline">
 
       <el-form-item label="运维姓名：">
-        <el-input v-model="form.name"></el-input>
+        <el-input v-model="form.name" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="运维电话：">
-        <el-input v-model="form.phone"></el-input>
+        <el-input v-model="form.phone" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="司机姓名：">
-        <el-input v-model="form.driverName"></el-input>
+        <el-input v-model="form.driverName" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="司机电话：">
-        <el-input v-model="form.driverPhone"></el-input>
+        <el-input v-model="form.driverPhone" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="调度车辆数：">
-        <el-col :span="11">
-          <el-input v-model="form.dispatchBikeNumMin"></el-input>
-        </el-col>
-        <el-col class="line" :span="1" style="text-align: center">-</el-col>
-        <el-col :span="11">
-          <el-input v-model="form.dispatchBikeNumMax"></el-input>
-        </el-col>
+          <el-input v-model="form.dispatchBikeNumMin" class="smallWidth"></el-input> -
+        <el-input v-model="form.dispatchBikeNumMax" class="smallWidth"></el-input>
       </el-form-item>
-
       <el-form-item label="报废车辆数：">
-        <el-col :span="11">
-          <el-input v-model="form.scrapBikeNumMin"></el-input>
-        </el-col>
-        <el-col class="line" :span="1" style="text-align: center">-</el-col>
-        <el-col :span="11">
-          <el-input v-model="form.scrapBikeNumMax"></el-input>
-        </el-col>
+        <el-input v-model="form.dispatchBikeNumMin" class="smallWidth"></el-input> -
+        <el-input v-model="form.dispatchBikeNumMax" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="添加时间段：">
-        <el-col :span="11">
           <el-date-picker
             v-model="form.Begin_addTime"
-            type="datetime"
-            placeholder="begin time">
-          </el-date-picker>
-        </el-col>
-        <el-col class="line" :span="1" style="text-align: center">-</el-col>
-        <el-col :span="11">
+            type="datetime">
+          </el-date-picker> -
           <el-date-picker
             v-model="form.End_addTime"
-            type="datetime"
-            placeholder="end time">
+            type="datetime">
           </el-date-picker>
-        </el-col>
       </el-form-item>
 
-      <el-form-item label="调度开始时间段：">
-        <el-col :span="11">
+      <el-form-item label="调度开始时间段：" class="smallWidth">
           <el-date-picker
             v-model="form.Begin_operateTime"
-            type="datetime"
-            placeholder="begin time">
-          </el-date-picker>
-        </el-col>
-        <el-col class="line" :span="1" style="text-align: center">-</el-col>
-        <el-col :span="11">
+            type="datetime">
+          </el-date-picker> -
           <el-date-picker
             v-model="form.End_operateTime"
-            type="datetime"
-            placeholder="end time">
+            type="datetime">
           </el-date-picker>
-        </el-col>
       </el-form-item>
 
       <el-form-item label="调度结束时间段：">
-        <el-col :span="11">
           <el-date-picker
             v-model="form.Begin_delTime"
-            type="datetime"
-            placeholder="begin time">
-          </el-date-picker>
-        </el-col>
-        <el-col class="line" :span="1" style="text-align: center">-</el-col>
-        <el-col :span="11">
+            type="datetime">
+          </el-date-picker> -
           <el-date-picker
             v-model="form.End_delTime"
-            type="datetime"
-            placeholder="end time">
+            type="datetime">
           </el-date-picker>
-        </el-col>
       </el-form-item>
 
       <el-form-item label="调度点类型:">
-        <el-select v-model="form.pointType" clearable placeholder="选择调度点类型">
+        <el-select v-model="form.pointType" clearable placeholder="选择调度点类型" >
           <el-option
             v-for="(item,key) in pointTypeR"
             :key="key"
@@ -104,7 +72,7 @@
       </el-form-item>
 
       <el-form-item label="调度点状态:">
-        <el-select v-model="form.pointStatus" clearable placeholder="选择调度点状态">
+        <el-select v-model="form.pointStatus" clearable placeholder="选择调度点状态" >
           <el-option
             v-for="(item,key) in pointStatusR"
             :key="key"
@@ -115,15 +83,15 @@
       </el-form-item>
 
       <el-form-item label="车辆编号：">
-        <el-input v-model="form.bicycle_info"></el-input>
+        <el-input v-model="form.bicycle_info" class="smallWidth"></el-input>
       </el-form-item>
 
       <el-form-item label="地区id：">
-        <el-input v-model="form.areaId"></el-input>
+        <el-input v-model="form.areaId" class="smallWidth"></el-input>
       </el-form-item>
 
-      <el-button type="primary" @click="search">查询</el-button>
-      <el-button type="primary" @click="onExport">导出</el-button>
+      <el-button type="primary" @click="query">查询</el-button>
+      <el-button type="primary" @click="exportFile">导出</el-button>
 
     </el-form>
 
@@ -222,16 +190,24 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-
+    <!--导出-->
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+      <el-button @click="exportCurrent">导出当前页</el-button>
+      <el-button @click="exportAll">导出所有</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelExport">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
-  import Tools from '../../utils/tools.js'
-  import Moment from 'moment'
-
+  import baseUrl from '../../utils/baseUrl.js'
   export default {
     data () {
       return {
+        exportFormVisible: false,
         form: {}, // 查询字符串
         pointTypeR: {
           '1': '调度起点',
@@ -244,6 +220,7 @@
           '1': '选定中',
           '2': '全部处理完'
         },
+        exportParam: {},
         tableData: [
           {
             name: '运维姓名',
@@ -259,120 +236,52 @@
             pointStatus: 0,
             bicycle_info: '5555555555555',
             areaId: '上海'
-          }, {
-            name: '运维姓名',
-            phone: '15455452558',
-            driverName: '司机姓名',
-            driverPhone: '55522123666',
-            dispatchBikeNum: 55,
-            scrapBikeNum: 2,
-            addTime: 1493899822000,
-            operateTime: 1493899822000,
-            delTime: 1493899822000,
-            pointType: 2,
-            pointStatus: 1,
-            bicycle_info: '5555555555555',
-            areaId: '上海'
-          }, {
-            name: '运维姓名',
-            phone: '15455452558',
-            driverName: '司机姓名',
-            driverPhone: '55522123666',
-            dispatchBikeNum: 55,
-            scrapBikeNum: 2,
-            addTime: 1493899822000,
-            operateTime: 1493899822000,
-            delTime: 1493899822000,
-            pointType: 3,
-            pointStatus: 2,
-            bicycle_info: '5555555555555',
-            areaId: '上海'
-          },
-          {
-            name: '运维姓名',
-            phone: '15455452558',
-            driverName: '司机姓名',
-            driverPhone: '55522123666',
-            dispatchBikeNum: 55,
-            scrapBikeNum: 2,
-            addTime: 1493899822000,
-            operateTime: 1493899822000,
-            delTime: 1493899822000,
-            pointType: 1,
-            pointStatus: 0,
-            bicycle_info: '5555555555555',
-            areaId: '上海'
-          }, {
-            name: '运维姓名',
-            phone: '15455452558',
-            driverName: '司机姓名',
-            driverPhone: '55522123666',
-            dispatchBikeNum: 55,
-            scrapBikeNum: 2,
-            addTime: 1493899822000,
-            operateTime: 1493899822000,
-            delTime: 1493899822000,
-            pointType: 2,
-            pointStatus: 1,
-            bicycle_info: '5555555555555',
-            areaId: '上海'
-          }, {
-            name: '运维姓名',
-            phone: '15455452558',
-            driverName: '司机姓名',
-            driverPhone: '55522123666',
-            dispatchBikeNum: 55,
-            scrapBikeNum: 2,
-            addTime: 1493899822000,
-            operateTime: 1493899822000,
-            delTime: 1493899822000,
-            pointType: 3,
-            pointStatus: 2,
-            bicycle_info: '5555555555555',
-            areaId: '上海'
           }
         ],
-        pagination: {pageSizes: [10, 20, 50, 100], pageSize: 10, total: 0, index: 1}
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1}
       }
     },
     created: function () {
-      this.search()
+      this.query()
     },
     methods: {
-      // 2017-11-27 未完成待续
-      search () {
-//        this.$ajax.get('/city/bike/intervene/list', {params: this.form})
-//          .then(res => {
-//            console.log(res)
-//          })
-//          .catch(err => {
-//            console.log(err)
-//          })
-        let list = this.tableData
-        for (let i = 0; i < list.length; i++) {
-          list[i].pointTypeName = Tools.k2value(this.pointTypeR, list[i].pointType)
-          list[i].pointStatusName = Tools.k2value(this.pointStatusR, list[i].pointStatus)
-          list[i].addTime = Moment(new Date(list[i].addTime)).format('YYYY-MM-DD HH:mm:ss')
-          list[i].operateTime = Moment(new Date(list[i].operateTime)).format('YYYY-MM-DD HH:mm:ss')
-          list[i].delTime = Moment(new Date(list[i].delTime)).format('YYYY-MM-DD HH:mm:ss')
-        }
-        console.log(this.tableData)
-      },
       handleSizeChange: function (val) {
-        this.formInline.pageSize = val
-        this.onSubmit('condition')
+        this.form.pageSize = val
+        this.query()
       },
       handleCurrentChange: function (val) {
-        this.formInline.index = val
-        this.onSubmit('condition')
+        this.form.index = val
+        this.query()
       },
-      onExport () {
-        console.log('onexport!')
+      handleIconClick (ev) {
+        console.log(ev)
+      },
+      query: function () {},
+      exportFile () {
+        this.exportFormVisible = true
+      },
+      cancelExport () {
+        this.exportFormVisible = false
+      },
+      exportCurrent () {
+        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageSize = this.pagination.pageSize
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
+      },
+      exportAll () {
+        this.exportParam.pageSize = ''
+        this.exportParam.pageNo = ''
+        this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
+        this.$refs['FileForm'].submit()
+        this.exportFormVisible = false
       }
     }
   }
 </script>
 <style scoped>
+  @import '../../assets/css/common.css';
   .count {
     margin-top: 10px;
   }

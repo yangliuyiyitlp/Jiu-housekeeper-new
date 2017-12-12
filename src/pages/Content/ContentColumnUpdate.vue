@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-form :model="form" :rules="rules" ref="ruleForm" label-width="200px" class="demo-ruleForm">
+    <el-form :model="form" :rules="rules" ref="ruleForm" label-width="200px" class="ruleForm">
 
       <el-form-item label="文章id:" v-if=0>
         <el-input v-model="form.id"></el-input>
@@ -342,19 +342,19 @@
     height: 100%;
   }
 
-  .demo-ruleForm {
+  .ruleForm {
     margin-top: 10px;
   }
 
-  .demo-ruleForm > .el-form-item > .el-form-item__label {
+  .ruleForm > .el-form-item > .el-form-item__label {
     width: 150px !important;
   }
 
-  .demo-ruleForm > .el-form-item > .el-form-item__content {
+  .ruleForm > .el-form-item > .el-form-item__content {
     margin-left: 150px !important;
   }
 
-  .demo-ruleForm .textarea, .demo-ruleForm .el-input, .demo-ruleForm .el-input__inner {
+  .ruleForm .textarea, .ruleForm .el-input, .ruleForm .el-input__inner {
     width: 300px;
   }
 

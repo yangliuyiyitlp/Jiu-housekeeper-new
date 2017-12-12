@@ -78,6 +78,15 @@
         </el-form-item>
       </div>
     </el-form>
+    <!--隐藏表单用于查询-->
+    <form v-show="false" action="" method="post" ref="FileForm">
+      <input name="attributionCompany" v-model="exportParam.attributionCompany"/>
+      <input name="attributionSection" v-model="exportParam.attributionSection"/>
+      <input name="loginName" v-model="exportParam.loginName"/>
+      <input name="name" v-model="exportParam.name"/>
+      <input name="pageSize" v-model="exportParam.pageSize"/>
+      <input name="pageNo" v-model="exportParam.pageNo"/>
+    </form>
     <el-table
       :data="tableData"
       border
@@ -168,7 +177,16 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="pagination.total">
     </el-pagination>
-
+    <!--导出-->
+    <el-dialog size='tiny' title="导出" :visible.sync="exportFormVisible" :show-close="false"
+               :close-on-press-escape="false"
+               :close-on-click-modal="false" class="demo-ruleForm ">
+      <el-button @click="exportCurrent">导出当前页</el-button>
+      <el-button @click="exportAll">导出所有</el-button>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="cancelExport">取 消</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -182,6 +200,7 @@
       return {
         dialogVisible: false,
         showMore: false,
+        exportFormVisible: false,
         formInline: {
           user: '',
           region: '',
@@ -194,6 +213,7 @@
           pageSize: 10,
           index: 1
         },
+        exportParam: {},
         tableData: [{
           number: '0008',
           status: '正常',
