@@ -159,10 +159,12 @@
     },
     data: function () {
       return {
-        tableData: [{ account: '发发发',
+        tableData: [{
+          account: '发发发',
           providerName: '方法',
           providerNo: 'ff',
-          id: '1'}],
+          id: '1'
+        }],
         dialogFormVisible: false,  // 模态框是否显示
         exportFormVisible: false,
         form: {
@@ -382,6 +384,7 @@
       }
     }
   }
+
 </script>
 <style scoped>
   .demo-form-inline {
