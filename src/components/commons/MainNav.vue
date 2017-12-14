@@ -13,10 +13,11 @@
       <el-menu-item index="10" @click="service" v-if="menus.service">客服管理</el-menu-item>
       <el-menu-item index="11" @click="redpacket" v-if="menus.redpacket">红包管理</el-menu-item>
       <el-menu-item index="12" @click="activity" v-if="menus.activity">活动中心</el-menu-item>
+      <el-menu-item index="13" @click="serviceConfig" v-if="menus.serviceConfig">服务配置</el-menu-item>
       <li data-v-01c7fadb class="time right left">{{this.date | convertDate}}
         <a class='exit' href="#" @click="quit">退出</a>
       </li>
-      <el-menu-item index="13" class="right " @click="user" v-if="menus.user">
+      <el-menu-item index="14" class="right " @click="user" v-if="menus.user">
         <i class="iconfont icon-anonymity"></i>个人信息({{username}})
       </el-menu-item>
 
@@ -50,80 +51,73 @@
     methods: {
       quit () {
         /* 删除cookie */
-        while (Cookie.get('token') !== '' && Cookie.get('token') !== undefined) {
+        while (Cookie.get('sessionId') !== '' && Cookie.get('sessionId') !== undefined) {
           Cookie.remove('username')
-          Cookie.remove('token')
+          Cookie.remove('sessionId')
         }
         sessionStorage.removeItem('menus')
         this.$router.push('/login')
       },
       handleSelect (key, keyPath) {
-//        console.log(key, keyPath)
       },
       setting () {
         this.$router.push({
-//          name: 'setting.user'
           name: getdefaultMenu('setting', this.menus)
         })
       },
       facility () {
         this.$router.push({
-//          name: 'tabs'
           name: getdefaultMenu('facility', this.menus)
         })
       },
       content () {
         this.$router.push({
-//          name: 'content.release'
           name: getdefaultMenu('content', this.menus)
         })
       },
       status () {
         this.$router.push({
-//          name: 'status.bike.map'
           name: getdefaultMenu('status', this.menus)
         })
       },
       vip () {
         this.$router.push({
-//          name: 'vip.info'
           name: getdefaultMenu('vip', this.menus)
         })
       },
       report () {
         this.$router.push({
-//          name: 'report.vip'
           name: getdefaultMenu('report', this.menus)
         })
       },
       city () {
         this.$router.push({
-//          name: 'city.bike.intervene.list'
           name: getdefaultMenu('city', this.menus)
         })
       },
       service () {
         this.$router.push({
-//          name: 'service.change.credit'
           name: getdefaultMenu('service', this.menus)
         })
       },
       redpacket () {
         this.$router.push({
-//          name: 'redpacket.click'
           name: getdefaultMenu('redpacket', this.menus)
         })
       },
       user () {
         this.$router.push({
-//          name: 'user.info'
           name: getdefaultMenu('user', this.menus)
         })
       },
       activity () {
         this.$router.push({
-//          name: 'activity.red.rain'
           name: getdefaultMenu('activity', this.menus)
+        })
+      },
+      serviceConfig () {
+        this.$router.push({
+          name: getdefaultMenu('serviceConfig', this.menus)
         })
       }
     }

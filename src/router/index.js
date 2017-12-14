@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
   // NProgress.start()
   // 判断用户是否登录
   // Cookie.delCookie('token')
-  if (Cookie.get('token') !== '' && Cookie.get('token') !== undefined) {
+  if (Cookie.get('sessionId') !== '' && Cookie.get('sessionId') !== undefined) {
     // 这种情况出现在手动修改地址栏地址时
     // 如果当前处于登录状态，并且跳转地址为login，则自动跳回系统首页
     console.log('to.path', to.path)
@@ -43,10 +43,11 @@ router.beforeEach((to, from, next) => {
     } else {
       // 页面跳转前先判断是否存在权限列表，如果存在则直接跳转，如果没有则请求一次
       let authList = store.state.grantedAuthorities
+      console.log(authList)
       if (authList === null || authList.length === 0) {
         console.log('没有权限list')
         // 获取权限列表，如果失败则跳回登录页重新登录
-        store.dispatch('getPermission', Cookie.get('token')).then(result => {
+        store.dispatch('getPermission', Cookie.get('sessionId')).then(result => {
           // 匹配并生成需要添加的路由对象
           // console.log('获取到menus', result)
           generateAuthList(result, asyncRouter).then(res => {

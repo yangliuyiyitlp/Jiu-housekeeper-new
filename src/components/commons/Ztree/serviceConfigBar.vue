@@ -28,7 +28,7 @@
       let menu = sessionStorage.getItem('menus')
       this.menus = JSON.parse(menu)
       for (let key in this.menus) {
-        if (key === 'service') {
+        if (key === 'serviceConfig') {
           this.data = this.menus[key]
         }
       }
@@ -36,7 +36,7 @@
     methods: {
       handleNodeClick (data) {
         console.log(data)
-        bus.$emit('servicebar', data.name)
+        bus.$emit('serviceConfigBar', data.name)
       }
     }
   }

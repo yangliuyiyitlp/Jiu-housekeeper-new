@@ -28,59 +28,6 @@
       }
     },
     methods: {
-//      login () {
-//        let vm = this
-//        if (this.username === '' || this.password === '') {
-//          alert('请输入用户名或密码')
-//        } else {
-//          let data = {'username': this.username, 'password': this.password}
-//          /* 假的地址接口请求 */
-//          this.$ajax.post('/login/submit', data)
-//            .then((res) => {
-//              /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
-//              if (res.data.code === -1) {
-//                this.tip = '该用户不存在'
-//                this.showTip = true
-//              } else if (res.data.code === 0) {
-//                this.tip = '密码输入错误'
-//                this.showTip = true
-//              } else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
-//                /* 路由跳转this.$router.push */
-//                this.$router.push('/main')
-//              } else if (res.data.code === 200 && res.data.token !== '' && res.data.token !== undefined) {
-//                Cookie.remove('token')
-//                Cookie.set('token', res.data.token)
-//                this.$ajax.post('/login/right', {token: res.data.token})
-//                  .then((res) => {
-//                    if (res.data.code === 200) {
-//                      let extendsRoutes = res.data.menus
-//                      // 存菜单
-//                      sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-//                      this.showTip = true
-//                      Cookie.remove('username')
-//                      Cookie.set('username', this.username)
-//                      // 跳转界面
-//                      vm.$router.push({path: '/home'})
-//                      this.tip = '登录成功'
-//                    }
-//                  })
-//                  .catch(() => {
-//                    this.$message({
-//                      type: 'error',
-//                      message: '获取权限失败'
-//                    })
-//                  })
-//              } else {
-//                this.tip = '登录失败'
-//                this.showTip = true
-//              }
-//            })
-//            .catch(() => {
-//              this.tip = '登录失败'
-//              this.showTip = true
-//            })
-//        }
-//      },
       login () {
         let vm = this
         if (this.username === '' || this.password === '') {
@@ -94,30 +41,33 @@
               data: data
             }).then(res => {
               /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
-              if (res.data.code === -1) {
-                this.tip = '该用户不存在'
+              if (res.data.status === 500) {
+                this.tip = res.data.msg
                 this.showTip = true
-              } else if (res.data.code === 0) {
-                this.tip = '密码输入错误'
+//              }
+//              else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
+//                /* 路由跳转this.$router.push */
+//                this.$router.push('/main')
+              } else if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
+                Cookie.remove('sessionId')
+                Cookie.set('sessionId', res.data.sessionId)
+                this.tip = res.data.message
                 this.showTip = true
-              } else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
-                /* 路由跳转this.$router.push */
-                this.$router.push('/main')
-              } else if (res.data.code === 200 && res.data.token !== '' && res.data.token !== undefined) {
-                Cookie.remove('token')
-                Cookie.set('token', res.data.token)
-                this.$ajax.post('/login/right', {token: res.data.token})
+                this.$ajax.get('/login/right', {params: {sessionId: res.data.sessionId}})
                   .then((res) => {
-                    if (res.data.code === 200) {
-                      let extendsRoutes = res.data.menus
+                    if (res.data.code === 500) {
+                      vm.tip = res.data.msg
+                      this.showTip = true
+                    } else {
+                      let extendsRoutes = res.data
                       // 存菜单
                       sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-                      this.showTip = true
                       Cookie.remove('username')
                       Cookie.set('username', this.username)
                       // 跳转界面
                       vm.$router.push({path: '/home'})
-                      vm.tip = '登录成功'
+                      vm.tip = '获取权限成功'
+                      this.showTip = true
                     }
                   })
               }
@@ -125,6 +75,7 @@
             })
               .catch(err => {
                 reject(vm.tip = '登录失败' + err)
+                this.showTip = true
               })
           })
         }

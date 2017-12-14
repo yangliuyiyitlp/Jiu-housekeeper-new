@@ -15,23 +15,23 @@ const store = new Vuex.Store({
   mutations: mutations,
   actions: {
     // 获取权限列表
-    getPermission (context, token) {
+    getPermission (context, sessionId) {
       return new Promise((resolve, reject) => {
-        Axios.post('/login/right', {token: token}).then((res) => {
+        Axios.get('/login/right', {params: {sessionId: sessionId}}).then((res) => {
           // 存储权限列表
-          context.commit('setAuth', res.data.menus)
-          sessionStorage.setItem('menus', JSON.stringify(res.data.menus))
-          resolve(res.data.menus)
+          context.commit('setAuth', res.data)
+          sessionStorage.setItem('menus', JSON.stringify(res.data))
+          resolve(res.data)
         }).catch(() => {
           reject()
         })
       })
     },
-    setToken (context, token) {
-      context.commit('setToken', token)
+    setToken (context, sessionId) {
+      context.commit('setToken', sessionId)
     },
-    setAuthorities (context, token) {
-      context.commit('setAuth', token)
+    setAuthorities (context, sessionId) {
+      context.commit('setAuth', sessionId)
     }
   }
 })

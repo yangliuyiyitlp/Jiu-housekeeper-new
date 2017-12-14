@@ -637,6 +637,28 @@ const asyncRouter = [
       permission: []
     },
     component: r => require.ensure([], () => r(require('../pages/Activity/ActivityMonth/ActivityRedrain.vue')), 'ActivityRedrain')
+  },
+  {
+    path: '/serviceConfig',
+    name: 'serviceConfig',
+    component: r => require.ensure([], () => r(require('../pages/ServiceConfig/ServiceConfig.vue')), 'ServiceConfig'),
+    children: []
+  },
+  {
+    path: '/serviceConfig/msg',
+    name: 'serviceConfig.msg',
+    meta: {     // 为每个路由页面增加meta字段。在routerMatch函数中将匹配到的详细权限字段赋值到这里。这样在每个页面的route对象中就会得到这个字段。
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/ServiceConfig/ServiceConfigMsg.vue')), 'ServiceConfigMsg')
+  },
+  {
+    path: '/serviceConfig/name',
+    name: 'serviceConfig.name',
+    meta: {     // 为每个路由页面增加meta字段。在routerMatch函数中将匹配到的详细权限字段赋值到这里。这样在每个页面的route对象中就会得到这个字段。
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/ServiceConfig/serviceConfigName.vue')), 'ServiceConfigName')
   }
   // , {path: '*', component: r => require.ensure([], () => r(require('../components/commons/NotFound.vue')), 'NotFound')}
 ]

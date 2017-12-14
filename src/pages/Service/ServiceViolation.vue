@@ -8,22 +8,22 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
 
           <el-form-item label="姓名:">
-            <el-input v-model="formInline.user" placeholder="姓名">
+            <el-input v-model="formInline.user">
             </el-input>
           </el-form-item>
 
           <el-form-item label="手机号:">
-            <el-input v-model="formInline.phone" placeholder="手机号">
+            <el-input v-model="formInline.phone" >
             </el-input>
           </el-form-item>
 
           <el-form-item label="车辆编号:">
-            <el-input v-model="formInline.bicycle_number" placeholder="车辆编号">
+            <el-input v-model="formInline.bicycle_number" >
             </el-input>
           </el-form-item>
 
           <el-form-item label="违规类型:">
-            <el-select v-model="formInline.violation_type" placeholder="违规类型" clearable>
+            <el-select v-model="formInline.violation_type"  clearable>
               <el-option label="违停一次" value="1"></el-option>
               <el-option label="加装私锁" value="2"></el-option>
               <el-option label="车辆丢失" value="3"></el-option>
@@ -32,19 +32,19 @@
           </el-form-item>
 
           <el-form-item label="变更积分:">
-            <el-input v-model="formInline.change_points" placeholder="变更积分">
+            <el-input v-model="formInline.change_points" >
             </el-input>
           </el-form-item>
 
           <el-form-item label="冲正标志:">
-            <el-select v-model="formInline.logo" placeholder="冲正标志" clearable>
+            <el-select v-model="formInline.logo" placeholder="请选择" clearable>
               <el-option label="未冲正" value="1"></el-option>
               <el-option label="已冲正" value="2"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="审核状态:">
-            <el-select v-model="formInline.audit_status" placeholder="审核状态" clearable>
+            <el-select v-model="formInline.audit_status" placeholder="请选择" clearable>
               <el-option label="未审核" value="1"></el-option>
               <el-option label="审核通过" value="2"></el-option>
               <el-option label="审核未通过" value="3"></el-option>
@@ -52,35 +52,47 @@
           </el-form-item>
 
           <el-form-item label="积分清零:">
-            <el-select v-model="formInline.integral_zero" placeholder="积分清零" clearable>
+            <el-select v-model="formInline.integral_zero" placeholder="请选择" clearable>
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="2"></el-option>
             </el-select>
           </el-form-item>
 
           <el-form-item label="操作员:">
-            <el-input v-model="formInline.operator" placeholder="选择操作员">
+            <el-input v-model="formInline.operator">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="更新时间:">
+
+          <el-form-item label="更新时间：">
             <el-date-picker
-              v-model="formInline.update_date"
-              type="datetimerange"
-              placeholder="选择时间范围">
+              class="timeInput"
+              v-model="formInline.Begin_addTime"
+              type="datetime">
+            </el-date-picker> -
+            <el-date-picker
+              class="timeInput"
+              v-model="formInline.End_addTime"
+              type="datetime">
             </el-date-picker>
           </el-form-item>
 
-          <el-form-item label="违规时间:">
+          <el-form-item label="违规时间：">
             <el-date-picker
-              v-model="formInline.violation_date"
-              type="datetimerange"
-              placeholder="选择时间范围">
+              class="timeInput"
+              v-model="formInline.Begin_addTime"
+              type="datetime">
+            </el-date-picker> -
+            <el-date-picker
+              class="timeInput"
+              v-model="formInline.End_addTime"
+              type="datetime">
             </el-date-picker>
           </el-form-item>
+
 
           <el-form-item label="问题描述:">
-            <el-input v-model="formInline.problem_des" placeholder="问题描述">
+            <el-input v-model="formInline.problem_des">
             </el-input>
           </el-form-item>
 
@@ -430,6 +442,9 @@
 </script>
 
 <style scoped>
+  .timeInput {
+    width: 145px !important;
+  }
   .padding{
     padding-left:10px;
   }
