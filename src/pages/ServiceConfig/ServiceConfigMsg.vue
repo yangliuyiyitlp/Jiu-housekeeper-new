@@ -1,218 +1,182 @@
 <template>
   <div class="padding">
-    <p class="left">通道名</p>
-    <p>权重<i>{{resultNum}}</i></p>
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <div>
+    <p class="left">短信通道名</p>
+    <p>权重</p>
+    <el-form :inline="true" class="demo-form-inline">
+      <div class="center">
         <el-form-item>
-          <el-select v-model="formInline.name" clearable class="name">
-            <el-option label="亿美" value="1"></el-option>
-            <el-option label="聚合" value="2"></el-option>
+          <el-select v-model="formInline.id" clearable class="name center">
+            <el-option label="大汉三通" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-button class="prevent" @click="numReduce">-</el-button>
-        <input type="text" class="num" v-model="num">
+        <input type="text" class="num" v-model='formInline.percentOne'>
         <el-button class="prevent" @click="numAdd">+</el-button>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="num"></el-progress>
+        <el-button type="primary" class="float " @click="submit(formInline)">提交</el-button>
+        <el-progress :text-inside="true" class="center" :stroke-width="20"
+                     :percentage="formInline.percentOne"></el-progress>
       </div>
-      <div>
+      <div class="center">
         <el-form-item>
-          <el-select v-model="formInline.nameTwo" clearable class="name">
-            <el-option label="亿美" value="1"></el-option>
-            <el-option label="聚合" value="2"></el-option>
+          <el-select v-model="form.id" clearable class="name center">
+            <el-option label="云企讯" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-button class="prevent" @click="numReduceTwo">-</el-button>
-        <input type="text" class="num" v-model="numTwo">
+        <input type="text" class="num" v-model=form.percent>
         <el-button class="prevent" @click="numAddTwo">+</el-button>
-        <el-progress :text-inside="true" :stroke-width="20" :percentage="numTwo"></el-progress>
+        <el-button type="primary" class="float " @click="submit(form)">提交</el-button>
+        <el-progress :text-inside="true" class="center" :stroke-width="20" :percentage="form.percent"></el-progress>
       </div>
-      <!--<div>-->
-      <!--<input type="text" v-model="nameThree" class="name">-->
-      <!--<el-button class="prevent" @click="numReduceThree">-</el-button>-->
-      <!--<input type="text" class="num" v-model="numThree">-->
-      <!--<el-button class="prevent" @click="numAddThree">+</el-button>-->
-      <!--<el-progress :text-inside="true" :stroke-width="18" :percentage="numThree"></el-progress>-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<input type="text" v-model="nameFour" class="name">-->
-      <!--<el-button class="prevent" @click="numReduceFour">-</el-button>-->
-      <!--<input type="text" class="num" v-model="numFour">-->
-      <!--<el-button class="prevent" @click="numAddFour">+</el-button>-->
-      <!--<el-progress :text-inside="true" :stroke-width="18" :percentage="numFour"></el-progress>-->
-      <!--</div>-->
-      <!--<div>-->
-      <!--<input type="text" v-model="nameFive" class="name">-->
-      <!--<el-button class="prevent" @click="numReduceFive">-</el-button>-->
-      <!--<input type="text" class="num" v-model="numFive">-->
-      <!--<el-button class="prevent" @click="numAddFive">+</el-button>-->
-      <!--<el-progress :text-inside="true" :stroke-width="18" :percentage="numFive"></el-progress>-->
-      <!--</div>-->
+      <div class="center">
+        <el-form-item>
+          <el-select v-model="formData.id" clearable class="name center">
+            <!--<el-option label="亿美" value="1"></el-option>-->
+            <el-option label="阿里云" value="3"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-button class="prevent" @click="numReduceThree">-</el-button>
+        <input type="text" class="num" v-model=formData.percentTwo>
+        <el-button class="prevent" @click="numAddThree">+</el-button>
+        <el-button type="primary" class="float " @click="submit(formData)">提交</el-button>
+        <el-progress :text-inside="true" class="center" :stroke-width="20" :percentage="formData.percentTwo"></el-progress>
+      </div>
     </el-form>
-    <div class="btn">
-      <el-button type="primary" @click="submit(form)">提交</el-button>
-    </div>
-
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
-        resultName: 0,
-        resultNum: 0,
         formInline: {
-          name: '0',
-          nameTwo: '0'
+          id: '1',
+          percentOne: 0
         },
-        num: 0,
-        numTwo: 0
-//        nameThree: '',
-//        numThree: 0,
-//        nameFour: '',
-//        numFour: 0,
-//        nameFive: '',
-//        numFive: 0
+        form: {
+          id: '2',
+          percent: 0
+        },
+        formData: {
+          id: '3',
+          percentTwo: 0
+        }
+      }
+    },
+    computed: {
+      percentOne () {
+        return this.formInline.percentOne
+      },
+      percent () {
+        return this.form.percent
+      },
+      percentTwo () {
+        return this.formData.percentTwo
       }
     },
     watch: {
-      num (val) {
-        if (typeof (val) !== Number && val !== '') {
-          this.num = parseInt(val)
-        } else if (val === '') {
-          this.num = 0
-        }
-        this.resultNum = this.num + this.numTwo
+      percentOne (val, old) {
+        old = parseInt(old)
+        this.formInline.percentOne = watchOptions(val)
+        console.log(val, old)
       },
-      numTwo (val) {
-        if (typeof (val) !== Number && val !== '') {
-          this.numTwo = parseInt(val)
-        } else if (val === '') {
-          this.numTwo = 0
-        }
-        this.resultNum = this.num + this.numTwo
+      percent (val, old) {
+        old = parseInt(old)
+        this.form.percent = watchOptions(val)
+      },
+      percentTwo (val, old) {
+        old = parseInt(old)
+        this.formData.percentTwo = watchOptions(val)
       }
-//      numThree (val) {
-//        if (typeof (val) !== Number && val !== '') {
-//          this.numThree = parseInt(val)
-//        } else if (val === '') {
-//          this.numThree = 0
-//        }
-//        this.resultNum = this.num + this.numTwo + this.numThree + this.numFour + this.numFive
-//      },
-//      numFour (val) {
-//        if (typeof (val) !== Number && val !== '') {
-//          this.numFour = parseInt(val)
-//        } else if (val === '') {
-//          this.numFour = 0
-//        }
-//        this.resultNum = this.num + this.numTwo + this.numThree + this.numFour + this.numFive
-//      },
-//      numFive (val) {
-//        if (typeof (val) !== Number && val !== '') {
-//          this.numFive = parseInt(val)
-//        } else if (val === '') {
-//          this.numFive = 0
-//        }
-//        this.resultNum = this.num + this.numTwo + this.numThree + this.numFour + this.numFive
-//      },
-//      name (val, old) {
-//        this.resultName = valChange(this.resultName, val, old)
-//      },
-//      nameTwo (val, old) {
-//        this.resultName = valChange(this.resultName, val, old)
-//      },
-//      nameThree (val, old) {
-//        this.resultName = valChange(this.resultName, val, old)
-//      },
-//      nameFour (val, old) {
-//        this.resultName = valChange(this.resultName, val, old)
-//      },
-//      nameFive (val, old) {
-//        this.resultName = valChange(this.resultName, val, old)
-//      }
     },
     methods: {
       numReduce () {
-        if (this.num >= 10) {
-          this.num -= 10
+        if (this.formInline.percentOne >= 10) {
+          this.formInline.percentOne -= 10
         }
       },
       numAdd () {
-        if (this.num <= 90) {
-          this.num += 10
+        if (this.formInline.percentOne <= 90) {
+          this.formInline.percentOne += 10
         }
       },
       numReduceTwo () {
-        if (this.numTwo >= 10) {
-          this.numTwo -= 10
+        if (this.form.percent >= 10) {
+          this.form.percent -= 10
         }
       },
       numAddTwo () {
-        if (this.numTwo <= 90) {
-          this.numTwo += 10
+        if (this.form.percent <= 90) {
+          this.form.percent += 10
         }
       },
-//      numReduceThree () {
-//        if (this.numThree >= 10) {
-//          this.numThree -= 10
-//        }
-//      },
-//      numAddThree () {
-//        if (this.numThree <= 90) {
-//          this.numThree += 10
-//        }
-//      },
-//      numReduceFour () {
-//        if (this.numFour >= 10) {
-//          this.numFour -= 10
-//        }
-//      },
-//      numAddFour () {
-//        if (this.numFour <= 90) {
-//          this.numFour += 10
-//        }
-//      },
-//      numReduceFive () {
-//        if (this.numFive >= 10) {
-//          this.numFive -= 10
-//        }
-//      },
-//      numAddFive () {
-//        if (this.numFive <= 90) {
-//          this.numFive += 10
-//        }
-//      },
-      submit (form) {
-        if (parseInt(this.formInline.name) <= 0 && parseInt(this.formInline.nameTwo) <= 0) {
-          alert('请输入通道名')
+      numReduceThree () {
+        if (this.formData.percentTwo >= 10) {
+          this.formData.percentTwo -= 10
+        }
+      },
+      numAddThree () {
+        if (this.formData.percentTwo <= 90) {
+          this.formData.percentTwo += 10
+        }
+      },
+      submit (result) {
+        let arr = []
+        for (let key in result) {
+          arr.push(result[key])
+        }
+        if (arr[0] === '') {
+          alert('请输入短信通道名')
           return false
         }
-        if (this.resultNum <= 0) {
-          alert('请输入占比')
+        if (arr[1] >= 100) {
+          alert('通道占比不能超过100')
           return false
         }
-        if (this.resultNum >= 100) {
-          alert('通道占比总和不能超过100')
-          return false
-        }
-        this.$ajax.get('service/config/msg/', {params: this.formInline})
-          .then()
-          .catch()
+        this.$ajax.post('serviceConfig/msg/message', {'id': arr[0], 'percent': arr[1]})
+          .then((res) => {
+            console.log(res)
+            if (res.data.code === 200) {
+              this.$message({
+                type: 'success',
+                message: res.data.msg
+              })
+            } else if (res.data.code === 303) {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              })
+            } else {
+              this.$message({
+                type: 'error',
+                message: '提交异常'
+              })
+            }
+          }
+          )
+          .catch((err) => {
+            this.$message({
+              type: 'error',
+              message: '提交异常' + err
+            })
+          })
       }
     }
   }
-
-  //  function valChange (resultName, val, old) {
-  //    if (val !== '' && old === '') {
-  //      resultName += 1
-  //    } else if (val === '' && old !== '') {
-  //      resultName -= 1
-  //    }
-  //    return resultName
-  //  }
+  function watchOptions (val) {
+    if (val === '' || parseInt(val) <= 0) {
+      val = 0
+    } else if (parseInt(val) >= 100) {
+      val = 100
+    }
+    return parseInt(val)
+  }
 </script>
 <style scoped>
+  .center {
+    height: 60px;
+    line-height: 60px;
+  }
+
   .padding {
     padding-top: 100px;
     margin-left: 20%;
@@ -235,30 +199,16 @@
     text-align: center;
   }
 
-  .del {
-    float: right;
-    border-radius: 10px;
-    background-color: #20a0ff;
-    border: 1px solid #20a0ff;
-    color: #fff;
-    margin-left: 20px;
-  }
-
   .prevent {
-    height:36px;
+    height: 36px;
     padding: 3px 10px;
   }
 
   .left {
     float: left;
-    margin-right: 110px;
+    margin-right: 120px;
     text-align: center;
     width: 100px;
-  }
-
-  .btn {
-    margin-top: 40px;
-    text-align: right;
   }
 
   p {
@@ -272,6 +222,11 @@
     float: right;
   }
 
+  .float {
+    float: right;
+    margin-top: 13px;
+  }
+
   .el-progress-bar__inner {
     background-color: #13ce66;
   }
@@ -279,7 +234,7 @@
   .num {
     width: 50px;
     text-align: center;
-    height:30px;
+    height: 30px;
   }
 
   button {

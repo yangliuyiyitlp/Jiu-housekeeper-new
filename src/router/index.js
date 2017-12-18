@@ -54,8 +54,9 @@ router.beforeEach((to, from, next) => {
             // console.log('匹配出路由', res)
             // sessionStorage.setItem('authList', JSON.stringify(res))
             // store.dispatch('authList', JSON.stringify(res))
-            // console.log('res是', res)
+            console.log('res是', res)
             router.addRoutes(res)
+            console.log(router)
             next(to.path)
           })
         }).catch((err) => {
