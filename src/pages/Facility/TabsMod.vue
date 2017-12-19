@@ -17,13 +17,13 @@
           <el-option label="否" value="false"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="query">查询</el-button>
+      <el-form-item v-if="hasPermission('inPort')">
+        <el-button type="primary" @click="view">查询</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasPermission('outPort')">
         <el-button type="primary" @click="exportFile">导出</el-button>
       </el-form-item>
-      <el-form-item>
+      <el-form-item v-if="hasPermission('create')">
         <el-button type="primary" @click="dialogFormVisible = true">新增</el-button>
       </el-form-item>
     </el-form>
@@ -84,6 +84,7 @@
         </template>
       </el-table-column>
       <el-table-column
+        v-if="hasPermission('updateDelete')"
         header-align="center"
         align="center"
         label="操作">
@@ -199,6 +200,13 @@
       }
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       query: function () {
         this.exportParam.account = this.requestParam.account
         this.exportParam.providerName = this.requestParam.providerName

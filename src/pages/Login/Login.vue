@@ -1,10 +1,10 @@
 <template>
-  <div class="wrap">
+  <div class="wrap" @keydown="show($event)">
     <h3>赳管家</h3>
     <p v-show="showTip">{{tip}}</p>
     <input type="text" placeholder="请输入用户名" v-model="username">
     <input type="password" placeholder="请输入密码" v-model="password">
-    <button @click="login">登录</button>
+    <button @click="login" >登录</button>
   </div>
 </template>
 <script>
@@ -28,6 +28,11 @@
       }
     },
     methods: {
+      show: function (ev) {
+        if (ev.keyCode === 13) {
+          this.login()
+        }
+      },
       login () {
         let vm = this
         if (this.username === '' || this.password === '') {

@@ -50,8 +50,8 @@
       <el-form-item label="软件版本：">
         <el-input v-model="requestParam.versions"></el-input>
       </el-form-item>
-      <el-button type="primary" @click="query">查询</el-button>
-      <el-button type="primary" @click="exportFile">导出</el-button>
+      <el-button  v-if="hasPermission('view')" type="primary" @click="query">查询</el-button>
+      <el-button  v-if="hasPermission('outPort')" type="primary" @click="exportFile">导出</el-button>
     </el-form>
     <el-table
       :data="tableData"
@@ -353,6 +353,13 @@
       }
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       query () {
         this.exportParam.factoryName = this.requestParam.factoryName
         this.exportParam.lockFactoryNo = this.requestParam.lockFactoryNo
