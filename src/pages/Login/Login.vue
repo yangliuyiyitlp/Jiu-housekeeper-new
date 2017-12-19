@@ -56,8 +56,6 @@
               } else if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
                 Cookie.remove('sessionId')
                 Cookie.set('sessionId', res.data.sessionId)
-                this.tip = res.data.message
-                this.showTip = true
                 this.$ajax.get('/login/right', {params: {sessionId: res.data.sessionId}})
                   .then((res) => {
                     if (res.data.code === 500) {
@@ -71,8 +69,6 @@
                       Cookie.set('username', this.username)
                       // 跳转界面
                       vm.$router.push({path: '/home'})
-                      vm.tip = '获取权限成功'
-                      this.showTip = true
                     }
                   })
               }
