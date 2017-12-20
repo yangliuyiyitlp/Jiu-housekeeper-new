@@ -450,6 +450,14 @@ const asyncRouter = [
     component: r => require.ensure([], () => r(require('../pages/City/CityBlacklist.vue')), 'CityBlacklist')
   },
   {
+    path: '/city/fencing/info',
+    name: 'city.fencing.info',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/City/CityFencingInfo.vue')), 'CityFencingInfo')
+  },
+  {
     path: '/service',
     name: 'service',
     component: r => require.ensure([], () => r(require('../pages/Service/Service.vue')), 'Service'),
