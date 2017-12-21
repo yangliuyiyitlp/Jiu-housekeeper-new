@@ -452,7 +452,16 @@
       resetForm (ruleForm) {
         this.ruleForm = {}
       },
-      submitForm () {}
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!')
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
+      }
     }
   }
 </script>
@@ -477,10 +486,10 @@
     border-radius: 5px;
   }
   .ruleForm > .el-form-item > .el-form-item__label {
-    width: 150px !important;
+    width: 100px !important;
   }
 
   .ruleForm > .el-form-item > .el-form-item__content {
-    margin-left: 150px !important;
+    margin-left: 100px !important;
   }
 </style>

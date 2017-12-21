@@ -12,7 +12,7 @@ import VueMoment from 'vue-moment'
 import Axios from 'axios'
 import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
-// import Cookie from 'js-cookie'
+import Cookie from 'js-cookie'
 Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
 Vue.prototype.$store = store
@@ -20,42 +20,41 @@ Axios.defaults.baseURL = baseUrl
 Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 
 // 超时设置
-const service = Axios.create({
+Axios.create({
   timeout: 5000                  // 请求超时时间
 })
-
 // http request 拦截器
 // 每次请求都为http头增加Authorization字段，其内容为token
-// service.interceptors.request.use(
-//   config => {
-//     if (store.state.user.token) {
-//       // config.headers.Authorization = `token ${store.state.user.token}`
-//       config.headers.Authorization = Cookie.get('token')
-//     }
-//     return config
-//   },
-//   err => {
-//     return Promise.reject(err)
-//   })
+Axios.interceptors.request.use(
+  config => {
+    if (Cookie.get('sessionId')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+      config.headers.Authorization = {'sessionId': `${Cookie.get('sessionId')}`}
+    }
+    return config
+  },
+  err => {
+    console.log(7777)
+    return Promise.reject(err)
+  })
 
 // http response 拦截器
 // 针对响应代码确认跳转到对应页面
-// service.interceptors.response.use(
-//   response => response,
-//   error => {
-//     if (error.response) {
-//       switch (error.response.status) {
-//         case 401:
-//           router.push('error/401')
-//           break
-//         case 403:
-//           router.push('error/403')
-//           break
-//       }
-//     }
-//     return Promise.reject(error.response.data)
-//   }
-// )
+Axios.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response) {
+      switch (error.response.status) {
+        case 401:
+          router.push('/404')
+          break
+        case 403:
+          router.push('/404')
+          break
+      }
+    }
+    return Promise.reject(error.response.data)
+  }
+)
 
 Vue.use(VueMoment)
 
@@ -171,7 +170,6 @@ new Vue({
   el: '#app',
   router,
   store,
-  service,
   i18n,
   template: '<App/>',
   components: {App}
