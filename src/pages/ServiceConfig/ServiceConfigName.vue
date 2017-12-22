@@ -155,8 +155,8 @@
 
   .left {
     float: left;
-    margin-right: 120px;
-    text-align: center;
+    margin-left: 7px;
+    margin-right: 115px;
     width: 100px;
   }
 

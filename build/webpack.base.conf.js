@@ -13,11 +13,14 @@ module.exports = {
     app: ['babel-polyfill', './src/main.js']
   },
   output: {
-    path: config.build.assetsRoot,
+    // path: config.build.assetsRoot,    12.22 号修改 因打包后报错chunk loading faild
+    path: '/dist',
     filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config.build.assetsPublicPath
-      : config.dev.assetsPublicPath
+    publicPath: '/',
+    chunkFilename:'js/[id].[chunkhash].js',  // 12.22 号增加
+    // publicPath: process.env.NODE_ENV === 'production'  12.22 号修改
+    //   ? config.build.assetsPublicPath
+    //   : config.dev.assetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],

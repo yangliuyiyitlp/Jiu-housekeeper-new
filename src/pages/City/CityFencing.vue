@@ -200,6 +200,8 @@
           this.title = '电子围栏基础信息新增'
         } else if (this.title === '电子围栏基础信息新增') {
           this.ruleForm = {}
+          this.$refs.loadFile.clearFiles()
+          this.$refs.upload.clearFiles()
           this.update = true
           this.tip = '立即创建'
           this.$refs.ruleForm.resetFields()
@@ -391,8 +393,6 @@
             .then((res) => {
               this.Token = res.data
               this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
-              // oss上图片的路径 在表单体提交之前拼接
-//              this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
               resolve()
             })
             .catch(err => {
@@ -412,8 +412,6 @@
             .then((res) => {
               this.Token1 = res.data
               this.Token1.key = this.Token1.dir + '/' + (+new Date()) + file.name
-              // oss上图片的路径 在表单体提交之前拼接
-//              this.form.coverPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token1.key
               resolve()
             })
             .catch(err => {
