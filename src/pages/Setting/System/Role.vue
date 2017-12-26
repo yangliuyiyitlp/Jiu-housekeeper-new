@@ -3,7 +3,6 @@
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <!-- 角色列表-->
       <el-tab-pane label="角色列表" name="first">
-
         <!--表格-->
         <el-table
           :data="tableData"
@@ -174,6 +173,7 @@
         highlight-current
         :data="select"
         :props="defaultProps"
+        @check-change="handleCheckChange"
         accordion
         show-checkbox
         node-key="id">
@@ -199,6 +199,7 @@
         roleVisible: false,
         checkbox: false,
         filterText: '',
+        arr: [],
         formInline: {
           loginName: '',
           name: '',
@@ -223,7 +224,11 @@
             label: '佛山分公司',
             children: [{
               id: 4,
-              label: '城市运营'
+              label: '城市运营',
+              children: [{
+                id: 99,
+                label: '运营'
+              }]
             }]
           }, {
             id: 5,
@@ -525,6 +530,15 @@
         this.form.attributionCompany = this.filterText
         this.cityVisible = false
       },
+      handleCheckChange (data, checked, indeterminate) {
+        if (!data.children && checked && this.arr.indexOf(data.id) === -1) {
+          this.arr.push(data.id)
+        } else if (!data.children && !checked && this.arr.indexOf(data.id) !== 1) {
+        }
+        console.log(this.arr)
+//        console.log('1', checked)
+//        console.log('2', indeterminate)
+      },
       getCheckedKeys () {
         let arr = this.$refs.tree2.getCheckedKeys()
         console.log(arr)
@@ -562,6 +576,756 @@
       }
     }
   }
+//  let arr = [
+//    {
+//      'id': 'e826349b33f24c2ca61571b9bb148004',
+//      'parentId': '0',
+//      'parentIds': '0,',
+//      'label': '城市运营',
+//      'sort': 5,
+//      'path': '',
+//      'target': '',
+//      'icon': '',
+//      'isShow': '1',
+//      'permission': '',
+//      'createBy': '1',
+//      'createDate': 1493295987000,
+//      'updateBy': '1',
+//      'updateDate': 1503300330000,
+//      'remarks': '',
+//      'delFlag': '0',
+//      'name': 'city',
+//      'type': 0,
+//      'children': [
+//        {
+//          'id': '2a7a73b9775544389e87bda404f53d5c',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '公司信息管理',
+//          'sort': 1,
+//          'path': '/city/company/info',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1489334400000,
+//          'updateBy': '1',
+//          'updateDate': 1494604800000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.company.info',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': 'd987a01100e74daa873d0884fafe2df1',
+//              'parentId': '2a7a73b9775544389e87bda404f53d5c',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,2a7a73b9775544389e87bda404f53d5c,',
+//              'label': '编辑',
+//              'sort': 60,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:company:tCompanyparamInfo:edit',
+//              'createBy': '1',
+//              'createDate': 1490457600000,
+//              'updateBy': '1',
+//              'updateDate': 1490457600000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'ef388fc08aac480297be2d76e8aa1ed9',
+//              'parentId': '2a7a73b9775544389e87bda404f53d5c',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,2a7a73b9775544389e87bda404f53d5c,',
+//              'label': '查看',
+//              'sort': 30,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:company:tCompanyparamInfo:view',
+//              'createBy': '1',
+//              'createDate': 1490457600000,
+//              'updateBy': '1',
+//              'updateDate': 1490457600000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': '8cd8de4b9ba7401d9e5490fc99a3f19d',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '运维车辆干涉明细',
+//          'sort': 5030,
+//          'path': '/city/bike/intervene/list',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1511780102000,
+//          'updateBy': '1',
+//          'updateDate': 1511780102000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.bike.intervene.list',
+//          'type': 1,
+//          'children': []
+//        },
+//        {
+//          'id': '66e7f5c81b904d5183cfaf38b1853c95',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '点位管理',
+//          'sort': 8,
+//          'path': '/city/point',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1496851200000,
+//          'updateBy': '1',
+//          'updateDate': 1496851200000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.point',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': '11620d52356e45ac92fefdbf37a16a39',
+//              'parentId': '66e7f5c81b904d5183cfaf38b1853c95',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,66e7f5c81b904d5183cfaf38b1853c95,',
+//              'label': '查看',
+//              'sort': 1,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:childrenareaposition:tChildrenAreaPosition:view',
+//              'createBy': '1',
+//              'createDate': 1496851200000,
+//              'updateBy': '1',
+//              'updateDate': 1496851200000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': '67e9720132d9455b8394672e99f8bd17',
+//              'parentId': '66e7f5c81b904d5183cfaf38b1853c95',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,66e7f5c81b904d5183cfaf38b1853c95,',
+//              'label': '编辑',
+//              'sort': 2,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:childrenareaposition:tChildrenAreaPosition:edit',
+//              'createBy': '1',
+//              'createDate': 1496851200000,
+//              'updateBy': '1',
+//              'updateDate': 1496851200000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'fsfask34454gherjfsdertyrtrt4841d',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '电子围栏基础信息',
+//          'sort': 3,
+//          'path': '/city/fencing/info',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': 'view,updateDelete,create',
+//          'createBy': '1',
+//          'createDate': 1493222400000,
+//          'updateBy': '1',
+//          'updateDate': 1494604800000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.fencing.info',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': 'j4g54j5g45tr5ad31d13d16rf',
+//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
+//              'label': '查询',
+//              'sort': 3,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'city:fencing:info:view',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'sfkh4546d6gdg1d231gdgjjgh',
+//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
+//              'label': '修改',
+//              'sort': 3,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'city:fencing:info:update',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': '641fhf8585455454555ghjgfj',
+//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
+//              'label': '删除',
+//              'sort': 3,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'city:fencing:info:delete',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'ytfd4ga45453gdg45d4g4hf5g',
+//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
+//              'label': '新增',
+//              'sort': 3,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'city:fencing:info:create',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'f9fb12ea16b3456c97d00278d31e9d2b',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '远程升级',
+//          'sort': 3,
+//          'path': '/city/remote',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1493222400000,
+//          'updateBy': '1',
+//          'updateDate': 1494604800000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.remote',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': '8f4773beccb4446abd54156842b00ea7',
+//              'parentId': 'f9fb12ea16b3456c97d00278d31e9d2b',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,f9fb12ea16b3456c97d00278d31e9d2b,',
+//              'label': '编辑',
+//              'sort': 60,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:update:tUpdateInfo:edit',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': '0f21885745e44ceea043fb074200f837',
+//              'parentId': 'f9fb12ea16b3456c97d00278d31e9d2b',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,f9fb12ea16b3456c97d00278d31e9d2b,',
+//              'label': '查看',
+//              'sort': 30,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:update:tUpdateInfo:view',
+//              'createBy': '1',
+//              'createDate': 1493222400000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'addeb73b760741f1817d1b820815a945',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '小区域管理',
+//          'sort': 4,
+//          'path': '/city/range',
+//          'target': 'mainFrame',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1494604800000,
+//          'updateBy': '1',
+//          'updateDate': 1494604800000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.range',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': '0c3b13fcea5040849e43492436f4c8d3',
+//              'parentId': 'addeb73b760741f1817d1b820815a945',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
+//              'label': '编辑',
+//              'sort': 60,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:childrenarea:tChildrenArea:edit',
+//              'createBy': '1',
+//              'createDate': 1494604800000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'ada8d7c4919443d9b37df49c39de1d9d',
+//              'parentId': 'addeb73b760741f1817d1b820815a945',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
+//              'label': '查看',
+//              'sort': 30,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:childrenarea:tChildrenArea:view',
+//              'createBy': '1',
+//              'createDate': 1494604800000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': '709b77eab0ad42e9811956fdb6becb5e',
+//              'parentId': 'addeb73b760741f1817d1b820815a945',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
+//              'label': '区域围栏',
+//              'sort': 90,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:childrenarea:tChildrenArea:fance',
+//              'createBy': '1',
+//              'createDate': 1494604800000,
+//              'updateBy': '1',
+//              'updateDate': 1494604800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'ddee66ec37424ec08f990643f4fbd6d0',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '城市黑名单',
+//          'sort': 5030,
+//          'path': '/city/blacklist',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1503502528000,
+//          'updateBy': '1',
+//          'updateDate': 1503502528000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.blacklist',
+//          'type': 1,
+//          'children': []
+//        },
+//        {
+//          'id': 'b8ccbc6255a74e699376b1712c8397cc',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '运营人员管理',
+//          'sort': 2,
+//          'path': '/city/operator',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1493740800000,
+//          'updateBy': '1',
+//          'updateDate': 1494604800000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.operator',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': 'c95afc3575f84456860cae4044180bd8',
+//              'parentId': 'b8ccbc6255a74e699376b1712c8397cc',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,afa4f268958040a3b540693c9210da66,b8ccbc6255a74e699376b1712c8397cc,',
+//              'label': '查看',
+//              'sort': 30,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:administrator:tAdministratorInfo:view',
+//              'createBy': '1',
+//              'createDate': 1493740800000,
+//              'updateBy': '1',
+//              'updateDate': 1493740800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'bbed6b2fd62546a6984e1fe4cbea142e',
+//              'parentId': 'b8ccbc6255a74e699376b1712c8397cc',
+//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,afa4f268958040a3b540693c9210da66,b8ccbc6255a74e699376b1712c8397cc,',
+//              'label': '编辑',
+//              'sort': 60,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'electric:administrator:tAdministratorInfo:edit',
+//              'createBy': '1',
+//              'createDate': 1493740800000,
+//              'updateBy': '1',
+//              'updateDate': 1493740800000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': null,
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'ca5decf461d442e6aeadc17cd4b8acbb',
+//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
+//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
+//          'label': '区域统计报表',
+//          'sort': 38,
+//          'path': '/city/area/total',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1502697043000,
+//          'updateBy': '1',
+//          'updateDate': 1502697043000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'city.area.total',
+//          'type': 1,
+//          'children': []
+//        }
+//      ]
+//    },
+//    {
+//      'id': 'vxcv4sdf48432bb4dedfgd356d5919',
+//      'parentId': '0',
+//      'parentIds': '0,',
+//      'label': '服务配置',
+//      'sort': 2,
+//      'path': '',
+//      'target': '',
+//      'icon': '',
+//      'isShow': '1',
+//      'permission': '',
+//      'createBy': '1',
+//      'createDate': 1489075200000,
+//      'updateBy': '1',
+//      'updateDate': 1493222400000,
+//      'remarks': '',
+//      'delFlag': '0',
+//      'name': 'serviceConfig',
+//      'type': 0,
+//      'children': [
+//        {
+//          'id': 'fkdfsd4545sdfsdfsdfsdas4548a',
+//          'parentId': 'vxcv4sdf48432bb4dedfgd356d5919',
+//          'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,',
+//          'label': '短信配置',
+//          'sort': 2,
+//          'path': '/serviceConfig/msg',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1489075200000,
+//          'updateBy': '1',
+//          'updateDate': 1493222400000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'serviceConfig.msg',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': '44ghkf45ghd5eh5dh5d2d1h2d1',
+//              'parentId': 'fkdfsd4545sdfsdfsdfsdas4548a',
+//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,fkdfsd4545sdfsdfsdfsdas4548a,',
+//              'label': '短信通道请求次数提交',
+//              'sort': 2,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'serviceConfig:msg:submitCount',
+//              'createBy': '1',
+//              'createDate': 1489075200000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'hfghjghj45454gsgdf1g24jk5g',
+//              'parentId': 'fkdfsd4545sdfsdfsdfsdas4548a',
+//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,fkdfsd4545sdfsdfsdfsdas4548a,',
+//              'label': '短信通道提交',
+//              'sort': 2,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'serviceConfig:msg:submit',
+//              'createBy': '1',
+//              'createDate': 1489075200000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        },
+//        {
+//          'id': 'jkdfgjk4874sfsd48sfs4sf45ss4',
+//          'parentId': 'vxcv4sdf48432bb4dedfgd356d5919',
+//          'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,',
+//          'label': '实名认证',
+//          'sort': 2,
+//          'path': '/serviceConfig/name',
+//          'target': '',
+//          'icon': '',
+//          'isShow': '1',
+//          'permission': '',
+//          'createBy': '1',
+//          'createDate': 1489075200000,
+//          'updateBy': '1',
+//          'updateDate': 1493222400000,
+//          'remarks': '',
+//          'delFlag': '0',
+//          'name': 'serviceConfig.name',
+//          'type': 1,
+//          'children': [
+//            {
+//              'id': '44b5d4f54g8wfzc23z1vgr5',
+//              'parentId': 'jkdfgjk4874sfsd48sfs4sf45ss4',
+//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,jkdfgjk4874sfsd48sfs4sf45ss4,',
+//              'label': '实名认证请求次数提交',
+//              'sort': 2,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'serviceConfig:name:submitCount',
+//              'createBy': '1',
+//              'createDate': 1489075200000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            },
+//            {
+//              'id': 'gd4g45sdg45s4f548efg45s',
+//              'parentId': 'jkdfgjk4874sfsd48sfs4sf45ss4',
+//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,jkdfgjk4874sfsd48sfs4sf45ss4,',
+//              'label': '实名认证通道提交',
+//              'sort': 2,
+//              'path': '',
+//              'target': '',
+//              'icon': '',
+//              'isShow': '0',
+//              'permission': 'serviceConfig:name:submit',
+//              'createBy': '1',
+//              'createDate': 1489075200000,
+//              'updateBy': '1',
+//              'updateDate': 1493222400000,
+//              'remarks': '',
+//              'delFlag': '0',
+//              'name': '',
+//              'type': 2,
+//              'children': []
+//            }
+//          ]
+//        }
+//      ]
+//    }
+//  ]
+//
+//  //  function routePath (arr) {
+//  //    for (let i = 0; i < arr.length; i++) {
+//  //      let item = arr[i]
+//  //      if (item.children !== undefined && item.children.length > 0) {  // 递归 筛选出所有的对象
+//  //        routePath(item.children)
+//  //      }
+//  //      console.log(item)
+//  //      newArr.push(item)
+//  //      if (item.parentId === '0' && item.parentIds === '0,') {  // 找出一级菜单
+//  //        menus[item.name] = []
+//  //        console.log(0, menus)
+//  //      }
+//  //      newArr.find(function (s) {
+//  //        if (s.id === item.parentId) {
+//  //          s.children
+//  //        }
+//  //      })
+//  //    }
+//  //  }
+//
+//  backJson(arr)
+//
+//  function backJson (backData) {
+//    let firstLength = backData.length // 数组的长度
+//    let dataObj = {}
+//    for (let i = 0; i < firstLength; i++) {
+//      dataObj[backData[i].name] = []  // 生成一级菜单
+//      let secondLength = backData[i].children.length // 二级菜单长度
+//      for (let j = 0; j < secondLength; j++) {
+//        let secondPage = backData[i].children[j]
+//        if (secondPage.type === 1) {  // 二级是页面
+//          let pageObj = {'label': '', 'name': '', 'path': '', 'permission': []}
+//          pageObj.label = secondPage.label
+//          pageObj.name = secondPage.name
+//          pageObj.path = secondPage.path
+//          if (secondPage.children !== [] && secondPage.children !== undefined) {
+//            for (let g = 0; g < secondPage.children.length; g++) {
+//              pageObj.permission.push(secondPage.children[g].permission)
+//            }
+//          }
+//          dataObj[backData[i].name].push(pageObj)
+//        } else if (secondPage.type === 0) {
+//          // 说明二级菜单的children有值,则循环二级菜单找到三级菜单页面
+//          let childObj = {'label': '', 'children': []}
+//          let threePage = secondPage.children
+//          for (let k = 0; k < threePage.length; k++) {
+//            childObj.label = backData[i].children[j].label
+//            let childPageObj = {'label': '', 'name': '', 'path': '', 'permission': []}
+//            childPageObj.label = threePage[k].label
+//            childPageObj.name = threePage[k].name
+//            childPageObj.path = threePage[k].path
+//            if (threePage[k].children) {
+//              for (let g = 0; g < threePage[k].children.length; g++) {
+//                childPageObj.permission.push(threePage[k].children[g].permission)
+//              }
+//            }
+//            childObj.children.push(childPageObj)
+//          }
+//          dataObj[backData[i].name].push(childObj)
+//        }
+//      }
+//    }
+//    console.log(22, dataObj)
+//    return dataObj
+//  }
 </script>
 
 <style scoped>

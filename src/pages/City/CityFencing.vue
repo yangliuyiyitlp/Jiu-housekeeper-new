@@ -21,10 +21,10 @@
               type="datetime">
             </el-date-picker>
           </el-form-item>
-          <el-form-item v-if="hasPermission('view')">
+          <el-form-item v-if="hasPermission('city:fencing:info:view')">
             <el-button type="primary" @click="query">查询</el-button>
           </el-form-item>
-          <el-form-item v-if="hasPermission('create')">
+          <el-form-item v-if="hasPermission('city:fencing:info:create')">
             <el-button type="primary" @click="addNewRecord">新增</el-button>
           </el-form-item>
         </el-form>
@@ -75,14 +75,14 @@
             label="备注">
           </el-table-column>
           <el-table-column
-            v-if="hasPermission('updateDelete')"
+            v-if = 'updateDelete'
             header-align="center"
             align="center"
             width="100"
             label="操作">
             <template slot-scope="scope">
-              <el-button @click="modifyRecord(scope.row.id)" type="text" size="small">修改</el-button>
-              <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
+              <el-button v-if="hasPermission('city:fencing:info:update')" @click="modifyRecord(scope.row.id)" type="text" size="small">修改</el-button>
+              <el-button v-if="hasPermission('city:fencing:info:delete')" @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -100,7 +100,7 @@
           </el-form-item>
 
           <el-form-item label="图标图片：">
-            <el-input v-model="ruleForm.iconUrl" v-show='true'></el-input>
+            <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
             <img width="100%" :src="ruleForm.iconUrl" alt="图标图片">
             <el-upload
               :disabled="!update"
@@ -118,7 +118,7 @@
           </el-form-item>
 
           <el-form-item label="展示图片：">
-            <el-input v-model="ruleForm.displayUrl" v-show='true'></el-input>
+            <el-input v-model="ruleForm.displayUrl" v-show='false'></el-input>
             <img width="100%" :src="ruleForm.displayUrl" alt="展示图片">
             <el-upload
               :disabled="!update"
@@ -161,6 +161,7 @@
         opFlag: {0: '都不显示', 1: '围栏外显示', 2: '围栏内显示', 3: '都显示'},
         showFlag: '',
         tip: '立即创建',
+        updateDelete: '',
         Token: {},
         Token1: {},
         tableData: [],
@@ -174,10 +175,15 @@
       }
     },
     created: function () {
-      if (this.hasPermission('create')) {
+      if (this.hasPermission('city:fencing:info:create')) {
         this.create = true
       } else {
         this.create = false
+      }
+      if (this.hasPermission('city:fencing:info:update') || this.hasPermission('city:fencing:info:delete')) {
+        this.updateDelete = true
+      } else {
+        this.updateDelete = false
       }
       this.query()
     },
@@ -196,7 +202,7 @@
         return false
       },
       handleClick () {
-        if (this.activeName2 === 'first' && this.hasPermission('create')) {
+        if (this.activeName2 === 'first' && this.hasPermission('city:fencing:info:create')) {
           this.title = '电子围栏基础信息新增'
         } else if (this.title === '电子围栏基础信息新增') {
           this.ruleForm = {}

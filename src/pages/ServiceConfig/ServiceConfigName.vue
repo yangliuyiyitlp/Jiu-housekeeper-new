@@ -12,7 +12,7 @@
         <el-button class="prevent" @click="numReduce">-</el-button>
         <input type="text" class="num" v-model='formInline.percentOne'>
         <el-button class="prevent" @click="numAdd">+</el-button>
-        <el-button type="primary" class="float " @click="submit(formInline)">提交</el-button>
+        <el-button type="primary" class="float " @click="submit(formInline)" v-if="hasPermission('serviceConfig:name:submit')">提交</el-button>
         <el-progress :text-inside="true" class="center" :stroke-width="20"
                      :percentage="formInline.percentOne"></el-progress>
       </div>
@@ -25,7 +25,7 @@
         <el-button class="prevent" @click="numReduceTwo">-</el-button>
         <input type="text" class="num" v-model=form.percent>
         <el-button class="prevent" @click="numAddTwo">+</el-button>
-        <el-button type="primary" class="float " @click="submit(form)">提交</el-button>
+        <el-button type="primary" class="float " @click="submit(form)" v-if="hasPermission('serviceConfig:name:submit')">提交</el-button>
         <el-progress :text-inside="true" class="center" :stroke-width="20" :percentage="form.percent"></el-progress>
       </div>
     </el-form>
@@ -65,6 +65,13 @@
       }
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       numReduce () {
         if (this.formInline.percentOne >= 10) {
           this.formInline.percentOne -= 10

@@ -26,7 +26,7 @@
                     :disabled="true"
                     :on-icon-click="searchCompany"
                     icon="search"
-                    v-model="formInline.attributionCompany">
+                    v-model="formInline.companyId">
                   </el-input>
                 </el-form-item>
                 <el-form-item label="归属部门：">
@@ -34,7 +34,7 @@
                     :disabled="true"
                     :on-icon-click="searchSection"
                     icon="search"
-                    v-model="formInline.attributionSection">
+                    v-model="formInline.officeId">
                   </el-input>
                 </el-form-item>
 
@@ -71,12 +71,12 @@
               </div>
               <!--隐藏表单用于查询-->
               <form v-show="false" action="" method="post" ref="FileForm">
-                <input name="attributionCompany" v-model="exportParam.attributionCompany"/>
-                <input name="attributionSection" v-model="exportParam.attributionSection"/>
+                <input name="companyId" v-model="exportParam.companyId"/>
+                <input name="officeId" v-model="exportParam.officeId"/>
                 <input name="loginName" v-model="exportParam.loginName"/>
                 <input name="name" v-model="exportParam.name"/>
                 <input name="pageSize" v-model="exportParam.pageSize"/>
-                <input name="pageNo" v-model="exportParam.pageNo"/>
+                <input name="pageNum" v-model="exportParam.pageNum"/>
               </form>
 
               <!--表格-->
@@ -89,67 +89,63 @@
                 <el-table-column
                   header-align="center"
                   align="center"
+                  show-overflow-tooltip
                   prop="id"
-                  label="id"
-                  width="260">
+                  label="id">
                 </el-table-column>
                 <el-table-column
                   header-align="center"
+                  show-overflow-tooltip
                   align="center"
-                  prop="attributionCompany"
-                  label="归属公司"
-                  width="260">
+                  prop="companyId"
+                  label="归属公司">
                 </el-table-column>
 
                 <el-table-column
+                  show-overflow-tooltip
                   header-align="center"
                   align="center"
-                  prop="attributionSection"
-                  label="归属部门"
-                  width="260">
+                  prop="officeId"
+                  label="归属部门">
                 </el-table-column>
 
                 <el-table-column
+                  show-overflow-tooltip
                   header-align="center"
                   align="center"
                   prop="loginName"
-                  label="登录名"
-                  width="260">
+                  label="登录名">
                   <template slot-scope="scope">
                     <span v-bind:class="{active: true}">{{ scope.row.loginName}}</span>
                   </template>
                 </el-table-column>
 
                 <el-table-column
+                  show-overflow-tooltip
                   header-align="center"
                   align="center"
                   prop="name"
-                  label="姓名"
-                  width="180">
+                  label="姓名">
                 </el-table-column>
 
                 <el-table-column
                   header-align="center"
                   align="center"
-                  prop="tel"
-                  label="电话"
-                  width="300">
+                  prop="phone"
+                  label="电话">
                 </el-table-column>
 
                 <el-table-column
                   header-align="center"
                   align="center"
-                  prop="photo"
-                  label="手机"
-                  width="300">
+                  prop="mobile"
+                  label="手机">
                 </el-table-column>
 
                 <el-table-column
-                  fixed="right"
                   header-align="center"
                   align="center"
-                  label="操作"
-                  width="160">
+                  label="操作">
                   <template slot-scope="scope">
                     <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
                     <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
@@ -162,7 +158,7 @@
               <el-pagination
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                :current-page="pagination.pageNo"
+                :current-page="pagination.pageNum"
                 :page-sizes="pagination.pageSizes"
                 :page-size="pagination.pageSize"
                 layout="total, sizes, prev, pager, next, jumper"
@@ -186,8 +182,8 @@
 
               <el-form ref="form" :model="form" :rules="rules" label-width="150px">
                 <el-form-item label="头像：">
-                  <el-input v-model="form.imgPath" v-show='false'></el-input>
-                  <img width="100%" :src="form.imgPath" alt="头像">
+                  <el-input v-model="form.photo" v-show='false'></el-input>
+                  <img width="100%" :src="form.photo" alt="头像">
                   <el-upload
                     :disabled="saveUp"
                     ref="uploadFile"
@@ -207,7 +203,7 @@
                     :disabled="true"
                     :on-icon-click="searchCompany"
                     icon="search"
-                    v-model="form.attributionCompany">
+                    v-model="form.company">
                   </el-input>
                 </el-form-item>
                 <el-form-item label="归属部门：">
@@ -215,44 +211,44 @@
                     :disabled="true"
                     :on-icon-click="searchSection"
                     icon="search"
-                    v-model="form.attributionSection">
+                    v-model="form.office">
                   </el-input>
                 </el-form-item>
 
-                <el-form-item label="工号：" prop="number">
-                  <el-input v-model="form.number"></el-input>
+                <el-form-item label="工号：" prop="no">
+                  <el-input v-model="form.no" :disabled="saveUp"></el-input>
                 </el-form-item>
 
                 <el-form-item label="姓名：" prop="name">
-                  <el-input v-model="form.name"></el-input>
+                  <el-input v-model="form.name" :disabled="saveUp"></el-input>
                 </el-form-item>
 
-                <el-form-item label="登录名：" prop="loginName">
-                  <el-input v-model="form.loginName"></el-input>
+                <el-form-item label="登录名：" prop="login_name">
+                  <el-input v-model="form.login_name" :disabled="saveUp"></el-input>
                 </el-form-item>
 
-                <el-form-item label="密码：" prop="psw">
-                  <el-input v-model="form.psw">></el-input>
+                <el-form-item label="密码：" prop="password">
+                  <el-input v-model="form.password" :disabled="saveUp" type="password">></el-input>
                 </el-form-item>
 
-                <el-form-item label="确认密码：" prop="password">
-                  <el-input v-model="form.password"></el-input>
+                <el-form-item  v-if="!saveUp" label="确认密码：" prop="psd" >
+                  <el-input v-model="form.psd"  type="password"></el-input>
                 </el-form-item>
 
                 <el-form-item label="邮箱：">
-                  <el-input v-model="form.email"></el-input>
+                  <el-input v-model="form.email" :disabled="saveUp"></el-input>
                 </el-form-item>
 
                 <el-form-item label="电话：">
-                  <el-input v-model="form.tel"></el-input>
+                  <el-input v-model="form.phone" :disabled="saveUp"></el-input>
                 </el-form-item>
 
                 <el-form-item label="手机：">
-                  <el-input v-model="form.phone"></el-input>
+                  <el-input v-model="form.mobile" :disabled="saveUp"></el-input>
                 </el-form-item>
 
-                <el-form-item label="是否允许登录：" prop="isLogin">
-                  <el-select v-model="form.isLogin" clearable>
+                <el-form-item label="是否允许登录：" prop="login_flag">
+                  <el-select v-model="form.login_flag" clearable :disabled="saveUp">
                     <el-option label="是" value="1"></el-option>
                     <el-option label="否" value="2"></el-option>
                   </el-select>
@@ -260,15 +256,15 @@
                 </el-form-item>
 
                 <el-form-item label="用户类型：">
-                  <el-select v-model="form.userType" placeholder="选择用户类型" clearable>
+                  <el-select v-model="form.user_type" placeholder="选择用户类型" clearable :disabled="saveUp">
                     <el-option label="系统管理" value="1"></el-option>
                     <el-option label="部门管理" value="2"></el-option>
                     <el-option label="普通用户" value="3"></el-option>
                   </el-select>
                 </el-form-item>
 
-                <el-form-item label="用户角色：" prop="userRole">
-                  <el-radio-group v-model="form.userRole">
+                <el-form-item label="用户角色：" prop="role">
+                  <el-radio-group v-model="form.role" :disabled="saveUp">
                     <el-radio label="本公司管理员"></el-radio>
                     <el-radio label="本部门管理员"></el-radio>
                     <el-radio label="部门管理员"></el-radio>
@@ -276,11 +272,11 @@
                 </el-form-item>
 
                 <el-form-item label="备注：">
-                  <el-input v-model="form.remark" type="textarea" class='textarea'></el-input>
+                  <el-input v-model="form.remarks" type="textarea" class='textarea' :disabled="saveUp"></el-input>
                 </el-form-item>
 
                 <el-form-item>
-                  <el-button type="primary" :disabled="saveUp" @click="saveData(form)">保存</el-button>
+                  <el-button type="primary" :disabled="saveUp" @click="saveData('form')">保存</el-button>
                   <el-button @click="back">返回</el-button>
                 </el-form-item>
               </el-form>
@@ -310,7 +306,6 @@
       </el-col>
     </el-row>
 
-
   </div>
 </template>
 
@@ -331,22 +326,9 @@
         msg: '',
         filterText: '',
         activeName2: 'first',
-        formInline: {
-          attributionCompany: '',
-          attributionSection: '',
-          loginName: '',
-          name: '',
-          key: ''
-        }, // 条件搜索字段
-        exportParam: {
-          attributionCompany: '',
-          attributionSection: '',
-          loginName: '',
-          name: '',
-          pageSize: '',
-          pageNo: ''
-        }, // 导出
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        formInline: {}, // 条件搜索字段
+        exportParam: {}, // 导出
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         select_city: [{
           id: 1,
           label: '上海市总公司',
@@ -514,37 +496,27 @@
           label: 'label'
         },
         form: {}, // 详情展示数据
-        tableData: [{
-          id: 0,
-          attributionCompany: '上海市长宁区虹桥路',
-          attributionSection: '上海市长宁区虹桥路',
-          loginName: '大剿匪啊啊啊',
-          name: '大剿匪啊',
-          photo: 45454844,
-          tel: 123456
-        }], // 列表展示数据
+        tableData: [], // 列表展示数据
         rules: {
-          number: [
+          no: [
             {required: true, message: '请输入工号', trigger: 'blur'}
           ],
           name: [
             {required: true, message: '请输入姓名', trigger: 'blur'}
           ],
-          loginName: [
+          login_name: [
             {required: true, message: '请输入登录名', trigger: 'blur'}
           ],
-          psw: [
-            {required: true, message: '请输入密码', trigger: 'blur'},
-            {min: 3, message: '长度在 3 以上', trigger: 'blur'}
-          ],
           password: [
-            {required: true, message: '请确认密码', trigger: 'blur'},
-            {min: 3, message: '长度在 3 以上', trigger: 'blur'}
+            {required: true, message: '请输入密码', trigger: 'blur'}
           ],
-          isLogin: [
+          psd: [
+            {required: true, message: '请确认密码', trigger: 'blur'}
+          ],
+          login_flag: [
             {required: true, message: '请选择', trigger: 'blur'}
           ],
-          userRole: [
+          role: [
             {required: true, message: '请选择角色', trigger: 'blur'}
           ]
         }
@@ -582,16 +554,16 @@
         }
       },
       query () {
-        this.exportParam.attributionCompany = this.formInline.attributionCompany
-        this.exportParam.attributionSection = this.formInline.attributionSection
+        this.exportParam.companyId = this.formInline.companyId
+        this.exportParam.officeId = this.formInline.officeId
         this.exportParam.loginName = this.formInline.loginName
         this.exportParam.name = this.formInline.name
-        this.exportParam.pageNo = this.formInline.pageNo
+        this.exportParam.pageNum = this.formInline.pageNum
         this.exportParam.pageSize = this.formInline.pageSize
-        this.$ajax.get('/list', {params: this.formInline})
+        this.$ajax.get('/setting/user/list', {params: this.formInline})
           .then(response => {
             if (response.data.code === 200) {
-              this.tableData1 = response.data.data.result
+              this.tableData = response.data.data.result
               this.pagination.count = response.data.data.total
             } else {
               this.$message({
@@ -603,7 +575,7 @@
           .catch(() => {
             this.$message({
               type: 'error',
-              message: '获取列表信息失败'
+              message: '获取列表信息异常'
             })
           })
       },
@@ -617,9 +589,9 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('/delete', {params: {'id': id}})
+            this.$ajax.get('/setting/user/delete', {params: {'id': id}})
               .then((res) => {
-                if (res.data.code === 0) {
+                if (res.data.code === 200) {
                   // 删除成功
                   this.$message({
                     type: 'success',
@@ -631,14 +603,14 @@
                 } else {
                   this.$message({
                     type: 'error',
-                    message: res.data.msg
+                    message: '删除失败'
                   })
                 }
               })
               .catch(() => {
                 this.$message({
                   type: 'error',
-                  message: '操作失败'
+                  message: '删除异常'
                 })
               })
           }
@@ -654,56 +626,65 @@
         this.activeName2 = 'second'
         this.titleSecond = '用户修改'
         this.saveUp = false
-        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/setting/user/form', {params: {userId: scope.row.id}})
           .then((res) => {
-            if (res.data.code === 0) {
-              this.form = res.data.tActivitiesInfo
+            if (res.data.code === 200) {
+              this.form = res.data.data
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '获取失败'
               })
             }
           })
-          .catch((error) => {
-            console.log('点击修改报错:', error)
+          .catch(() => {
             this.$message({
               type: 'error',
-              message: '获取失败'
+              message: '获取异常'
             })
           })
       }, // 修改
       saveData (form) {       // 修改确定功能
         this.$refs[form].validate((valid) => {
-          if (valid) {
-            this.activeName2 = 'first'
-            this.form.userRole = {}
-            this.$ajax.get('/activity/enjoy/save', {params: this.form})
-              .then((response) => {
-                if (response.data.code === 0) {
-                  // 更新成功
-                  this.$message({
-                    type: 'success',
-                    message: '操作成功'
-                  })
-                  // 刷新页面
-                  this.$refs.uploadFile.clearFiles()
-                  this.query()
-                } else {
+          if (form.password === form.psd) {
+            if (valid) {
+//              this.form.userRole = {}
+              let url = ''
+              if (form.row.id !== undefined && form.row.id !== '') {  // 修改
+                url = '/setting/user/update'
+              } else {  // 新增
+                url = '/setting/user/add'
+              }
+              this.$ajax.get(url, {params: this.form})
+                .then((response) => {
+                  if (response.data.code === 200) {
+                    // 更新成功
+                    this.$message({
+                      type: 'success',
+                      message: '操作成功'
+                    })
+                    this.activeName2 = 'first'
+                    // 刷新页面
+                    this.$refs.uploadFile.clearFiles()
+                    this.query()
+                  } else {
+                    this.$message({
+                      type: 'error',
+                      message: '操作失败'
+                    })
+                  }
+                })
+                .catch(() => {
                   this.$message({
                     type: 'error',
-                    message: '操作失败'
+                    message: '操作异常'
                   })
-                }
-              })
-              .catch((err) => {
-                this.$message({
-                  type: 'error',
-                  message: err
                 })
-              })
+            } else {
+              return false
+            }
           } else {
-            return false
+            alert('两次输入的密码不一致')
           }
         })
       },
@@ -712,24 +693,25 @@
         this.activeName2 = 'second'
         this.titleSecond = '用户添加'
         this.saveUp = false
-        this.$ajax.get('/activity/enjoy/sort')
-          .then((res) => {
-            if (res.data.code === 0) {
-              this.form = {}
-              this.form.sort = res.data.tActivitiesInfo.sort
-            } else {
-              this.$message({
-                type: 'error',
-                message: res.data.msg
-              })
-            }
-          })
-          .catch(() => {
-            this.$message({
-              message: '请求显示顺序失败',
-              type: 'info'
-            })
-          })
+        this.form = {}
+//        this.$ajax.get('/setting/user/add')
+//          .then((res) => {
+//            if (res.data.code === 0) {
+//              this.form = {}
+//              this.form.sort = res.data.tActivitiesInfo.sort
+//            } else {
+//              this.$message({
+//                type: 'error',
+//                message: res.data.msg
+//              })
+//            }
+//          })
+//          .catch(() => {
+//            this.$message({
+//              message: '请求显示顺序失败',
+//              type: 'info'
+//            })
+//          })
       },   // 新增
       more (row, column, cell, event) {
         this.$refs['form'].resetFields()
@@ -738,17 +720,24 @@
         } else {
           this.activeName2 = 'second'
           this.titleSecond = '用户详情'
-          this.saveUp = true
-          this.$ajax.get('/activity/enjoy/view/form', {params: {id: row.id}})
+          this.saveUp = true  // 保存按钮不显示
+          this.$ajax.get('/setting/user/form', {params: {userId: row.id}})
             .then((res) => {
-              if (res.data.code === 0) {
-                this.form = res.data.tActivitiesInfo
+              if (res.data.code === 200) {
+                console.log(res.data.data)
+                this.form = res.data.data
               } else {
                 this.$message({
                   type: 'error',
-                  message: '获取列表失败'
+                  message: '获取详情失败'
                 })
               }
+            })
+            .catch(() => {
+              this.$message({
+                type: 'error',
+                message: '获取详情异常'
+              })
             })
         }
       }, // 详情
@@ -786,8 +775,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNo = val
-        this.pagination.pageNo = val
+        this.formInline.pageNum = val
+        this.pagination.pageNum = val
         this.query()
       },
       getFile () {}, // todo 导入
@@ -802,7 +791,7 @@
         this.exportFormVisible = false
       },
       exportCurrent () {
-        this.exportParam.pageNo = this.pagination.pageNo
+        this.exportParam.pageNum = this.pagination.pageNum
         this.exportParam.pageSize = this.pagination.pageSize
         this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/export`)
         this.$refs['FileForm'].submit()
@@ -810,7 +799,7 @@
       },
       exportAll () {
         this.exportParam.pageSize = ''
-        this.exportParam.pageNo = ''
+        this.exportParam.pageNum = ''
         this.$refs['FileForm'].setAttribute('action', `${baseUrl}/activity/enjoy/exportAll`)
         this.$refs['FileForm'].submit()
         this.exportFormVisible = false

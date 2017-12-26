@@ -12,7 +12,7 @@
         <el-button class="prevent" @click="numReduce">-</el-button>
         <input type="text" class="num" v-model='formInline.percentOne'>
         <el-button class="prevent" @click="numAdd">+</el-button>
-        <el-button type="primary" class="float " @click="submit(formInline)">提交</el-button>
+        <el-button type="primary" class="float " @click="submit(formInline)" v-if="hasPermission('serviceConfig:msg:submit')">提交</el-button>
         <el-progress :text-inside="true" class="center" :stroke-width="20"
                      :percentage="formInline.percentOne"></el-progress>
       </div>
@@ -25,7 +25,7 @@
         <el-button class="prevent" @click="numReduceTwo">-</el-button>
         <input type="text" class="num" v-model=form.percent>
         <el-button class="prevent" @click="numAddTwo">+</el-button>
-        <el-button type="primary" class="float " @click="submit(form)">提交</el-button>
+        <el-button type="primary" class="float " @click="submit(form)" v-if="hasPermission('serviceConfig:msg:submit')">提交</el-button>
         <el-progress :text-inside="true" class="center" :stroke-width="20" :percentage="form.percent"></el-progress>
       </div>
       <div class="center">
@@ -37,7 +37,7 @@
         <el-button class="prevent" @click="numReduceThree">-</el-button>
         <input type="text" class="num" v-model=formData.percentTwo>
         <el-button class="prevent" @click="numAddThree">+</el-button>
-        <el-button type="primary" class="float " @click="submit(formData)">提交</el-button>
+        <el-button type="primary" class="float " @click="submit(formData)" v-if="hasPermission('serviceConfig:msg:submit')">提交</el-button>
         <el-progress :text-inside="true" class="center" :stroke-width="20"
                      :percentage="formData.percentTwo"></el-progress>
       </div>
@@ -50,7 +50,7 @@
         <el-button class="prevent" @click="countReduce">-</el-button>
         <input type="text" class="num" v-model=ruleForm.count>
         <el-button class="prevent" @click="countAdd">+</el-button>
-        <el-button type="primary" class='sub ' @click="sub">提交</el-button>
+        <el-button type="primary" class='sub ' @click="sub" v-if="hasPermission('serviceConfig:msg:submitCount')">提交</el-button>
 
       </div>
     </el-form>
@@ -72,7 +72,7 @@
           id: '3',
           percentTwo: 0
         },
-        opFlag: {'d': '一天', 'h': '一小时', 'm': '2分钟'},
+        opFlag: {'d': '一天', 'h': '一小时', 'm': '30秒'},
         ruleForm: {
           type: '',
           count: 0
@@ -116,13 +116,23 @@
       this.beforeList()
     },
     methods: {
+      hasPermission (data) {
+        let permissionList = this.$route.meta.permission
+        if (permissionList && permissionList.length && permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
       beforeList () {
         this.$ajax.get('serviceConfig/msg/querySmsPercent')
           .then((res) => {
             if (res.data.code === 200) {
+              console.log(0, res.data.data[1])
+              console.log(0, res.data.data[2])
+              console.log(0, res.data.data[3])
               this.formInline.percentOne = res.data.data[1]
-              this.formInline.percent = res.data.data[2]
-              this.formInline.percentTwo = res.data.data[3]
+              this.form.percent = res.data.data[2]
+              this.formData.percentTwo = res.data.data[3]
 //              for (let key in res.data.data){
 //              }
             } else {
@@ -178,7 +188,7 @@
           alert('请输入短信通道名')
           return false
         }
-        if (arr[1] >= 100) {
+        if (arr[1] > 100) {
           alert('通道占比不能超过100')
           return false
         }
