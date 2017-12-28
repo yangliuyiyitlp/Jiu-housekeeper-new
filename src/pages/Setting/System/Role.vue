@@ -47,7 +47,7 @@
             label="操作"
             width="160">
             <template slot-scope="scope">
-              <el-button @click="allotRecord(scope.row.id)" type="text" size="small">分配</el-button>
+              <!--<el-button @click="allotRecord(scope.row.id)" type="text" size="small">分配</el-button>-->
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
             </template>
@@ -72,12 +72,12 @@
       <el-tab-pane :label="titleSecond" name="second" class="second">
 
         <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-          <el-form-item >
+          <el-form-item>
             <el-input v-model="form.id" v-if=false></el-input>
           </el-form-item>
           <el-form-item label="归属机构：">
             <el-input
-              :disabled="saveUp"
+              :disabled=true
               :on-icon-click="searchCompany"
               icon="search"
               v-model="form.office">
@@ -93,50 +93,50 @@
             <span>工作流用户组标识</span>
           </el-form-item>
 
-          <el-form-item label="角色类型：">
-            <el-select v-model="form.roleType" clearable :disabled="saveUp">
-              <el-option label="任务分配" value="1"></el-option>
-              <el-option label="管理角色" value="2"></el-option>
-              <el-option label="普通角色" value="3"></el-option>
-            </el-select>
-            <span>工作流组用户组类型（任务分配：assignment、管理角色：security-role、普通角色：user）</span>
-          </el-form-item>
+          <!--<el-form-item label="角色类型：">-->
+          <!--<el-select v-model="form.roleType" clearable :disabled="saveUp">-->
+          <!--<el-option label="任务分配" value="1"></el-option>-->
+          <!--<el-option label="管理角色" value="2"></el-option>-->
+          <!--<el-option label="普通角色" value="3"></el-option>-->
+          <!--</el-select>-->
+          <!--<span>工作流组用户组类型（任务分配：assignment、管理角色：security-role、普通角色：user）</span>-->
+          <!--</el-form-item>-->
 
-          <el-form-item label="是否系统数据：">
-            <el-select v-model="form.isSys" clearable :disabled="saveUp">
-              <el-option label="是" value="1"></el-option>
-              <el-option label="否" value="2"></el-option>
-            </el-select>
-            <span>“是”代表此数据只有超级管理员能进行修改，“否”则表示拥有角色修改人员的权限都能进行修改</span>
-          </el-form-item>
+          <!--<el-form-item label="是否系统数据：">-->
+          <!--<el-select v-model="form.isSys" clearable :disabled="saveUp">-->
+          <!--<el-option label="是" value="1"></el-option>-->
+          <!--<el-option label="否" value="2"></el-option>-->
+          <!--</el-select>-->
+          <!--<span>“是”代表此数据只有超级管理员能进行修改，“否”则表示拥有角色修改人员的权限都能进行修改</span>-->
+          <!--</el-form-item>-->
 
           <el-form-item label="是否可用：">
-            <el-select v-model="form.useable" clearable :disabled="saveUp">
+            <el-select v-model="form.useable" clearable :disabled="saveUp" class="width">
               <el-option label="是" value="1"></el-option>
-              <el-option label="否" value="2"></el-option>
+              <el-option label="否" value="0"></el-option>
             </el-select>
             <span>“是”代表此数据可用，“否”则表示此数据不可用</span>
           </el-form-item>
 
-          <el-form-item label="数据范围：">
-            <el-select v-model="form.dataScope" clearable :disabled="saveUp">
-              <el-option label="所有数据" value="1"></el-option>
-              <el-option label="所在公司及以下数据" value="2"></el-option>
-              <el-option label="所在公司数据" value="3"></el-option>
-              <el-option label="所在部门及以下数据" value="4"></el-option>
-              <el-option label="所在部门数据" value="5"></el-option>
-              <el-option label="仅本人数据" value="6"></el-option>
-              <el-option label="按明细设置" value="7"></el-option>
-            </el-select>
-            <span>特殊情况下，设置为“按明细设置”，可进行跨机构授权</span>
-          </el-form-item>
+          <!--<el-form-item label="数据范围：">-->
+          <!--<el-select v-model="form.dataScope" clearable :disabled="saveUp">-->
+          <!--<el-option label="所有数据" value="1"></el-option>-->
+          <!--<el-option label="所在公司及以下数据" value="2"></el-option>-->
+          <!--<el-option label="所在公司数据" value="3"></el-option>-->
+          <!--<el-option label="所在部门及以下数据" value="4"></el-option>-->
+          <!--<el-option label="所在部门数据" value="5"></el-option>-->
+          <!--<el-option label="仅本人数据" value="6"></el-option>-->
+          <!--<el-option label="按明细设置" value="7"></el-option>-->
+          <!--</el-select>-->
+          <!--<span>特殊情况下，设置为“按明细设置”，可进行跨机构授权</span>-->
+          <!--</el-form-item>-->
 
           <el-form-item label="角色授权：">
             <el-input
-              :disabled="saveUp"
-              :on-icon-click="searchTarget"
+              :disabled=true
+              :on-icon-click="searchRoles"
               icon="search"
-              v-model="form.attributionTarget">
+              v-model="form.menuIds">
             </el-input>
           </el-form-item>
 
@@ -145,23 +145,45 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" :disabled="saveUp" @click="saveData">保存</el-button>
+            <el-button type="primary" :disabled="saveUp" @click="saveData('form')">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
 
       </el-tab-pane>
 
+
+       <!--角色分配-->
+      <!--<el-tab-pane  label="角色分配" name="third" class="second" >-->
+        <!--<el-form :inline="true" :model="formRole" class="demo-form-inline">-->
+
+          <!--<el-form-item label="角色名称：">-->
+            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+          <!--</el-form-item>-->
+          <!--<el-form-item label="归属机构：">-->
+            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+          <!--</el-form-item>-->
+
+          <!--<el-form-item label="英文名称：">-->
+            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+          <!--</el-form-item>-->
+
+          <!--<el-form-item>-->
+            <!--<el-button type="primary" @click="recordRole">分配角色</el-button>-->
+          <!--</el-form-item>-->
+        <!--</el-form>-->
+      <!--</el-tab-pane>-->
+
     </el-tabs>
     <!--模态框-->
     <el-dialog title="归属机构" size="tiny" :visible.sync="cityVisible" center>
       关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
       <el-tree
-        default-expand-all
         ref="tree"
         highlight-current
-        :data="select"
+        :data="selectSection"
         :props="defaultProps"
+        class="searchTree"
         accordion
         :filter-node-method="filterNode"
         @node-click="handleNode">
@@ -174,15 +196,15 @@
 
     <el-dialog title="角色授权" size="tiny" :visible.sync="roleVisible" center>
       <el-tree
-        default-expand-all
         ref="tree2"
-        highlight-current
-        :data="select"
-        :props="defaultProps"
-        @check-change="handleCheckChange"
-        accordion
         show-checkbox
-        node-key="id">
+        default-expand-all
+        highlight-current
+        :data="selectRole"
+        :props="defaultProps"
+        :default-checked-keys="checkedRoles"
+        node-key="id"
+        class="searchTree">
       </el-tree>
       <div slot="footer" class="dialog-footer">
         <el-button @click="roleCancel">取 消</el-button>
@@ -194,179 +216,37 @@
 </template>
 
 <script>
+  import Cookie from 'js-cookie'
+
   export default {
     data () {
       return {
         value1: '',
         activeName2: 'first',
         titleSecond: '角色添加',
-        select: '',
+        selectSection: '',
+        select_section: [],
+        selectRole: '',
+        select_role: [],
+        checkedRoles: [],
         cityVisible: false,
         roleVisible: false,
-        checkbox: false,
+        saveUp: false,
         filterText: '',
-        arr: [],
-        formInline: {
-          loginName: '',
-          name: '',
-          key: ''
-        }, // 条件搜索字段
-        form: {
-          role_type: 1,
-          isSysdata: 1,
-          isUse: 1,
-          data_range: 4,
-          attributionCompany: '',
-          attributionTarget: ''
-        },
-        select_section: [{
-          id: 1,
-          label: '上海市总公司',
-          children: [{
-            id: 2,
-            label: '厦门分公司'
-          }, {
-            id: 3,
-            label: '佛山分公司',
-            children: [{
-              id: 4,
-              label: '城市运营',
-              children: [{
-                id: 99,
-                label: '运营'
-              }]
-            }]
-          }, {
-            id: 5,
-            label: '珠海分公司',
-            children: [{
-              id: 6,
-              label: '城市运营'
-            }]
-          }, {
-            id: 7,
-            label: '运营部'
-          }, {
-            id: 8,
-            label: '北京分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 10,
-            label: '客服部',
-            children: [{
-              id: 11,
-              label: '红包管理员'
-            }, {
-              id: 12,
-              label: '客服部'
-            }]
-          }, {
-            id: 13,
-            label: '上海分公司',
-            children: [{
-              id: 14,
-              label: '黄浦区政府'
-            }, {
-              id: 15,
-              label: '城市运营'
-            }, {
-              id: 16,
-              label: '虹口区政府'
-            }, {
-              id: 17,
-              label: '普陀区政府'
-            }, {
-              id: 18,
-              label: '静安区政府'
-            }, {
-              id: 19,
-              label: '嘉定区政府'
-            }, {
-              id: 20,
-              label: '浦东新区政府'
-            }, {
-              id: 21,
-              label: '闵行区政府'
-            }, {
-              id: 22,
-              label: '宝山区政府'
-            }, {
-              id: 23,
-              label: '松江区政府'
-            }, {
-              id: 24,
-              label: '杨浦区政府'
-            }, {
-              id: 25,
-              label: '徐汇区政府'
-            }, {
-              id: 26,
-              label: '长宁区政府'
-            }, {
-              id: 27,
-              label: '青浦区政府'
-            }, {
-              id: 28,
-              label: '奉贤区政府'
-            }, {
-              id: 29,
-              label: '金山区政府'
-            }]
-          }, {
-            id: 30,
-            label: '生产部'
-          }, {
-            id: 31,
-            label: '成都分公司',
-            children: [{
-              id: 32,
-              label: '城市运营'
-            }]
-          }, {
-            id: 33,
-            label: '湖州分公司',
-            children: [{
-              id: 34,
-              label: '城市运营'
-            }]
-          }, {
-            id: 35,
-            label: '公司领导'
-          }, {
-            id: 36,
-            label: '综合部'
-          }, {
-            id: 37,
-            label: '市场部'
-          }, {
-            id: 38,
-            label: '技术部'
-          }, {
-            id: 39,
-            label: '研发部'
-          }, {
-            id: 40,
-            label: '深圳分公司',
-            children: [{
-              id: 41,
-              label: '城市运营'
-            }]
-          }]
-        }],
+        filterId: '',
+        formInline: {}, // 条件搜索字段
+        form: {},
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name'
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         tableData: [],
         rules: {
-          role_name: [
+          name: [
             {required: true, message: '请输入角色名称', trigger: 'blur'}
           ],
-          english_name: [
+          enname: [
             {required: true, message: '请输入英文名称', trigger: 'blur'}
           ]
         }
@@ -374,6 +254,7 @@
     },
     created () {
       this.query()
+      this.companySearch()
     },
     watch: {
       filterText (val) {
@@ -418,9 +299,10 @@
           this.activeName2 = 'second'
           this.titleSecond = '角色详情'
           this.saveUp = true  // 保存按钮不显示
-          this.$ajax.get('/setting/role/form', {params: {userId: row.id}})
+          this.$ajax.get('/setting/role/form', {params: {id: row.id}})
             .then((res) => {
               if (res.data.code === 200) {
+                this.moreSearch(row.id)
                 this.form = res.data.data
               } else {
                 this.$message({
@@ -437,13 +319,72 @@
             })
         }
       }, // 详情
+      companySearch () { // 归属机构列表获取
+        this.$ajax.get('/setting/role/section', {params: {sessionId: Cookie.get('sessionId')}})
+          .then(response => {
+            if (response.data.code === 200) {
+              this.select_section = response.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取归属机构列表失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取归属机构列表异常'
+            })
+          })
+      },
+      moreSearch (id) {       // 详情里面对应角色的角色授权列表
+        this.$ajax.get('/setting/role/menuAll', {params: {sessionId: Cookie.get('sessionId'), id: id}})
+          .then(response => {
+            if (response.data.code === 200) {
+              let result = response.data.data
+              this.select_role = result
+              // 循环每个里面有没有roleId和menuId,有的话把id放到checkedRoles数组中
+              searchRoles(result, this.checkedRoles)
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取角色列表失败'
+              })
+            }
+          })
+          .catch((err) => {
+            this.$message({
+              type: 'error',
+              message: '获取角色列表异常' + err
+            })
+          })
+      },
+      addSearch () {       // 新增里面角色授权所有列表获取
+        this.$ajax.get('/setting/role/menuTree', {params: {sessionId: Cookie.get('sessionId')}})
+          .then(response => {
+            if (response.data.code === 200) {
+              this.select_role = response.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取角色列表失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取角色列表异常'
+            })
+          })
+      },
       addNewRecord () {
         this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '角色添加'
-        this.form.role_name = ''
-        this.form.english_name = ''
-        this.form.remark = ''
+        this.form = {}
+        this.addSearch()
       },   // 新增
       deleteRecord (id) {
         this.$confirm('确定删除?', '提示', {
@@ -455,28 +396,27 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('/delete', {params: {'id': id}})
+            this.$ajax.get('setting/role/delete', {params: {'id': id}})
               .then((res) => {
-                if (res.data.code === 0) {
+                if (res.data.code === 200) {
                   // 删除成功
                   this.$message({
                     type: 'success',
                     message: res.data.msg
                   })
-//                this.$refs['formA'].resetFields()
                   // 刷新页面
                   this.query()
                 } else {
                   this.$message({
                     type: 'error',
-                    message: res.data.msg
+                    message: '删除失败'
                   })
                 }
               })
               .catch(() => {
                 this.$message({
                   type: 'error',
-                  message: '操作失败'
+                  message: '删除异常'
                 })
               })
           }
@@ -492,41 +432,44 @@
         this.activeName2 = 'second'
         this.titleSecond = '角色修改'
         this.saveUp = false
-        this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
+        this.$ajax.get('/setting/role/form', {params: {id: scope.row.id}})
           .then((res) => {
-            if (res.data.code === 0) {
-              this.form = res.data.tActivitiesInfo
+            if (res.data.code === 200) {
+              this.moreSearch(scope.row.id)
+              this.form = res.data.data
             } else {
               this.$message({
                 type: 'error',
-                message: res.data.msg
+                message: '获取详情失败'
               })
             }
           })
-          .catch((error) => {
-            console.log('点击修改报错:', error)
+          .catch(() => {
             this.$message({
               type: 'error',
-              message: '获取失败'
+              message: '获取详情异常'
             })
           })
       }, // 修改
-      allotRecord () {},
       saveData (form) {       // 修改确定功能
         this.$refs[form].validate((valid) => {
           if (valid) {
-            this.activeName2 = 'first'
-            this.form.userRole = {}
-            this.$ajax.get('/activity/enjoy/save', {params: this.form})
+            let url = ''
+            if (this.form.id !== undefined && this.form.id !== '') {  // 修改
+              url = '/setting/role/update'
+            } else {  // 新增
+              url = '/setting/role/add'
+            }
+            this.$ajax.get(url, {params: this.form})
               .then((response) => {
-                if (response.data.code === 0) {
+                if (response.data.code === 200) {
                   // 更新成功
                   this.$message({
                     type: 'success',
                     message: '操作成功'
                   })
                   // 刷新页面
-                  this.$refs.uploadFile.clearFiles()
+                  this.activeName2 = 'first'
                   this.query()
                 } else {
                   this.$message({
@@ -535,10 +478,10 @@
                   })
                 }
               })
-              .catch((err) => {
+              .catch(() => {
                 this.$message({
                   type: 'error',
-                  message: err
+                  message: '操作异常'
                 })
               })
           } else {
@@ -547,48 +490,42 @@
         })
       },
       searchCompany () {
+        this.defaultProps.label = 'name'
         this.cityVisible = true
-        this.select = this.select_section
+        this.selectSection = this.select_section
         this.filterText = ''
       },
-      searchTarget () {
+      searchRoles () {
+        this.defaultProps.label = 'label'
         this.roleVisible = true
-        this.select = this.select_section
+        this.selectRole = this.select_role
+      },
+      filterNode (value, data) {
+        if (!value) return true
+        return data.name.indexOf(value) !== -1
+      },
+      handleNode (data) {
+        this.filterText = data.name // 弹框树模型点击输入值
+        this.filterId = data.id // 弹框树模型点击输入值
       },
       doModify () {
-        this.form.attributionCompany = this.filterText
+        this.form.office = this.filterText
+        this.form.officeId = this.filterId
         this.cityVisible = false
-      },
-      handleCheckChange (data, checked, indeterminate) {
-        if (!data.children && checked && this.arr.indexOf(data.id) === -1) {
-          this.arr.push(data.id)
-        } else if (!data.children && !checked && this.arr.indexOf(data.id) !== 1) {
-        }
-        console.log(this.arr)
-//        console.log('1', checked)
-//        console.log('2', indeterminate)
       },
       getCheckedKeys () {
         let arr = this.$refs.tree2.getCheckedKeys()
-        console.log(arr)
-        this.form.attributionTarget = arr.join(',')
+        this.form.menuIds = arr.join(',')
         this.roleVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.form.attributionCompany = ''
+        this.form.office = ''
+        this.form.officeId = ''
       },
       roleCancel () {
         this.roleVisible = false
-        this.form.attributionTarget = ''
-      },
-      handleNode (data) {
-        this.filterText = data.label // 弹框树模型点击输入值
-        console.log(data)
-      },
-      filterNode (value, data) {
-        if (!value) return true
-        return data.label.indexOf(value) !== -1
+        this.form.menuIds = ''
       },
       handleSizeChange (val) {
         this.formInline.pageSize = val
@@ -605,763 +542,26 @@
       }
     }
   }
-//  let arr = [
-//    {
-//      'id': 'e826349b33f24c2ca61571b9bb148004',
-//      'parentId': '0',
-//      'parentIds': '0,',
-//      'label': '城市运营',
-//      'sort': 5,
-//      'path': '',
-//      'target': '',
-//      'icon': '',
-//      'isShow': '1',
-//      'permission': '',
-//      'createBy': '1',
-//      'createDate': 1493295987000,
-//      'updateBy': '1',
-//      'updateDate': 1503300330000,
-//      'remarks': '',
-//      'delFlag': '0',
-//      'name': 'city',
-//      'type': 0,
-//      'children': [
-//        {
-//          'id': '2a7a73b9775544389e87bda404f53d5c',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '公司信息管理',
-//          'sort': 1,
-//          'path': '/city/company/info',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1489334400000,
-//          'updateBy': '1',
-//          'updateDate': 1494604800000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.company.info',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': 'd987a01100e74daa873d0884fafe2df1',
-//              'parentId': '2a7a73b9775544389e87bda404f53d5c',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,2a7a73b9775544389e87bda404f53d5c,',
-//              'label': '编辑',
-//              'sort': 60,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:company:tCompanyparamInfo:edit',
-//              'createBy': '1',
-//              'createDate': 1490457600000,
-//              'updateBy': '1',
-//              'updateDate': 1490457600000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'ef388fc08aac480297be2d76e8aa1ed9',
-//              'parentId': '2a7a73b9775544389e87bda404f53d5c',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,2a7a73b9775544389e87bda404f53d5c,',
-//              'label': '查看',
-//              'sort': 30,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:company:tCompanyparamInfo:view',
-//              'createBy': '1',
-//              'createDate': 1490457600000,
-//              'updateBy': '1',
-//              'updateDate': 1490457600000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': '8cd8de4b9ba7401d9e5490fc99a3f19d',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '运维车辆干涉明细',
-//          'sort': 5030,
-//          'path': '/city/bike/intervene/list',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1511780102000,
-//          'updateBy': '1',
-//          'updateDate': 1511780102000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.bike.intervene.list',
-//          'type': 1,
-//          'children': []
-//        },
-//        {
-//          'id': '66e7f5c81b904d5183cfaf38b1853c95',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '点位管理',
-//          'sort': 8,
-//          'path': '/city/point',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1496851200000,
-//          'updateBy': '1',
-//          'updateDate': 1496851200000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.point',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': '11620d52356e45ac92fefdbf37a16a39',
-//              'parentId': '66e7f5c81b904d5183cfaf38b1853c95',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,66e7f5c81b904d5183cfaf38b1853c95,',
-//              'label': '查看',
-//              'sort': 1,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:childrenareaposition:tChildrenAreaPosition:view',
-//              'createBy': '1',
-//              'createDate': 1496851200000,
-//              'updateBy': '1',
-//              'updateDate': 1496851200000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': '67e9720132d9455b8394672e99f8bd17',
-//              'parentId': '66e7f5c81b904d5183cfaf38b1853c95',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,66e7f5c81b904d5183cfaf38b1853c95,',
-//              'label': '编辑',
-//              'sort': 2,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:childrenareaposition:tChildrenAreaPosition:edit',
-//              'createBy': '1',
-//              'createDate': 1496851200000,
-//              'updateBy': '1',
-//              'updateDate': 1496851200000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'fsfask34454gherjfsdertyrtrt4841d',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '电子围栏基础信息',
-//          'sort': 3,
-//          'path': '/city/fencing/info',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': 'view,updateDelete,create',
-//          'createBy': '1',
-//          'createDate': 1493222400000,
-//          'updateBy': '1',
-//          'updateDate': 1494604800000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.fencing.info',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': 'j4g54j5g45tr5ad31d13d16rf',
-//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
-//              'label': '查询',
-//              'sort': 3,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'city:fencing:info:view',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'sfkh4546d6gdg1d231gdgjjgh',
-//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
-//              'label': '修改',
-//              'sort': 3,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'city:fencing:info:update',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': '641fhf8585455454555ghjgfj',
-//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
-//              'label': '删除',
-//              'sort': 3,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'city:fencing:info:delete',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'ytfd4ga45453gdg45d4g4hf5g',
-//              'parentId': 'fsfask34454gherjfsdertyrtrt4841d',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,fsfask34454gherjfsdertyrtrt4841d,',
-//              'label': '新增',
-//              'sort': 3,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'city:fencing:info:create',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'f9fb12ea16b3456c97d00278d31e9d2b',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '远程升级',
-//          'sort': 3,
-//          'path': '/city/remote',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1493222400000,
-//          'updateBy': '1',
-//          'updateDate': 1494604800000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.remote',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': '8f4773beccb4446abd54156842b00ea7',
-//              'parentId': 'f9fb12ea16b3456c97d00278d31e9d2b',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,f9fb12ea16b3456c97d00278d31e9d2b,',
-//              'label': '编辑',
-//              'sort': 60,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:update:tUpdateInfo:edit',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': '0f21885745e44ceea043fb074200f837',
-//              'parentId': 'f9fb12ea16b3456c97d00278d31e9d2b',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,f9fb12ea16b3456c97d00278d31e9d2b,',
-//              'label': '查看',
-//              'sort': 30,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:update:tUpdateInfo:view',
-//              'createBy': '1',
-//              'createDate': 1493222400000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'addeb73b760741f1817d1b820815a945',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '小区域管理',
-//          'sort': 4,
-//          'path': '/city/range',
-//          'target': 'mainFrame',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1494604800000,
-//          'updateBy': '1',
-//          'updateDate': 1494604800000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.range',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': '0c3b13fcea5040849e43492436f4c8d3',
-//              'parentId': 'addeb73b760741f1817d1b820815a945',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
-//              'label': '编辑',
-//              'sort': 60,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:childrenarea:tChildrenArea:edit',
-//              'createBy': '1',
-//              'createDate': 1494604800000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'ada8d7c4919443d9b37df49c39de1d9d',
-//              'parentId': 'addeb73b760741f1817d1b820815a945',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
-//              'label': '查看',
-//              'sort': 30,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:childrenarea:tChildrenArea:view',
-//              'createBy': '1',
-//              'createDate': 1494604800000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': '709b77eab0ad42e9811956fdb6becb5e',
-//              'parentId': 'addeb73b760741f1817d1b820815a945',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,addeb73b760741f1817d1b820815a945,',
-//              'label': '区域围栏',
-//              'sort': 90,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:childrenarea:tChildrenArea:fance',
-//              'createBy': '1',
-//              'createDate': 1494604800000,
-//              'updateBy': '1',
-//              'updateDate': 1494604800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'ddee66ec37424ec08f990643f4fbd6d0',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '城市黑名单',
-//          'sort': 5030,
-//          'path': '/city/blacklist',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1503502528000,
-//          'updateBy': '1',
-//          'updateDate': 1503502528000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.blacklist',
-//          'type': 1,
-//          'children': []
-//        },
-//        {
-//          'id': 'b8ccbc6255a74e699376b1712c8397cc',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '运营人员管理',
-//          'sort': 2,
-//          'path': '/city/operator',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1493740800000,
-//          'updateBy': '1',
-//          'updateDate': 1494604800000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.operator',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': 'c95afc3575f84456860cae4044180bd8',
-//              'parentId': 'b8ccbc6255a74e699376b1712c8397cc',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,afa4f268958040a3b540693c9210da66,b8ccbc6255a74e699376b1712c8397cc,',
-//              'label': '查看',
-//              'sort': 30,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:administrator:tAdministratorInfo:view',
-//              'createBy': '1',
-//              'createDate': 1493740800000,
-//              'updateBy': '1',
-//              'updateDate': 1493740800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'bbed6b2fd62546a6984e1fe4cbea142e',
-//              'parentId': 'b8ccbc6255a74e699376b1712c8397cc',
-//              'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,afa4f268958040a3b540693c9210da66,b8ccbc6255a74e699376b1712c8397cc,',
-//              'label': '编辑',
-//              'sort': 60,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'electric:administrator:tAdministratorInfo:edit',
-//              'createBy': '1',
-//              'createDate': 1493740800000,
-//              'updateBy': '1',
-//              'updateDate': 1493740800000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': null,
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'ca5decf461d442e6aeadc17cd4b8acbb',
-//          'parentId': 'e826349b33f24c2ca61571b9bb148004',
-//          'parentIds': '0,1,27,e826349b33f24c2ca61571b9bb148004,',
-//          'label': '区域统计报表',
-//          'sort': 38,
-//          'path': '/city/area/total',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1502697043000,
-//          'updateBy': '1',
-//          'updateDate': 1502697043000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'city.area.total',
-//          'type': 1,
-//          'children': []
-//        }
-//      ]
-//    },
-//    {
-//      'id': 'vxcv4sdf48432bb4dedfgd356d5919',
-//      'parentId': '0',
-//      'parentIds': '0,',
-//      'label': '服务配置',
-//      'sort': 2,
-//      'path': '',
-//      'target': '',
-//      'icon': '',
-//      'isShow': '1',
-//      'permission': '',
-//      'createBy': '1',
-//      'createDate': 1489075200000,
-//      'updateBy': '1',
-//      'updateDate': 1493222400000,
-//      'remarks': '',
-//      'delFlag': '0',
-//      'name': 'serviceConfig',
-//      'type': 0,
-//      'children': [
-//        {
-//          'id': 'fkdfsd4545sdfsdfsdfsdas4548a',
-//          'parentId': 'vxcv4sdf48432bb4dedfgd356d5919',
-//          'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,',
-//          'label': '短信配置',
-//          'sort': 2,
-//          'path': '/serviceConfig/msg',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1489075200000,
-//          'updateBy': '1',
-//          'updateDate': 1493222400000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'serviceConfig.msg',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': '44ghkf45ghd5eh5dh5d2d1h2d1',
-//              'parentId': 'fkdfsd4545sdfsdfsdfsdas4548a',
-//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,fkdfsd4545sdfsdfsdfsdas4548a,',
-//              'label': '短信通道请求次数提交',
-//              'sort': 2,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'serviceConfig:msg:submitCount',
-//              'createBy': '1',
-//              'createDate': 1489075200000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'hfghjghj45454gsgdf1g24jk5g',
-//              'parentId': 'fkdfsd4545sdfsdfsdfsdas4548a',
-//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,fkdfsd4545sdfsdfsdfsdas4548a,',
-//              'label': '短信通道提交',
-//              'sort': 2,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'serviceConfig:msg:submit',
-//              'createBy': '1',
-//              'createDate': 1489075200000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        },
-//        {
-//          'id': 'jkdfgjk4874sfsd48sfs4sf45ss4',
-//          'parentId': 'vxcv4sdf48432bb4dedfgd356d5919',
-//          'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,',
-//          'label': '实名认证',
-//          'sort': 2,
-//          'path': '/serviceConfig/name',
-//          'target': '',
-//          'icon': '',
-//          'isShow': '1',
-//          'permission': '',
-//          'createBy': '1',
-//          'createDate': 1489075200000,
-//          'updateBy': '1',
-//          'updateDate': 1493222400000,
-//          'remarks': '',
-//          'delFlag': '0',
-//          'name': 'serviceConfig.name',
-//          'type': 1,
-//          'children': [
-//            {
-//              'id': '44b5d4f54g8wfzc23z1vgr5',
-//              'parentId': 'jkdfgjk4874sfsd48sfs4sf45ss4',
-//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,jkdfgjk4874sfsd48sfs4sf45ss4,',
-//              'label': '实名认证请求次数提交',
-//              'sort': 2,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'serviceConfig:name:submitCount',
-//              'createBy': '1',
-//              'createDate': 1489075200000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            },
-//            {
-//              'id': 'gd4g45sdg45s4f548efg45s',
-//              'parentId': 'jkdfgjk4874sfsd48sfs4sf45ss4',
-//              'parentIds': '0,vxcv4sdf48432bb4dedfgd356d5919,jkdfgjk4874sfsd48sfs4sf45ss4,',
-//              'label': '实名认证通道提交',
-//              'sort': 2,
-//              'path': '',
-//              'target': '',
-//              'icon': '',
-//              'isShow': '0',
-//              'permission': 'serviceConfig:name:submit',
-//              'createBy': '1',
-//              'createDate': 1489075200000,
-//              'updateBy': '1',
-//              'updateDate': 1493222400000,
-//              'remarks': '',
-//              'delFlag': '0',
-//              'name': '',
-//              'type': 2,
-//              'children': []
-//            }
-//          ]
-//        }
-//      ]
-//    }
-//  ]
-//
-//  //  function routePath (arr) {
-//  //    for (let i = 0; i < arr.length; i++) {
-//  //      let item = arr[i]
-//  //      if (item.children !== undefined && item.children.length > 0) {  // 递归 筛选出所有的对象
-//  //        routePath(item.children)
-//  //      }
-//  //      console.log(item)
-//  //      newArr.push(item)
-//  //      if (item.parentId === '0' && item.parentIds === '0,') {  // 找出一级菜单
-//  //        menus[item.name] = []
-//  //        console.log(0, menus)
-//  //      }
-//  //      newArr.find(function (s) {
-//  //        if (s.id === item.parentId) {
-//  //          s.children
-//  //        }
-//  //      })
-//  //    }
-//  //  }
-//
-//  backJson(arr)
-//
-//  function backJson (backData) {
-//    let firstLength = backData.length // 数组的长度
-//    let dataObj = {}
-//    for (let i = 0; i < firstLength; i++) {
-//      dataObj[backData[i].name] = []  // 生成一级菜单
-//      let secondLength = backData[i].children.length // 二级菜单长度
-//      for (let j = 0; j < secondLength; j++) {
-//        let secondPage = backData[i].children[j]
-//        if (secondPage.type === 1) {  // 二级是页面
-//          let pageObj = {'label': '', 'name': '', 'path': '', 'permission': []}
-//          pageObj.label = secondPage.label
-//          pageObj.name = secondPage.name
-//          pageObj.path = secondPage.path
-//          if (secondPage.children !== [] && secondPage.children !== undefined) {
-//            for (let g = 0; g < secondPage.children.length; g++) {
-//              pageObj.permission.push(secondPage.children[g].permission)
-//            }
-//          }
-//          dataObj[backData[i].name].push(pageObj)
-//        } else if (secondPage.type === 0) {
-//          // 说明二级菜单的children有值,则循环二级菜单找到三级菜单页面
-//          let childObj = {'label': '', 'children': []}
-//          let threePage = secondPage.children
-//          for (let k = 0; k < threePage.length; k++) {
-//            childObj.label = backData[i].children[j].label
-//            let childPageObj = {'label': '', 'name': '', 'path': '', 'permission': []}
-//            childPageObj.label = threePage[k].label
-//            childPageObj.name = threePage[k].name
-//            childPageObj.path = threePage[k].path
-//            if (threePage[k].children) {
-//              for (let g = 0; g < threePage[k].children.length; g++) {
-//                childPageObj.permission.push(threePage[k].children[g].permission)
-//              }
-//            }
-//            childObj.children.push(childPageObj)
-//          }
-//          dataObj[backData[i].name].push(childObj)
-//        }
-//      }
-//    }
-//    console.log(22, dataObj)
-//    return dataObj
-//  }
+
+  function searchRoles (result, checkedRoles) {
+    for (let i = 0; i < result.length; i++) {
+      let item = result[i]
+      if (item.children !== undefined && item.children.length > 0) {
+        // 递归
+        searchRoles(item.children, checkedRoles)
+      }
+      if (item.roleId && item.roleId) {
+        let arr = checkedRoles.push(item.id)
+        return arr
+      }
+    }
+  }
 </script>
 
 <style scoped>
-  .second .textarea, .second .el-input, .second .el-input__inner {
-    width: 300px;
+  .second .textarea, .second .el-input, .second .el-input__inner,.width {
+    width: 250px;
   }
-
   .keySearch {
     width: 140px;
     height: 20px;
@@ -1370,6 +570,7 @@
     border-radius: 5px;
     margin-bottom: 20px;
   }
+
   .active {
     color: #20a0ff;
     cursor: pointer;
@@ -1377,5 +578,13 @@
 
   span {
     color: #888;
+  }
+  .el-dialog__wrapper .el-dialog .el-dialog__body .searchTree .el-tree-node .el-tree-node__children .el-tree-node .el-tree-node__content{
+    line-height: 25px!important;
+    height: 25px!important;
+  }
+  .el-tree-node__content{
+    line-height: 25px!important;
+    height: 25px!important;
   }
 </style>
