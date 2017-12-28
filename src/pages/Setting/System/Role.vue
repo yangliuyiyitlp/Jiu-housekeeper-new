@@ -8,35 +8,39 @@
           :data="tableData"
           style="width: 100%"
           border
+          @cell-click="more"
           stripe>
           <el-table-column
             header-align="center"
             align="center"
-            prop="role_name"
+            show-overflow-tooltip
+            prop="id"
+            label="id">
+          </el-table-column>
+          <el-table-column
+            show-overflow-tooltip
+            header-align="center"
+            align="center"
+            prop="name"
             label="角色名称">
+            <template slot-scope="scope">
+              <span v-bind:class="{active: true}">{{ scope.row.name}}</span>
+            </template>
           </el-table-column>
 
           <el-table-column
             header-align="center"
             align="center"
-            prop="english_name"
+            prop="enname"
             label="英文名称">
           </el-table-column>
 
           <el-table-column
             header-align="center"
             align="center"
-            prop="attribution_mechanism"
+            prop="office"
             label="归属机构">
           </el-table-column>
-
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="data_range"
-            label="数据范围">
-          </el-table-column>
-
           <el-table-column
             header-align="center"
             align="center"
@@ -55,7 +59,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNo"
+          :current-page="pagination.pageNum"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -68,27 +72,29 @@
       <el-tab-pane :label="titleSecond" name="second" class="second">
 
         <el-form ref="form" :model="form" :rules="rules" label-width="150px">
-
+          <el-form-item >
+            <el-input v-model="form.id" v-if=false></el-input>
+          </el-form-item>
           <el-form-item label="归属机构：">
             <el-input
-              :disabled="true"
+              :disabled="saveUp"
               :on-icon-click="searchCompany"
               icon="search"
-              v-model="form.attributionCompany">
+              v-model="form.office">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="角色名称：" prop="role_name">
-            <el-input v-model="form.role_name"></el-input>
+          <el-form-item label="角色名称：" prop="name">
+            <el-input v-model="form.name" :disabled="saveUp"></el-input>
           </el-form-item>
 
-          <el-form-item label="英文名称：" prop="english_name">
-            <el-input v-model="form.english_name"></el-input>
+          <el-form-item label="英文名称：" prop="enname">
+            <el-input v-model="form.enname" :disabled="saveUp"></el-input>
             <span>工作流用户组标识</span>
           </el-form-item>
 
           <el-form-item label="角色类型：">
-            <el-select v-model="form.role_type" clearable>
+            <el-select v-model="form.roleType" clearable :disabled="saveUp">
               <el-option label="任务分配" value="1"></el-option>
               <el-option label="管理角色" value="2"></el-option>
               <el-option label="普通角色" value="3"></el-option>
@@ -97,7 +103,7 @@
           </el-form-item>
 
           <el-form-item label="是否系统数据：">
-            <el-select v-model="form.isSysdata" clearable>
+            <el-select v-model="form.isSys" clearable :disabled="saveUp">
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="2"></el-option>
             </el-select>
@@ -105,7 +111,7 @@
           </el-form-item>
 
           <el-form-item label="是否可用：">
-            <el-select v-model="form.isUse" clearable>
+            <el-select v-model="form.useable" clearable :disabled="saveUp">
               <el-option label="是" value="1"></el-option>
               <el-option label="否" value="2"></el-option>
             </el-select>
@@ -113,7 +119,7 @@
           </el-form-item>
 
           <el-form-item label="数据范围：">
-            <el-select v-model="form.data_range" clearable>
+            <el-select v-model="form.dataScope" clearable :disabled="saveUp">
               <el-option label="所有数据" value="1"></el-option>
               <el-option label="所在公司及以下数据" value="2"></el-option>
               <el-option label="所在公司数据" value="3"></el-option>
@@ -127,7 +133,7 @@
 
           <el-form-item label="角色授权：">
             <el-input
-              :disabled="true"
+              :disabled="saveUp"
               :on-icon-click="searchTarget"
               icon="search"
               v-model="form.attributionTarget">
@@ -135,11 +141,11 @@
           </el-form-item>
 
           <el-form-item label="备注：">
-            <el-input v-model="form.remark" type="textarea" class='textarea'></el-input>
+            <el-input v-model="form.remark" :disabled="saveUp" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item>
-            <el-button type="primary" @click="saveData">保存</el-button>
+            <el-button type="primary" :disabled="saveUp" @click="saveData">保存</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -354,13 +360,8 @@
           children: 'children',
           label: 'label'
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
-        tableData: [{
-          role_name: '客服部红包管理员',
-          english_name: 'xingzhegnquzhengfu',
-          attribution_mechanism: '上海市总公司',
-          data_range: '所在公司及以下数据'
-        }],
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
+        tableData: [],
         rules: {
           role_name: [
             {required: true, message: '请输入角色名称', trigger: 'blur'}
@@ -389,10 +390,11 @@
         }
       },
       query () {
-        this.$ajax.get('/list', {params: this.formInline})
+        this.$ajax.get('setting/role/list')
           .then(response => {
+            console.log(response)
             if (response.data.code === 200) {
-              this.tableData1 = response.data.data.result
+              this.tableData = response.data.data.result
               this.pagination.count = response.data.data.total
             } else {
               this.$message({
@@ -404,10 +406,37 @@
           .catch(() => {
             this.$message({
               type: 'error',
-              message: '获取列表信息失败'
+              message: '获取列表信息异常'
             })
           })
       },
+      more (row, column, cell, event) {
+        this.$refs['form'].resetFields()
+        if (column.property !== 'name') {
+          return false
+        } else {
+          this.activeName2 = 'second'
+          this.titleSecond = '角色详情'
+          this.saveUp = true  // 保存按钮不显示
+          this.$ajax.get('/setting/role/form', {params: {userId: row.id}})
+            .then((res) => {
+              if (res.data.code === 200) {
+                this.form = res.data.data
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '获取详情失败'
+                })
+              }
+            })
+            .catch(() => {
+              this.$message({
+                type: 'error',
+                message: '获取详情异常'
+              })
+            })
+        }
+      }, // 详情
       addNewRecord () {
         this.$refs['form'].resetFields()
         this.activeName2 = 'second'
@@ -567,8 +596,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNo = val
-        this.pagination.pageNo = val
+        this.formInline.pageNum = val
+        this.pagination.pageNum = val
         this.query()
       },
       back () {
@@ -1340,6 +1369,10 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 20px;
+  }
+  .active {
+    color: #20a0ff;
+    cursor: pointer;
   }
 
   span {

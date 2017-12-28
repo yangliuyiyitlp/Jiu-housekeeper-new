@@ -28,12 +28,13 @@ Axios.create({
 Axios.interceptors.request.use(
   config => {
     if (Cookie.get('sessionId')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
-      config.headers.Authorization = {'sessionId': `${Cookie.get('sessionId')}`}
+      // config.headers.Authorization = {'sessionId': `${Cookie.get('sessionId')}`}
+      config.headers.Authorization = `${Cookie.get('sessionId')}`
+      // console.log(config.headers.Authorization)
     }
     return config
   },
   err => {
-    console.log(7777)
     return Promise.reject(err)
   })
 
