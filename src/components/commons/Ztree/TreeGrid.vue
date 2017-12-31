@@ -23,7 +23,7 @@
       <template slot-scope="scope">
 
         <button type="button" class="el-button el-button--default el-button--small"
-                @click="handleUpdate(scope.row.id)">编辑
+                @click="handleUpdate(scope.row.id)">修改
         </button>
 
         <el-button size="small" @click="handleDelete(scope.row.id)" type="info">
@@ -31,7 +31,7 @@
         </el-button>
 
         <button type="button" class="el-button el-button--primary el-button--small"
-                @click="handleAdd(scope.row.parentIds,scope.row.id)"> 添加下级树结构
+                @click="handleAdd(scope.row.parentIds,scope.row.label,scope.row.id)"> 添加下级树结构
         </button>
 
       </template>
@@ -149,7 +149,7 @@
   }
 </script>
 
-<style scoped>
+<style>
   .ms-tree-space {
     position: relative;
     top: 1px;
@@ -168,5 +168,17 @@
 
   table td {
     line-height: 26px;
+  }
+  .el-table .cell {
+    word-break: normal !important;
+  }
+  .el-table th,.el-table__row {
+    text-align: center;
+  }
+.el-table_1_column_1{
+  text-align: left;
+}
+  .el-table_1_column_9, .el-table_1_column_10{
+    width:50px;
   }
 </style>

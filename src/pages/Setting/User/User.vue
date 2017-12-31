@@ -277,6 +277,7 @@
 
           </el-tabs>
           <!--模态框-->
+          <div class="wrapperTree">
           <el-dialog :title=title size="tiny" :visible.sync="cityVisible" center>
             关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
             <el-tree
@@ -294,6 +295,7 @@
               <el-button type="primary" @click="doModify">确 定</el-button>
             </div>
           </el-dialog>
+          </div>
         </div>
       </el-col>
     </el-row>
@@ -784,6 +786,7 @@
 
 <style scoped>
   @import '../../../assets/css/common.css';
+  @import '../../../assets/css/treecss.css';
 
   .width {
     width: 300px;

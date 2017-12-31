@@ -459,7 +459,7 @@
       this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
       // 编辑
       bus.$on('updateBtn', (id) => {
-        this.$refs['form'].resetFields()
+//        this.$refs['form'].resetFields()
         this.modifyRecord(id)
       })
       // 删除
@@ -529,7 +529,7 @@
         })
       },
       modifyRecord (id) {
-//        this.$refs['form'].resetFields()
+        this.$refs['form'].resetFields()
         this.activeName2 = 'second'
         this.titleSecond = '机构修改'
         this.saveUp = false

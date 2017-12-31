@@ -153,65 +153,66 @@
       </el-tab-pane>
 
 
-       <!--角色分配-->
+      <!--角色分配-->
       <!--<el-tab-pane  label="角色分配" name="third" class="second" >-->
-        <!--<el-form :inline="true" :model="formRole" class="demo-form-inline">-->
+      <!--<el-form :inline="true" :model="formRole" class="demo-form-inline">-->
 
-          <!--<el-form-item label="角色名称：">-->
-            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="归属机构：">-->
-            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
-          <!--</el-form-item>-->
+      <!--<el-form-item label="角色名称：">-->
+      <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+      <!--</el-form-item>-->
+      <!--<el-form-item label="归属机构：">-->
+      <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+      <!--</el-form-item>-->
 
-          <!--<el-form-item label="英文名称：">-->
-            <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
-          <!--</el-form-item>-->
+      <!--<el-form-item label="英文名称：">-->
+      <!--<el-input v-model="formRole.loginName" :disabled = true></el-input>-->
+      <!--</el-form-item>-->
 
-          <!--<el-form-item>-->
-            <!--<el-button type="primary" @click="recordRole">分配角色</el-button>-->
-          <!--</el-form-item>-->
-        <!--</el-form>-->
+      <!--<el-form-item>-->
+      <!--<el-button type="primary" @click="recordRole">分配角色</el-button>-->
+      <!--</el-form-item>-->
+      <!--</el-form>-->
       <!--</el-tab-pane>-->
 
     </el-tabs>
-    <!--模态框-->
-    <el-dialog title="归属机构" size="tiny" :visible.sync="cityVisible" center>
-      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
-      <el-tree
-        ref="tree"
-        highlight-current
-        :data="selectSection"
-        :props="defaultProps"
-        class="searchTree"
-        accordion
-        :filter-node-method="filterNode"
-        @node-click="handleNode">
-      </el-tree>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="modifyCancel">取 消</el-button>
-        <el-button type="primary" @click="doModify">确 定</el-button>
-      </div>
-    </el-dialog>
+    <div class="wrapperTree">
+      <!--模态框-->
+      <el-dialog title="归属机构" size="tiny" :visible.sync="cityVisible" center>
+        关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+        <el-tree
+          ref="tree"
+          highlight-current
+          :data="selectSection"
+          :props="defaultProps"
+          class="searchTree"
+          accordion
+          :filter-node-method="filterNode"
+          @node-click="handleNode">
+        </el-tree>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="modifyCancel">取 消</el-button>
+          <el-button type="primary" @click="doModify">确 定</el-button>
+        </div>
+      </el-dialog>
 
-    <el-dialog title="角色授权" size="tiny" :visible.sync="roleVisible" center>
-      <el-tree
-        ref="tree2"
-        show-checkbox
-        default-expand-all
-        highlight-current
-        :data="selectRole"
-        :props="defaultProps"
-        :default-checked-keys="checkedRoles"
-        node-key="id"
-        class="searchTree">
-      </el-tree>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="roleCancel">取 消</el-button>
-        <el-button type="primary" @click="getCheckedKeys">确 定</el-button>
-      </div>
-    </el-dialog>
-
+      <el-dialog title="角色授权" size="tiny" :visible.sync="roleVisible" center>
+        <el-tree
+          ref="tree2"
+          show-checkbox
+          default-expand-all
+          highlight-current
+          :data="selectRole"
+          :props="defaultProps"
+          :default-checked-keys="checkedRoles"
+          node-key="id"
+          class="searchTree">
+        </el-tree>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="roleCancel">取 消</el-button>
+          <el-button type="primary" @click="getCheckedKeys">确 定</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 </template>
 
@@ -462,6 +463,7 @@
             }
             this.$ajax.get(url, {params: this.form})
               .then((response) => {
+                console.log(response)
                 if (response.data.code === 200) {
                   // 更新成功
                   this.$message({
@@ -514,8 +516,13 @@
         this.cityVisible = false
       },
       getCheckedKeys () {
-        let arr = this.$refs.tree2.getCheckedKeys()
-        this.form.menuIds = arr.join(',')
+        let arr = this.$refs.tree2.getCheckedNodes()
+        let newarr = []
+        for (let i = 0; i < arr.length; i++) {
+          newarr.push(arr[i].parentIds + arr[i].id)
+          console.log(newarr)
+        }
+        this.form.menuIds = newarr.join(',')
         this.roleVisible = false
       },
       modifyCancel () {
@@ -559,9 +566,12 @@
 </script>
 
 <style scoped>
-  .second .textarea, .second .el-input, .second .el-input__inner,.width {
+  @import '../../../assets/css/treecss.css';
+
+  .second .textarea, .second .el-input, .second .el-input__inner, .width {
     width: 250px;
   }
+
   .keySearch {
     width: 140px;
     height: 20px;
@@ -578,13 +588,5 @@
 
   span {
     color: #888;
-  }
-  .el-dialog__wrapper .el-dialog .el-dialog__body .searchTree .el-tree-node .el-tree-node__children .el-tree-node .el-tree-node__content{
-    line-height: 25px!important;
-    height: 25px!important;
-  }
-  .el-tree-node__content{
-    line-height: 25px!important;
-    height: 25px!important;
   }
 </style>

@@ -374,7 +374,7 @@
     mounted () {
       // 编辑
       bus.$on('updateBtn', (id) => {
-        this.$refs['form'].resetFields()
+//        this.$refs['form'].resetFields()
         this.modifyRecord(id)
       })
       // 删除
