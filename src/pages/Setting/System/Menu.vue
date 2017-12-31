@@ -229,7 +229,6 @@
           this.companySearch()
         }
       },
-      handleNodeClick () {},
       query () {
         // 请求栏目列表
         this.$ajax.get('/setting/menu/list', {params: {sessionId: Cookie.get('sessionId')}})

@@ -1,6 +1,7 @@
 <template>
-  <div class="right">
+  <div class="right" ref="right">
     <el-row>
+
       <el-col :span="3" class="search_bar" ref="search_bar">
         <el-tree
           highlight-current
@@ -12,206 +13,136 @@
         </el-tree>
       </el-col>
       <el-col :span="21">
-        <div class="grid-content bg-purple-light">
-          <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
-            <!--机构列表-->
-            <el-tab-pane label="机构列表" name="first">
-              <!--树表格组件-->
-              <div>
-                <tree-grid
-                  :defaultExpandAll="true"
-                  :columns="columns"
-                  :tree-structure="true"
-                  :data-source="dataSource">
-                </tree-grid>
-              </div>
+        <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
+          <!--菜单列表-->
+          <el-tab-pane label="机构列表" name="first">
+            <div>
+              <tree-grid
+                :defaultExpandAll="true"
+                :columns="columns"
+                :tree-structure="true"
+                :data-source="dataSource">
+              </tree-grid>
+            </div>
 
+          </el-tab-pane>
 
+          <!--机构添加 -->
+          <el-tab-pane :label="titleSecond" name="second" class="second">
 
+            <el-form ref="menuForm" :rules="rules" :model="form" label-width="150px">
+              <el-form-item>
+                <el-input v-model="form.id" v-if=false></el-input>
+              </el-form-item>
 
-              <!--<el-table-->
-                <!--:data="tableData"-->
-                <!--width="100%"-->
-                <!--border-->
-                <!--stripe>-->
-                <!--<el-table-column-->
-                  <!--prop="id"-->
-                  <!--label="id"-->
-                  <!--width="180">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--prop="name"-->
-                  <!--label="机构名称"-->
-                  <!--width="180">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--prop="area"-->
-                  <!--label="归属区域	"-->
-                  <!--width="180">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--prop="number"-->
-                  <!--label="机构编码	">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--prop="type"-->
-                  <!--label="机构类型	">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--prop="remarks"-->
-                  <!--show-overflow-tooltip-->
-                  <!--label="备注">-->
-                <!--</el-table-column>-->
-                <!--<el-table-column-->
-                  <!--header-align="center"-->
-                  <!--align="center"-->
-                  <!--label="操作">-->
-                  <!--<template slot-scope="scope">-->
-                    <!--<el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>-->
-                    <!--<el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>-->
-                    <!--<el-button @click="addRecord(scope.row.id)" type="text" size="small">添加下级机构</el-button>-->
-                  <!--</template>-->
-                <!--</el-table-column>-->
-              <!--</el-table>-->
+              <el-form-item label="上级机构：">
+                <el-input
+                  :disabled=true
+                  :on-icon-click="searchMechanism"
+                  icon="search"
+                  v-model="form.menuName">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="归属区域：">
+                <el-input
+                  :disabled=true
+                  :on-icon-click="searchArea"
+                  icon="search"
+                  v-model="form.menuArea">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="机构名称：" prop="label">
+                <el-input v-model="form.label"></el-input>
+              </el-form-item>
 
-            </el-tab-pane>
+              <el-form-item label="机构编码：">
+                <el-input v-model="form.path"></el-input>
+              </el-form-item>
 
-            <!--机构添加 -->
-            <el-tab-pane :label='titleSecond' name="second" class="second">
+              <el-form-item label="机构类型：" prop="loginFlag">
+                <el-select v-model="form.loginFlag" clearable class="width">
+                  <el-option label="公司" value="1"></el-option>
+                  <el-option label="部门" value="0"></el-option>
+                  <el-option label="小组" value="0"></el-option>
+                  <el-option label="其他" value="0"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="机构级别：" prop="loginFlag">
+                <el-select v-model="form.loginFlag" clearable class="width">
+                  <el-option label="一级" value="1"></el-option>
+                  <el-option label="二级" value="0"></el-option>
+                  <el-option label="三级" value="0"></el-option>
+                  <el-option label="四级" value="0"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="是否可用：" prop="loginFlag">
+                <el-select v-model="form.loginFlag" clearable class="width">
+                  <el-option label="是" value="1"></el-option>
+                  <el-option label="否" value="0"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="主负责人：">
+                <el-input
+                  :disabled=true
+                  :on-icon-click="mainLeader"
+                  icon="search"
+                  v-model="form.menuMain">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="副负责人：">
+                <el-input
+                  :disabled=true
+                  :on-icon-click="secondLeader"
+                  icon="search"
+                  v-model="form.menuSecond">
+                </el-input>
+              </el-form-item>
+              <el-form-item label="联系地址：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="邮政编码：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="负责人：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="电话：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="传真：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱：">
+                <el-input v-model="form.target"></el-input>
+              </el-form-item>
+              <el-form-item label="备注：">
+                <el-input v-model="form.remarks" type="textarea" class='textarea'></el-input>
+              </el-form-item>
 
-              <el-form ref="form" :model="form"  :rules="rules" label-width="150px">
+              <el-form-item label="快递添加下级部门：" prop="roleId">
+                <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
+                  <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+                  </el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" @click="saveData('form')">保存</el-button>
+                <el-button @click="back">返回</el-button>
+              </el-form-item>
+            </el-form>
 
-                <el-form-item label="上级机构：">
-                  <el-input
-                    :disabled="true"
-                    :on-icon-click="searchSection"
-                    icon="search"
-                    v-model="form.superior_mechanism">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="归属区域：">
-                  <el-input
-                    :disabled="true"
-                    :on-icon-click="searchSection"
-                    icon="search"
-                    v-model="form.attribution_area">
-                  </el-input>
-                </el-form-item>
+          </el-tab-pane>
 
-                <el-form-item label="机构名称：" prop="name">
-                  <el-input v-model="form.name"></el-input>
-                </el-form-item>
-
-                <el-form-item label="机构编码：">
-                  <el-input v-model="form.mechanism_number"></el-input>
-                </el-form-item>
-
-                <el-form-item label="机构类型：">
-                  <el-select v-model="form.mechanism_type" clearable>
-                    <el-option label="公司" value="1"></el-option>
-                    <el-option label="部门" value="2"></el-option>
-                    <el-option label="小组" value="3"></el-option>
-                    <el-option label="其他" value="4"></el-option>
-                  </el-select>
-                </el-form-item>
-
-                <el-form-item label="机构级别：">
-                  <el-select v-model="form.mechanism_level" clearable>
-                    <el-option label="一级" value="1"></el-option>
-                    <el-option label="二级" value="2"></el-option>
-                    <el-option label="三级" value="3"></el-option>
-                    <el-option label="四级" value="4"></el-option>
-                  </el-select>
-                </el-form-item>
-
-                <el-form-item label="是否可用：">
-                  <el-select v-model="form.isUse" clearable>
-                    <el-option label="是" value="1"></el-option>
-                    <el-option label="否" value="2"></el-option>
-                  </el-select>
-                  <a>*“是”代表此账号允许登陆，“否”则表示此账号不允许登陆</a>
-                </el-form-item>
-
-                <el-form-item label="主负责人：">
-                  <el-input
-                    :disabled="true"
-                    :on-icon-click="searchSection"
-                    icon="search"
-                    v-model="form.main_responsible">
-                  </el-input>
-                </el-form-item>
-                <el-form-item label="副负责人：">
-                  <el-input
-                    :disabled="true"
-                    :on-icon-click="searchSection"
-                    icon="search"
-                    v-model="form.vice_responsible">
-                  </el-input>
-                </el-form-item>
-
-                <el-form-item label="联系地址：">
-                  <el-input v-model="form.contact_address"></el-input>
-                </el-form-item>
-
-                <el-form-item label="邮政编码：">
-                  <el-input v-model="form.zip_code"></el-input>
-                </el-form-item>
-
-                <el-form-item label="负责人：">
-                  <el-input v-model="form.responsible"></el-input>
-                </el-form-item>
-
-                <el-form-item label="电话：">
-                  <el-input v-model="form.phone"></el-input>
-                </el-form-item>
-
-                <el-form-item label="传真：">
-                  <el-input v-model="form.fax"></el-input>
-                </el-form-item>
-
-                <el-form-item label="邮箱：">
-                  <el-input v-model="form.email"></el-input>
-                </el-form-item>
-
-                <el-form-item label="备注：">
-                  <el-input v-model="form.remark" type="textarea" class='textarea'></el-input>
-                </el-form-item>
-
-                <el-form-item label="快速添加下级部门：">
-                  <el-checkbox-group v-model="form.lower_department">
-                    <el-checkbox label="综合部"></el-checkbox>
-                    <el-checkbox label="开发部"></el-checkbox>
-                    <el-checkbox label="人力部"></el-checkbox>
-                  </el-checkbox-group>
-                </el-form-item>
-
-                <el-form-item>
-                  <el-button type="primary" :disabled='saveUp' @click="saveData(form)">保存</el-button>
-                  <el-button @click="back">返回</el-button>
-                </el-form-item>
-              </el-form>
-
-            </el-tab-pane>
-
-          </el-tabs>
+        </el-tabs>
+        <div class="wrapperTree">
           <!--模态框-->
-          <el-dialog :title=title size="tiny" :visible.sync="cityVisible" center>
+          <el-dialog :title="title" size="tiny" :visible.sync="cityVisible" center>
             关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
             <el-tree
-              ref="tree2"
+              ref="tree"
               highlight-current
-              :data="select"
-              :props="defaultProps"
+              :data="secondSection"
+              :props="secondProps"
               class="searchTree"
               accordion
               :filter-node-method="filterNode"
@@ -225,228 +156,65 @@
         </div>
       </el-col>
     </el-row>
+
   </div>
 </template>
 
 <script>
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
-  // arr2tree引入
-  import arr2tree from '../../../utils/arr2tree.js'
   import bus from '@/assets/js/eventBus.js'
+  import Cookie from 'js-cookie'
+
   export default {
     data () {
       return {
         value1: '',
         activeName2: 'first',
-        saveUp: false,
         title: '',
-        titleSecond: '机构添加',
-        select: '',
         filterText: '',
+        filterId: '',
         cityVisible: false,
+        saveUp: true,
+        titleSecond: '机构添加',
+        select_section: [],
+        secondSection: [],
+        checkedRoles: [],
+        roles: [],
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name'
         },
-        select_section: [{
-          id: 1,
-          label: '上海市总公司',
-          children: [{
-            id: 4,
-            label: '厦门分公司'
-          }, {
-            id: 4,
-            label: '佛山分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '珠海分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '运营部'
-          }, {
-            id: 4,
-            label: '北京分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '客服部',
-            children: [{
-              id: 9,
-              label: '红包管理员'
-            }, {
-              id: 9,
-              label: '客服部'
-            }]
-          }, {
-            id: 4,
-            label: '上海分公司',
-            children: [{
-              id: 9,
-              label: '黄浦区政府'
-            }, {
-              id: 9,
-              label: '城市运营'
-            }, {
-              id: 9,
-              label: '虹口区政府'
-            }, {
-              id: 9,
-              label: '普陀区政府'
-            }, {
-              id: 9,
-              label: '静安区政府'
-            }, {
-              id: 9,
-              label: '嘉定区政府'
-            }, {
-              id: 9,
-              label: '浦东新区政府'
-            }, {
-              id: 9,
-              label: '闵行区政府'
-            }, {
-              id: 9,
-              label: '宝山区政府'
-            }, {
-              id: 9,
-              label: '松江区政府'
-            }, {
-              id: 9,
-              label: '杨浦区政府'
-            }, {
-              id: 9,
-              label: '徐汇区政府'
-            }, {
-              id: 9,
-              label: '长宁区政府'
-            }, {
-              id: 9,
-              label: '青浦区政府'
-            }, {
-              id: 9,
-              label: '奉贤区政府'
-            }, {
-              id: 9,
-              label: '金山区政府'
-            }]
-          }, {
-            id: 4,
-            label: '生产部'
-          }, {
-            id: 4,
-            label: '成都分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '湖州分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }, {
-            id: 4,
-            label: '公司领导'
-          }, {
-            id: 4,
-            label: '综合部'
-          }, {
-            id: 4,
-            label: '市场部'
-          }, {
-            id: 4,
-            label: '技术部'
-          }, {
-            id: 4,
-            label: '研发部'
-          }, {
-            id: 4,
-            label: '深圳分公司',
-            children: [{
-              id: 9,
-              label: '城市运营'
-            }]
-          }]
-        }],
-        formInline: {
-          attribution_company: '',
-          login_name: '',
-          attribution_department: '',
-          name: ''
+        secondProps: {
+          children: 'children',
+          label: 'name'
         },
-        form: {
-          superior_mechanism: '',
-          attribution_area: '',
-          mechanism_name: '',
-          mechanism_number: '',
-          mechanism_type: '2',
-          mechanism_level: '1',
-          isUse: '1',
-          main_responsible: '',
-          vice_responsible: '',
-          contact_address: '',
-          zip_code: '',
-          responsible: '',
-          email: '',
-          fax: '',
-          phone: '',
-          lower_department: [],
-          remark: ''
-        },
-        tableData: [{
-          id: '18745852358',
-          name: '上海市总公司',
-          area: '中华人民共和国',
-          number: '大剿匪啊啊啊',
-          type: '大剿匪啊',
-          remarks: '02118745852358'
-        }],
+        formInline: {},
+        form: {},
         rules: {
-          name: [
-            {required: true, message: '请输入机构名称', trigger: 'blur'}
+          label: [
+            {required: true, message: '请输入名称', trigger: 'blur'}
           ]
         },
         columns: [
           {
-            text: '栏目名称',
+            text: '机构名称',
             dataIndex: 'name'
           },
           {
-            text: '归属机构',
-            dataIndex: 'officeId'
+            text: '归属区域',
+            dataIndex: 'grade'
           },
           {
-            text: '栏目模型',
-            dataIndex: 'module'
+            text: '机构编码',
+            dataIndex: 'code'
           },
           {
-            text: '排序',
-            dataIndex: 'sort'
+            text: '机构类型',
+            dataIndex: 'type'
           },
           {
-            text: '导航菜单',
-            dataIndex: 'inMenuName'
-          },
-          {
-            text: '栏目列表',
-            dataIndex: 'inListName'
-          },
-          {
-            text: '展示方式',
-            dataIndex: 'showModes'
+            text: '备注',
+            dataIndex: 'remarks'
           }
         ], // 树表格
         dataSource: [] // 树表格
@@ -454,12 +222,11 @@
     },
     created () {
       this.query()
+      this.searchOrganization()
     },
     mounted () {
-      this.$refs.search_bar.$el.style.height = (document.documentElement.clientHeight - 100) + 'px'
       // 编辑
       bus.$on('updateBtn', (id) => {
-//        this.$refs['form'].resetFields()
         this.modifyRecord(id)
       })
       // 删除
@@ -467,14 +234,13 @@
         this.deleteRecord(id)
       })
       // 添加下一级
-      bus.$on('addBtn', (parentId) => {
-        this.$refs['form'].resetFields()
-        this.addRecord()
+      bus.$on('addBtn', (parentId, menuName, id) => {
+        this.addNextRecord(parentId, menuName, id)
       })
     },
     watch: {
       filterText (val) {
-        this.$refs.tree2.filter(val)
+        this.$refs.tree.filter(val)
       }
     },
     methods: {
@@ -482,11 +248,63 @@
         if (this.activeName2 === 'first') {
           this.titleSecond = '机构添加'
         }
+        if (tab.label === '添加下级机构') {
+          this.addNextRecord()
+        }
         if (tab.label === '机构添加') {
           this.addRecord()
         }
       },
-      handleNodeClick () {},
+      handleNodeClick (data) {
+        this.formInline.officeId = data.id
+        this.query()
+      },
+      searchOrganization () {
+        this.$ajax.get('/setting/user/section', {params: {sessionId: Cookie.get('sessionId')}})
+          .then(response => {
+            if (response.data.code === 200) {
+              this.select_section = response.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取机构列表失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取机构列表异常'
+            })
+          })
+      },
+      query () {
+        // 请求机构列表
+        this.$ajax.get('/setting/user/section', {
+          params: {
+            sessionId: Cookie.get('sessionId'),
+            officeId: this.formInline.officeId
+          }
+        })
+          .then(res => {
+            if (res.data.code === 200) {
+              // 递归循环 显示隐藏
+              isShow(res.data.data)
+              this.dataSource = res.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取列表失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取列表异常'
+            })
+          })
+      }, // 树表格
       deleteRecord (id) {
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
@@ -497,27 +315,26 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.post('/delete', {params: {'id': id}})
+            this.$ajax.get('setting/menu/delete', {params: {'id': id}})
               .then((res) => {
-                if (res.data.code === 0) {
+                if (res.data.code === 200) {
                   // 删除成功
                   this.$message({
                     type: 'success',
                     message: res.data.msg
                   })
-                  // 刷新页面
                   this.query()
                 } else {
                   this.$message({
                     type: 'error',
-                    message: res.data.msg
+                    message: '删除失败'
                   })
                 }
               })
               .catch(() => {
                 this.$message({
                   type: 'error',
-                  message: '操作失败'
+                  message: '删除异常'
                 })
               })
           }
@@ -529,18 +346,20 @@
         })
       },
       modifyRecord (id) {
-        this.$refs['form'].resetFields()
+        if (this.$refs['menuForm'] !== undefined) {
+          this.$refs['menuForm'].resetFields()
+        }
         this.activeName2 = 'second'
         this.titleSecond = '机构修改'
-        this.saveUp = false
-        this.$ajax.get('/activity/enjoy/form', {params: {id: id}})
+        this.$ajax.get('/setting/menu/form', {params: {id: id, sessionId: Cookie.get('sessionId')}})
           .then((res) => {
-            if (res.data.code === 0) {
-              this.form = res.data.tActivitiesInfo
+            if (res.data.code === 200) {
+              this.form = res.data.data
+//              this.form.type = this.form.type.toString()
             } else {
               this.$message({
                 type: 'error',
-                message: '获取异常'
+                message: '获取失败'
               })
             }
           })
@@ -548,46 +367,46 @@
             console.log('点击修改报错:', error)
             this.$message({
               type: 'error',
-              message: '获取失败'
+              message: '获取异常'
             })
           })
       }, // 修改
+      addNextRecord (parentId, menuName, id) {
+        if (this.$refs['menuForm'] !== undefined) {
+          this.$refs['menuForm'].resetFields()
+        }
+        this.form = {}
+        this.activeName2 = 'second'
+        this.titleSecond = '添加下级机构'
+        this.form.menuName = menuName
+        this.form.parentId = id
+      }, // 添加
+      handleCheckedCitiesChange () {},
       addRecord () {
-//        this.$refs['form'].resetFields()
+        this.$refs['menuForm'].resetFields()
+        this.form = {}
         this.activeName2 = 'second'
         this.titleSecond = '机构添加'
-        this.saveUp = false
-        this.$ajax.get('/activity/enjoy/sort')
-          .then((res) => {
-            if (res.data.code === 0) {
-              this.form = {}
-              this.form.sort = res.data.tActivitiesInfo.sort
-            } else {
-              this.$message({
-                type: 'error',
-                message: '请求显示顺序异常'
-              })
-            }
-          })
-          .catch(() => {
-            this.$message({
-              message: '请求显示顺序失败',
-              type: 'info'
-            })
-          })
-      }, // 添加下级目录
-      saveData (form) {       // 修改确定功能
-        this.$refs[form].validate((valid) => {
+      },
+      saveData () {       // 修改确定功能
+        this.$refs['menuForm'].validate((valid) => {
           if (valid) {
-            this.activeName2 = 'first'
-            this.$ajax.get('/activity/enjoy/save', {params: this.form})
+            let url = ''
+            if (this.form.id !== undefined && this.form.id !== '') {  // 修改
+              url = '/setting/menu/update'
+            } else {  // 新增
+              url = '/setting/menu/add'
+            }
+//            this.form.type = parseInt(this.form.type)
+            this.$ajax.get(url, {params: this.form})
               .then((response) => {
-                if (response.data.code === 0) {
+                if (response.data.code === 200) {
                   // 更新成功
                   this.$message({
                     type: 'success',
                     message: '操作成功'
                   })
+                  this.activeName2 = 'first'
                   this.query()
                 } else {
                   this.$message({
@@ -609,70 +428,165 @@
       },
       back () {
         this.activeName2 = 'first'
-        this.titleSecond = '用户添加'
+        this.titleSecond = '机构添加'
       },
-      searchSection () {
+      searchMechanism () { // 上级机构
         this.cityVisible = true
-        this.title = '选择部门'
-        this.select = this.select_section
+        this.filterText = ''
+        this.title = '机构选择'
+        this.secondSection = this.select_section
+      },
+      searchArea () {  // 归属区域
+        this.$ajax.get('/setting/menu/section', {params: {sessionId: Cookie.get('sessionId')}})
+          .then(response => {
+            if (response.data.code === 200) {
+              this.cityVisible = true
+              this.filterText = ''
+              this.title = '区域选择'
+              this.secondSection = response.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取区域列表失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取区域列表异常'
+            })
+          })
+      },
+      mainLeader () {
+        this.cityVisible = true
+        this.filterText = ''
+        this.title = '主负责人'
+        this.secondSection = this.select_section
+      },
+      secondLeader () {
+        this.cityVisible = true
+        this.filterText = ''
+        this.title = '副负责人'
+        this.secondSection = this.select_section
       },
       doModify () {
-        if (this.title === '选择公司') {
-          this.formInline.attributionCompany = this.filterText
-        } else if (this.title === '选择部门') {
-          this.formInline.attributionSection = this.filterText
+        if (this.title === '机构选择') {
+          this.form.menuName = this.filterText
+          this.form.Id = this.filterId
+        } else if (this.title === '区域选择') {
+          this.form.menuArea = this.filterText
+          this.form.Id = this.filterId
+        } else if (this.title === '主负责人') {
+          this.form.menuMain = this.filterText
+          this.form.Id = this.filterId
+        } else if (this.title === '副负责人') {
+          this.form.menuSecond = this.filterText
+          this.form.Id = this.filterId
         }
         this.cityVisible = false
       },
       modifyCancel () {
+        if (this.title === '机构选择') {
+          this.form.menuName = ''
+          this.form.Id = ''
+        } else if (this.title === '机构选择') {
+          this.form.menuArea = ''
+          this.form.Id = ''
+        } else if (this.title === '主负责人') {
+          this.form.menuMain = this.filterText
+          this.form.Id = this.filterId
+        } else if (this.title === '副负责人') {
+          this.form.menuSecond = this.filterText
+          this.form.Id = this.filterId
+        }
         this.cityVisible = false
-        this.formInline.attributionCompany = ''
-        this.formInline.attributionSection = ''
       },
       filterNode (value, data) {
         if (!value) return true
-        return data.label.indexOf(value) !== -1
+        return data.name.indexOf(value) !== -1
       },
       handleNode (data) {
-        this.filterText = data.label // 弹框树模型点击输入值
-      },
-      query () {
-        // 请求栏目列表
-        this.$ajax.get('http://localhost:3000/content/column/getcategorys')
-          .then(res => {
-            if (res.data.code === 200) {
-              let arr = res.data.data
-              this.dataSource = arr2tree.getTree(arr, '1')
-            }
-          })
-          .catch(err => {
-            console.log(err)
-          })
-      } // 树表格
+        this.filterText = data.name // 弹框树模型点击输入值
+        this.filterId = data.id
+      }
+//      // 上传之前 清除原有图片
+//      clearUploadedImgPath () {
+//        // 如果有就清除
+//        if (this.form.imgPath) {
+//          this.$refs.uploadFile.clearFiles()
+//        }
+//        this.form.imgPath = ''
+//      },
+//      // 移除图片时清空form表单中的图片地址
+//      removeImgPath () {
+//        this.form.imgPath = ''
+//      },
+//      // 上传组件获取oss相关
+//      beforeUploadImgPath (file) {
+//        return new Promise((resolve) => {
+//          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'settingMenu'}})
+//            .then((res) => {
+//              this.Token = res.data
+//              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
+//              resolve()
+//            })
+//            .catch(err => {
+//              this.$message({
+//                message: err.data.msg,
+//                type: 'error'
+//              })
+//            })
+//        })
+//      },
+//      successImgPath (response, file, fileList) {
+//        this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+//      }
     },
     components: {
       TreeGrid
     }  // 树表格
   }
+
+  function isShow (result) {
+    for (let i = 0; i < result.length; i++) {
+      let item = result[i]
+      if (item.children !== undefined && item.children.length > 0) {
+        isShow(item.children)
+      }
+      if (item.isShow === '1') {
+        item.show = '显示'
+      } else if (item.isShow === '0') {
+        item.show = '隐藏'
+      }
+    }
+  }
+
 </script>
 
 <style scoped>
-  .search_bar {
-    border: 1px solid #ccc;
-    overflow: auto;
-  }
+  @import '../../../assets/css/treecss.css';
 
-  .second .textarea, .second .el-input, .second .el-input__inner {
-    width: 300px;
-  }
   .keySearch {
     width: 140px;
     height: 20px;
     outline-style: none;
     border: 1px solid #ccc;
     border-radius: 5px;
+    margin-bottom: 20px;
   }
-  a {
-    color: red;
+
+  .second .textarea, .second .el-input, .second .el-input__inner, .width {
+    width: 300px;
   }
+
+  span {
+    color: #888;
+  }
+
+  img {
+    width: 148px;
+    height: 148px;
+  }
+
 </style>

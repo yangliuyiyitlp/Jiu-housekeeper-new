@@ -277,7 +277,7 @@
 
           </el-tabs>
           <!--模态框-->
-          <div class="wrapperTree">
+
           <el-dialog :title=title size="tiny" :visible.sync="cityVisible" center>
             关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
             <el-tree
@@ -295,7 +295,6 @@
               <el-button type="primary" @click="doModify">确 定</el-button>
             </div>
           </el-dialog>
-          </div>
         </div>
       </el-col>
     </el-row>
@@ -699,12 +698,11 @@
           .then(response => {
             if (response.data.code === 200) {
               let resultData = response.data.data
+              console.log(resultData)
               for (let i = 0; i < resultData.result.length; i++) {
                 this.roles.push(resultData.result[i].name)
                 this.roleObj[resultData.result[i].name] = resultData.result[i].id
               }
-              console.log(this.roles)
-              console.log(this.roleObj)
             } else {
               this.$message({
                 type: 'error',
