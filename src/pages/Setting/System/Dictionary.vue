@@ -19,7 +19,7 @@
           </el-form-item>
 
           <el-form-item label="描述：">
-            <el-input v-model="formInline.des" placeholder="输入描述">
+            <el-input v-model="formInline.des" >
             </el-input>
           </el-form-item>
 
@@ -78,7 +78,7 @@
             <template slot-scope="scope">
               <el-button @click="modifyRecord(scope)" type="text" size="small">修改</el-button>
               <el-button @click="deleteRecord(scope.row.id)" type="text" size="small">删除</el-button>
-              <el-button @click="allotRecord(scope.row.id)" type="text" size="small">添加键值</el-button>
+              <el-button @click="allotRecord(scope.row)" type="text" size="small">添加键值</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -99,30 +99,30 @@
       <!--字典添加 -->
       <el-tab-pane :label="titleSecond" name="second" class="second">
 
-        <el-form ref="form" :model="form" label-width="150px">
+        <el-form ref="dictionaryForm" :model="dictionaryForm" label-width="150px">
 
-          <el-form-item label="键值：">
-            <el-input v-model="form.key"></el-input>
+          <el-form-item label="键值：" prop="">
+            <el-input v-model="dictionaryForm.key"></el-input>
           </el-form-item>
 
-          <el-form-item label="标签：">
-            <el-input v-model="form.tag"></el-input>
+          <el-form-item label="标签：" prop="">
+            <el-input v-model="dictionaryForm.tag"></el-input>
           </el-form-item>
 
-          <el-form-item label="类型：">
-            <el-input v-model="form.type"></el-input>
+          <el-form-item label="类型：" prop="">
+            <el-input v-model="dictionaryForm.dic_type"></el-input>
           </el-form-item>
 
-          <el-form-item label="描述：">
-            <el-input v-model="form.des"></el-input>
+          <el-form-item label="描述：" prop="">
+            <el-input v-model="dictionaryForm.dic_des"></el-input>
           </el-form-item>
 
-          <el-form-item label="排序：">
-            <el-input v-model="form.sort"></el-input>
+          <el-form-item label="排序：" prop="">
+            <el-input v-model="dictionaryForm.sort"></el-input>
           </el-form-item>
 
           <el-form-item label="备注：">
-            <el-input v-model="form.remark" type="textarea" class='textarea'></el-input>
+            <el-input v-model="dictionaryForm.remark" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item>
@@ -143,18 +143,8 @@
       return {
         activeName: 'first',
         titleSecond: '字典添加',
-        formInline: {
-          type: '',
-          des: ''
-        },
-        form: {
-          key: '',
-          tag: '',
-          type: '',
-          des: '',
-          sort: '10',
-          remark: ''
-        },
+        formInline: {},
+        dictionaryForm: {},
         options: [{
           value: '1',
           label: 'account_status'
@@ -185,8 +175,7 @@
       handleClick (tab, event) {
         if (this.activeName === 'first') {
           this.titleSecond = '字典添加'
-        }
-        if (tab.label === '字典添加') {
+        } else if (tab.label === '字典添加') {
           this.addNewRecord()
         }
       },
@@ -204,7 +193,7 @@
         this.$ajax.get('/list', {params: this.formInline})
           .then(response => {
             if (response.data.code === 200) {
-              this.tableData1 = response.data.data.result
+              this.tableData = response.data.data.result
               this.pagination.count = response.data.data.total
             } else {
               this.$message({
@@ -221,10 +210,10 @@
           })
       },
       addNewRecord () {
-        this.$refs['form'].resetFields()
+        this.$refs['dictionaryForm'].resetFields()
         this.activeName = 'second'
-        this.titleSecond = '角色添加'
-        this.form = {}
+        this.titleSecond = '字典添加'
+        this.dictionaryForm = {}
       },   // 新增
       deleteRecord (id) {
         this.$confirm('确定删除?', '提示', {
@@ -244,7 +233,6 @@
                     type: 'success',
                     message: res.data.msg
                   })
-//                this.$refs['formA'].resetFields()
                   // 刷新页面
                   this.query()
                 } else {
@@ -269,13 +257,13 @@
         })
       },
       modifyRecord (scope) {
-        this.$refs['form'].resetFields()
+        this.$refs['dictionaryForm'].resetFields()
         this.activeName = 'second'
         this.titleSecond = '字典修改'
         this.$ajax.get('/activity/enjoy/form', {params: {id: scope.row.id}})
           .then((res) => {
-            if (res.data.code === 0) {
-              this.form = res.data.tActivitiesInfo
+            if (res.data.code === 200) {
+              this.dictionaryForm = res.data.data
             } else {
               this.$message({
                 type: 'error',
@@ -291,15 +279,22 @@
             })
           })
       }, // 修改
-      allotRecord () {
+      allotRecord (scope) {
         this.activeName = 'second'
-        this.titleSecond = '字典添加'
+        this.titleSecond = '添加键值'
+        this.dictionaryForm.dic_type = scope.dic_type
+        this.dictionaryForm.dic_des = scope.dic_des
       },
       saveData () {       // 修改确定功能
-        this.$refs['form'].validate((valid) => {
+        this.$refs['dictionaryForm'].validate((valid) => {
           if (valid) {
-            this.activeName = 'first'
-            this.$ajax.get('/activity/enjoy/save', {params: this.form})
+            let url = ''
+            if (this.$refs['dictionaryForm'].id !== undefined && this.$refs['dictionaryForm'].id !== '') {
+              url = ''
+            } else {
+              url = ''
+            }
+            this.$ajax.get(url, {params: this.form})
               .then((response) => {
                 if (response.data.code === 0) {
                   // 更新成功
@@ -308,7 +303,7 @@
                     message: '操作成功'
                   })
                   // 刷新页面
-                  this.$refs.uploadFile.clearFiles()
+                  this.activeName = 'first'
                   this.query()
                 } else {
                   this.$message({

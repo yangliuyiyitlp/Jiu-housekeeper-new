@@ -135,7 +135,7 @@ const asyncRouter = [
     component: r => require.ensure([], () => r(require('../pages/Setting/System/Role.vue')), 'SettingRole')
   },
   {
-    path: '/setting/dictionary',
+    path: 'setting/dictionary',
     name: 'setting.dictionary',
     meta: {
       permission: []
