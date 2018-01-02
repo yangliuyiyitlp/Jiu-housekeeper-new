@@ -131,13 +131,14 @@
           <!--<span>特殊情况下，设置为“按明细设置”，可进行跨机构授权</span>-->
           <!--</el-form-item>-->
 
-          <el-form-item label="角色授权：">
+          <el-form-item label="角色授权：" prop="menuIds">
             <el-input
               :disabled=true
               :on-icon-click="searchRoles"
               icon="search"
               v-model="form.menuIds">
             </el-input>
+            <span>点开看详情</span>
           </el-form-item>
 
           <el-form-item label="备注：">
@@ -249,6 +250,9 @@
           ],
           enname: [
             {required: true, message: '请输入英文名称', trigger: 'blur'}
+          ],
+          menuIds: [
+            {required: true, message: '请选择角色', trigger: 'blur'}
           ]
         }
       }
@@ -346,7 +350,8 @@
               let result = response.data.data
               this.select_role = result
               // 循环每个里面有没有roleId和menuId,有的话把id放到checkedRoles数组中
-              searchRoles(result, this.checkedRoles)
+              searchRole(result, this.checkedRoles)
+              this.form.menuIds = this.checkedRoles.join(',')
             } else {
               this.$message({
                 type: 'error',
@@ -472,6 +477,7 @@
                   })
                   // 刷新页面
                   this.activeName2 = 'first'
+                  this.titleSecond = '角色添加'
                   this.query()
                 } else {
                   this.$message({
@@ -516,13 +522,25 @@
         this.cityVisible = false
       },
       getCheckedKeys () {
+//        let arr = this.$refs.tree2.getCheckedNodes()
+//        let newArr = []
+//        for (let i = 0; i < arr.length; i++) {
+//          newArr.push(arr[i].parentIds + arr[i].id)
+//        }
         let arr = this.$refs.tree2.getCheckedNodes()
-        let newarr = []
-        for (let i = 0; i < arr.length; i++) {
-          newarr.push(arr[i].parentIds + arr[i].id)
-          console.log(newarr)
+        let newArr = []
+        let arrZero = arr[0].parentIds + arr[0].id
+        newArr = arrZero.split(',')
+        for (let j = 1; j < arr.length; j++) {
+          let arrLater = arr[j].parentIds + arr[j].id
+          let parentsArr = arrLater.split(',')
+          for (let i = 0; i < parentsArr.length; i++) {
+            if (newArr.indexOf(parentsArr[i]) === -1) {
+              newArr.push(parentsArr[i])
+            }
+          }
         }
-        this.form.menuIds = newarr.join(',')
+        this.form.menuIds = newArr.join(',')
         this.roleVisible = false
       },
       modifyCancel () {
@@ -550,12 +568,12 @@
     }
   }
 
-  function searchRoles (result, checkedRoles) {
+  function searchRole (result, checkedRoles) {
     for (let i = 0; i < result.length; i++) {
       let item = result[i]
       if (item.children !== undefined && item.children.length > 0) {
         // 递归
-        searchRoles(item.children, checkedRoles)
+        searchRole(item.children, checkedRoles)
       }
       if (item.roleId && item.roleId) {
         let arr = checkedRoles.push(item.id)

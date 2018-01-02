@@ -5,7 +5,9 @@
       <el-tab-pane label="区域列表" name="first">
         <div>
           <tree-grid
-            :defaultExpandAll="false"
+            :defaultExpandAll="true"
+            :areaOpsFencing=true
+            :areaBikeFencing=true
             :columns="columns"
             :tree-structure="true"
             :data-source="dataSource">
@@ -17,83 +19,39 @@
       <!--区域添加 -->
       <el-tab-pane :label="titleSecond" name="second" class="second">
 
-        <el-form ref="menuForm" :rules="rules" :model="form" label-width="150px">
+        <el-form ref="areaForm" :rules="rules" :model="areaForm" label-width="150px">
           <el-form-item>
-            <el-input v-model="form.id" v-if=false></el-input>
+            <el-input v-model="areaForm.id" v-if=false></el-input>
           </el-form-item>
 
-          <el-form-item label="上级菜单：">
+          <el-form-item label="上级区域：">
             <el-input
               :disabled=true
               :on-icon-click="searchMenu"
               icon="search"
-              v-model="form.menuName">
+              v-model="areaForm.menuName">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="名称：" prop="label">
-            <el-input v-model="form.label"></el-input>
+          <el-form-item label="区域名称：" prop="label">
+            <el-input v-model="areaForm.label"></el-input>
           </el-form-item>
 
-          <el-form-item label="链接：">
-            <el-input v-model="form.path"></el-input>
-            <span>点击菜单跳转的页面</span>
+          <el-form-item label="区域编码：">
+            <el-input v-model="areaForm.path"></el-input>
           </el-form-item>
 
-          <el-form-item label="目标：">
-            <el-input v-model="form.target" placeholder="输入目标窗口"></el-input>
-            <span>链接地址打开的目标窗口</span>
+          <el-form-item label="区域推送码：">
+            <el-input v-model="areaForm.target" placeholder="输入目标窗口"></el-input>
           </el-form-item>
 
-          <!--<el-form-item label="图标：">-->
-          <!--<el-input v-model="form.icon" v-show='true'></el-input>-->
-          <!--<img width="100%" :src="form.icon" alt="图标">-->
-          <!--<el-upload-->
-          <!--ref="uploadFile"-->
-          <!--list-type="picture-card"-->
-          <!--action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'-->
-          <!--:data="Token"-->
-          <!--:on-remove="removeImgPath"-->
-          <!--:on-success="successImgPath"-->
-          <!--:before-upload="beforeUploadImgPath">-->
-          <!--<el-button type="primary" @click="clearUploadedImgPath">上传图片-->
-          <!--<i class="el-icon-upload el-icon&#45;&#45;right"></i>-->
-          <!--</el-button>-->
-          <!--</el-upload>-->
-          <!--</el-form-item>-->
-
-          <el-form-item label="排序：" prop="sort">
-            <el-input v-model.number="form.sort"></el-input>
-            <span>排列顺序，升序</span>
-          </el-form-item>
-
-          <el-form-item label="可见：" prop="isShow">
-            <el-radio class="radio" v-model="form.isShow" label="1">显示</el-radio>
-            <el-radio class="radio" v-model="form.isShow" label="0">隐藏</el-radio>
-            <span>该菜单或操作是否显示到系统菜单中</span>
-          </el-form-item>
-
-          <el-form-item label="菜单属性：" prop="type">
-            <el-radio class="radio" v-model="form.type" label=0>空菜单</el-radio>
-            <el-radio class="radio" v-model="form.type" label=1>页面</el-radio>
-            <el-radio class="radio" v-model="form.type" label=2>按钮</el-radio>
-          </el-form-item>
-
-          <!--<el-form-item label="菜单属性：" prop="type">-->
-          <!--<el-select v-model="form.type" clearable class="width">-->
-          <!--<el-option label="空菜单" value=0></el-option>-->
-          <!--<el-option label="页面" value="1"></el-option>-->
-          <!--<el-option label="按钮" value="2"></el-option>-->
-          <!--</el-select>-->
-          <!--</el-form-item>-->
-
-          <el-form-item label="权限标识：">
-            <el-input v-model="form.permission"></el-input>
-            <span>控制器中定义的权限标识，如：electric:bicycleinfo:tBicycleInfo:view</span>
+          <el-form-item label="区域类型：">
+            <el-radio class="radio" v-model="areaForm.isShow" label="1">显示</el-radio>
+            <el-radio class="radio" v-model="areaForm.isShow" label="0">隐藏</el-radio>
           </el-form-item>
 
           <el-form-item label="备注：">
-            <el-input v-model="form.remarks" type="textarea" class='textarea'></el-input>
+            <el-input v-model="areaForm.remarks" type="textarea" class='textarea'></el-input>
           </el-form-item>
 
           <el-form-item>
@@ -104,10 +62,30 @@
 
       </el-tab-pane>
 
+      <!--电子围栏-->
+      <el-tab-pane :label="OPSFencing" name="third" v-if='areaFence'>
+        <el-form ref="areaForm" :inline="true" :model="fencingForm" class="demo-form-inline">
+          <el-form-item label="所属区域：">
+            <el-input
+              :disabled=true
+              :on-icon-click="searchMenu"
+              icon="search"
+              v-model="fencingForm.menuName">
+            </el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="doModify">保存</el-button>
+            <el-button type="primary" @click="doModify">清楚轨迹</el-button>
+            <el-button type="primary" @click="doModify">将区域边界设置围栏</el-button>
+          </el-form-item>
+          <el-input v-model='fencingForm.menuName'></el-input>
+        </el-form>
+      </el-tab-pane>
+
     </el-tabs>
     <div class="wrapperTree">
       <!--模态框-->
-      <el-dialog title="上次菜单" size="tiny" :visible.sync="cityVisible" center>
+      <el-dialog title="上次区域" size="tiny" :visible.sync="cityVisible" center>
         关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
         <el-tree
           ref="tree"
@@ -130,7 +108,6 @@
 
 <script>
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
-  //  import arr2tree from '../../../utils/arr2tree.js'
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
 
@@ -145,57 +122,42 @@
         cityVisible: false,
         saveUp: true,
         titleSecond: '区域添加',
+        OPSFencing: '运维电子围栏',
+        areaFence: false,
         select: [],
         Token: {},
         defaultProps: {
           children: 'children',
           label: 'label'
         },
-        form: {},
+        areaForm: {},
         tableData: [],
+        fencingForm: {}, // 电子围栏
         rules: {
           label: [
             {required: true, message: '请输入名称', trigger: 'blur'}
-          ],
-          sort: [
-            {required: true, message: '请输入序号'},
-            {type: 'number', message: '必须为数字值'}
-          ],
-          isShow: [
-            {required: true, message: '是否展示', trigger: 'blur'}
-          ],
-          type: [
-            {required: true, message: '请输入菜单类型', trigger: 'blur'}
           ]
         },
         columns: [
           {
             text: '区域名称',
-            dataIndex: 'label'
+            dataIndex: 'name'
           },
           {
             text: '城市代码',
-            dataIndex: 'path'
+            dataIndex: 'id'
           },
           {
             text: '区域编码',
-            dataIndex: 'sort'
+            dataIndex: 'code'
           },
           {
             text: '区域类型',
-            dataIndex: 'show'
+            dataIndex: 'type'
           },
           {
             text: '区域推送码',
-            dataIndex: 'permission'
-          },
-          {
-            text: '运维电子围栏',
-            dataIndex: 'permission'
-          },
-          {
-            text: '骑行电子围栏',
-            dataIndex: 'permission'
+            dataIndex: 'pushCode'
           }
         ], // 树表格
         dataSource: [] // 树表格
@@ -217,6 +179,14 @@
       bus.$on('addBtn', (parentId, menuName, id) => {
         this.addNextRecord(parentId, menuName, id)
       })
+      // 运维电子围栏
+      bus.$on('areaOps', (id) => {
+        this.handleAreaOps(id)
+      })
+      // 骑行电子围栏
+      bus.$on('areaBike', (id) => {
+        this.handleAreaBike(id)
+      })
     },
     watch: {
       filterText (val) {
@@ -225,21 +195,23 @@
     },
     methods: {
       handleClick (tab, event) {
+        console.log(tab.label)
         if (this.activeName2 === 'first') {
-          this.titleSecond = '菜单添加'
-        }
-        if (tab.label === '添加下一级') {
+          this.titleSecond = '区域添加'
+          this.areaFence = false
+        } else if (tab.label === '添加下一级') {
           this.addNextRecord()
           this.companySearch()
-        }
-        if (tab.label === '菜单添加') {
+          this.areaFence = false
+        } else if (tab.label === '区域添加') {
           this.addRecord()
           this.companySearch()
+          this.areaFence = false
         }
       },
       query () {
         // 请求栏目列表
-        this.$ajax.get('/setting/menu/list', {params: {sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get('/setting/area/list', {params: {sessionId: Cookie.get('sessionId')}})
           .then(res => {
             if (res.data.code === 200) {
               // 递归循环 显示隐藏
@@ -300,17 +272,16 @@
         })
       },
       modifyRecord (id) {
-        console.log(22, this.$refs['menuForm'])
-        if (this.$refs['menuForm'] !== undefined) {
-          this.$refs['menuForm'].resetFields()
+        if (this.$refs['areaForm'] !== undefined) {
+          this.$refs['areaForm'].resetFields()
         }
         this.activeName2 = 'second'
-        this.titleSecond = '菜单修改'
+        this.titleSecond = '区域修改'
         this.$ajax.get('/setting/menu/form', {params: {id: id, sessionId: Cookie.get('sessionId')}})
           .then((res) => {
             if (res.data.code === 200) {
-              this.form = res.data.data
-              this.form.type = this.form.type.toString()
+              this.areaForm = res.data.data
+//              this.form.type = this.form.type.toString()
             } else {
               this.$message({
                 type: 'error',
@@ -327,31 +298,30 @@
           })
       }, // 修改
       addNextRecord (parentId, menuName, id) {
-        this.$refs['menuForm'].resetFields()
-        this.form = {}
+        this.$refs['areaForm'].resetFields()
+        this.areaForm = {}
         this.activeName2 = 'second'
         this.titleSecond = '添加下一级'
-        this.form.menuName = menuName
-        this.form.parentId = id
+        this.areaForm.menuName = menuName
+        this.areaForm.parentId = id
       }, // 添加
       addRecord () {
-        this.$refs['menuForm'].resetFields()
-        this.form = {}
+        this.$refs['areaForm'].resetFields()
+        this.areaForm = {}
         this.activeName2 = 'second'
-        this.titleSecond = '菜单添加'
+        this.titleSecond = '区域添加'
       },
       saveData () {       // 修改确定功能
-        console.log(typeof (this.form.sort))
-        this.$refs['menuForm'].validate((valid) => {
+        this.$refs['areaForm'].validate((valid) => {
           if (valid) {
             let url = ''
-            if (this.form.id !== undefined && this.form.id !== '') {  // 修改
+            if (this.areaForm.id !== undefined && this.areaForm.id !== '') {  // 修改
               url = '/setting/menu/update'
             } else {  // 新增
               url = '/setting/menu/add'
             }
-            this.form.type = parseInt(this.form.type)
-            this.$ajax.get(url, {params: this.form})
+//            this.form.type = parseInt(this.form.type)
+            this.$ajax.get(url, {params: this.areaForm})
               .then((response) => {
                 if (response.data.code === 200) {
                   // 更新成功
@@ -408,14 +378,14 @@
           })
       },
       doModify () {
-        this.form.menuName = this.filterText
-        this.form.parentId = this.filterId
+        this.areaForm.menuName = this.filterText
+        this.areaForm.parentId = this.filterId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.form.menuName = ''
-        this.form.parentId = ''
+        this.areaForm.menuName = ''
+        this.areaForm.parentId = ''
       },
       filterNode (value, data) {
         if (!value) return true
@@ -424,6 +394,16 @@
       handleNode (data) {
         this.filterText = data.label // 弹框树模型点击输入值
         this.filterId = data.id
+      },
+      handleAreaOps (id) {
+        this.activeName2 = 'third'
+        this.areaFence = true
+        this.OPSFencing = '运维电子围栏'
+      }, // 电子围栏
+      handleAreaBike (id) {
+        this.activeName2 = 'third'
+        this.areaFence = true
+        this.OPSFencing = '骑行电子围栏'
       }
 //      // 上传之前 清除原有图片
 //      clearUploadedImgPath () {

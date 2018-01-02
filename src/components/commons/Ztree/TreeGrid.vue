@@ -18,6 +18,20 @@
         {{scope.row[column.dataIndex]}}
       </template>
     </el-table-column>
+<!--系统设置 下面的区域管理开始-->
+    <el-table-column label="运维电子围栏" v-if="areaOpsFencing" >
+      <template slot-scope="scope">
+        <a class="area" @click="handleAreaOps(scope.row.id)">运维电子围栏</a>
+      </template>
+    </el-table-column>
+
+    <el-table-column label="骑行电子围栏" v-if="areaBikeFencing" >
+      <template slot-scope="scope">
+        <a class="area" @click="handleAreaBike(scope.row.id)">骑行电子围栏</a>
+
+      </template>
+    </el-table-column>
+<!--系统设置 下面的区域管理结束-->
 
     <el-table-column label="操作" v-if="treeType === 'normal'" width="260">
       <template slot-scope="scope">
@@ -79,6 +93,19 @@
         type: String,
         default: function () {
           return 'normal'
+        }
+      },
+      // 系统设置 区域管理下面的按钮
+      areaOpsFencing: {
+        type: Boolean,
+        default: function () {
+          return false
+        }
+      },
+      areaBikeFencing: {
+        type: Boolean,
+        default: function () {
+          return false
         }
       },
 // 是否默认展开所有树
@@ -144,6 +171,12 @@
       // 添加下级树结构
       handleAdd (parentIds, id) {
         bus.$emit('addBtn', parentIds, id)
+      },
+      handleAreaOps (id) {
+        bus.$emit('areaOps', id)
+      },
+      handleAreaBike (id) {
+        bus.$emit('areaBike', id)
       }
     }
   }
@@ -161,7 +194,14 @@
     width: 18px;
     height: 14px;
   }
-
+  .el-table .cell, .el-table th>div {
+    padding-left: 0!important;
+    padding-right: 0!important;
+  }
+.area{
+  color:#20a0ff;
+  cursor:pointer
+}
   .ms-tree-space::before {
     content: ""
   }
