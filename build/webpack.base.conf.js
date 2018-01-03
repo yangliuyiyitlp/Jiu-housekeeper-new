@@ -12,6 +12,9 @@ module.exports = {
   entry: {
     app: ['babel-polyfill', './src/main.js']
   },
+  externals:{
+    'BMap':'BMap'
+  },// 百度地图新增
   output: {
     // path: config.build.assetsRoot,    12.22 号修改 因打包后报错chunk loading faild
     path: '/dist',

@@ -24,30 +24,31 @@
             <el-input v-model="areaForm.id" v-if=false></el-input>
           </el-form-item>
 
-          <el-form-item label="上级区域：">
+          <el-form-item label="上级区域：" prop="areaName">
             <el-input
               :disabled=true
               :on-icon-click="searchMenu"
               icon="search"
-              v-model="areaForm.menuName">
+              v-model="areaForm.areaName">
             </el-input>
           </el-form-item>
 
-          <el-form-item label="区域名称：" prop="label">
-            <el-input v-model="areaForm.label"></el-input>
+          <el-form-item label="区域名称：" prop="name">
+            <el-input v-model="areaForm.name"></el-input>
           </el-form-item>
 
           <el-form-item label="区域编码：">
-            <el-input v-model="areaForm.path"></el-input>
+            <el-input v-model="areaForm.code"></el-input>
           </el-form-item>
 
           <el-form-item label="区域推送码：">
-            <el-input v-model="areaForm.target" placeholder="输入目标窗口"></el-input>
+            <el-input v-model="areaForm.pushCode"></el-input>
           </el-form-item>
 
-          <el-form-item label="区域类型：">
-            <el-radio class="radio" v-model="areaForm.isShow" label="1">显示</el-radio>
-            <el-radio class="radio" v-model="areaForm.isShow" label="0">隐藏</el-radio>
+          <el-form-item label="区域类型：" prop="type">
+            <el-select v-model="areaForm.type" clearable class="width">
+              <el-option  v-for="(area,val,index) in areas" :value="val" :label="area" :key="index"></el-option>
+            </el-select>
           </el-form-item>
 
           <el-form-item label="备注：">
@@ -78,14 +79,18 @@
             <el-button type="primary" @click="doModify">清楚轨迹</el-button>
             <el-button type="primary" @click="doModify">将区域边界设置围栏</el-button>
           </el-form-item>
-          <el-input v-model='fencingForm.menuName'></el-input>
         </el-form>
+        <!--百度地图-->
+        <div>
+          <map-ops :height="height" :longitude="longitude" :latitude="latitude"></map-ops>
+        </div>
+
       </el-tab-pane>
 
     </el-tabs>
     <div class="wrapperTree">
       <!--模态框-->
-      <el-dialog title="上次区域" size="tiny" :visible.sync="cityVisible" center>
+      <el-dialog title="上级区域" size="tiny" :visible.sync="cityVisible" center>
         关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
         <el-tree
           ref="tree"
@@ -103,6 +108,7 @@
         </div>
       </el-dialog>
     </div>
+
   </div>
 </template>
 
@@ -110,6 +116,7 @@
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
+  import mapOps from './areamap.vue'
 
   export default {
     data () {
@@ -125,17 +132,24 @@
         OPSFencing: '运维电子围栏',
         areaFence: false,
         select: [],
+        areas: {'1': '国家', '2': '省份，直辖市', '3': '地市', '4': '区县'},
         Token: {},
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name'
         },
         areaForm: {},
         tableData: [],
         fencingForm: {}, // 电子围栏
         rules: {
-          label: [
+          areaName: [
+            {required: true, message: '请选择上级区域', trigger: 'blur'}
+          ],
+          name: [
             {required: true, message: '请输入名称', trigger: 'blur'}
+          ],
+          type: [
+            {required: true, message: '请选择区域类型', trigger: 'blur'}
           ]
         },
         columns: [
@@ -160,7 +174,10 @@
             dataIndex: 'pushCode'
           }
         ], // 树表格
-        dataSource: [] // 树表格
+        dataSource: [], // 树表格
+        height: 300, // 地图
+        longitude: 116.404,
+        latitude: 39.915
       }
     },
     created () {
@@ -176,8 +193,8 @@
         this.deleteRecord(id)
       })
       // 添加下一级
-      bus.$on('addBtn', (parentId, menuName, id) => {
-        this.addNextRecord(parentId, menuName, id)
+      bus.$on('addBtn', (parentId, menuName, id, name) => {
+        this.addNextRecord(parentId, menuName, id, name)
       })
       // 运维电子围栏
       bus.$on('areaOps', (id) => {
@@ -195,28 +212,26 @@
     },
     methods: {
       handleClick (tab, event) {
-        console.log(tab.label)
         if (this.activeName2 === 'first') {
           this.titleSecond = '区域添加'
           this.areaFence = false
         } else if (tab.label === '添加下一级') {
           this.addNextRecord()
-          this.companySearch()
           this.areaFence = false
         } else if (tab.label === '区域添加') {
           this.addRecord()
-          this.companySearch()
           this.areaFence = false
         }
       },
       query () {
         // 请求栏目列表
-        this.$ajax.get('/setting/area/list', {params: {sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get('/setting/area/list')
           .then(res => {
             if (res.data.code === 200) {
               // 递归循环 显示隐藏
               isShow(res.data.data)
               this.dataSource = res.data.data
+              this.select = res.data.data
             } else {
               this.$message({
                 type: 'error',
@@ -241,7 +256,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('setting/menu/delete', {params: {'id': id}})
+            this.$ajax.get('setting/area/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 200) {
                   // 删除成功
@@ -277,11 +292,11 @@
         }
         this.activeName2 = 'second'
         this.titleSecond = '区域修改'
-        this.$ajax.get('/setting/menu/form', {params: {id: id, sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get('/setting/area/form', {params: {id: id, sessionId: Cookie.get('sessionId')}})
           .then((res) => {
             if (res.data.code === 200) {
               this.areaForm = res.data.data
-//              this.form.type = this.form.type.toString()
+              this.areaForm.type = this.areas[res.data.data.type]
             } else {
               this.$message({
                 type: 'error',
@@ -289,24 +304,28 @@
               })
             }
           })
-          .catch((error) => {
-            console.log('点击修改报错:', error)
+          .catch(() => {
             this.$message({
               type: 'error',
               message: '获取异常'
             })
           })
       }, // 修改
-      addNextRecord (parentId, menuName, id) {
-        this.$refs['areaForm'].resetFields()
+      addNextRecord (parentId, menuName, id, name) {
+        console.log(22, name)
+        if (this.$refs['areaForm'] !== undefined) {
+          this.$refs['areaForm'].resetFields()
+        }
         this.areaForm = {}
         this.activeName2 = 'second'
         this.titleSecond = '添加下一级'
-        this.areaForm.menuName = menuName
+        this.areaForm.areaName = name
         this.areaForm.parentId = id
       }, // 添加
       addRecord () {
-        this.$refs['areaForm'].resetFields()
+        if (this.$refs['areaForm'] !== undefined) {
+          this.$refs['areaForm'].resetFields()
+        }
         this.areaForm = {}
         this.activeName2 = 'second'
         this.titleSecond = '区域添加'
@@ -316,9 +335,9 @@
           if (valid) {
             let url = ''
             if (this.areaForm.id !== undefined && this.areaForm.id !== '') {  // 修改
-              url = '/setting/menu/update'
+              url = '/setting/area/update'
             } else {  // 新增
-              url = '/setting/menu/add'
+              url = '/setting/area/add'
             }
 //            this.form.type = parseInt(this.form.type)
             this.$ajax.get(url, {params: this.areaForm})
@@ -355,44 +374,43 @@
       },
       searchMenu () {
         this.cityVisible = true
-        this.defaultProps.label = 'label'
         this.filterText = ''
       },
-      companySearch () { // 上级菜单列表
-        this.$ajax.get('/setting/menu/section', {params: {sessionId: Cookie.get('sessionId')}})
-          .then(response => {
-            if (response.data.code === 200) {
-              this.select = response.data.data
-            } else {
-              this.$message({
-                type: 'error',
-                message: '获取菜单列表失败'
-              })
-            }
-          })
-          .catch(() => {
-            this.$message({
-              type: 'error',
-              message: '获取菜单列表异常'
-            })
-          })
-      },
+//      companySearch () { // 上级菜单列表
+//        this.$ajax.get('/setting/menu/section', {params: {sessionId: Cookie.get('sessionId')}})
+//          .then(response => {
+//            if (response.data.code === 200) {
+//              this.select = response.data.data
+//            } else {
+//              this.$message({
+//                type: 'error',
+//                message: '获取菜单列表失败'
+//              })
+//            }
+//          })
+//          .catch(() => {
+//            this.$message({
+//              type: 'error',
+//              message: '获取菜单列表异常'
+//            })
+//          })
+//      },
       doModify () {
-        this.areaForm.menuName = this.filterText
+        this.areaForm.areaName = this.filterText
         this.areaForm.parentId = this.filterId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.areaForm.menuName = ''
+        this.areaForm.areaName = ''
         this.areaForm.parentId = ''
       },
       filterNode (value, data) {
         if (!value) return true
-        return data.label.indexOf(value) !== -1
+        return data.name.indexOf(value) !== -1
       },
       handleNode (data) {
-        this.filterText = data.label // 弹框树模型点击输入值
+        this.filterText = data.name // 弹框树模型点击输入值
         this.filterId = data.id
       },
       handleAreaOps (id) {
@@ -439,7 +457,8 @@
 //      }
     },
     components: {
-      TreeGrid
+      TreeGrid,
+      mapOps
     }  // 树表格
   }
 
@@ -483,5 +502,28 @@
     width: 148px;
     height: 148px;
   }
+  /*地图*/
+  /*#allmap {width: 100%; height:500px; overflow: hidden;}*/
+  /*#result {width:100%;font-size:12px;}*/
+  /*dl,dt,dd,ul,li{*/
+    /*margin:0;*/
+    /*padding:0;*/
+    /*list-style:none;*/
+  /*}*/
+  /*p{font-size:12px;}*/
+  /*dt{*/
+    /*font-size:14px;*/
+    /*font-family:"微软雅黑";*/
+    /*font-weight:bold;*/
+    /*border-bottom:1px dotted #000;*/
+    /*padding:5px 0 5px 5px;*/
+    /*margin:5px 0;*/
+  /*}*/
+  /*dd{*/
+    /*padding:5px 0 0 5px;*/
+  /*}*/
+  /*li{*/
+    /*line-height:28px;*/
+  /*}*/
 
 </style>
