@@ -1,6 +1,6 @@
 <template>
-  <div>
-   <h1>relitu</h1>
+  <div class="iframe">
+    <iframe src="http://www.runoob.com"></iframe>
   </div>
 </template>
 
@@ -13,5 +13,8 @@
 </script>
 
 <style scoped>
-
+.iframe{
+  width:100%;
+  height:100%
+}
 </style>

@@ -1,86 +1,159 @@
 <template>
   <div class="wrap" @keydown="show($event)">
     <h3>赳管家</h3>
-    <p v-show="showTip">{{tip}}</p>
+    <!--<p v-show="showTip">{{tip}}</p>-->
     <input type="text" placeholder="请输入用户名" v-model="username">
     <input type="password" placeholder="请输入密码" v-model="password">
-    <button @click="login" >登录</button>
+    <!--<button @click="login" >登录</button>-->
   </div>
 </template>
 <script>
-  import Cookie from 'js-cookie'
+//  import Cookie from 'js-cookie'
 
   export default {
     data () {
       return {
-        showTip: false,
-        tip: '',
+//        showTip: false,
+//        tip: '',
         username: '',
         password: ''
       }
     },
     mounted () {
+      console.log(1)
+      // 先判断页面有没有存过username,没有的话获取地址栏的用户名 密码 sessionid传给后台校验用户
+//      if (!Cookie.get('username') || !Cookie.get('sessionId')) {
+//      if (this.$route.query.username && this.$route.query.password) {
+//        this.username = this.$route.query.username
+//        this.password = this.$route.query.password
+//        Cookie.set('username', this.username)
+//        let vm = this
+//        let data = {'username': this.username, 'password': this.password}
+//        return new Promise((resolve, reject) => {
+//          this.$ajax({
+//            url: '/login/submit',
+//            method: 'post',
+//            data: data
+//          }).then(res => {
+//            if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
+//              Cookie.remove('sessionId')
+//              Cookie.set('sessionId', res.data.sessionId)
+//             vm.$router.push({path: this.$route.path})
+//              console.log(this.$route.path)
+//            } else {
+//              alert('页面跳转失败')
+//            }
+//          })
+//            .catch(() => {
+//              alert('页面跳转异常')
+//            })
+//        })
+//      } else {
+//        this.$router.push('/404')
+//      }
+//      } else if (Cookie.get('username') && Cookie.get('sessionId')) {
+//        this.$router.push({path: this.$route.path})
+//      }
+
       /* 页面挂载获取cookie，如果存在username的cookie，则跳转到主页，不需登录 */
-      if (Cookie.get('username')) {
-        this.$router.push('/home')
-      } else {
-        this.$router.push('/login')
-      }
+//      if (Cookie.get('username')) {
+//        this.$router.push('/home')
+//      } else {
+//        this.$router.push('/login')
+//      }
+//      if (this.$route.query.username && this.$route.query.password) {
+//        this.username = this.$route.query.username
+//        this.password = this.$route.query.password
+//        let vm = this
+//        let data = {'username': this.username, 'password': this.password}
+//        return new Promise((resolve, reject) => {
+//          this.$ajax({
+//            url: '/login/submit',
+//            method: 'post',
+//            data: data
+//          }).then(res => {
+//            if (res.data.status === 500) {
+//              this.tip = res.data.msg
+//              this.showTip = true
+//            } else if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
+//              Cookie.remove('sessionId')
+//              Cookie.set('sessionId', res.data.sessionId)
+//              this.$ajax.get('/login/right', {params: {sessionId: res.data.sessionId}})
+//                .then((res) => {
+//                  if (res.data.code === 500) {
+//                    vm.tip = res.data.msg
+//                    this.showTip = true
+//                  } else {
+//                    let extendsRoutes = res.data
+//                    // 存菜单
+//                    sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
+//                    Cookie.remove('username')
+//                    Cookie.set('username', this.username)
+//                    // 跳转界面
+//                    vm.$router.push({path: this.$route.path})
+//                  }
+//                })
+//            }
+//            resolve(res)
+//          })
+//            .catch(err => {
+//              reject(vm.tip = '登录失败' + err)
+//              this.showTip = true
+//            })
+//        })
+//      } else {
+//        this.$router.push('/login')
+//      }
     },
     methods: {
       show: function (ev) {
         if (ev.keyCode === 13) {
           this.login()
         }
-      },
-      login () {
-        let vm = this
-        if (this.username === '' || this.password === '') {
-          alert('请输入用户名或密码')
-        } else {
-          let data = {'username': this.username, 'password': this.password}
-          return new Promise((resolve, reject) => {
-            this.$ajax({
-              url: '/login/submit',
-              method: 'post',
-              data: data
-            }).then(res => {
-              /* 接口的传值是(-1,该用户不存在),(0,密码错误)，同时还会检测管理员账号的值 */
-              if (res.data.status === 500) {
-                this.tip = res.data.msg
-                this.showTip = true
-//              }
-//              else if (res.data.code === 'main') {   // 创建登录页login.vue时，做的判断是当用户名和密码都为admin时，认为它是管理员账号，跳转到管理页main.vue
-//                /* 路由跳转this.$router.push */
-//                this.$router.push('/main')
-              } else if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
-                Cookie.remove('sessionId')
-                Cookie.set('sessionId', res.data.sessionId)
-                this.$ajax.get('/login/right', {params: {sessionId: res.data.sessionId}})
-                  .then((res) => {
-                    if (res.data.code === 500) {
-                      vm.tip = res.data.msg
-                      this.showTip = true
-                    } else {
-                      let extendsRoutes = res.data
-                      // 存菜单
-                      sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
-                      Cookie.remove('username')
-                      Cookie.set('username', this.username)
-                      // 跳转界面
-                      vm.$router.push({path: '/home'})
-                    }
-                  })
-              }
-              resolve(res)
-            })
-              .catch(err => {
-                reject(vm.tip = '登录失败' + err)
-                this.showTip = true
-              })
-          })
-        }
       }
+//      login () {
+//        let vm = this
+//        if (this.username === '' || this.password === '') {
+//          alert('请输入用户名或密码')
+//        } else {
+//          let data = {'username': this.username, 'password': this.password}
+//          return new Promise((resolve, reject) => {
+//            this.$ajax({
+//              url: '/login/submit',
+//              method: 'post',
+//              data: data
+//            }).then(res => {
+//              if (res.data.status === 500) {
+//                this.tip = res.data.msg
+//                this.showTip = true
+//              } else if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
+//                Cookie.remove('sessionId')
+//                Cookie.set('sessionId', res.data.sessionId)
+//                this.$ajax.get('/login/right', {params: {sessionId: res.data.sessionId}})
+//                  .then((res) => {
+//                    if (res.data.code === 500) {
+//                      vm.tip = res.data.msg
+//                      this.showTip = true
+//                    } else {
+//                      let extendsRoutes = res.data
+//                      // 存菜单
+//                      sessionStorage.setItem('menus', JSON.stringify(extendsRoutes))
+//                      Cookie.remove('username')
+//                      Cookie.set('username', this.username)
+//                      // 跳转界面
+//                      vm.$router.push({path: '/home'})
+//                    }
+//                  })
+//              }
+//              resolve(res)
+//            })
+//              .catch(err => {
+//                reject(vm.tip = '登录失败' + err)
+//                this.showTip = true
+//              })
+//          })
+//        }
+//      }
     }
   }
 </script>

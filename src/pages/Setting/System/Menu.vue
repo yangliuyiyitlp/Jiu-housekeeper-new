@@ -133,6 +133,7 @@
   //  import arr2tree from '../../../utils/arr2tree.js'
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
+  import a from '../../../assets/js/getsessionId.js'
 
   export default {
     data () {
@@ -190,10 +191,17 @@
             dataIndex: 'permission'
           }
         ], // 树表格
-        dataSource: [] // 树表格
+        dataSource: [], // 树表格
+        username: '',
+        password: '',
+        path: ''
       }
     },
     created () {
+      this.username = this.$route.query.username
+      this.password = this.$route.query.password
+      this.path = this.$route.path
+      a.sessionId(this.username, this.password, this.path, '/setting/menu/submit', this.$router, this.$ajax)
       this.query()
     },
     mounted () {

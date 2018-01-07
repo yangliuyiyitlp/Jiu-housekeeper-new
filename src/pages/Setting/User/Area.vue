@@ -24,12 +24,12 @@
             <el-input v-model="areaForm.id" v-if=false></el-input>
           </el-form-item>
 
-          <el-form-item label="上级区域：" prop="areaName">
+          <el-form-item label="上级区域：" prop="parentName">
             <el-input
               :disabled=true
               :on-icon-click="searchMenu"
               icon="search"
-              v-model="areaForm.areaName">
+              v-model="areaForm.parentName">
             </el-input>
           </el-form-item>
 
@@ -47,7 +47,7 @@
 
           <el-form-item label="区域类型：" prop="type">
             <el-select v-model="areaForm.type" clearable class="width">
-              <el-option  v-for="(area,val,index) in areas" :value="val" :label="area" :key="index"></el-option>
+              <el-option v-for="(area,val,index) in areas" :value="val" :label="area" :key="index"></el-option>
             </el-select>
           </el-form-item>
 
@@ -82,7 +82,7 @@
         </el-form>
         <!--百度地图-->
         <div>
-          <map-ops :height="height" :longitude="longitude" :latitude="latitude"></map-ops>
+          <baidu-map :m="giveData"></baidu-map>
         </div>
 
       </el-tab-pane>
@@ -116,7 +116,8 @@
   import TreeGrid from '../../../components/commons/Ztree/TreeGrid.vue'
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
-  import mapOps from './areamap.vue'
+  import baiduMap from './areamap.vue'
+  import a from '../../../assets/js/getsessionId.js'
 
   export default {
     data () {
@@ -142,7 +143,7 @@
         tableData: [],
         fencingForm: {}, // 电子围栏
         rules: {
-          areaName: [
+          parentName: [
             {required: true, message: '请选择上级区域', trigger: 'blur'}
           ],
           name: [
@@ -175,12 +176,21 @@
           }
         ], // 树表格
         dataSource: [], // 树表格
-        height: 300, // 地图
-        longitude: 116.404,
-        latitude: 39.915
+        giveData: {
+          height: 300,
+          longitude: 116.404,
+          latitude: 39.915
+        },
+        username: '',
+        password: '',
+        path: ''
       }
     },
     created () {
+      this.username = this.$route.query.username
+      this.password = this.$route.query.password
+      this.path = this.$route.path
+      a.sessionId(this.username, this.password, this.path, '/setting/area/submit', this.$router, this.$ajax)
       this.query()
     },
     mounted () {
@@ -228,9 +238,8 @@
         this.$ajax.get('/setting/area/list')
           .then(res => {
             if (res.data.code === 200) {
-              // 递归循环 显示隐藏
-              isShow(res.data.data)
               this.dataSource = res.data.data
+              this.getType(this.dataSource)
               this.select = res.data.data
             } else {
               this.$message({
@@ -246,6 +255,15 @@
             })
           })
       }, // 树表格
+      getType (result) {
+        for (let i = 0; i < result.length; i++) {
+          let item = result[i]
+          if (item.children !== undefined && item.children.length > 0) {
+            this.getType(item.children)
+          }
+          item.type = this.areas[item.type]
+        }
+      },
       deleteRecord (id) {
         this.$confirm('确定删除?', '提示', {
           confirmButtonText: '确定',
@@ -272,7 +290,8 @@
                   })
                 }
               })
-              .catch(() => {
+              .catch((err) => {
+                console.log(err)
                 this.$message({
                   type: 'error',
                   message: '删除异常'
@@ -292,9 +311,10 @@
         }
         this.activeName2 = 'second'
         this.titleSecond = '区域修改'
-        this.$ajax.get('/setting/area/form', {params: {id: id, sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get('/setting/area/detail', {params: {id: id, sessionId: Cookie.get('sessionId')}})
           .then((res) => {
             if (res.data.code === 200) {
+              console.log(res.data)
               this.areaForm = res.data.data
               this.areaForm.type = this.areas[res.data.data.type]
             } else {
@@ -312,14 +332,13 @@
           })
       }, // 修改
       addNextRecord (parentId, menuName, id, name) {
-        console.log(22, name)
         if (this.$refs['areaForm'] !== undefined) {
           this.$refs['areaForm'].resetFields()
         }
         this.areaForm = {}
         this.activeName2 = 'second'
         this.titleSecond = '添加下一级'
-        this.areaForm.areaName = name
+        this.areaForm.parentName = name
         this.areaForm.parentId = id
       }, // 添加
       addRecord () {
@@ -349,6 +368,7 @@
                     message: '操作成功'
                   })
                   this.activeName2 = 'first'
+                  this.titleSecond = '区域添加'
                   this.query()
                 } else {
                   this.$message({
@@ -376,33 +396,14 @@
         this.cityVisible = true
         this.filterText = ''
       },
-//      companySearch () { // 上级菜单列表
-//        this.$ajax.get('/setting/menu/section', {params: {sessionId: Cookie.get('sessionId')}})
-//          .then(response => {
-//            if (response.data.code === 200) {
-//              this.select = response.data.data
-//            } else {
-//              this.$message({
-//                type: 'error',
-//                message: '获取菜单列表失败'
-//              })
-//            }
-//          })
-//          .catch(() => {
-//            this.$message({
-//              type: 'error',
-//              message: '获取菜单列表异常'
-//            })
-//          })
-//      },
       doModify () {
-        this.areaForm.areaName = this.filterText
+        this.areaForm.parentName = this.filterText
         this.areaForm.parentId = this.filterId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.areaForm.areaName = ''
+        this.areaForm.parentName = ''
         this.areaForm.parentId = ''
       },
       filterNode (value, data) {
@@ -422,58 +423,40 @@
         this.activeName2 = 'third'
         this.areaFence = true
         this.OPSFencing = '骑行电子围栏'
+      },
+      right (username, password, path) {
+        if (!Cookie.get('username') || !Cookie.get('sessionId')) {
+          if (username && password) {
+            let data = {'username': username, 'password': password}
+            this.$ajax({
+              url: '/setting/area/submit',
+              method: 'post',
+              data: data
+            }).then(res => {
+              if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
+                Cookie.remove('sessionId')
+                Cookie.set('username', username)
+                Cookie.set('sessionId', res.data.sessionId)
+                this.$router.push({path: path})
+              } else {
+                alert('页面跳转失败')
+              }
+            })
+              .catch(() => {
+                alert('页面跳转异常')
+              })
+          } else {
+            this.$router.push('/404')
+          }
+        } else if (Cookie.get('username') && Cookie.get('sessionId')) {
+          this.$router.push({path: path})
+        }
       }
-//      // 上传之前 清除原有图片
-//      clearUploadedImgPath () {
-//        // 如果有就清除
-//        if (this.form.imgPath) {
-//          this.$refs.uploadFile.clearFiles()
-//        }
-//        this.form.imgPath = ''
-//      },
-//      // 移除图片时清空form表单中的图片地址
-//      removeImgPath () {
-//        this.form.imgPath = ''
-//      },
-//      // 上传组件获取oss相关
-//      beforeUploadImgPath (file) {
-//        return new Promise((resolve) => {
-//          this.$ajax.get('beforeUpload/img', {params: {user_dir: 'settingMenu'}})
-//            .then((res) => {
-//              this.Token = res.data
-//              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
-//              resolve()
-//            })
-//            .catch(err => {
-//              this.$message({
-//                message: err.data.msg,
-//                type: 'error'
-//              })
-//            })
-//        })
-//      },
-//      successImgPath (response, file, fileList) {
-//        this.form.imgPath = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
-//      }
     },
     components: {
       TreeGrid,
-      mapOps
+      baiduMap
     }  // 树表格
-  }
-
-  function isShow (result) {
-    for (let i = 0; i < result.length; i++) {
-      let item = result[i]
-      if (item.children !== undefined && item.children.length > 0) {
-        isShow(item.children)
-      }
-      if (item.isShow === '1') {
-        item.show = '显示'
-      } else if (item.isShow === '0') {
-        item.show = '隐藏'
-      }
-    }
   }
 
 </script>
@@ -502,28 +485,29 @@
     width: 148px;
     height: 148px;
   }
+
   /*地图*/
   /*#allmap {width: 100%; height:500px; overflow: hidden;}*/
   /*#result {width:100%;font-size:12px;}*/
   /*dl,dt,dd,ul,li{*/
-    /*margin:0;*/
-    /*padding:0;*/
-    /*list-style:none;*/
+  /*margin:0;*/
+  /*padding:0;*/
+  /*list-style:none;*/
   /*}*/
   /*p{font-size:12px;}*/
   /*dt{*/
-    /*font-size:14px;*/
-    /*font-family:"微软雅黑";*/
-    /*font-weight:bold;*/
-    /*border-bottom:1px dotted #000;*/
-    /*padding:5px 0 5px 5px;*/
-    /*margin:5px 0;*/
+  /*font-size:14px;*/
+  /*font-family:"微软雅黑";*/
+  /*font-weight:bold;*/
+  /*border-bottom:1px dotted #000;*/
+  /*padding:5px 0 5px 5px;*/
+  /*margin:5px 0;*/
   /*}*/
   /*dd{*/
-    /*padding:5px 0 0 5px;*/
+  /*padding:5px 0 0 5px;*/
   /*}*/
   /*li{*/
-    /*line-height:28px;*/
+  /*line-height:28px;*/
   /*}*/
 
 </style>

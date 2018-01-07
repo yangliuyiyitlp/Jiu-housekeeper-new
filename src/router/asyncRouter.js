@@ -4,6 +4,17 @@
 // permission字段内容从后台获取，代表该页内部详细权限，以key:value形式存储
 
 const asyncRouter = [
+  // {path: '/', redirect: {name: 'Login'}},
+  {
+    path: '/login',
+    name: 'Login',
+    component: r => require.ensure([], () => r(require('@/pages/Login/Login.vue')), 'Login')
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: r => require.ensure([], () => r(require('@/components/commons/NotFound.vue')), 'NotFound')
+  },
   {
     path: '/user',
     name: 'user',
