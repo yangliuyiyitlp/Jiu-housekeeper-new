@@ -1,0 +1,8 @@
+{
+  "contentUrl": "http://10.0.180.107/bicycle-cms/cms",
+  "mainUrl": "http://operateweb.99bicycle.com/jjbike_web/a",
+  "healthUrl": "http://10.0.180.45:8082/celebrities-health/findEnroler",
+  "serviceConfigUrl":"http://10.1.229.39:81",
+  "loginUrl":"http://10.0.180.107/access-management",
+  "OperateUrl": "http://172.16.20.213:8888"
+}

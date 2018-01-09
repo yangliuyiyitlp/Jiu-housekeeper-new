@@ -134,6 +134,7 @@
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
   import a from '../../../assets/js/getsessionId.js'
+  import baseUrl from '../../../utils/baseUrl'
 
   export default {
     data () {
@@ -201,7 +202,7 @@
       this.username = this.$route.query.username
       this.password = this.$route.query.password
       this.path = this.$route.path
-      a.sessionId(this.username, this.password, this.path, '/setting/menu/submit', this.$router, this.$ajax)
+      a.sessionId(this.username, this.password, this.path, this.$router, this.$ajax)
       this.query()
     },
     mounted () {
@@ -239,7 +240,7 @@
       },
       query () {
         // 请求栏目列表
-        this.$ajax.get('/setting/menu/list', {params: {sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get(`${baseUrl.loginUrl}/sys/menu`, {params: {sessionId: Cookie.get('sessionId')}})
           .then(res => {
             if (res.data.code === 200) {
               // 递归循环 显示隐藏
@@ -269,7 +270,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('setting/menu/delete', {params: {'id': id}})
+            this.$ajax.post(`${baseUrl.loginUrl}/sys/menu/delete`, {'id': id})
               .then((res) => {
                 if (res.data.code === 200) {
                   // 删除成功

@@ -12,6 +12,18 @@ let baseUrl
 // baseUrl = 'http://hk.99bicycle.com'
 // 测试
 // baseUrl = 'http://139.196.194.172:3000'
-// 开发 固定
-baseUrl = 'http://localhost:3000'
+// 开发
+// baseUrl = 'http://localhost:3000'
+
+// 系统重构后
+
+// if (process.env.NODE_ENV === 'production') {
+//   baseUrl = require('./baseUrl-prod.json')
+// } else if (process.env.NODE_ENV === 'test') {
+//   baseUrl = require('./baseUrl-test.json')
+// } else {
+//   baseUrl = require('./baseUrl-dev.json')
+// }
+baseUrl = require('./baseUrl-dev.json')
+
 module.exports = baseUrl

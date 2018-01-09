@@ -17,7 +17,8 @@ Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
 Vue.prototype.$store = store
 Axios.defaults.baseURL = baseUrl
-Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+// Axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+Axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // 超时设置
 Axios.create({
@@ -27,9 +28,9 @@ Axios.create({
 // 每次请求都为http头增加Authorization字段，其内容为token
 Axios.interceptors.request.use(
   config => {
-    if (Cookie.get('sessionId')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
+    if (Cookie.get('adminId')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
       // config.headers.Authorization = {'sessionId': `${Cookie.get('sessionId')}`}
-      config.headers.Authorization = `${Cookie.get('sessionId')}`
+      config.headers.userId = `${Cookie.get('adminId')}`
       // console.log(config.headers.Authorization)
     }
     return config

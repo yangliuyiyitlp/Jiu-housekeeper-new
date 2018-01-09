@@ -117,7 +117,8 @@
   import bus from '@/assets/js/eventBus.js'
   import Cookie from 'js-cookie'
   import baiduMap from './areamap.vue'
-  import a from '../../../assets/js/getsessionId.js'
+//  import a from '../../../assets/js/getsessionId.js'
+//  import baseUrl from '../../../utils/baseUrl'
 
   export default {
     data () {
@@ -190,7 +191,8 @@
       this.username = this.$route.query.username
       this.password = this.$route.query.password
       this.path = this.$route.path
-      a.sessionId(this.username, this.password, this.path, '/setting/area/submit', this.$router, this.$ajax)
+      this.right(this.username, this.password, this.path)
+//      a.sessionId(this.username, this.password, this.path, this.$router, this.$ajax)
       this.query()
     },
     mounted () {
@@ -235,7 +237,7 @@
       },
       query () {
         // 请求栏目列表
-        this.$ajax.get('/setting/area/list')
+        this.$ajax.get('http://192.168.0.151:8888/sys/area/list')
           .then(res => {
             if (res.data.code === 200) {
               this.dataSource = res.data.data
@@ -274,7 +276,7 @@
           if (id !== undefined) {
             // 调用后台服务
             // 删除元素
-            this.$ajax.get('setting/area/delete', {params: {'id': id}})
+            this.$ajax.get('http://192.168.0.151:8888/sys/area/delete', {params: {'id': id}})
               .then((res) => {
                 if (res.data.code === 200) {
                   // 删除成功
@@ -311,7 +313,7 @@
         }
         this.activeName2 = 'second'
         this.titleSecond = '区域修改'
-        this.$ajax.get('/setting/area/detail', {params: {id: id, sessionId: Cookie.get('sessionId')}})
+        this.$ajax.get('http://192.168.0.151:8888/sys/area/detail', {params: {id: id, sessionId: Cookie.get('sessionId')}})
           .then((res) => {
             if (res.data.code === 200) {
               console.log(res.data)
@@ -354,9 +356,9 @@
           if (valid) {
             let url = ''
             if (this.areaForm.id !== undefined && this.areaForm.id !== '') {  // 修改
-              url = '/setting/area/update'
+              url = 'http://192.168.0.151:8888/sys/area/update'
             } else {  // 新增
-              url = '/setting/area/add'
+              url = 'http://192.168.0.151:8888/sys/area/add'
             }
 //            this.form.type = parseInt(this.form.type)
             this.$ajax.get(url, {params: this.areaForm})
@@ -428,8 +430,9 @@
         if (!Cookie.get('username') || !Cookie.get('sessionId')) {
           if (username && password) {
             let data = {'username': username, 'password': password}
+            console.log(data)
             this.$ajax({
-              url: '/setting/area/submit',
+              url: 'http://192.168.0.151:8888/api/login',
               method: 'post',
               data: data
             }).then(res => {
