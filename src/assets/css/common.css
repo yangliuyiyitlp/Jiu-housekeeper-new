@@ -25,4 +25,7 @@
 .smallWidth.el-input{
   width:100px;
 }
+body{
+  margin:0!important;
+}
 

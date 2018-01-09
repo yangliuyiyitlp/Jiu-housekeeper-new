@@ -6,5 +6,6 @@
   "loginUrl":"http://192.168.0.151:8888",
   "cityFencingUrl":"http://192.168.0.151:9008",
   "serviceConfigUrl":"http://139.196.194.172:8080",
-  "OperateUrl":"http://172.16.20.213:8888"
+  "OperateUrl":"http://172.16.20.213:8888",
+  "localUrl":"http://192.168.0.107:8098"
 }
