@@ -38,7 +38,9 @@ export default {
       Cookie.remove('adminId')
       Cookie.set('adminId', adminId)
       Cookie.set('path', path)
-      let data = {'path': `${baseUrl.localUrl}` + path}
+      let url = window.location.origin + window.location.pathname
+      console.log(url)
+      let data = {'path': url}
       ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data})
         .then(res => {
           console.log(res)

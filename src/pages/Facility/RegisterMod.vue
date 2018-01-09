@@ -161,6 +161,7 @@
       return {
         activeName2: 'first',
         update: true,
+        create: true,
         value6: '',
         title: '电子围栏基础信息新增',
         opFlag: {0: '都不显示', 1: '围栏外显示', 2: '围栏内显示', 3: '都显示'},
@@ -243,7 +244,7 @@
 //        }
 //      },
       handleClick () {
-        if (this.activeName2 === 'first' && this.hasPermission('city:fencing:info:create')) {
+        if (this.activeName2 === 'first' && this.create) {
           this.title = '电子围栏基础信息新增'
         } else if (this.title === '电子围栏基础信息新增') {
           this.ruleForm = {}
@@ -320,7 +321,7 @@
       },
       back () {
         this.activeName2 = 'first'
-        if (this.hasPermission('create')) {
+        if (this.create) {
           this.title = '电子围栏基础信息新增'
         }
       },
