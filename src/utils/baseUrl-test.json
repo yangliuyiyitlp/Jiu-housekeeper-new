@@ -2,9 +2,9 @@
   "contentUrl": "http://139.196.194.172:8080/bicycle-cms/cms",
   "mainUrl":"http://116.231.74.120:10001/a",
   "healthUrl":"http://139.196.194.172:8080/celebrities-health",
-  "serviceConfigUrl":"http://139.196.194.172:8080",
   "loginUrl":"http://139.196.194.172:8080/access-management",
   "cityFencingUrl":"http://139.196.194.172:8080/electron-fence",
+  "serviceConfigUrl":"http://139.196.194.172:8080",
   "serviceConfigName":"http://139.196.194.172:8280",
   "OperateUrl":"http://172.16.20.213:8888"
 }

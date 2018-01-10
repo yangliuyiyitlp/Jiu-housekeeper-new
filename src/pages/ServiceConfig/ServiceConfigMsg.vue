@@ -57,6 +57,9 @@
   </div>
 </template>
 <script>
+  import a from '../../assets/js/getsessionId.js'
+  import baseUrl from '../../utils/baseUrl'
+
   export default {
     data () {
       return {
@@ -76,8 +79,18 @@
         ruleForm: {
           type: '',
           count: 0
-        }
+        },
+        adminId: '',
+        path: '',
+        permissionList: ['serviceConfig:msg:submit', 'serviceConfig:msg:submitCount']
       }
+    },
+    created () {
+      // 请求按钮权限
+      this.adminId = this.$route.query.adminId
+      this.path = this.$route.path
+      a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
+      this.beforeList()
     },
     computed: {
       percentOne () {
@@ -112,19 +125,15 @@
         this.ruleForm.count = watchValue(val)
       }
     },
-    created () {
-      this.beforeList()
-    },
     methods: {
       hasPermission (data) {
-        let permissionList = this.$route.meta.permission
-        if (permissionList && permissionList.length && permissionList.includes(data)) {
+        if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
           return true
         }
         return false
       },
       beforeList () {
-        this.$ajax.get('serviceConfig/msg/querySmsPercent')
+        this.$ajax.get(`${baseUrl.serviceConfigUrl}/sms/querySmsPercent`)
           .then((res) => {
             if (res.data.code === 200) {
               console.log(0, res.data.data[1])
@@ -192,7 +201,7 @@
           alert('通道占比不能超过100')
           return false
         }
-        this.$ajax.post('serviceConfig/msg/message', {'id': arr[0], 'percent': arr[1]})
+        this.$ajax.post(`${baseUrl.serviceConfigUrl}/sms/changePercent`, {'id': arr[0], 'percent': arr[1]})
           .then((res) => {
             if (res.data.code === 200) {
               this.$message({
@@ -232,7 +241,7 @@
           alert('请选择请求类型')
           return false
         } else {
-          this.$ajax.get('serviceConfig/msg/type', {params: this.ruleForm})
+          this.$ajax.get(`${baseUrl.serviceConfigUrl}/sms/requestNum`, {params: this.ruleForm})
             .then((res) => {
               if (res.data.code === 200) {
                 this.$message({

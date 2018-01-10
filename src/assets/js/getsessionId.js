@@ -35,15 +35,16 @@ import baseUrl from '../../utils/baseUrl'
 export default {
   sessionId (adminId, path, router, ajax, permissionList) {
     if (adminId && path) {
+      let url = window.location.origin + window.location.pathname
+      console.log(adminId)
       Cookie.remove('adminId')
       Cookie.set('adminId', adminId)
       Cookie.set('path', path)
-      let url = window.location.origin + window.location.pathname
-      console.log(url)
       let data = {'path': url}
-      ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data})
+      console.log(22, url)
+      ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data, timeout: 3000})
         .then(res => {
-          console.log(res)
+          console.log(55)
           if (res.data.code === 200) {
             console.log(33, res.data.data)
             for (let i = 0; i < res.data.data.length; i++) {
@@ -56,8 +57,8 @@ export default {
             alert('页面跳转失败')
           }
         })
-        .catch(() => {
-          alert('页面跳转异常')
+        .catch((err) => {
+          alert('页面跳转异常' + err)
         })
     } else {
       router.push('/404')

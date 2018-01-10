@@ -25,13 +25,13 @@
           </el-form-item>
 
           <el-form-item label="上级区域：" prop="parentName">
-            <el-input
-              :disabled=true
-              :on-icon-click="searchMenu"
-              icon="search"
-              v-model="areaForm.parentName">
-            </el-input>
-          </el-form-item>
+          <el-input
+            :disabled=true
+            :on-icon-click="searchMenu"
+            icon="search"
+            v-model="areaForm.parentName">
+          </el-input>
+        </el-form-item>
 
           <el-form-item label="区域名称：" prop="name">
             <el-input v-model="areaForm.name"></el-input>

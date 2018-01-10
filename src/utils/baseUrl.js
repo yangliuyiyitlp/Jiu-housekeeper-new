@@ -17,13 +17,13 @@ let baseUrl
 
 // 系统重构后
 
-if (process.env.NODE_ENV === 'production') {
-  baseUrl = require('./baseUrl-prod.json')
-} else if (process.env.NODE_ENV === 'test') {
-  baseUrl = require('./baseUrl-test.json')
-} else {
-  baseUrl = require('./baseUrl-dev.json')
-}
-// baseUrl = require('./baseUrl-dev.json')
+// if (process.env.NODE_ENV === 'production') {
+//   baseUrl = require('./baseUrl-prod.json')
+// } else if (process.env.NODE_ENV === 'test') {
+//   baseUrl = require('./baseUrl-test.json')
+// } else {
+//   baseUrl = require('./baseUrl-dev.json')
+// }
+baseUrl = require('./baseUrl-dev.json')
 
 module.exports = baseUrl
