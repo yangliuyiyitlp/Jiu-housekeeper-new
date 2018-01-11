@@ -64,6 +64,14 @@ const asyncRouter = [
       permission: []
     },
     component: r => require.ensure([], () => r(require('../pages/AdvertMenage/AdvertContent.vue')), 'AdvertContent')
+  },
+  {
+    path: '/advertData',
+    name: 'advertData',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/AdvertMenage/AdvertData.vue')), 'AdvertData')
   }
 ]
 

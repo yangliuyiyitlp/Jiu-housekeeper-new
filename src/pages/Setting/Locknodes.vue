@@ -2,12 +2,12 @@
   <div>
     <el-form :inline="true" :model="cityForm" class="demo-form-inline">
 
-      <el-form-item label="城市：" prop="parentName">
+      <el-form-item label="城市：" prop="cityName">
         <el-input
           :disabled=true
           :on-icon-click="searchMenu"
           icon="search"
-          v-model="cityForm.parentName">
+          v-model="cityForm.name">
         </el-input>
       </el-form-item>
 
@@ -158,7 +158,6 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-      this.query()
     },
     watch: {
       filterText (val) {
@@ -172,113 +171,9 @@
         this.cityTree()
       },
       cityTree () {
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/test`).then(res => {
+        this.$ajax.get(`${baseUrl.cityFencingUrl}/area/list`).then(res => {
           if (res.data.code === 200) {
-            this.select = [{
-              'id': '1',
-              'parentId': '0',
-              'parentIds': '0,',
-              'name': '上海市总公司',
-              'sort': 10,
-              'areaId': '1',
-              'code': '100000',
-              'type': '1',
-              'grade': '1',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1369584000000,
-              'updateBy': '1',
-              'updateDate': 1496764800000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': [{
-                'id': '33',
-                'parentId': '1',
-                'parentIds': '0,1,',
-                'name': '上海分公司',
-                'sort': 30,
-                'areaId': '13',
-                'code': '100000009',
-                'type': '1',
-                'grade': '2',
-                'address': '',
-                'zipCode': '',
-                'master': '',
-                'phone': '',
-                'fax': '',
-                'email': '',
-                'useable': '1',
-                'primaryPerson': '',
-                'deputyPerson': '',
-                'createBy': '1',
-                'createDate': 1497888000000,
-                'updateBy': '1',
-                'updateDate': 1502265256000,
-                'remarks': '',
-                'delFlag': '0',
-                'children': [{
-                  'id': '55',
-                  'parentId': '33',
-                  'parentIds': '0,1,33,',
-                  'name': '宝山区政府',
-                  'sort': 30,
-                  'areaId': '21',
-                  'code': '100000009009',
-                  'type': '2',
-                  'grade': '3',
-                  'address': '',
-                  'zipCode': '',
-                  'master': '',
-                  'phone': '',
-                  'fax': '',
-                  'email': '',
-                  'useable': '1',
-                  'primaryPerson': '',
-                  'deputyPerson': '',
-                  'createBy': '1',
-                  'createDate': 1505444156000,
-                  'updateBy': '1',
-                  'updateDate': 1505444156000,
-                  'remarks': '',
-                  'delFlag': '0',
-                  'children': []
-                }, {
-                  'id': '34',
-                  'parentId': '33',
-                  'parentIds': '0,1,33,',
-                  'name': '城市运营',
-                  'sort': 30,
-                  'areaId': '13',
-                  'code': '100000009001',
-                  'type': '2',
-                  'grade': '3',
-                  'address': '',
-                  'zipCode': '',
-                  'master': '',
-                  'phone': '',
-                  'fax': '',
-                  'email': '',
-                  'useable': '1',
-                  'primaryPerson': '',
-                  'deputyPerson': '',
-                  'createBy': '1',
-                  'createDate': 1497888000000,
-                  'updateBy': '1',
-                  'updateDate': 1501516800000,
-                  'remarks': '',
-                  'delFlag': '0',
-                  'children': []
-                }]
-              }]
-            }]
+            this.select = res.data.data
           } else {
             this.$message({
               type: 'error',
@@ -294,14 +189,14 @@
         })
       },
       doModify () {
-        this.cityForm.parentName = this.filterText
-        this.cityForm.parentId = this.filterId
+        this.cityForm.name = this.filterText
+        this.cityForm.id = this.filterId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.cityForm.parentName = ''
-        this.cityForm.parentId = ''
+        this.cityForm.name = ''
+        this.cityForm.id = ''
       },
       filterNode (value, data) {
         if (!value) return true

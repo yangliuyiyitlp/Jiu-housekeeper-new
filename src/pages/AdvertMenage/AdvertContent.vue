@@ -29,7 +29,7 @@
           <el-form-item v-if="hasPermission('view')">
             <el-button type="primary" @click="query">查询</el-button>
           </el-form-item>
-          <el-form-item v-if="hasPermission('city:fencing:info:create')">
+          <el-form-item v-if="hasPermission('advert/content/create')">
             <el-button type="primary" @click="addNewRecord">新增</el-button>
           </el-form-item>
         </el-form>
@@ -103,22 +103,25 @@
             label="操作人">
           </el-table-column>
           <el-table-column
-            v-if = 'updateDelete'
+            v-if='updateDelete'
             header-align="center"
             align="center"
             width="100"
             label="操作">
             <template slot-scope="scope">
-              <el-button v-if="hasPermission('city:fencing:info:update')" @click="modifyRecord(scope.row.id)" type="text" size="small">暂停</el-button>
-              <el-button v-if="hasPermission('city:fencing:info:delete')" @click="deleteRecord(scope.row.id)" type="text" size="small">修改</el-button>
-              <el-button v-if="hasPermission('city:fencing:info:delete')" @click="deleteRecord(scope.row.id)" type="text" size="small">数据</el-button>
+              <el-button v-if="hasPermission('advert/content/pause')" @click="modifyRecord(scope.row.id)" type="text"
+                         size="small">暂停
+              </el-button>
+              <el-button v-if="hasPermission('advert/content/update')" @click="deleteRecord(scope.row.id)" type="text"
+                         size="small">修改
+              </el-button>
             </template>
           </el-table-column>
         </el-table>
       </el-tab-pane>
       <el-tab-pane :label="title" name="second" v-if="create">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-          <el-form-item label="广告标题：" >
+          <el-form-item label="广告标题：">
             <el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>
           </el-form-item>
           <el-form-item label="投放时间：">
@@ -136,13 +139,13 @@
           </el-form-item>
           <el-form-item label="广告类型：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
           <el-form-item label="广告位置：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index">{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -154,60 +157,80 @@
               <el-radio-button label="bottom">bottom</el-radio-button>
               <el-radio-button label="left">left</el-radio-button>
             </el-radio-group>
-            <div v-if="img">
-              ddd
+            <div>
+              <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
+              <img width="100%" :src="ruleForm.iconUrl" alt="图标图片">
+              <el-upload
+                :disabled="!update"
+                ref="loadFile"
+                list-type="picture-card"
+                action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                :data="Token"
+                :on-remove="removeImgPath"
+                :on-success="successImgPath"
+                :before-upload="beforeUploadImgPath">
+                <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传图片
+                  <i class="el-icon-upload el-icon--right"></i>
+                </el-button>
+              </el-upload>
             </div>
             <div>
-              ccc
+              <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
+              <img width="100%" :src="ruleForm.iconUrl" alt="图标图片">
+              <el-upload
+                :disabled="!update"
+                ref="upload"
+                list-type="picture-card"
+                action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                :data="Token"
+                :on-remove="removeImgPath"
+                :on-success="successImgPath"
+                :before-upload="beforeUploadImgPath">
+                <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传图片
+                  <i class="el-icon-upload el-icon--right"></i>
+                </el-button>
+              </el-upload>
             </div>
           </el-form-item>
 
           <el-form-item label="地区：" prop="showRule">
+            <el-transfer
+              filterable
+              :filter-method="filterMethod"
+              filter-placeholder="请输入城市拼音"
+              v-model="value2"
+              :data="data2">
+            </el-transfer>
+
           </el-form-item>
 
           <el-form-item label="投放平台：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
 
           <el-form-item label="投放版本：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
               </el-checkbox>
             </el-checkbox-group>
             <br>
-            <label>新增版本号：</label><el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input><button>确定</button>
+            <label>新增版本号：</label>
+            <el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>
+            <button>确定</button>
           </el-form-item>
 
           <el-form-item label="投放形式：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="role in roles" :label="role" :key="role">{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="落地页地址：" >
+          <el-form-item label="落地页地址：">
             <el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>
           </el-form-item>
-
-          <!--<el-form-item label="图标图片：">-->
-            <!--<el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>-->
-            <!--<img width="100%" :src="ruleForm.iconUrl" alt="图标图片">-->
-            <!--<el-upload-->
-              <!--:disabled="!update"-->
-              <!--ref="loadFile"-->
-              <!--list-type="picture-card"-->
-              <!--action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'-->
-              <!--:data="Token"-->
-              <!--:on-remove="removeImgPath"-->
-              <!--:on-success="successImgPath"-->
-              <!--:before-upload="beforeUploadImgPath">-->
-              <!--<el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传图片-->
-                <!--<i class="el-icon-upload el-icon&#45;&#45;right"></i>-->
-              <!--</el-button>-->
-            <!--</el-upload>-->
-          <!--</el-form-item>-->
 
           <el-form-item>
             <el-button v-if="update" type="primary" @click="submitForm('ruleForm')">{{tip}}</el-button>
@@ -215,8 +238,6 @@
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
-      </el-tab-pane>
-      <el-tab-pane label="数据" name="third">
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -229,7 +250,27 @@
 
   export default {
     data () {
+      // 穿梭框
+      const generateData2 = _ => {
+        const data = []
+        const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都']
+        const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu']
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          })
+        })
+        return data
+      }
       return {
+        data2: generateData2(),
+        value2: [],
+        filterMethod (query, item) {
+          return item.pinyin.indexOf(query) > -1
+        },
+        // 穿梭框
         activeName2: 'first',
         update: true,
         create: true,
@@ -254,7 +295,7 @@
         },
         adminId: '',
         path: '',
-        permissionList: ['view', 'city:fencing:info:create', 'city:fencing:info:update', 'city:fencing:info:delete']
+        permissionList: ['advert/content/create', 'advert/content/update', 'advert/content/pause']
       }
     },
     created () {
@@ -263,12 +304,12 @@
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.query()
-      if (this.hasPermission('city:fencing:info:create')) {
+      if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
         this.create = false
       }
-      if (this.hasPermission('city:fencing:info:update') || this.hasPermission('city:fencing:info:delete')) {
+      if (this.hasPermission('advert/content/update') || this.hasPermission('advert/content/delete')) {
         this.updateDelete = true
       } else {
         this.updateDelete = false
@@ -287,36 +328,6 @@
         }
         return false
       },
-//      sessionId (adminId, path) {
-//        console.log(22)
-//        console.log(999)
-//        if (adminId && path) {
-//          Cookie.remove('adminId')
-//          Cookie.set('adminId', adminId)
-//          Cookie.set('path', path)
-//          let data = {'path': 'http://192.168.0.107:8098/facility/register'}
-//          this.$ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data})
-//            .then(res => {
-//              console.log(res)
-//              if (res.data.code === 200) {
-//                console.log(33, res.data.data)
-//                for (let i = 0; i < res.data.data.length; i++) {
-//                  if (res.data.data[i].permission !== '' && res.data.data[i].permission !== undefined) {
-//                    this.permissionList.push(res.data.data[i].permission)
-//                  }
-//                }
-//                this.$router.push({path: path})
-//              } else {
-//                alert('页面跳转失败')
-//              }
-//            })
-//            .catch(() => {
-//              alert('页面跳转异常')
-//            })
-//        } else {
-//          this.$router.push('/404')
-//        }
-//      },
       handleClick () {
         if (this.activeName2 === 'first' && this.create) {
           this.title = '广告内容新增'
@@ -614,6 +625,7 @@
   .width {
     width: 203px;
   }
+
   .active {
     color: #20a0ff;
   }

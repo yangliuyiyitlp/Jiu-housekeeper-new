@@ -79,6 +79,16 @@ module.exports = {
         exclude: /node_modules/,
         loader: 'style-loader!css-loader!less-loader'
       }
+    ],
+    loaders: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
+      }
     ]
   },
   plugins: [
