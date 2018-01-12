@@ -7,7 +7,7 @@
           :disabled=true
           :on-icon-click="searchMenu"
           icon="search"
-          v-model="cityForm.name">
+          v-model="cityForm.cityName">
         </el-input>
       </el-form-item>
 
@@ -25,13 +25,13 @@
         </el-date-picker>
       </el-form-item>
       <el-form-item label="姓名：">
-        <el-input v-model="cityForm.user"></el-input>
+        <el-input v-model="cityForm.name"></el-input>
       </el-form-item>
       <el-form-item label="旧车辆编号：">
-        <el-input v-model="cityForm.user"></el-input>
+        <el-input v-model="cityForm.oldCode"></el-input>
       </el-form-item>
       <el-form-item label="新车辆编号：">
-        <el-input v-model="cityForm.user"></el-input>
+        <el-input v-model="cityForm.newCode"></el-input>
       </el-form-item>
 
       <el-form-item v-if="hasPermission('/setting/lockNodes/view')">
@@ -189,14 +189,14 @@
         })
       },
       doModify () {
-        this.cityForm.name = this.filterText
-        this.cityForm.id = this.filterId
+        this.cityForm.cityName = this.filterText
+        this.cityForm.areaId = this.filterId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.cityForm.name = ''
-        this.cityForm.id = ''
+        this.cityForm.cityName = ''
+        this.cityForm.areaId = ''
       },
       filterNode (value, data) {
         if (!value) return true
@@ -229,19 +229,18 @@
         this.query()
       },
       query () {
-        this.exportParam.bikeid = this.cityForm.bikeid
-        this.exportParam.imei = this.cityForm.imei
-        this.exportParam.deviceid = this.cityForm.deviceid
-        this.exportParam.blemac = this.cityForm.blemac
-        this.exportParam.iccid = this.cityForm.iccid
-        this.exportParam.gpsNo = this.cityForm.gpsNo
-        this.exportParam.operateFlag = this.cityForm.operateFlag
+        this.exportParam.areaId = this.cityForm.areaId
+        this.exportParam.name = this.cityForm.name
+        this.exportParam.oldCode = this.cityForm.oldCode
+        this.exportParam.newCode = this.cityForm.newCode
+        this.exportParam.beginTime = this.cityForm.beginTime
+        this.exportParam.endTime = this.cityForm.endTime
         this.exportParam.pageNo = this.cityForm.pageNo
         this.exportParam.pageSize = this.cityForm.pageSize
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/test`, {params: this.cityForm, timeout: 3000}).then(res => {
+        this.$ajax.get(`${baseUrl.cityFencingUrl}/replace/lock/list `, {params: this.cityForm, timeout: 3000}).then(res => {
           if (res.data.code === 200) {
             this.tableData = res.data.data
-            this.pagination.count = res.data.totalNumber
+            this.pagination.count = res.data.total
           } else {
             this.$message({
               type: 'error',

@@ -139,7 +139,7 @@
           </el-form-item>
           <el-form-item label="广告类型：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index">{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -194,26 +194,31 @@
           </el-form-item>
 
           <el-form-item label="地区：" prop="showRule">
-            <el-transfer
-              filterable
-              :filter-method="filterMethod"
-              filter-placeholder="请输入城市拼音"
-              v-model="value2"
-              :data="data2">
-            </el-transfer>
-
+            <input ref='keySearch' type='text' placeholder="输入关键字进行过滤" class='keySearch' v-model="filterText">
+            <el-tree
+              :data="selectSection"
+              show-checkbox
+              default-expand-all
+              node-key="id"
+              ref="tree"
+              class="treeWidth"
+              accordion
+              :filter-node-method="filterNode"
+              @node-click="handleNode"
+              :props="defaultProps">
+            </el-tree>
           </el-form-item>
 
           <el-form-item label="投放平台：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index">{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
 
           <el-form-item label="投放版本：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index">{{role}}
               </el-checkbox>
             </el-checkbox-group>
             <br>
@@ -224,7 +229,7 @@
 
           <el-form-item label="投放形式：" prop="roleId">
             <el-checkbox-group v-model="checkedRoles" @change="handleCheckedCitiesChange">
-              <el-checkbox v-for="{role, index} in roles" :key="index" >{{role}}
+              <el-checkbox v-for="{role, index} in roles" :key="index">{{role}}
               </el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -250,27 +255,10 @@
 
   export default {
     data () {
-      // 穿梭框
-      const generateData2 = _ => {
-        const data = []
-        const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都']
-        const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu']
-        cities.forEach((city, index) => {
-          data.push({
-            label: city,
-            key: index,
-            pinyin: pinyin[index]
-          })
-        })
-        return data
-      }
       return {
-        data2: generateData2(),
-        value2: [],
-        filterMethod (query, item) {
-          return item.pinyin.indexOf(query) > -1
-        },
-        // 穿梭框
+        selectSection: [],
+        filterText: '',
+        filterId: '',
         activeName2: 'first',
         update: true,
         create: true,
@@ -293,6 +281,10 @@
             {required: true, message: '请选择显示规则', trigger: 'blur'}
           ]
         },
+        defaultProps: {
+          children: 'children',
+          label: 'name'
+        },
         adminId: '',
         path: '',
         permissionList: ['advert/content/create', 'advert/content/update', 'advert/content/pause']
@@ -304,6 +296,7 @@
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.query()
+      this.selectCity()
       if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
@@ -315,7 +308,495 @@
         this.updateDelete = false
       }
     },
+    watch: {
+      filterText (val) {
+        this.$refs.tree.filter(val)
+      }
+    },
     methods: {
+      filterNode (value, data) {
+        if (!value) return true
+        return data.name.indexOf(value) !== -1
+      },
+      handleNode (data) {
+        this.filterText = data.name // 弹框树模型点击输入值
+        this.filterId = data.id // 弹框树模型点击输入值
+      },
+      selectCity () {
+        this.selectSection = [{
+          'id': '1',
+          'parentId': '0',
+          'parentIds': '0,',
+          'name': '上海市总公司',
+          'sort': 10,
+          'areaId': '1',
+          'code': '100000',
+          'type': '1',
+          'grade': '1',
+          'address': '',
+          'zipCode': '',
+          'master': '',
+          'phone': '',
+          'fax': '',
+          'email': '',
+          'useable': '1',
+          'primaryPerson': '',
+          'deputyPerson': '',
+          'createBy': '1',
+          'createDate': 1369584000000,
+          'updateBy': '1',
+          'updateDate': 1496764800000,
+          'remarks': '',
+          'delFlag': '0',
+          'children': [{
+            'id': '33',
+            'parentId': '1',
+            'parentIds': '0,1,',
+            'name': '上海分公司',
+            'sort': 30,
+            'areaId': '13',
+            'code': '100000009',
+            'type': '1',
+            'grade': '2',
+            'address': '',
+            'zipCode': '',
+            'master': '',
+            'phone': '',
+            'fax': '',
+            'email': '',
+            'useable': '1',
+            'primaryPerson': '',
+            'deputyPerson': '',
+            'createBy': '1',
+            'createDate': 1497888000000,
+            'updateBy': '1',
+            'updateDate': 1502265256000,
+            'remarks': '',
+            'delFlag': '0',
+            'children': [{
+              'id': '55',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '宝山区政府',
+              'sort': 30,
+              'areaId': '21',
+              'code': '100000009009',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444156000,
+              'updateBy': '1',
+              'updateDate': 1505444156000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '34',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '城市运营',
+              'sort': 30,
+              'areaId': '13',
+              'code': '100000009001',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1497888000000,
+              'updateBy': '1',
+              'updateDate': 1501516800000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '45',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '黄浦区政府',
+              'sort': 30,
+              'areaId': '24',
+              'code': '',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1504070206000,
+              'updateBy': '1',
+              'updateDate': 1504070206000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '56',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '松江区政府',
+              'sort': 30,
+              'areaId': '26',
+              'code': '100000009010',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444183000,
+              'updateBy': '1',
+              'updateDate': 1505444183000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '57',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '杨浦区政府',
+              'sort': 30,
+              'areaId': '18',
+              'code': '100000009011',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444214000,
+              'updateBy': '1',
+              'updateDate': 1505444214000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '58',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '徐汇区政府',
+              'sort': 30,
+              'areaId': '16',
+              'code': '100000009012',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444231000,
+              'updateBy': '1',
+              'updateDate': 1505444231000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '59',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '长宁区政府',
+              'sort': 30,
+              'areaId': '17',
+              'code': '100000009013',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444293000,
+              'updateBy': '1',
+              'updateDate': 1505444301000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '49',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '虹口区政府',
+              'sort': 30,
+              'areaId': '25',
+              'code': '100000009003',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505385789000,
+              'updateBy': '1',
+              'updateDate': 1505385789000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '60',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '青浦区政府',
+              'sort': 30,
+              'areaId': '67',
+              'code': '100000009014',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444388000,
+              'updateBy': '1',
+              'updateDate': 1505444388000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '50',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '普陀区政府',
+              'sort': 30,
+              'areaId': '22',
+              'code': '100000009004',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505385822000,
+              'updateBy': '1',
+              'updateDate': 1505385822000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '61',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '奉贤区政府',
+              'sort': 30,
+              'areaId': '28',
+              'code': '100000009015',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444411000,
+              'updateBy': '1',
+              'updateDate': 1505444411000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '51',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '静安区政府',
+              'sort': 30,
+              'areaId': '19',
+              'code': '100000009005',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505394685000,
+              'updateBy': '1',
+              'updateDate': 1505394814000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '62',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '金山区政府',
+              'sort': 30,
+              'areaId': '27',
+              'code': '100000009016',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444436000,
+              'updateBy': '1',
+              'updateDate': 1505444436000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '52',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '嘉定区政府',
+              'sort': 30,
+              'areaId': '23',
+              'code': '100000009006',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505443295000,
+              'updateBy': '1',
+              'updateDate': 1505443295000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '53',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '浦东新区政府',
+              'sort': 30,
+              'areaId': '14',
+              'code': '100000009007',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505443937000,
+              'updateBy': '1',
+              'updateDate': 1505444014000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }, {
+              'id': '54',
+              'parentId': '33',
+              'parentIds': '0,1,33,',
+              'name': '闵行区政府',
+              'sort': 30,
+              'areaId': '15',
+              'code': '100000009008',
+              'type': '2',
+              'grade': '3',
+              'address': '',
+              'zipCode': '',
+              'master': '',
+              'phone': '',
+              'fax': '',
+              'email': '',
+              'useable': '1',
+              'primaryPerson': '',
+              'deputyPerson': '',
+              'createBy': '1',
+              'createDate': 1505444077000,
+              'updateBy': '1',
+              'updateDate': 1505444077000,
+              'remarks': '',
+              'delFlag': '0',
+              'children': []
+            }]
+          }]
+        }]
+      },
+      handleNodeClick (data) {
+        this.formInline.officeId = data.id
+        this.query()
+      },
       onBeginTimeChange (val) {
         this.formInline.beginTime = new Date(val).getTime()
       },
@@ -588,6 +1069,20 @@
   img {
     width: 148px;
     height: 148px;
+  }
+
+  .keySearch {
+    padding:5px;
+    width: 188px;
+  }
+  .treeWidth {
+    width: 200px;
+    height: 300px;
+    overflow: auto;
+    border-radius: 4px;
+    border: 1px solid #bfcbd9;
+    padding: 3px 10px;
+    box-sizing: border-box;
   }
 
   .avatar-uploader .el-upload {

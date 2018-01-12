@@ -26,11 +26,11 @@
               <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="位置：">
-            <el-select v-model="formInline.showRule" clearable>
-              <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
-            </el-select>
-          </el-form-item>
+          <!--<el-form-item label="位置：">-->
+          <!--<el-select v-model="formInline.showRule" clearable>-->
+          <!--<el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>-->
+          <!--</el-select>-->
+          <!--</el-form-item>-->
 
           <el-form-item v-if="hasPermission('advert/data/view')">
             <el-button type="primary" @click="query">查询</el-button>
@@ -104,24 +104,14 @@
       </el-tab-pane>
       <el-tab-pane label="数据详情" name="second" v-if="moreData">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="展示位置：">
-            <el-select v-model="formInline.showRule" clearable>
-              <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
-            </el-select>
-            <el-select v-model="formInline.showRule" clearable>
-              <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
-            </el-select>
-          </el-form-item>
+          <el-select v-model="formInline.showRule" clearable>
+            <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
+          </el-select>
+          <el-select v-model="formInline.showRule" clearable>
+            <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
+          </el-select>
         </el-form>
-        <div>
-          <echarts
-            :title="{'text':'标题'}"
-            :options="data"
-            :legendShow="['页面PV','页面UV']"
-            type="line"
-            className="f-echarts">
-          </echarts>
-        </div>
+        <div id="myChart" :style="{width: '900px', height: '300px'}" ></div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -130,7 +120,13 @@
 <script>
   import a from '../../assets/js/getsessionId.js'
   import baseUrl from '../../utils/baseUrl'
-
+  // 引入基本模板
+  let echarts = require('echarts/lib/echarts')
+  // 引入柱状图组件
+  require('echarts/lib/chart/line')
+  // 引入提示框和title组件
+  require('echarts/lib/component/tooltip')
+  require('echarts/lib/component/title')
   export default {
     data () {
       return {
@@ -142,27 +138,27 @@
         formInline: {},
         adminId: '',
         path: '',
-        permissionList: ['advert/data/view', 'advert/data/export', 'advert/data/more'],
-        data: {
-          legend: {
-            data: [ '页面PV', '页面UV', '下载PV', '下载UV', '激活量', '注册量' ]
-          },
-          xAxis: [
-            {
-              type: 'category',
-              data: [ '20170201', '20170202', '20170203', '20170204', '20170205', '20170206', '20170207' ]
-            }
-          ],
-          series: [
-            {
-              name: '页面PV',
-              type: 'line',
-              stack: '总量',
-              areaStyle: { normal: {} },
-              data: [ 320, 332, 301, 334, 390, 330, 2 ]
-            }
-          ]
-        }
+        permissionList: ['advert/data/view', 'advert/data/export', 'advert/data/more']
+//        data: {
+//          legend: {
+//           data: [ '页面PV', '页面UV', '下载PV', '下载UV', '激活量', '注册量' ]
+//          },
+//          xAxis: [
+//            {
+//              type: 'category',
+//              data: [ '20170201', '20170202', '20170203', '20170204', '20170205', '20170206', '20170207' ]
+//            }
+//          ],
+//          series: [
+//            {
+//              name: '页面22',
+//              type: 'line',
+//              stack: '总量',
+//              areaStyle: { normal: {} },
+//              data: [ 400, 332, 301, 334, 390, 330, 2 ]
+//            }
+//          ]
+//        }
       }
     },
     created () {
@@ -172,7 +168,77 @@
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.query()
     },
+    mounted () {
+      this.drawLine()
+    },
     methods: {
+      drawLine () {
+        // 基于准备好的dom，初始化echarts实例
+        let myChart = echarts.init(document.getElementById('myChart'))
+        // 绘制图表
+        myChart.setOption({
+          title: {
+            text: '折线图堆叠'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+          },
+          grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            containLabel: true
+          },
+          toolbox: {
+            feature: {
+              saveAsImage: {}
+            }
+          },
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['00:00-00:59', '01:00-01:59', '02:00-02:59', '03:00-03:59', '04:00-04:59', '05:00-05:59', '06:00-06:59']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              name: '邮件营销',
+              type: 'line',
+              stack: '总量',
+              data: [120, 132, 101, 134, 90, 230, 210]
+            },
+            {
+              name: '联盟广告',
+              type: 'line',
+              stack: '总量',
+              data: [220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+              name: '视频广告',
+              type: 'line',
+              stack: '总量',
+              data: [150, 232, 201, 154, 190, 330, 410]
+            },
+            {
+              name: '直接访问',
+              type: 'line',
+              stack: '总量',
+              data: [320, 332, 301, 334, 390, 330, 320]
+            },
+            {
+              name: '搜索引擎',
+              type: 'line',
+              stack: '总量',
+              data: [820, 932, 901, 934, 1290, 1330, 1320]
+            }
+          ]
+        })
+      },
       onBeginTimeChange (val) {
         this.formInline.beginTime = new Date(val).getTime()
       },
@@ -318,5 +384,9 @@
 
   .ruleForm > .el-form-item > .el-form-item__content {
     margin-left: 100px !important;
+  }
+  #myChart{
+    width:100%;
+    height:400px;
   }
 </style>
