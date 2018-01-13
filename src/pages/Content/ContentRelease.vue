@@ -693,7 +693,6 @@
     overflow: auto;
   }
 
-  /*没有加scoped，是因为需要表单el-form-item__label和el-form-item__content的样式*/
   html, body {
     height: 100%;
   }

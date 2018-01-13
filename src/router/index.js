@@ -6,7 +6,7 @@ import NotFound from '@/components/commons/NotFound.vue'
 // import whiteList from './directAccess'
 import asyncRouter from './asyncRouter'
 // import store from '../store/store'
-import Cookie from 'js-cookie'
+// import Cookie from 'js-cookie'
 
 Vue.use(VueRouter)
 // 默认路由
