@@ -4,13 +4,13 @@
       <el-tab-pane label="广告内容信息" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="状态：">
-            <el-select v-model="formInline.adPosition" clearable>
-              <el-option v-for="(key,val) in adPosition" v-bind:key=key :label=adPosition[key] :value=key></el-option>
+            <el-select v-model="formInline.adStatus" clearable>
+              <el-option v-for="(val,key) in adStatus" v-bind:key=key :label=adStatus[key] :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="位置：">
-            <el-select v-model="formInline.adStatus" clearable>
-              <el-option v-for="(val,key) in adStatus" v-bind:key=key :label=adStatus[key] :value=key></el-option>
+            <el-select v-model="formInline.adPosition" clearable>
+              <el-option v-for="(key,val) in adPosition" v-bind:key=key :label=adPosition[key] :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="投放时间：">
@@ -54,7 +54,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="adStatusName"
+            prop="adStatus"
             label="状态">
 
           </el-table-column>
@@ -68,7 +68,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="adPositionName"
+            prop="adPosition"
             label="位置">
           </el-table-column>
           <el-table-column
@@ -96,24 +96,33 @@
             width="100"
             label="操作">
             <template slot-scope="scope">
-              <el-button v-if="hasPermission('advert/content/pause')" @click="modifyRecord(scope.row.id)" type="text"
-                         size="small">暂停
+              <el-button v-if="hasPermission('advert/content/pause')" @click="pauseRecord(scope.row)" type="text"
+                         size="small">{{pauseTip}}
               </el-button>
-              <el-button v-if="hasPermission('advert/content/update')" @click="deleteRecord(scope.row.id)" type="text"
+              <el-button v-if="hasPermission('advert/content/update')" @click="modifyRecord(scope.row.id)" type="text"
                          size="small">修改
               </el-button>
             </template>
           </el-table-column>
         </el-table>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pagination.pageNo"
+          :page-sizes="pagination.pageSizes"
+          :page-size="pagination.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.count">
+        </el-pagination>
       </el-tab-pane>
 
       <el-tab-pane :label="title" name="second" v-if="create">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <h2>广告素材</h2>
-          <el-form-item label="广告标题：">
+          <el-form-item label="广告标题：" prop="adTitle">
             <el-input v-model="ruleForm.adTitle" class="width" placeholder="请输入广告标题"></el-input>
           </el-form-item>
-          <el-form-item label="投放时间：">
+          <el-form-item label="投放时间：" prop="beginDisplayTime">
             <el-date-picker
               v-model="ruleForm.beginDisplayTime"
               @change="addBeginTimeChange"
@@ -127,14 +136,14 @@
             </el-date-picker>
           </el-form-item>
 
-          <el-form-item label="广告位置：" prop="adPosition">
+          <el-form-item label="广告位置：" prop="checkedPosition">
             <el-checkbox-group v-model="checkedPosition" @change="handleCheckedPositionChange">
               <el-checkbox v-for="val in adCheckedPosition" :key="val" :label="val">{{val}}</el-checkbox>
               <!--<el-checkbox v-for="obj in adCheckedPosition" :key="obj.no" :label="obj.label" :checked="<v-if >">{{obj.label}}</el-checkbox>-->
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="广告图片：" prop="showRule">
+          <el-form-item label="广告图片：" prop="adPic">
             <el-radio-group v-model="adPic" @change="adPicChange" style="margin-bottom: 30px;">
               <el-radio-button label="1">开屏页</el-radio-button>
               <el-radio-button label="2">二级弹框</el-radio-button>
@@ -142,10 +151,9 @@
               <el-radio-button label="4">活动条</el-radio-button>
             </el-radio-group>
             <div v-show="Pic1">
-              <!--<el-input v-model="ruleForm.adPic1" v-show='false'></el-input>-->
-              <!--<img width="100%" :src="ruleForm.adPic1" alt="开屏页">-->
+              <el-input v-model="ruleForm.adPic1" v-show='false'></el-input>
+              <img width="100%" :src="ruleForm.adPic1" alt="开屏页">
               <el-upload
-                :disabled="!update"
                 ref="adPic1"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -153,14 +161,19 @@
                 :on-remove="removePic1"
                 :on-success="successPic1"
                 :before-upload="beforeUploadPic1">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedPic1">上传图片
+                <el-button type="primary" @click="clearUploadedPic1">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：750*1334
-              <el-checkbox-group v-model="checkedPic1" @change="handleCheckedPositionChange">
-                <el-checkbox v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-checkbox>
-              </el-checkbox-group>
+              <!--<el-checkbox-group v-model="checkedPic1" @change="handleCheckedPositionChange">-->
+              <!--<el-checkbox v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-checkbox>-->
+              <!--</el-checkbox-group>-->
+              <div>
+                <el-radio-group v-model="checkedPic1" @change="handleCheckedPositionChange">
+                  <el-radio v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-radio>
+                </el-radio-group>
+              </div>
               <el-input v-model="ruleForm.adTime1" class="imgTime" placeholder="请输入时长"></el-input>
               <a>只有选择GIF才可以选择</a>
 
@@ -169,7 +182,7 @@
               <el-input v-model="ruleForm.adPic2" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.adPic2" alt="二级弹框">
               <el-upload
-                :disabled="!update"
+
                 ref="adPic2"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -177,14 +190,16 @@
                 :on-remove="removePic2"
                 :on-success="successPic2"
                 :before-upload="beforeUploadPic2">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedPic2">上传图片
+                <el-button type="primary" @click="clearUploadedPic2">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：636*636
-              <el-checkbox-group v-model="checkedPic2" @change="handleCheckedPositionChange">
-                <el-checkbox v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-checkbox>
-              </el-checkbox-group>
+              <div>
+                <el-radio-group v-model="checkedPic2" @change="handleCheckedPositionChange">
+                  <el-radio v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-radio>
+                </el-radio-group>
+              </div>
               <el-input v-model="ruleForm.adTime2" class="imgTime" placeholder="请输入时长"></el-input>
               <a>只有选择GIF才可以选择</a>
 
@@ -193,7 +208,7 @@
               <el-input v-model="ruleForm.adPic3" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.adPic3" alt="骑行结束页">
               <el-upload
-                :disabled="!update"
+
                 ref="adPic3"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -201,14 +216,16 @@
                 :on-remove="removePic3"
                 :on-success="successPic3"
                 :before-upload="beforeUploadPic2">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedPic3">上传图片
+                <el-button type="primary" @click="clearUploadedPic3">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：690*370
-              <el-checkbox-group v-model="checkedPic3" @change="handleCheckedPositionChange">
-                <el-checkbox v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-checkbox>
-              </el-checkbox-group>
+              <div>
+                <el-radio-group v-model="checkedPic3" @change="handleCheckedPositionChange">
+                  <el-radio v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-radio>
+                </el-radio-group>
+              </div>
               <el-input v-model="ruleForm.adTime3" class="imgTime" placeholder="请输入时长"></el-input>
               <a>只有选择GIF才可以选择</a>
 
@@ -217,7 +234,7 @@
               <el-input v-model="ruleForm.adPic4" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.adPic4" alt="活动条">
               <el-upload
-                :disabled="!update"
+
                 ref="adPic4"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -225,25 +242,27 @@
                 :on-remove="removePic4"
                 :on-success="successPic4"
                 :before-upload="beforeUploadPic2">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedPic4">上传图片
+                <el-button type="primary" @click="clearUploadedPic4">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：640*100
-              <el-checkbox-group v-model="checkedPic4" @change="handleCheckedPositionChange">
-                <el-checkbox v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-checkbox>
-              </el-checkbox-group>
+              <div>
+                <el-radio-group v-model="checkedPic4" @change="handleCheckedPositionChange">
+                  <el-radio v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-radio>
+                </el-radio-group>
+              </div>
               <el-input v-model="ruleForm.adTime4" class="imgTime" placeholder="请输入时长"></el-input>
               <a>只有选择GIF才可以选择</a>
 
             </div>
           </el-form-item>
-          <el-form-item label="展示顺序：">
+          <el-form-item label="展示顺序：" prop="adSort">
             <el-input v-model="ruleForm.adSort" class="width" placeholder="请输入展示顺序"></el-input>
           </el-form-item>
           <hr>
           <h2>广告受众</h2>
-          <el-form-item label="地区：" prop="showRule">
+          <el-form-item label="地区：" prop="checkedCity">
             <div class="area">
               <input ref='keySearch' type='text' placeholder="输入关键字进行过滤" class='keySearch' v-model="filterText">
               <el-tree
@@ -263,13 +282,13 @@
             </div>
           </el-form-item>
 
-          <el-form-item label="投放平台：" prop="roleId">
+          <el-form-item label="投放平台：" prop="CheckedAdOs">
             <el-checkbox-group v-model="CheckedAdOs" @change="handleCheckedPositionChange">
               <el-checkbox v-for="val in adCheckedAdOs" :key="val" :label="val">{{val}}</el-checkbox>
             </el-checkbox-group>
           </el-form-item>
 
-          <el-form-item label="投放版本：" prop="roleId">
+          <el-form-item label="投放版本：" prop="appVosing">
             <el-checkbox-group v-model="appVosing" @change="handleCheckedPositionChange">
               <el-checkbox v-for="val in adAppVosing" :key="val" :label="val">{{val}}</el-checkbox>
             </el-checkbox-group>
@@ -279,37 +298,36 @@
           </el-form-item>
           <hr>
           <h2>广告详情</h2>
-          <el-form-item label="投放形式：" prop="roleId">
-            <el-checkbox-group v-model="styleArr" @change="handleCheckedPositionChange">
-              <el-checkbox v-for="val in adStyleArr" :key="val" :label="val">{{val}}</el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="投放形式：" prop="styleArr">
+            <el-radio-group v-model="styleArr" @change="handleCheckedStyleArr">
+              <el-radio v-for="val in adStyleArr" :key="val" :label="val">{{val}}</el-radio>
+            </el-radio-group>
           </el-form-item>
           <!--落地页-->
-          <el-form-item label="落地页地址：" v-if="isLandingUrl">
+          <el-form-item label="落地页地址：" v-show="isLandingUrl" prop="landingUrl">
             <el-input v-model="ruleForm.landingUrl" class="width" placeholder="请输入H5页面链接"></el-input>
           </el-form-item>
           <!--应用下载-->
-          <el-form-item label="下载形式：" prop="roleId" v-if="isDownloadWay">
-            <el-checkbox-group v-model="loadWayArr" @change="handleCheckedPositionChange">
-              <el-checkbox v-for="val in downloadWayArr" :key="val" :label="val">{{val}}</el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="下载形式：" prop="loadWayArr" v-show="isDownloadWay">
+            <el-radio-group v-model="loadWayArr" @change="handleCheckedLoadWay">
+              <el-radio v-for="val in downloadWayArr" :key="val" :label="val">{{val}}</el-radio>
+            </el-radio-group>
           </el-form-item>
           <!--应用下载-有下载页-->
-          <el-form-item label="下载页地址：" v-if="isDownloadPageUrl">
+          <el-form-item label="下载页地址：" v-show="isDownloadPageUrl" prop="downloadPageUrl">
             <el-input v-model="ruleForm.downloadPageUrl" class="width" placeholder="请输入下载页面地址"></el-input>
           </el-form-item>
           <!--应用下载-直接下载-->
-          <el-form-item label="下载地址：" v-if="isDownloadUrl">
+          <el-form-item label="下载地址：" v-show="isDownloadUrl" prop="downloadUrl">
             <el-input v-model="ruleForm.downloadUrl" class="width" placeholder="请输入应用下载地址"></el-input>
           </el-form-item>
           <!--应用下载-使用模板-->
           <!--加上上面的下载地址-->
-          <div>
-            <el-form-item label="应用展示图：" prop="showRule">
+          <div v-show="isDownloadModule">
+            <el-form-item label="应用展示图：">
               <el-input v-model="ruleForm.sdkUrl" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.sdkUrl" alt="应用展示图">
               <el-upload
-                :disabled="!update"
                 ref="sdkUrl"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -317,20 +335,19 @@
                 :on-remove="removeSdkUrl"
                 :on-success="successSdkUrl"
                 :before-upload="beforeUploadPic2">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedSdkUrl">上传图片
+                <el-button type="primary" @click="clearUploadedSdkUrl">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：750*420
             </el-form-item>
-            <el-form-item label="应用包名：">
+            <el-form-item label="应用包名：" prop="sdkName">
               <el-input v-model="ruleForm.sdkName" class="width" placeholder="输入格式xxx_xxx_xxx包名"></el-input>
             </el-form-item>
-            <el-form-item label="应用logo：" prop="showRule">
+            <el-form-item label="应用logo：">
               <el-input v-model="ruleForm.sdkLogo" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.sdkLogo" alt="应用展示图">
               <el-upload
-                :disabled="!update"
                 ref="sdkLogo"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -338,32 +355,32 @@
                 :on-remove="removeSdkLogo"
                 :on-success="successSdkLogo"
                 :before-upload="beforeUploadPic2">
-                <el-button :disabled="!update" type="primary" @click="clearUploadedSdkLogo">上传图片
+                <el-button type="primary" @click="clearUploadedSdkLogo">上传图片
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
               尺寸：160*160
             </el-form-item>
-            <el-form-item label="应用名称：">
+            <el-form-item label="应用名称：" prop="appName">
               <el-input v-model="ruleForm.appName" class="width" placeholder="不超过9个中文字符"></el-input>
             </el-form-item>
-            <el-form-item label="标签：">
+            <el-form-item label="标签：" prop="labelArr">
               <el-checkbox-group v-model="labelArr" @change="handleCheckedPositionChange">
                 <el-checkbox v-for="val in sdkLabelArr" :key="val" :label="val">{{val}} <i class="el-icon-close"
-                                                                                           @click="iconDelete"></i>
+                                                                                           @click="iconDelete(val)"></i>
                 </el-checkbox>
               </el-checkbox-group>
               <label>自定义标签：</label>
-              <el-input v-model="ruleForm.sdkLabel" class="width"></el-input>
+              <el-input v-model="sdkLabel" class="width"></el-input>
               <button @click="iconAdd">保存</button>
             </el-form-item>
-            <el-form-item label="一句话简介：">
+            <el-form-item label="一句话简介：" prop="sdkAbstract">
               <el-input v-model="ruleForm.sdkAbstract" class="width" placeholder="不超过50个中文字符"></el-input>
             </el-form-item>
-            <el-form-item label="版本号：">
+            <el-form-item label="版本号：" prop="adkVersion">
               <el-input v-model="ruleForm.adkVersion" class="width" placeholder="输入格式x.x.x.x版本号"></el-input>
             </el-form-item>
-            <el-form-item label="安装包大小：">
+            <el-form-item label="安装包大小：" prop="sdkSize">
               <el-input v-model="ruleForm.sdkSize" class="width" placeholder="请输入安装包大小，例：15MB"></el-input>
             </el-form-item>
             <el-form-item label="预览图：">
@@ -371,7 +388,7 @@
                 <el-input v-model="ruleForm.viewImg1" v-show='false'></el-input>
                 <img width="100%" :src="ruleForm.viewImg1" alt="预览图">
                 <el-upload
-                  :disabled="!update"
+
                   ref="viewImg1"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -379,17 +396,17 @@
                   :on-remove="removeViewImg1"
                   :on-success="successViewImg1"
                   :before-upload="beforeUploadPic2">
-                  <el-button :disabled="!update" type="primary" @click="clearUploadedViewImg1">上传图片
+                  <el-button type="primary" @click="clearUploadedViewImg1">上传图片
                     <i class="el-icon-upload el-icon--right"></i>
                   </el-button>
                 </el-upload>
                 尺寸：636*636
-                </div>
+              </div>
               <div class="viewImg">
                 <el-input v-model="ruleForm.viewImg" v-show='false'></el-input>
                 <img width="100%" :src="ruleForm.viewImg" alt="预览图">
                 <el-upload
-                  :disabled="!update"
+
                   ref="viewImg2"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -397,7 +414,7 @@
                   :on-remove="removeViewImg2"
                   :on-success="successViewImg2"
                   :before-upload="beforeUploadPic2">
-                  <el-button :disabled="!update" type="primary" @click="clearUploadedViewImg2">上传图片
+                  <el-button type="primary" @click="clearUploadedViewImg2">上传图片
                     <i class="el-icon-upload el-icon--right"></i>
                   </el-button>
                 </el-upload>
@@ -407,7 +424,7 @@
                 <el-input v-model="ruleForm.viewImg3" v-show='false'></el-input>
                 <img width="100%" :src="ruleForm.viewImg3" alt="预览图">
                 <el-upload
-                  :disabled="!update"
+
                   ref="viewImg3"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -415,7 +432,7 @@
                   :on-remove="removeViewImg3"
                   :on-success="successViewImg3"
                   :before-upload="beforeUploadPic2">
-                  <el-button :disabled="!update" type="primary" @click="clearUploadedViewImg3">上传图片
+                  <el-button type="primary" @click="clearUploadedViewImg3">上传图片
                     <i class="el-icon-upload el-icon--right"></i>
                   </el-button>
                 </el-upload>
@@ -425,7 +442,7 @@
                 <el-input v-model="ruleForm.viewImg4" v-show='false'></el-input>
                 <img width="100%" :src="ruleForm.viewImg4" alt="预览图">
                 <el-upload
-                  :disabled="!update"
+
                   ref="viewImg4"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -433,7 +450,7 @@
                   :on-remove="removeViewImg4"
                   :on-success="successViewImg4"
                   :before-upload="beforeUploadPic2">
-                  <el-button :disabled="!update" type="primary" @click="clearUploadedViewImg4">上传图片
+                  <el-button type="primary" @click="clearUploadedViewImg4">上传图片
                     <i class="el-icon-upload el-icon--right"></i>
                   </el-button>
                 </el-upload>
@@ -445,10 +462,9 @@
             </el-form-item>
           </div>
 
-
           <el-form-item>
-            <el-button v-if="update" type="primary" @click="submitForm('ruleForm')">{{tip}}</el-button>
-            <el-button v-if='update' @click="resetForm('ruleForm')">重置所有</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">{{tip}}</el-button>
+            <el-button @click="resetForm('ruleForm')">重置所有</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -469,7 +485,6 @@
         filterText: '',
         filterId: '',
         activeName2: 'first',
-        update: true,
         create: true,
         Pic1: true,
         Pic2: false,
@@ -477,16 +492,17 @@
         Pic4: false,
         adPic: '1',
         title: '广告内容新增',
-        adStatus: {0: '全部', 1: '投放中', 2: '未开始', 3: '已结束', 4: '已暂停'},
-        adPosition: {0: '全部', 1: '开屏', 2: '活动条', 3: '二级弹框', 4: '骑行结束页'},
+        adStatus: {'0': '全部', '1': '投放中', '2': '未开始', '3': '已结束', '4': '已暂停'},
+        adPosition: {'0': '全部', '1': '开屏', '2': '活动条', '3': '二级弹框', '4': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
+        pauseTip: '暂停',
         updateDelete: '',
         Token1: {},
         Token2: {},
         Token3: {},
         Token4: {},
-        tableData: [],
+        tableData: [{'id': 22}],
         checkedPosition: [],
         adCheckedPosition: ['开屏', '活动条', '二级弹框', '骑行结束页'],
 //        adCheckedPosition: [{'no': 1, 'label': '开屏'}, {'no': 2, 'label': '活动条'}, {'no': 3, 'label': '二级弹框'}, {'no': 4, 'label': '骑行结束页'}],
@@ -502,27 +518,45 @@
         adAppVosing: ['1.2', '2.5'],
         styleArr: [],
         adStyleArr: ['落地页', '应用下载'],
-        isLandingUrl: true,
+        adStyleObj: {'0': '落地页', '1': '应用下载'},
         downloadWayArr: ['有下载页', '使用模板', '直接下载'],
-        isDownloadWay: true,
-        isDownloadPageUrl: true,
-        isDownloadUrl: true,
+        isLandingUrl: true,
+        isDownloadWay: false,
+        isDownloadPageUrl: false,
+        isDownloadUrl: false,
+        isDownloadModule: false,
         sdkUrlToken: {},
         loadWayArr: [],
         sdkLogoToken: {},
         labelArr: [],
         sdkLabelArr: ['游戏', '仙侠'],
+        sdkLabel: '',
         formInline: {},
         ruleForm: {},
         rules: {
-          showRule: [
-            {required: true, message: '请选择显示规则', trigger: 'blur'}
-          ]
+          adTitle: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
+          beginDisplayTime: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
+          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
+          adSort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
+          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
+          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
+          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
+          landingUrl: [{required: true, message: '请输入落地页地址', trigger: 'blur'}],
+          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
+          downloadPageUrl: [{required: true, message: '请输入下载页地址', trigger: 'blur'}],
+          downloadUrl: [{required: true, message: '请输入下载地址', trigger: 'blur'}],
+          sdkName: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
+          appName: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
+          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
+          sdkAbstract: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
+          adkVersion: [{required: true, message: '请输入版本号', trigger: 'blur'}],
+          sdkSize: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
         },
         defaultProps: {
           children: 'children',
           label: 'name'
         },
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         adminId: '',
         path: '',
         permissionList: ['advert/content/view', 'advert/content/create', 'advert/content/update', 'advert/content/pause']
@@ -533,14 +567,14 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-      this.query()
       this.selectCity()
+      this.iconList()
       if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
         this.create = false
       }
-      if (this.hasPermission('advert/content/update') || this.hasPermission('advert/content/delete')) {
+      if (this.hasPermission('advert/content/update') || this.hasPermission('advert/content/pause')) {
         this.updateDelete = true
       } else {
         this.updateDelete = false
@@ -552,45 +586,53 @@
       }
     },
     methods: {
-      adPicChange (val) {
-        if (val === '1') {
-          this.Pic1 = true
-          this.Pic2 = false
-          this.Pic3 = false
-          this.Pic4 = false
-        } else if (val === '2') {
-          this.Pic1 = false
-          this.Pic2 = true
-          this.Pic3 = false
-          this.Pic4 = false
-        } else if (val === '3') {
-          this.Pic1 = false
-          this.Pic2 = false
-          this.Pic3 = true
-          this.Pic4 = false
-        } else if (val === '4') {
-          this.Pic1 = false
-          this.Pic2 = false
-          this.Pic3 = false
-          this.Pic4 = true
+      onBeginTimeChange (val) {
+        this.formInline.beginDisplayTime = new Date(val).getTime()
+      },
+      onEndTimeChange (val) {
+        this.formInline.endDisplayTime = new Date(val).getTime()
+      },
+      addBeginTimeChange (val) {
+        this.ruleForm.beginDisplayTime = new Date(val).getTime()
+      },
+      addEndTimeChange (val) {
+        this.ruleForm.endDisplayTime = new Date(val).getTime()
+      },
+      hasPermission (data) {
+        if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
+          return true
         }
-      }, // 广告图片
-      getCheckedKeys () {
-        let arr = this.$refs.tree2.getCheckedNodes()
-        let newArr = []
-        let arrZero = arr[0].parentIds + arr[0].id
-        newArr = arrZero.split(',')
-        for (let j = 1; j < arr.length; j++) {
-          let arrLater = arr[j].parentIds + arr[j].id
-          let parentsArr = arrLater.split(',')
-          for (let i = 0; i < parentsArr.length; i++) {
-            if (newArr.indexOf(parentsArr[i]) === -1) {
-              newArr.push(parentsArr[i])
-            }
-          }
+        return false
+      },
+      handleClick () {
+        if (this.activeName2 === 'first' && this.create) {
+          this.title = '广告内容新增'
+        } else if (this.title === '广告内容新增') {
+          this.ruleForm = {}
+          this.tip = '立即创建'
+          this.$refs.ruleForm.resetFields()
+          this.$refs.adPic1.clearFiles()
+          this.$refs.adPic2.clearFiles()
+          this.$refs.adPic3.clearFiles()
+          this.$refs.adPic4.clearFiles()
+          this.$refs.sdkUrl.clearFiles()
+          this.$refs.sdkLogo.clearFiles()
+          this.$refs.viewImg1.clearFiles()
+          this.$refs.viewImg2.clearFiles()
+          this.$refs.viewImg3.clearFiles()
+          this.$refs.viewImg4.clearFiles()
         }
-        this.form.menuIds = newArr.join(',')
-      }, // 地区
+      },
+      handleSizeChange (val) {
+        this.formInline.pageSize = val
+        this.pagination.pageSize = val
+        this.query()
+      },
+      handleCurrentChange (val) {
+        this.formInline.pageNo = val
+        this.pagination.pageNo = val
+        this.query()
+      },
       filterNode (value, data) {
         if (!value) return true
         return data.name.indexOf(value) !== -1
@@ -1070,47 +1112,34 @@
           }]
         }]
       },
-      handleNodeClick (data) {
-        this.formInline.officeId = data.id
-        this.query()
-      },
-      onBeginTimeChange (val) {
-        this.formInline.beginDisplayTime = new Date(val).getTime()
-      },
-      onEndTimeChange (val) {
-        this.formInline.endDisplayTime = new Date(val).getTime()
-      },
-      addBeginTimeChange (val) {
-        this.ruleForm.beginDisplayTime = new Date(val).getTime()
-      },
-      addEndTimeChange (val) {
-        this.ruleForm.endDisplayTime = new Date(val).getTime()
-      },
-      hasPermission (data) {
-        if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
-          return true
+      getCheckedKeys () {
+        let arr = this.$refs.tree.getCheckedNodes()
+        let newArr = []
+        let arrZero = arr[0].parentIds + arr[0].id
+        newArr = arrZero.split(',')
+        for (let j = 1; j < arr.length; j++) {
+          let arrLater = arr[j].parentIds + arr[j].id
+          let parentsArr = arrLater.split(',')
+          for (let i = 0; i < parentsArr.length; i++) {
+            if (newArr.indexOf(parentsArr[i]) === -1) {
+              newArr.push(parentsArr[i])
+            }
+          }
         }
-        return false
-      },
-      handleClick () {
-        if (this.activeName2 === 'first' && this.create) {
-          this.title = '广告内容新增'
-        } else if (this.title === '广告内容新增') {
-          this.ruleForm = {}
-          this.$refs.adPic1.clearFiles()
-          this.update = true
-          this.tip = '立即创建'
-          this.$refs.ruleForm.resetFields()
-        }
-      },
+        this.ruleForm.adCityNames = newArr.join(',')
+      }, // 地区
       query () {
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/list`, {params: this.formInline, timeout: 1000})
+        this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/list`, {params: this.formInline, timeout: 3000})
           .then((res) => {
             if (res.data.code === 200) {
               let result = res.data.data
               this.tableData = result
+              this.pagination.count = res.data.total
+              // 状态  形式 位置
               for (let i = 0; i < result.length; i++) {
-                this.tableData[i].showRule = this.adStatus[result[i].showRule]
+                this.tableData[i].adStatus = this.adStatus[result[i].adStatus]
+                this.tableData[i].adStyle = this.adStyleObj[result[i].adStyle]
+                this.tableData[i].adPosition = this.adPosition[result[i].adPosition]
               }
             } else {
               this.$message({
@@ -1119,13 +1148,91 @@
               })
             }
           })
-          .catch((error) => {
-            console.log('获取列表失败:', error)
+          .catch(() => {
             this.$message({
               type: 'error',
               message: '获取列表异常'
             })
           })
+      },
+      addNewRecord () {
+        this.activeName2 = 'second'
+        this.title = '广告内容新增'
+        this.tip = '立即创建'
+        this.ruleForm = {}
+        this.$refs.ruleForm.resetFields()
+        this.$refs.adPic1.clearFiles()
+        this.$refs.adPic2.clearFiles()
+        this.$refs.adPic3.clearFiles()
+        this.$refs.adPic4.clearFiles()
+        this.$refs.sdkUrl.clearFiles()
+        this.$refs.sdkLogo.clearFiles()
+        this.$refs.viewImg1.clearFiles()
+        this.$refs.viewImg2.clearFiles()
+        this.$refs.viewImg3.clearFiles()
+        this.$refs.viewImg4.clearFiles()
+      }, // 新增
+      adPicChange (val) {
+        if (val === '1') {
+          this.Pic1 = true
+          this.Pic2 = false
+          this.Pic3 = false
+          this.Pic4 = false
+        } else if (val === '2') {
+          this.Pic1 = false
+          this.Pic2 = true
+          this.Pic3 = false
+          this.Pic4 = false
+        } else if (val === '3') {
+          this.Pic1 = false
+          this.Pic2 = false
+          this.Pic3 = true
+          this.Pic4 = false
+        } else if (val === '4') {
+          this.Pic1 = false
+          this.Pic2 = false
+          this.Pic3 = false
+          this.Pic4 = true
+        }
+      }, // 广告图片
+      pauseRecord (row) {
+        if (row.adStatus !== '投放中' || row.adStatus !== '未开始') {
+          alert('只有投放中状态可以暂停')
+        } else {
+          this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/one`, {params: {pauseId: row.id}})
+            .then(res => {
+              if (res.data.code === 200) {
+                this.pauseTip = '已暂停'
+                this.query()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: res.data.msg
+                })
+              }
+            }).catch(() => {
+              this.$message({
+                type: 'error',
+                message: '状态修改失败'
+              })
+            })
+        }
+      }, // 暂停
+      modifyRecord (id) {
+        this.activeName2 = 'second'
+        this.create = true
+        this.title = '广告内容修改'
+        this.tip = '提交修改'
+        this.getMore(id)
+      }, // 修改
+      back () {
+        this.activeName2 = 'first'
+        if (this.create) {
+          this.title = '广告内容新增'
+        }
+      },
+      resetForm (ruleForm) {
+        this.ruleForm = {}
       },
       getMore (id) {
         this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/one`, {params: {ruleId: id}})
@@ -1148,40 +1255,8 @@
               message: '查询异常'
             })
           })
-      },
-      more (row, column, cell, event) {
-        if (column.property !== 'id') {
-          return false
-        } else {
-          this.activeName2 = 'second'
-          this.create = true
-          this.update = false
-          this.title = '电子围栏基础信息详情'
-          this.getMore(row.id)
-          console.log(row.id)
-        }
-      },
-      addNewRecord () {
-        this.ruleForm = {}
-        this.activeName2 = 'second'
-        this.update = true
-        this.$refs.ruleForm.resetFields()
-      },
-      back () {
-        this.activeName2 = 'first'
-        if (this.create) {
-          this.title = '广告内容新增'
-        }
-      },
-      modifyRecord (id) {
-        this.activeName2 = 'second'
-        this.create = true
-        this.update = true
-        this.title = '广告内容修改'
-        this.tip = '提交修改'
-        this.getMore(id)
-      },
-      moreSearch (id) {       // 详情里面对应角色的角色授权列表
+      }, // 获取详情
+      moreSearch (id) { // 地区
         this.$ajax.get('/setting/role/menuAll', {params: {sessionId: Cookie.get('sessionId'), id: id}})
           .then(response => {
             if (response.data.code === 200) {
@@ -1203,49 +1278,6 @@
               message: '获取角色列表异常' + err
             })
           })
-      },
-      deleteRecord (id) {
-        this.$confirm('此操作将永久删除该记录, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          if (id !== undefined) {
-            this.$ajax.post(`${baseUrl.cityFencingUrl}/delete`, {ruleId: id})
-              .then((res) => {
-                console.log(res)
-                if (res.data.code === 200) {
-                  // 删除成功
-                  this.$message({
-                    type: 'success',
-                    message: res.data.msg
-                  })
-//                this.$refs['formA'].resetFields()
-                  // 刷新页面
-                  this.query()
-                } else {
-                  this.$message({
-                    type: 'error',
-                    message: '删除失败'
-                  })
-                }
-              })
-              .catch(() => {
-                this.$message({
-                  type: 'error',
-                  message: '删除异常'
-                })
-              })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '取消删除'
-          })
-        })
-      },
-      resetForm (ruleForm) {
-        this.ruleForm = {}
       },
       submitForm (ruleForm) {
         this.$refs[ruleForm].validate((valid) => {
@@ -1302,8 +1334,92 @@
         })
       },
       handleCheckedPositionChange () {},
-      iconDelete () {}, // 标签删除
-      iconAdd () {}, // 标签删除
+      iconList () { // 获取标签list
+        this.$ajax.get('')
+          .then(response => {
+            if (response.data.code === 200) {
+              this.sdkLabelArr = response.data.data
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取标签失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取标签异常'
+            })
+          })
+      },
+      iconDelete (val) {
+        this.$confirm('确定删除?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let index = this.sdkLabelArr.indexOf(val)
+          if (index > -1) {
+            this.sdkLabelArr.splice(index, 1)
+          }
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '取消删除'
+          })
+        })
+      }, // 标签删除
+      iconAdd () {
+        this.$ajax.get('/setting/role/menuAll', {params: {sdkLabel: this.sdkLabe}})
+          .then(response => {
+            if (response.data.code === 200) {
+              this.sdkLabelArr.push(this.sdkLabel)
+              this.iconList()
+            } else {
+              this.$message({
+                type: 'error',
+                message: '获取标签失败'
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'error',
+              message: '获取标签异常'
+            })
+          })
+      },
+      handleCheckedStyleArr (val) {
+        if (val === '落地页') {
+          this.isLandingUrl = true
+          this.isDownloadWay = false
+          this.isDownloadPageUrl = false
+          this.isDownloadUrl = false
+          this.isDownloadModule = false
+        } else if (val === '应用下载') {
+          this.isLandingUrl = false
+          this.isDownloadWay = true
+          this.isDownloadPageUrl = true
+          this.isDownloadUrl = false
+          this.isDownloadModule = false
+        }
+      }, // 投放形式
+      handleCheckedLoadWay (val) {
+        if (val === '有下载页') {
+          this.isDownloadPageUrl = true
+          this.isDownloadUrl = false
+          this.isDownloadModule = false
+        } else if (val === '使用模板') {
+          this.isDownloadPageUrl = false
+          this.isDownloadUrl = true
+          this.isDownloadModule = true
+        } else if (val === '直接下载') {
+          this.isDownloadPageUrl = false
+          this.isDownloadUrl = true
+          this.isDownloadModule = false
+        }
+      }, // 下载形式
       // 上传组件获取oss相关 图片上传之前获取oss秘钥
       beforeUploadPic1 (file) {
 //        return new Promise((resolve) => {
@@ -1519,9 +1635,11 @@
     width: 148px;
     height: 148px;
   }
-.viewImg{
-  float:left;
-}
+
+  .viewImg {
+    float: left;
+  }
+
   .imgTime {
     width: 100px;
   }
