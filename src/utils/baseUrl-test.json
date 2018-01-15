@@ -3,7 +3,7 @@
   "mainUrl":"http://116.231.74.120:10001/a",
   "healthUrl":"http://139.196.194.172:8080/celebrities-health",
   "loginUrl":"http://139.196.194.172:8080/access-management",
-  "cityFencingUrl":"http://139.196.194.172:8080/electron-fence",
+  "cityFencingUrl":"http://139.196.194.172:8080/replace-lock", //赳开锁
   "serviceConfigUrl":"http://139.196.194.172:8080",
   "serviceConfigName":"http://139.196.194.172:8280",
   "OperateUrl":"http://172.16.20.213:8888"

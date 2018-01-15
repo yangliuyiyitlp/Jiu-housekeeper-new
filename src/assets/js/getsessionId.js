@@ -57,8 +57,8 @@ export default {
             alert('页面跳转失败')
           }
         })
-        .catch((err) => {
-          alert('页面跳转异常' + err)
+        .catch(() => {
+          alert('页面跳转异常')
         })
     } else {
       router.push('/404')

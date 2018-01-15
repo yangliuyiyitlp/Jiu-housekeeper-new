@@ -42,16 +42,15 @@
       </el-form-item>
     </el-form>
     <!--隐藏表单用于文件导出-->
-    <form style="display: none" action="" method="post" ref="FileForm">
-      <input name="bikeid" v-model="exportParam.bikeid"/>
-      <input name="gpsNo" v-model="exportParam.gpsNo"/>
-      <input name="operateFlag" v-model="exportParam.operateFlag"/>
-      <input name="imei" v-model="exportParam.imei"/>
-      <input name="deviceid" v-model="exportParam.deviceid"/>
-      <input name="blemac" v-model="exportParam.blemac"/>
-      <input name="iccid" v-model="exportParam.iccid"/>
+    <form style="display: none" action="" method="get" ref="FileForm">
+      <input name="areaId" v-model="exportParam.areaId"/>
+      <input name="name" v-model="exportParam.name"/>
+      <input name="oldCode" v-model="exportParam.oldCode"/>
+      <input name="newCode" v-model="exportParam.newCode"/>
+      <input name="beginTime" v-model="exportParam.beginTime"/>
+      <input name="endTime" v-model="exportParam.endTime"/>
       <input name="pageSize" v-model="exportParam.pageSize"/>
-      <input name="pageNo" v-model="exportParam.pageNo"/>
+      <input name="pageNum" v-model="exportParam.pageNum"/>
     </form>
     <el-table
       :data="tableData"
@@ -100,7 +99,7 @@
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="pagination.pageNo"
+      :current-page="pagination.pageNum"
       :page-sizes="pagination.pageSizes"
       :page-size="pagination.pageSize"
       layout="total, sizes, prev, pager, next, jumper"
@@ -147,7 +146,7 @@
           children: 'children',
           label: 'name'
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         adminId: '',
         path: '',
         permissionList: []
@@ -224,8 +223,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.cityForm.pageNo = val
-        this.pagination.pageNo = val
+        this.cityForm.pageNum = val
+        this.pagination.pageNum = val
         this.query()
       },
       query () {
@@ -235,9 +234,25 @@
         this.exportParam.newCode = this.cityForm.newCode
         this.exportParam.beginTime = this.cityForm.beginTime
         this.exportParam.endTime = this.cityForm.endTime
-        this.exportParam.pageNo = this.cityForm.pageNo
+        this.exportParam.pageNum = this.cityForm.pageNum
         this.exportParam.pageSize = this.cityForm.pageSize
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/replace/lock/list `, {params: this.cityForm, timeout: 3000}).then(res => {
+        if (this.cityForm.beginTime > this.cityForm.endTime) {
+          alert('开始时间不能晚于结束时间')
+          return
+        } else if (this.cityForm.name && this.cityForm.name.length > 10) {
+          alert('姓名长度不能超过10')
+          return
+        } else if (this.cityForm.oldCode && this.cityForm.oldCode.length > 20) {
+          alert('编号长度不能超过20')
+          return
+        } else if (this.cityForm.beginTime && this.cityForm.beginTime.length > 20) {
+          alert('编号长度不能超过20')
+          return
+        }
+        this.$ajax.get(`${baseUrl.cityFencingUrl}/replace/lock/list `, {
+          params: this.cityForm,
+          timeout: 3000
+        }).then(res => {
           if (res.data.code === 200) {
             this.tableData = res.data.data
             this.pagination.count = res.data.total
@@ -260,9 +275,9 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.exportParam.pageNo = ''
+          this.exportParam.pageNum = ''
           this.exportParam.pageSize = ''
-          this.$refs['FileForm'].setAttribute('action', `${baseUrl}/facility/unbund/export`)
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl.cityFencingUrl}/exportAll `)
           this.$refs['FileForm'].submit()
           this.exportFormVisible = false
         }).catch(() => {
