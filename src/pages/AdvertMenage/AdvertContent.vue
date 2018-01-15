@@ -401,7 +401,7 @@
         Pic1: true,
         title: '广告内容新增',
         adStatus: {'0': '全部', '1': '投放中', '2': '未开始', '3': '已结束', '4': '已暂停'},
-        type: {'0': '全部', '1': '开屏', '2': '活动条', '3': '二级弹框', '4': '骑行结束页'},
+        type: {'0': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
         pauseTip: '暂停',
@@ -431,6 +431,7 @@
         sdkLogoToken: {},
         labelArr: [],
         sdkLabelArr: ['游戏', '仙侠'],
+        sdkLabelObj: {},
         sdkLabel: '',
         formInline: {},
         ruleForm: {},
@@ -468,8 +469,8 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-      this.selectCity()
-      this.iconList()
+//      this.selectCity()
+//      this.iconList()
       if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
@@ -1100,7 +1101,7 @@
         if (row.adStatus !== '投放中' || row.adStatus !== '未开始') {
           alert('只有投放中状态可以暂停')
         } else {
-          this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/one`, {params: {pauseId: row.id}})
+          this.$ajax.get(`${baseUrl.cityFencingUrl}/findDictList?type=coupon_mode`, {params: {pauseId: row.id}})
             .then(res => {
               if (res.data.code === 200) {
                 this.pauseTip = '已暂停'
@@ -1236,10 +1237,14 @@
       },
       handleCheckedPositionChange () {},
       iconList () { // 获取标签list
-        this.$ajax.get('')
+        this.$ajax.get(`${baseUrl.advertContent}/findDictList?type=coupon_mode`, {timeout: 3000})
           .then(response => {
             if (response.data.code === 200) {
-              this.sdkLabelArr = response.data.data
+              let result = response.data.data
+              for (let i = 0; i < result.length; i++) {
+                this.sdkLabelArr.push(result[i].sdkLabel)
+                this.sdkLabelObj[result[i].sdkLabel] = result[i].id
+              }
             } else {
               this.$message({
                 type: 'error',
@@ -1262,7 +1267,24 @@
         }).then(() => {
           let index = this.sdkLabelArr.indexOf(val)
           if (index > -1) {
-            this.sdkLabelArr.splice(index, 1)
+//            this.sdkLabelArr.splice(index, 1)
+            let id = this.sdkLabelObj[val]
+            this.$ajax.get('', {params: {id: id}})
+              .then(res => {
+                if (res.data.code === 200) {
+                  this.$message({
+                    type: 'success',
+                    message: '标签删除成功'
+                  })
+                  this.iconList()
+                }
+              })
+              .catch(() => {
+                this.$message({
+                  type: 'info',
+                  message: '标签删除失败'
+                })
+              })
           }
         }).catch(() => {
           this.$message({
@@ -1272,22 +1294,22 @@
         })
       }, // 标签删除
       iconAdd () {
-        this.$ajax.get('/setting/role/menuAll', {params: {sdkLabel: this.sdkLabe}})
+        this.$ajax.get('/setting/role/menuAll', {params: {sdkLabel: this.sdkLabe, timeout: 3000}})
           .then(response => {
             if (response.data.code === 200) {
-              this.sdkLabelArr.push(this.sdkLabel)
+//              this.sdkLabelArr.push(this.sdkLabel)
               this.iconList()
             } else {
               this.$message({
                 type: 'error',
-                message: '获取标签失败'
+                message: '添加标签失败'
               })
             }
           })
           .catch(() => {
             this.$message({
               type: 'error',
-              message: '获取标签异常'
+              message: '添加标签异常'
             })
           })
       },
