@@ -131,7 +131,6 @@
 <script>
   import a from '../../assets/js/getsessionId.js'
   import baseUrl from '../../utils/baseUrl'
-
   export default {
     data () {
       return {
@@ -206,9 +205,12 @@
         this.filterId = data.id
       },
       onBeginTimeChange (val) {
+        console.log(val)
+//        this.cityForm.beginTime = val
         this.cityForm.beginTime = new Date(val).getTime()
       },
       onEndTimeChange (val) {
+//        this.cityForm.endTime = val
         this.cityForm.endTime = new Date(val).getTime()
       },
       hasPermission (data) {
@@ -234,8 +236,8 @@
         this.exportParam.newCode = this.cityForm.newCode
         this.exportParam.beginTime = this.cityForm.beginTime
         this.exportParam.endTime = this.cityForm.endTime
-        this.exportParam.pageNum = this.cityForm.pageNum
-        this.exportParam.pageSize = this.cityForm.pageSize
+//        this.exportParam.pageNum = this.cityForm.pageNum
+//        this.exportParam.pageSize = this.cityForm.pageSize
         if (this.cityForm.beginTime > this.cityForm.endTime) {
           alert('开始时间不能晚于结束时间')
           return
@@ -249,7 +251,7 @@
           alert('编号长度不能超过20')
           return
         }
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/replace/lock/list `, {
+        this.$ajax.get(`${baseUrl.cityFencingUrl}/replace/lock/list`, {
           params: this.cityForm,
           timeout: 3000
         }).then(res => {

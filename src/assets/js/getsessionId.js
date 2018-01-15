@@ -35,8 +35,10 @@ import baseUrl from '../../utils/baseUrl'
 export default {
   sessionId (adminId, path, router, ajax, permissionList) {
     if (adminId && path) {
-      let url = window.location.origin + window.location.pathname
-      console.log(adminId)
+      let url = window.location.origin + '/' + window.location.hash
+      if (url.indexOf('?') !== -1) {
+        url = url.split('?')[0]
+      }
       Cookie.remove('adminId')
       Cookie.set('adminId', adminId)
       Cookie.set('path', path)
@@ -44,7 +46,6 @@ export default {
       console.log(22, url)
       ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data, timeout: 3000})
         .then(res => {
-          console.log(55)
           if (res.data.code === 200) {
             console.log(33, res.data.data)
             for (let i = 0; i < res.data.data.length; i++) {

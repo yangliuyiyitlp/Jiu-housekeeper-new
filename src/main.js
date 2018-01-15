@@ -14,9 +14,9 @@ import Axios from 'axios'
 import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
 import Cookie from 'js-cookie'
-import Echarts from 'vue-echarts3'
+// import Echarts from 'vue-echarts3'
 
-Vue.component('echarts', Echarts)
+// Vue.component('echarts', Echarts)
 Vue.use(Vuex)
 Vue.prototype.$ajax = Axios
 Vue.prototype.$store = store

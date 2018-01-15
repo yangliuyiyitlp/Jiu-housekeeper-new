@@ -21,7 +21,7 @@ const routes = [
   {path: '/404', component: NotFound}
 ]
 const router = new VueRouter({
-  mode: 'history',
+  // mode: 'history',
   // routes: routes
   routes: asyncRouter
 })
