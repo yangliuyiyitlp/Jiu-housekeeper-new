@@ -139,7 +139,10 @@
         filterId: '',
         select: [],
         tableData: [],
-        cityForm: {},
+        cityForm: {
+          pageNum: 1,
+          pageSize: 30
+        },
         exportParam: {},
         defaultProps: {
           children: 'children',
@@ -255,9 +258,14 @@
           params: this.cityForm,
           timeout: 3000
         }).then(res => {
-          if (res.data.code === 200) {
-            this.tableData = res.data.data
-            this.pagination.count = res.data.total
+          if (res.data.code === 200 && res.data.data !== null) {
+            this.tableData = res.data.data.result
+            this.pagination.count = res.data.data.total
+          } else if (res.data.code === 200 && res.data.data === null) {
+            this.$message({
+              type: 'info',
+              message: '未查询到符合数据'
+            })
           } else {
             this.$message({
               type: 'error',
@@ -277,6 +285,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log(this.exportParam)
           this.exportParam.pageNum = ''
           this.exportParam.pageSize = ''
           this.$refs['FileForm'].setAttribute('action', `${baseUrl.cityFencingUrl}/exportAll `)

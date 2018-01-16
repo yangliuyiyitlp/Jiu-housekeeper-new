@@ -86,7 +86,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="adPeople"
+            prop="updateByName"
             label="操作人">
           </el-table-column>
           <el-table-column
@@ -137,7 +137,7 @@
           </el-form-item>
 
           <el-form-item label="广告位置：" prop="checkedPosition">
-            <el-radio-group v-model="checkedPosition">
+            <el-radio-group v-model="checkedPosition" @change="handleCheckedPositionChange">
               <el-radio v-for="val in adCheckedPosition" :key="val" :label="val">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
@@ -160,12 +160,13 @@
               </el-upload>
               尺寸：750*1334
               <div>
-                <el-radio-group v-model="checkedPic1" @change="handleCheckedPositionChange">
-                  <el-radio v-for="val in adCheckedPic1" :key="val" :label="val">{{val}}</el-radio>
+                <el-radio-group v-model="checkedPic" @change="handleCheckedPic">
+                  <el-radio label="1">图片</el-radio>
+                  <el-radio label="2" v-if="picType">GIF</el-radio>
                 </el-radio-group>
               </div>
-              <el-input v-model="ruleForm.gif_countdown" class="imgTime" placeholder="时长(单位s)"></el-input>
-              <a>只有选择GIF才可以选择</a>
+              <el-input v-model="ruleForm.gif_countdown" class="imgTime" v-if="gifTime"
+                        placeholder="时长(单位s)"></el-input>
             </div>
           </el-form-item>
 
@@ -190,24 +191,59 @@
                 @node-click="handleNode"
                 :props="defaultProps">
               </el-tree>
-              <button @click="getCheckedKeys" class="saveArea">保存地区</button>
+              <!--<a @click="getCheckedKeys" class="saveArea">保存地区</a>-->
             </div>
           </el-form-item>
 
-          <el-form-item label="投放平台：" prop="CheckedAdOs">
-            <el-checkbox-group v-model="CheckedAdOs" @change="handleCheckedPositionChange">
-              <el-checkbox v-for="val in adCheckedAdOs" :key="val" :label="val">{{val}}</el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="投放版本：" prop="checkedCity">
+            <div class="treeIos">
+              <p>ios投放版本：</p>
+              <div class="areaAdOs">
+                <el-tree
+                  :data="selectAdOs"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  :default-checked-keys="checkedAdOs"
+                  ref="treeIos"
+                  class="treeAdOs"
+                  accordion
+                  :props="defaultProps">
+                </el-tree>
+              </div>
+            </div>
+            <div>
+              <p>安卓投放版本：</p>
+              <div class="areaAdOs">
+                <el-tree
+                  :data="selectAndroid"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  :default-checked-keys="checkedAndroid"
+                  ref="treeAndroid"
+                  class="treeAdOs"
+                  accordion
+                  :props="defaultProps">
+                </el-tree>
+              </div>
+            </div>
           </el-form-item>
 
-          <el-form-item label="投放版本：" prop="appVosing">
-            <el-checkbox-group v-model="appVosing" @change="handleCheckedPositionChange">
-              <el-checkbox v-for="val in app_versions" :key="val" :label="val">{{val}}</el-checkbox>
-            </el-checkbox-group>
-            <!--<label>新增版本号：</label>-->
-            <!--<el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>-->
-            <!--<button>确定</button>-->
-          </el-form-item>
+          <!--<el-form-item label="投放平台：" prop="CheckedAdOs">-->
+            <!--<el-checkbox-group v-model="CheckedAdOs">-->
+              <!--<el-checkbox v-for="val in adCheckedAdOs" :key="val" :label="val">{{val}}</el-checkbox>-->
+            <!--</el-checkbox-group>-->
+          <!--</el-form-item>-->
+
+          <!--<el-form-item label="投放版本：" prop="appVosing">-->
+            <!--<el-checkbox-group v-model="appVosing">-->
+              <!--<el-checkbox v-for="val in app_versions" :key="val" :label="val">{{val}}</el-checkbox>-->
+            <!--</el-checkbox-group>-->
+            <!--&lt;!&ndash;<label>新增版本号：</label>&ndash;&gt;-->
+            <!--&lt;!&ndash;<el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>&ndash;&gt;-->
+            <!--&lt;!&ndash;<button>确定</button>&ndash;&gt;-->
+          <!--</el-form-item>-->
           <hr>
           <h2>广告详情</h2>
           <el-form-item label="投放形式：" prop="styleArr">
@@ -217,7 +253,7 @@
           </el-form-item>
           <!--落地页-->
           <el-form-item label="落地页地址：" v-show="isLandingUrl" prop="action_url">
-            <el-input v-model="ruleForm.action_url" class="width" placeholder="请输入H5页面链接"></el-input>
+            <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入H5页面链接"></el-input>
           </el-form-item>
           <!--应用下载-->
           <el-form-item label="下载形式：" prop="loadWayArr" v-show="isDownloadWay">
@@ -227,11 +263,11 @@
           </el-form-item>
           <!--应用下载-有下载页-->
           <el-form-item label="下载页地址：" v-show="isDownloadPageUrl" prop="action_url">
-            <el-input v-model="ruleForm.action_url" class="width" placeholder="请输入下载页面地址"></el-input>
+            <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入下载页面地址"></el-input>
           </el-form-item>
           <!--应用下载-直接下载-->
           <el-form-item label="下载地址：" v-show="isDownloadUrl" prop="action_url">
-            <el-input v-model="ruleForm.action_url" class="width" placeholder="请输入应用下载地址"></el-input>
+            <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入应用下载地址"></el-input>
           </el-form-item>
           <!--应用下载-使用模板-->
           <!--加上上面的下载地址-->
@@ -253,8 +289,8 @@
               </el-upload>
               尺寸：750*420
             </el-form-item>
-            <el-form-item label="应用包名：" prop="sdkName">
-              <el-input v-model="ruleForm.sdkName" class="width" placeholder="输入格式xxx_xxx_xxx包名"></el-input>
+            <el-form-item label="应用包名：" prop="sdk_Name">
+              <el-input v-model="ruleForm.sdk_Name" class="width" placeholder="输入格式xxx_xxx_xxx包名"></el-input>
             </el-form-item>
             <el-form-item label="应用logo：">
               <el-input v-model="ruleForm.logo_img" v-show='false'></el-input>
@@ -273,27 +309,27 @@
               </el-upload>
               尺寸：160*160
             </el-form-item>
-            <el-form-item label="应用名称：" prop="appName">
-              <el-input v-model="ruleForm.appName" class="width" placeholder="不超过9个中文字符"></el-input>
+            <el-form-item label="应用名称：" prop="title">
+              <el-input v-model="ruleForm.title" class="width" placeholder="不超过9个中文字符"></el-input>
             </el-form-item>
             <el-form-item label="标签：" prop="labelArr">
-              <el-checkbox-group v-model="labelArr" @change="handleCheckedPositionChange">
+              <el-checkbox-group v-model="labelArr">
                 <el-checkbox v-for="val in sdkLabelArr" :key="val" :label="val">{{val}} <i class="el-icon-close"
                                                                                            @click="iconDelete(val)"></i>
                 </el-checkbox>
               </el-checkbox-group>
               <label>自定义标签：</label>
-              <el-input v-model="sdkLabel" class="width"></el-input>
+              <el-input v-model="label" class="width"></el-input>
               <button @click="iconAdd">保存</button>
             </el-form-item>
-            <el-form-item label="一句话简介：" prop="sdkAbstract">
-              <el-input v-model="ruleForm.sdkAbstract" class="width" placeholder="不超过50个中文字符"></el-input>
+            <el-form-item label="一句话简介：" prop="sec_title">
+              <el-input v-model="ruleForm.sec_title" class="widthUrl" placeholder="不超过50个中文字符"></el-input>
             </el-form-item>
             <el-form-item label="版本号：" prop="version">
               <el-input v-model="ruleForm.version" class="width" placeholder="输入格式x.x.x.x版本号"></el-input>
             </el-form-item>
-            <el-form-item label="安装包大小：" prop="install_package">
-              <el-input v-model="ruleForm.install_package" class="width" placeholder="请输入安装包大小，例：15MB"></el-input>
+            <el-form-item label="安装包大小：" prop="install_Size">
+              <el-input v-model="ruleForm.install_Size" class="width" placeholder="请输入安装包大小，例：15MB"></el-input>
             </el-form-item>
             <el-form-item label="预览图：">
               <div class="viewImg">
@@ -400,8 +436,8 @@
         create: true,
         Pic1: true,
         title: '广告内容新增',
-        adStatus: {'0': '全部', '1': '投放中', '2': '未开始', '3': '已结束', '4': '已暂停'},
-        type: {'0': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
+        adStatus: {'': '全部', '1': '投放中', '2': '未开始', '3': '已结束', '4': '已暂停'},
+        type: {'': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
         pauseTip: '暂停',
@@ -410,50 +446,71 @@
         tableData: [{'id': 22}],
         checkedPosition: [],
         adCheckedPosition: ['开屏', '活动条', '二级弹框', '骑行结束页'],
-        checkedPic1: [],
-        adCheckedPic1: ['图片', 'GIF'],
+        checkedPic: [],
+        adCheckedPic: {'1': '图片', '2': 'GIF'},
         checkedCity: [],
-        adCheckedAdOs: ['Andriod', 'iOS'],
-        CheckedAdOs: [],
-        appVosing: [],
-        app_versions: ['1.2', '2.5'],
+        selectAdOs: [{
+          'id': '1',
+          'name': '1.2'
+        }, {
+          'id': '2',
+          'name': '1.3'
+        }, {
+          'id': '3',
+          'name': '1.4'
+        }, {
+          'id': '4',
+          'name': '1.5'
+        }],
+        checkedAdOs: [],
+        selectAndroid: [{
+          'id': '1',
+          'name': '1.2'
+        }, {
+          'id': '2',
+          'name': '1.3'
+        }],
+        checkedAndroid: [],
         styleArr: [],
         adStyleArr: ['落地页', '应用下载'],
         adStyleObj: {'0': '落地页', '1': '应用下载'},
         downloadWayArr: ['有下载页', '使用模板', '直接下载'],
+        downloadWayObj: {'0': '有下载页', '1': '使用模板', '2': '直接下载'},
         isLandingUrl: true,
         isDownloadWay: false,
         isDownloadPageUrl: false,
         isDownloadUrl: false,
         isDownloadModule: false,
+        gifTime: false,
+        picType: false,
+        positionVal: '',
+        picVal: '',
         sdkUrlToken: {},
         loadWayArr: [],
         sdkLogoToken: {},
         labelArr: [],
-        sdkLabelArr: ['游戏', '仙侠'],
+        sdkLabelArr: [],
         sdkLabelObj: {},
-        sdkLabel: '',
+        label: '',
         formInline: {},
         ruleForm: {},
-        rules: {
-          description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
-          display_time: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
-          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
-          sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
-          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
-          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
-          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
-          action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
-          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
-//          action_url: [{required: true, message: '请输入下载页地址', trigger: 'blur'}],
-//          action_url: [{required: true, message: '请输入下载地址', trigger: 'blur'}],
-          sdkName: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
-          appName: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
-          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
-          sdkAbstract: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
-          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
-          install_package: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
-        },
+//        rules: {
+//          description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
+//          display_time: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
+//          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
+//          sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
+//          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
+//          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
+//          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
+//          action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
+//          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
+//          sdk_Name: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
+//          title: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
+//          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
+//          sec_title: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
+//          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
+//          install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
+//        },
         defaultProps: {
           children: 'children',
           label: 'name'
@@ -469,8 +526,8 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-//      this.selectCity()
-//      this.iconList()
+      this.selectCity()
+      this.iconList()
       if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
@@ -544,492 +601,25 @@
         this.filterId = data.id // 弹框树模型点击输入值
       },
       selectCity () {
-        this.selectSection = [{
-          'id': '1',
-          'parentId': '0',
-          'parentIds': '0,',
-          'name': '上海市总公司',
-          'sort': 10,
-          'areaId': '1',
-          'code': '100000',
-          'type': '1',
-          'grade': '1',
-          'address': '',
-          'zipCode': '',
-          'master': '',
-          'phone': '',
-          'fax': '',
-          'email': '',
-          'useable': '1',
-          'primaryPerson': '',
-          'deputyPerson': '',
-          'createBy': '1',
-          'createDate': 1369584000000,
-          'updateBy': '1',
-          'updateDate': 1496764800000,
-          'remarks': '',
-          'delFlag': '0',
-          'children': [{
-            'id': '33',
-            'parentId': '1',
-            'parentIds': '0,1,',
-            'name': '上海分公司',
-            'sort': 30,
-            'areaId': '13',
-            'code': '100000009',
-            'type': '1',
-            'grade': '2',
-            'address': '',
-            'zipCode': '',
-            'master': '',
-            'phone': '',
-            'fax': '',
-            'email': '',
-            'useable': '1',
-            'primaryPerson': '',
-            'deputyPerson': '',
-            'createBy': '1',
-            'createDate': 1497888000000,
-            'updateBy': '1',
-            'updateDate': 1502265256000,
-            'remarks': '',
-            'delFlag': '0',
-            'children': [{
-              'id': '55',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '宝山区政府',
-              'sort': 30,
-              'areaId': '21',
-              'code': '100000009009',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444156000,
-              'updateBy': '1',
-              'updateDate': 1505444156000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '34',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '城市运营',
-              'sort': 30,
-              'areaId': '13',
-              'code': '100000009001',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1497888000000,
-              'updateBy': '1',
-              'updateDate': 1501516800000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '45',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '黄浦区政府',
-              'sort': 30,
-              'areaId': '24',
-              'code': '',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1504070206000,
-              'updateBy': '1',
-              'updateDate': 1504070206000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '56',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '松江区政府',
-              'sort': 30,
-              'areaId': '26',
-              'code': '100000009010',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444183000,
-              'updateBy': '1',
-              'updateDate': 1505444183000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '57',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '杨浦区政府',
-              'sort': 30,
-              'areaId': '18',
-              'code': '100000009011',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444214000,
-              'updateBy': '1',
-              'updateDate': 1505444214000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '58',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '徐汇区政府',
-              'sort': 30,
-              'areaId': '16',
-              'code': '100000009012',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444231000,
-              'updateBy': '1',
-              'updateDate': 1505444231000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '59',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '长宁区政府',
-              'sort': 30,
-              'areaId': '17',
-              'code': '100000009013',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444293000,
-              'updateBy': '1',
-              'updateDate': 1505444301000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '49',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '虹口区政府',
-              'sort': 30,
-              'areaId': '25',
-              'code': '100000009003',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505385789000,
-              'updateBy': '1',
-              'updateDate': 1505385789000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '60',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '青浦区政府',
-              'sort': 30,
-              'areaId': '67',
-              'code': '100000009014',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444388000,
-              'updateBy': '1',
-              'updateDate': 1505444388000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '50',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '普陀区政府',
-              'sort': 30,
-              'areaId': '22',
-              'code': '100000009004',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505385822000,
-              'updateBy': '1',
-              'updateDate': 1505385822000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '61',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '奉贤区政府',
-              'sort': 30,
-              'areaId': '28',
-              'code': '100000009015',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444411000,
-              'updateBy': '1',
-              'updateDate': 1505444411000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '51',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '静安区政府',
-              'sort': 30,
-              'areaId': '19',
-              'code': '100000009005',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505394685000,
-              'updateBy': '1',
-              'updateDate': 1505394814000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '62',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '金山区政府',
-              'sort': 30,
-              'areaId': '27',
-              'code': '100000009016',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444436000,
-              'updateBy': '1',
-              'updateDate': 1505444436000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '52',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '嘉定区政府',
-              'sort': 30,
-              'areaId': '23',
-              'code': '100000009006',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505443295000,
-              'updateBy': '1',
-              'updateDate': 1505443295000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '53',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '浦东新区政府',
-              'sort': 30,
-              'areaId': '14',
-              'code': '100000009007',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505443937000,
-              'updateBy': '1',
-              'updateDate': 1505444014000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }, {
-              'id': '54',
-              'parentId': '33',
-              'parentIds': '0,1,33,',
-              'name': '闵行区政府',
-              'sort': 30,
-              'areaId': '15',
-              'code': '100000009008',
-              'type': '2',
-              'grade': '3',
-              'address': '',
-              'zipCode': '',
-              'master': '',
-              'phone': '',
-              'fax': '',
-              'email': '',
-              'useable': '1',
-              'primaryPerson': '',
-              'deputyPerson': '',
-              'createBy': '1',
-              'createDate': 1505444077000,
-              'updateBy': '1',
-              'updateDate': 1505444077000,
-              'remarks': '',
-              'delFlag': '0',
-              'children': []
-            }]
-          }]
-        }]
-      },
-      getCheckedKeys () {
-        let arr = this.$refs.tree.getCheckedNodes()
-        let newArr = []
-        let arrZero = arr[0].parentIds + arr[0].id
-        newArr = arrZero.split(',')
-        for (let j = 1; j < arr.length; j++) {
-          let arrLater = arr[j].parentIds + arr[j].id
-          let parentsArr = arrLater.split(',')
-          for (let i = 0; i < parentsArr.length; i++) {
-            if (newArr.indexOf(parentsArr[i]) === -1) {
-              newArr.push(parentsArr[i])
+        this.$ajax.get(`${baseUrl.advertContentHei}/district/list`, {params: {timeout: 3000}})
+          .then((res) => {
+            if (res.data.code === 200) {
+              console.log(res.data.data)
+              this.selectSection = res.data.data
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              })
             }
-          }
-        }
-        this.ruleForm.city_name = newArr.join(',')
-      }, // 地区
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '地区列表获取异常'
+            })
+          })
+      },
       query () {
         this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/list`, {params: this.formInline, timeout: 3000})
           .then((res) => {
@@ -1064,9 +654,6 @@
         this.ruleForm = {}
         this.$refs.ruleForm.resetFields()
         this.$refs.adPic1.clearFiles()
-//        this.$refs.adPic2.clearFiles()
-//        this.$refs.adPic3.clearFiles()
-//        this.$refs.adPic4.clearFiles()
         this.$refs.top_img.clearFiles()
         this.$refs.logo_img.clearFiles()
         this.$refs.viewImg1.clearFiles()
@@ -1074,29 +661,6 @@
         this.$refs.viewImg3.clearFiles()
         this.$refs.viewImg4.clearFiles()
       }, // 新增
-//      adPicChange (val) {
-//        if (val === '1') {
-//          this.Pic1 = true
-//          this.Pic2 = false
-//          this.Pic3 = false
-//          this.Pic4 = false
-//        } else if (val === '2') {
-//          this.Pic1 = false
-//          this.Pic2 = true
-//          this.Pic3 = false
-//          this.Pic4 = false
-//        } else if (val === '3') {
-//          this.Pic1 = false
-//          this.Pic2 = false
-//          this.Pic3 = true
-//          this.Pic4 = false
-//        } else if (val === '4') {
-//          this.Pic1 = false
-//          this.Pic2 = false
-//          this.Pic3 = false
-//          this.Pic4 = true
-//        }
-//      }, // 广告图片
       pauseRecord (row) {
         if (row.adStatus !== '投放中' || row.adStatus !== '未开始') {
           alert('只有投放中状态可以暂停')
@@ -1182,12 +746,21 @@
           })
       },
       submitForm (ruleForm) {
+        // 获取地区
+        let treeArr = this.$refs.tree.getCheckedKeys()
+        this.ruleForm.city_name = treeArr.join(',')
+        // 获取版本
+        let treeIosArr = this.$refs.treeIos.getCheckedKeys()
+        this.ruleForm.ios_versions = treeIosArr.join(',')
+        let treeAndroidArr = this.$refs.treeAndroid.getCheckedKeys()
+        this.ruleForm.android_versions = treeAndroidArr.join(',')
+        // 请求
         this.$refs[ruleForm].validate((valid) => {
           let url
           if (valid) {
             if (this.ruleForm.id === undefined || this.ruleForm.id === '') {
-              url = `${baseUrl.cityFencingUrl}/add` // 新增功能
-              this.ruleForm.showRule = parseInt(this.ruleForm.showRule)
+              url = `${baseUrl.advertContent}/addAdDetails` // 新增功能
+//              this.ruleForm.showRule = parseInt(this.ruleForm.showRule)
               console.log(77)
             } else {
               url = `${baseUrl.cityFencingUrl}/update`
@@ -1205,7 +778,6 @@
             } else {
               this.ruleForm.autoDisplayTimes = 0
             }
-            this.ruleForm.sessionId = Cookie.get('sessionId')
             this.$ajax.post(url, this.ruleForm)
               .then(response => {
                 if (response.data.code === 200) {
@@ -1235,15 +807,38 @@
           }
         })
       },
-      handleCheckedPositionChange () {},
+      handleCheckedPositionChange (val) {
+        this.positionVal = val
+        if (this.positionVal === '开屏') {
+          this.picType = true
+        } else if (this.positionVal === '开屏' && this.picVal === 'GIF') {
+          this.picType = true
+          this.gifTime = true
+        } else {
+          this.gifTime = false
+          this.picType = false
+        }
+      },
+      handleCheckedPic (val) {
+        this.picVal = val
+        if (this.picVal === '2') {
+          console.log(11, val)
+          this.gifTime = true
+        } else {
+          this.gifTime = false
+        }
+      },
       iconList () { // 获取标签list
-        this.$ajax.get(`${baseUrl.advertContent}/findDictList?type=coupon_mode`, {timeout: 3000})
+        this.sdkLabelArr = []
+        this.sdkLabelObj = {}
+        this.$ajax.post(`${baseUrl.advertContent}/findDictList?type=coupon_mode`, {timeout: 3000})
           .then(response => {
             if (response.data.code === 200) {
               let result = response.data.data
+              console.log(result)
               for (let i = 0; i < result.length; i++) {
-                this.sdkLabelArr.push(result[i].sdkLabel)
-                this.sdkLabelObj[result[i].sdkLabel] = result[i].id
+                this.sdkLabelArr.push(result[i].label)
+                this.sdkLabelObj[result[i].label] = result[i].id
               }
             } else {
               this.$message({
@@ -1267,9 +862,8 @@
         }).then(() => {
           let index = this.sdkLabelArr.indexOf(val)
           if (index > -1) {
-//            this.sdkLabelArr.splice(index, 1)
             let id = this.sdkLabelObj[val]
-            this.$ajax.get('', {params: {id: id}})
+            this.$ajax.post(`${baseUrl.advertContent}/deletDict`, {id: id, timeout: 3000})
               .then(res => {
                 if (res.data.code === 200) {
                   this.$message({
@@ -1294,11 +888,15 @@
         })
       }, // 标签删除
       iconAdd () {
-        this.$ajax.get('/setting/role/menuAll', {params: {sdkLabel: this.sdkLabe, timeout: 3000}})
+        console.log(this.label)
+        this.$ajax.post(`${baseUrl.advertContent}/a`, {label: this.label, timeout: 3000})
           .then(response => {
             if (response.data.code === 200) {
-//              this.sdkLabelArr.push(this.sdkLabel)
               this.iconList()
+              this.$message({
+                type: 'success',
+                message: '添加标签成功'
+              })
             } else {
               this.$message({
                 type: 'error',
@@ -1482,6 +1080,10 @@
     height: 148px;
   }
 
+  .widthUrl {
+    width: 400px;
+  }
+
   .viewImg {
     float: left;
   }
@@ -1501,8 +1103,23 @@
     overflow: auto;
     border-radius: 4px;
     border: 1px solid #bfcbd9;
-    padding: 3px 10px;
+    padding: 3px 5px;
     box-sizing: border-box;
+  }
+
+  .treeAdOs {
+    width: 100px;
+    height: 150px;
+    overflow: auto;
+    border-radius: 4px;
+    border: 1px solid #bfcbd9;
+    padding: 3px 5px;
+    box-sizing: border-box;
+  }
+
+  .treeIos {
+    float: left;
+    margin-right: 50px;
   }
 
   .avatar-uploader .el-upload {
@@ -1567,6 +1184,12 @@
 
   .saveArea {
     float: right;
+    cursor: pointer;
+    color: #fff;
+    background-color: #20a0ff;
+    border-color: #20a0ff;
+    border-radius: 4px;
+    padding: 0px;
   }
 
   a {
