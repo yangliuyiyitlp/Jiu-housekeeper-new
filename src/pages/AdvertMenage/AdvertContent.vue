@@ -117,6 +117,7 @@
       </el-tab-pane>
 
       <el-tab-pane :label="title" name="second" v-if="create">
+        <!--<el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="ruleForm">-->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <h2>广告素材</h2>
           <el-form-item label="广告标题：" prop="description">
@@ -136,13 +137,13 @@
             </el-date-picker>
           </el-form-item>
 
-          <el-form-item label="广告位置：" prop="checkedPosition">
-            <el-radio-group v-model="checkedPosition" @change="handleCheckedPositionChange">
-              <el-radio v-for="val in adCheckedPosition" :key="val" :label="val">{{val}}</el-radio>
+          <el-form-item label="广告位置：" prop="type">
+            <el-radio-group v-model="ruleForm.type" @change="handleCheckedPositionChange">
+              <el-radio v-for="(val, key) in adCheckedPosition" :key="key" :label="key">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
 
-          <el-form-item label="广告图片：" prop="adPic">
+          <el-form-item label="广告图片：" prop="display_pic">
             <div v-show="Pic1">
               <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.display_pic" alt="广告图片">
@@ -160,13 +161,13 @@
               </el-upload>
               尺寸：750*1334
               <div>
-                <el-radio-group v-model="checkedPic" @change="handleCheckedPic">
+                <el-radio-group v-model="ruleForm.show_type" @change="handleCheckedPic" prop="show_type">
                   <el-radio label="1">图片</el-radio>
                   <el-radio label="2" v-if="picType">GIF</el-radio>
                 </el-radio-group>
               </div>
               <el-input v-model="ruleForm.gif_countdown" class="imgTime" v-if="gifTime"
-                        placeholder="时长(单位s)"></el-input>
+                        placeholder="时长(单位s)" prop="gif_countdown"></el-input>
             </div>
           </el-form-item>
 
@@ -191,11 +192,10 @@
                 @node-click="handleNode"
                 :props="defaultProps">
               </el-tree>
-              <!--<a @click="getCheckedKeys" class="saveArea">保存地区</a>-->
             </div>
           </el-form-item>
 
-          <el-form-item label="投放版本：" prop="checkedCity">
+          <el-form-item label="投放版本：" prop="checkedAdOs">
             <div class="treeIos">
               <p>ios投放版本：</p>
               <div class="areaAdOs">
@@ -229,26 +229,11 @@
               </div>
             </div>
           </el-form-item>
-
-          <!--<el-form-item label="投放平台：" prop="CheckedAdOs">-->
-            <!--<el-checkbox-group v-model="CheckedAdOs">-->
-              <!--<el-checkbox v-for="val in adCheckedAdOs" :key="val" :label="val">{{val}}</el-checkbox>-->
-            <!--</el-checkbox-group>-->
-          <!--</el-form-item>-->
-
-          <!--<el-form-item label="投放版本：" prop="appVosing">-->
-            <!--<el-checkbox-group v-model="appVosing">-->
-              <!--<el-checkbox v-for="val in app_versions" :key="val" :label="val">{{val}}</el-checkbox>-->
-            <!--</el-checkbox-group>-->
-            <!--&lt;!&ndash;<label>新增版本号：</label>&ndash;&gt;-->
-            <!--&lt;!&ndash;<el-input v-model="ruleForm.autoDisplayTimes" class="width"></el-input>&ndash;&gt;-->
-            <!--&lt;!&ndash;<button>确定</button>&ndash;&gt;-->
-          <!--</el-form-item>-->
           <hr>
           <h2>广告详情</h2>
-          <el-form-item label="投放形式：" prop="styleArr">
-            <el-radio-group v-model="styleArr" @change="handleCheckedStyleArr">
-              <el-radio v-for="val in adStyleArr" :key="val" :label="val">{{val}}</el-radio>
+          <el-form-item label="投放形式：" prop="is_download">
+            <el-radio-group v-model="ruleForm.is_download" @change="handleCheckedStyleArr">
+              <el-radio v-for="(val, key) in adStyleObj" :key="key" :label="key">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
           <!--落地页-->
@@ -256,9 +241,9 @@
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入H5页面链接"></el-input>
           </el-form-item>
           <!--应用下载-->
-          <el-form-item label="下载形式：" prop="loadWayArr" v-show="isDownloadWay">
-            <el-radio-group v-model="loadWayArr" @change="handleCheckedLoadWay">
-              <el-radio v-for="val in downloadWayArr" :key="val" :label="val">{{val}}</el-radio>
+          <el-form-item label="下载形式：" prop="downloadWay" v-show="isDownloadWay">
+            <el-radio-group v-model="ruleForm.downloadWay" @change="handleCheckedLoadWay">
+              <el-radio v-for="(val, key) in downloadWayObj" :key="key" :label="key">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
           <!--应用下载-有下载页-->
@@ -292,7 +277,7 @@
             <el-form-item label="应用包名：" prop="sdk_Name">
               <el-input v-model="ruleForm.sdk_Name" class="width" placeholder="输入格式xxx_xxx_xxx包名"></el-input>
             </el-form-item>
-            <el-form-item label="应用logo：">
+            <el-form-item label="应用logo：" prop="logo_img">
               <el-input v-model="ruleForm.logo_img" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.logo_img" alt="应用展示图">
               <el-upload
@@ -351,8 +336,8 @@
                 尺寸：636*636
               </div>
               <div class="viewImg">
-                <el-input v-model="ruleForm.viewImg" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.viewImg" alt="预览图">
+                <el-input v-model="ruleForm.viewImg2" v-show='false'></el-input>
+                <img width="100%" :src="ruleForm.viewImg2" alt="预览图">
                 <el-upload
 
                   ref="viewImg2"
@@ -445,8 +430,7 @@
         Token2: {},
         tableData: [{'id': 22}],
         checkedPosition: [],
-        adCheckedPosition: ['开屏', '活动条', '二级弹框', '骑行结束页'],
-        checkedPic: [],
+        adCheckedPosition: {'6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         adCheckedPic: {'1': '图片', '2': 'GIF'},
         checkedCity: [],
         selectAdOs: [{
@@ -471,10 +455,7 @@
           'name': '1.3'
         }],
         checkedAndroid: [],
-        styleArr: [],
-        adStyleArr: ['落地页', '应用下载'],
         adStyleObj: {'0': '落地页', '1': '应用下载'},
-        downloadWayArr: ['有下载页', '使用模板', '直接下载'],
         downloadWayObj: {'0': '有下载页', '1': '使用模板', '2': '直接下载'},
         isLandingUrl: true,
         isDownloadWay: false,
@@ -486,7 +467,6 @@
         positionVal: '',
         picVal: '',
         sdkUrlToken: {},
-        loadWayArr: [],
         sdkLogoToken: {},
         labelArr: [],
         sdkLabelArr: [],
@@ -494,23 +474,23 @@
         label: '',
         formInline: {},
         ruleForm: {},
-//        rules: {
-//          description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
-//          display_time: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
-//          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
-//          sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
-//          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
-//          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
-//          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
-//          action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
-//          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
-//          sdk_Name: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
-//          title: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
-//          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
-//          sec_title: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
-//          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
-//          install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
-//        },
+        rules: {
+          description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
+          display_time: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
+          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
+          sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
+          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
+          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
+          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
+          action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
+          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
+          sdk_Name: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
+          title: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
+          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
+          sec_title: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
+          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
+          install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
+        },
         defaultProps: {
           children: 'children',
           label: 'name'
@@ -754,7 +734,10 @@
         this.ruleForm.ios_versions = treeIosArr.join(',')
         let treeAndroidArr = this.$refs.treeAndroid.getCheckedKeys()
         this.ruleForm.android_versions = treeAndroidArr.join(',')
+        // 预览图4张图
+        this.ruleForm.rev_img = this.ruleForm.viewImg1 + ',' + this.ruleForm.viewImg2 + ',' + this.ruleForm.viewImg3 + ',' + this.ruleForm.viewImg4
         // 请求
+        console.log(this.ruleForm)
         this.$refs[ruleForm].validate((valid) => {
           let url
           if (valid) {
@@ -764,19 +747,6 @@
               console.log(77)
             } else {
               url = `${baseUrl.cityFencingUrl}/update`
-              console.log(this.ruleForm.showRule)
-              console.log(this.adStatus[this.showFlag])
-              if (this.ruleForm.showRule === this.adStatus[this.showFlag]) {
-                this.ruleForm.showRule = parseInt(this.showFlag)
-                console.log(this.ruleForm.showRule)
-              } else {
-                this.ruleForm.showRule = parseInt(this.ruleForm.showRule)
-              }
-            }
-            if (this.ruleForm.autoDisplayTimes !== undefined && this.ruleForm.autoDisplayTimes !== '') {
-              this.ruleForm.autoDisplayTimes = parseInt(this.ruleForm.autoDisplayTimes)
-            } else {
-              this.ruleForm.autoDisplayTimes = 0
             }
             this.$ajax.post(url, this.ruleForm)
               .then(response => {
@@ -808,10 +778,11 @@
         })
       },
       handleCheckedPositionChange (val) {
+        console.log(val)
         this.positionVal = val
-        if (this.positionVal === '开屏') {
+        if (this.positionVal === '4') {
           this.picType = true
-        } else if (this.positionVal === '开屏' && this.picVal === 'GIF') {
+        } else if (this.positionVal === '4' && this.picVal === '2') {
           this.picType = true
           this.gifTime = true
         } else {
@@ -820,6 +791,7 @@
         }
       },
       handleCheckedPic (val) {
+        console.log(val)
         this.picVal = val
         if (this.picVal === '2') {
           console.log(11, val)
@@ -912,13 +884,13 @@
           })
       },
       handleCheckedStyleArr (val) {
-        if (val === '落地页') {
+        if (val === '0') {
           this.isLandingUrl = true
           this.isDownloadWay = false
           this.isDownloadPageUrl = false
           this.isDownloadUrl = false
           this.isDownloadModule = false
-        } else if (val === '应用下载') {
+        } else if (val === '1') {
           this.isLandingUrl = false
           this.isDownloadWay = true
           this.isDownloadPageUrl = true
@@ -927,15 +899,15 @@
         }
       }, // 投放形式
       handleCheckedLoadWay (val) {
-        if (val === '有下载页') {
+        if (val === '0') {
           this.isDownloadPageUrl = true
           this.isDownloadUrl = false
           this.isDownloadModule = false
-        } else if (val === '使用模板') {
+        } else if (val === '1') {
           this.isDownloadPageUrl = false
           this.isDownloadUrl = true
           this.isDownloadModule = true
-        } else if (val === '直接下载') {
+        } else if (val === '2') {
           this.isDownloadPageUrl = false
           this.isDownloadUrl = true
           this.isDownloadModule = false

@@ -24,6 +24,6 @@ let baseUrl
 // } else {
 //   baseUrl = require('./baseUrl-dev.json')
 // }
-baseUrl = require('./baseUrl-test.json')
+baseUrl = require('./baseUrl-dev.json')
 
 module.exports = baseUrl
