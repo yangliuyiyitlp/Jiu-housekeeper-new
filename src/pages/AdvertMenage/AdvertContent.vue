@@ -108,7 +108,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNo"
+          :current-page="pagination.pageNum"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -131,7 +131,7 @@
             </el-date-picker>
             -
             <el-date-picker
-              v-model="formInline.del_time"
+              v-model="ruleForm.del_time"
               @change="addEndTimeChange"
               type="datetime">
             </el-date-picker>
@@ -146,7 +146,7 @@
           <el-form-item label="广告图片：" prop="display_pic">
             <div v-show="Pic1">
               <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
-              <img width="100%" :src="ruleForm.display_pic" alt="广告图片">
+                <img width="100%" :src="ruleForm.displayPic" alt="广告图片">
               <el-upload
                 ref="adPic1"
                 list-type="picture-card"
@@ -159,7 +159,7 @@
                   <i class="el-icon-upload el-icon--right"></i>
                 </el-button>
               </el-upload>
-              尺寸：750*1334
+              {{imgSize}}
               <div>
                 <el-radio-group v-model="ruleForm.show_type" @change="handleCheckedPic" prop="show_type">
                   <el-radio label="1">图片</el-radio>
@@ -167,16 +167,16 @@
                 </el-radio-group>
               </div>
               <el-input v-model="ruleForm.gif_countdown" class="imgTime" v-if="gifTime"
-                        placeholder="时长(单位s)" prop="gif_countdown"></el-input>
+                        placeholder="时长(单位s，为数字)" prop="gif_countdown"></el-input>
             </div>
           </el-form-item>
 
           <el-form-item label="展示顺序：" prop="sort">
-            <el-input v-model="ruleForm.sort" class="width" placeholder="请输入展示顺序"></el-input>
+            <el-input v-model="ruleForm.sort" class="width" placeholder="请输入展示顺序（数字格式）"></el-input>
           </el-form-item>
           <hr>
           <h2>广告受众</h2>
-          <el-form-item label="地区：" prop="checkedCity">
+          <el-form-item label="地区：" prop="checkedCityArr">
             <div class="area">
               <input ref='keySearch' type='text' placeholder="输入关键字进行过滤" class='keySearch' v-model="filterText">
               <el-tree
@@ -237,29 +237,29 @@
             </el-radio-group>
           </el-form-item>
           <!--落地页-->
-          <el-form-item label="落地页地址：" v-show="isLandingUrl" prop="action_url">
+          <el-form-item label="落地页地址：" v-if="isLandingUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入H5页面链接"></el-input>
           </el-form-item>
           <!--应用下载-->
-          <el-form-item label="下载形式：" prop="downloadWay" v-show="isDownloadWay">
+          <el-form-item label="下载形式：" prop="downloadWay" v-if="isDownloadWay">
             <el-radio-group v-model="ruleForm.downloadWay" @change="handleCheckedLoadWay">
               <el-radio v-for="(val, key) in downloadWayObj" :key="key" :label="key">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
           <!--应用下载-有下载页-->
-          <el-form-item label="下载页地址：" v-show="isDownloadPageUrl" prop="action_url">
+          <el-form-item label="下载页地址：" v-if="isDownloadPageUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入下载页面地址"></el-input>
           </el-form-item>
           <!--应用下载-直接下载-->
-          <el-form-item label="下载地址：" v-show="isDownloadUrl" prop="action_url">
+          <el-form-item label="下载地址：" v-if="isDownloadUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入应用下载地址"></el-input>
           </el-form-item>
           <!--应用下载-使用模板-->
           <!--加上上面的下载地址-->
-          <div v-show="isDownloadModule">
-            <el-form-item label="应用展示图：">
+          <div v-if="isDownloadModule">
+            <el-form-item label="应用展示图：" prop="top_img">
               <el-input v-model="ruleForm.top_img" v-show='false'></el-input>
-              <img width="100%" :src="ruleForm.top_img" alt="应用展示图">
+              <img width="100%" :src="ruleForm.topImg" alt="应用展示图">
               <el-upload
                 ref="top_img"
                 list-type="picture-card"
@@ -279,9 +279,9 @@
             </el-form-item>
             <el-form-item label="应用logo：" prop="logo_img">
               <el-input v-model="ruleForm.logo_img" v-show='false'></el-input>
-              <img width="100%" :src="ruleForm.logo_img" alt="应用展示图">
+              <img width="100%" :src="ruleForm.logoImg" alt="应用展示图">
               <el-upload
-                ref="logo_img"
+                ref="logoImg"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
                 :data="Token2"
@@ -297,10 +297,9 @@
             <el-form-item label="应用名称：" prop="title">
               <el-input v-model="ruleForm.title" class="width" placeholder="不超过9个中文字符"></el-input>
             </el-form-item>
-            <el-form-item label="标签：" prop="labelArr">
-              <el-checkbox-group v-model="labelArr">
-                <el-checkbox v-for="val in sdkLabelArr" :key="val" :label="val">{{val}} <i class="el-icon-close"
-                                                                                           @click="iconDelete(val)"></i>
+            <el-form-item label="标签：" prop="sdkLabelArr">
+              <el-checkbox-group v-model="sdkLabelArr" style="height:40px;">
+                <el-checkbox v-for="(val, key) in sdkLabelObj" :key="val" :label="key">{{key}} <i class="el-icon-close" @click="iconDelete(val)"></i>
                 </el-checkbox>
               </el-checkbox-group>
               <label>自定义标签：</label>
@@ -316,12 +315,12 @@
             <el-form-item label="安装包大小：" prop="install_Size">
               <el-input v-model="ruleForm.install_Size" class="width" placeholder="请输入安装包大小，例：15MB"></el-input>
             </el-form-item>
-            <el-form-item label="预览图：">
+
+            <el-form-item label="预览图：" prop="viewImg1">
               <div class="viewImg">
                 <el-input v-model="ruleForm.viewImg1" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.viewImg1" alt="预览图">
+                <img width="100%" :src="ruleForm.viewImgFirst" alt="预览图">
                 <el-upload
-
                   ref="viewImg1"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -337,9 +336,8 @@
               </div>
               <div class="viewImg">
                 <el-input v-model="ruleForm.viewImg2" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.viewImg2" alt="预览图">
+                <img width="100%" :src="ruleForm.viewImgSecond" alt="预览图">
                 <el-upload
-
                   ref="viewImg2"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -355,9 +353,8 @@
               </div>
               <div class="viewImg">
                 <el-input v-model="ruleForm.viewImg3" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.viewImg3" alt="预览图">
+                <img width="100%" :src="ruleForm.viewImgThree" alt="预览图">
                 <el-upload
-
                   ref="viewImg3"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -373,9 +370,8 @@
               </div>
               <div class="viewImg">
                 <el-input v-model="ruleForm.viewImg4" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.viewImg4" alt="预览图">
+                <img width="100%" :src="ruleForm.viewImgFour" alt="预览图">
                 <el-upload
-
                   ref="viewImg4"
                   list-type="picture-card"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
@@ -428,32 +424,15 @@
         pauseTip: '暂停',
         updateDelete: '',
         Token2: {},
-        tableData: [{'id': 22}],
+        tableData: [{'id': 22, 'adStatus': '投放中'}, {'id': 33, 'adStatus': '投放'}],
         checkedPosition: [],
         adCheckedPosition: {'6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         adCheckedPic: {'1': '图片', '2': 'GIF'},
+        imgSize: '尺寸：750*1334',
         checkedCity: [],
-        selectAdOs: [{
-          'id': '1',
-          'name': '1.2'
-        }, {
-          'id': '2',
-          'name': '1.3'
-        }, {
-          'id': '3',
-          'name': '1.4'
-        }, {
-          'id': '4',
-          'name': '1.5'
-        }],
+        selectAdOs: [],
         checkedAdOs: [],
-        selectAndroid: [{
-          'id': '1',
-          'name': '1.2'
-        }, {
-          'id': '2',
-          'name': '1.3'
-        }],
+        selectAndroid: [],
         checkedAndroid: [],
         adStyleObj: {'0': '落地页', '1': '应用下载'},
         downloadWayObj: {'0': '有下载页', '1': '使用模板', '2': '直接下载'},
@@ -468,34 +447,43 @@
         picVal: '',
         sdkUrlToken: {},
         sdkLogoToken: {},
-        labelArr: [],
-        sdkLabelArr: [],
         sdkLabelObj: {},
         label: '',
-        formInline: {},
+        sdkLabelArr: [],
+        formInline: {
+          pageSize: 30,
+          pageNum: 1
+        },
         ruleForm: {},
         rules: {
           description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
-          display_time: [{required: true, message: '请选择投放时间', trigger: 'blur'}],
-          checkedPosition: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
+          display_time: [{required: true, message: '请选择投放时间'}],
+          type: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
+          display_pic: [{required: true, message: '请上传广告图片', trigger: 'blur'}],
           sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
-          CheckedAdOs: [{required: true, message: '请选择投放平台', trigger: 'blur'}],
-          appVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
-          styleArr: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
+          city_name: [{required: true, message: '请选择地区', trigger: 'blur'}],
+          adAppVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
+          is_download: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
           action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
-          loadWayArr: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
+          downloadWay: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
           sdk_Name: [{required: true, message: '请输入应用包名', trigger: 'blur'}],
+          top_img: [{required: true, message: '请上传图片', trigger: 'blur'}],
+          logo_img: [{required: true, message: '请上传logo', trigger: 'blur'}],
           title: [{required: true, message: '请输入应用名称', trigger: 'blur'}],
-          labelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
           sec_title: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
           version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
-          install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}]
+          install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}],
+          viewImg1: [{required: true, message: '请上传预览图', trigger: 'blur'}],
+          sdkLabelArr: [{required: true, message: '请选择标签'}],
+          checkedAdOs: [{required: true, message: '请选择投放版本'}],
+          checkedCityArr: [{required: true, message: '请选择地区'}]
         },
+        fileList2: [],
         defaultProps: {
           children: 'children',
           label: 'name'
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         adminId: '',
         path: '',
         permissionList: ['advert/content/view', 'advert/content/create', 'advert/content/update', 'advert/content/pause']
@@ -508,6 +496,7 @@
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.selectCity()
       this.iconList()
+      this.selectVersion()
       if (this.hasPermission('advert/content/create')) {
         this.create = true
       } else {
@@ -526,16 +515,16 @@
     },
     methods: {
       onBeginTimeChange (val) {
-        this.formInline.display_time = new Date(val).getTime()
+        this.formInline.display_time = val
       },
       onEndTimeChange (val) {
-        this.formInline.del_time = new Date(val).getTime()
+        this.formInline.del_time = val
       },
       addBeginTimeChange (val) {
-        this.ruleForm.display_time = new Date(val).getTime()
+        this.ruleForm.display_time = val
       },
       addEndTimeChange (val) {
-        this.ruleForm.del_time = new Date(val).getTime()
+        this.ruleForm.del_time = val
       },
       hasPermission (data) {
         if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
@@ -548,18 +537,33 @@
           this.title = '广告内容新增'
         } else if (this.title === '广告内容新增') {
           this.ruleForm = {}
+          this.checkedCity = []
+          this.checkedAdOs = []
+          this.checkedAndroid = []
           this.tip = '立即创建'
           this.$refs.ruleForm.resetFields()
           this.$refs.adPic1.clearFiles()
-//          this.$refs.adPic2.clearFiles()
-//          this.$refs.adPic3.clearFiles()
-//          this.$refs.adPic4.clearFiles()
-          this.$refs.top_img.clearFiles()
-          this.$refs.logo_img.clearFiles()
-          this.$refs.viewImg1.clearFiles()
-          this.$refs.viewImg2.clearFiles()
-          this.$refs.viewImg3.clearFiles()
-          this.$refs.viewImg4.clearFiles()
+          if (this.$refs.top_img !== undefined && this.$refs.top_img !== '') {
+            this.$refs.top_img.clearFiles()
+          }
+          if (this.$refs.logoImg !== undefined && this.$refs.logoImg !== '') {
+            this.$refs.logoImg.clearFiles()
+          }
+          if (this.$refs.viewImg1 !== undefined && this.$refs.viewImg1 !== '') {
+            this.$refs.viewImg1.clearFiles()
+          }
+          if (this.$refs.viewImg2 !== undefined && this.$refs.viewImg2 !== '') {
+            this.$refs.viewImg2.clearFiles()
+          }
+          if (this.$refs.viewImg3 !== undefined && this.$refs.viewImg3 !== '') {
+            this.$refs.viewImg3.clearFiles()
+          }
+          if (this.$refs.viewImg4 !== undefined && this.$refs.viewImg4 !== '') {
+            this.$refs.viewImg4.clearFiles()
+          }
+          if (this.$refs.viewImg !== undefined && this.$refs.viewImg !== '') {
+            this.$refs.viewImg.clearFiles()
+          }
         }
       },
       handleSizeChange (val) {
@@ -568,8 +572,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNo = val
-        this.pagination.pageNo = val
+        this.formInline.pageNum = val
+        this.pagination.pageNum = val
         this.query()
       },
       filterNode (value, data) {
@@ -581,7 +585,7 @@
         this.filterId = data.id // 弹框树模型点击输入值
       },
       selectCity () {
-        this.$ajax.get(`${baseUrl.advertContentHei}/district/list`, {params: {timeout: 3000}})
+        this.$ajax.get(`${baseUrl.advertContent}/district/list`, {params: {timeout: 3000}})
           .then((res) => {
             if (res.data.code === 200) {
               console.log(res.data.data)
@@ -597,6 +601,39 @@
             this.$message({
               type: 'info',
               message: '地区列表获取异常'
+            })
+          })
+      },
+      selectVersion () {
+        this.$ajax.get(`${baseUrl.advertContentHei}/version/list`, {params: {'pdId': 0, timeout: 3000}})
+          .then((res) => {
+            let result = res.data.data
+            if (res.data.code === 200 && result.ios_versions && result.android_versions) {
+              let selectAdOsArr = result.ios_versions.split(',')
+              for (let i = 0; i < selectAdOsArr.length; i++) {
+                let selectAdOsObj = {}
+                selectAdOsObj.id = i
+                selectAdOsObj.name = selectAdOsArr[i]
+                this.selectAdOs.push(selectAdOsObj)
+              }
+              let selectAndroidArr = result.android_versions.split(',')
+              for (let i = 0; i < selectAndroidArr.length; i++) {
+                let selectAndroidObj = {}
+                selectAndroidObj.id = i
+                selectAndroidObj.name = selectAndroidArr[i]
+                this.selectAndroid.push(selectAndroidObj)
+              }
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '版本列表获取异常'
             })
           })
       },
@@ -632,24 +669,41 @@
         this.title = '广告内容新增'
         this.tip = '立即创建'
         this.ruleForm = {}
+        this.checkedCity = []
+        this.checkedAdOs = []
+        this.checkedAndroid = []
         this.$refs.ruleForm.resetFields()
         this.$refs.adPic1.clearFiles()
-        this.$refs.top_img.clearFiles()
-        this.$refs.logo_img.clearFiles()
-        this.$refs.viewImg1.clearFiles()
-        this.$refs.viewImg2.clearFiles()
-        this.$refs.viewImg3.clearFiles()
-        this.$refs.viewImg4.clearFiles()
+        if (this.$refs.top_img !== undefined && this.$refs.top_img !== '') {
+          this.$refs.top_img.clearFiles()
+        }
+        if (this.$refs.logoImg !== undefined && this.$refs.logoImg !== '') {
+          this.$refs.logoImg.clearFiles()
+        }
+        if (this.$refs.viewImg1 !== undefined && this.$refs.viewImg1 !== '') {
+          this.$refs.viewImg1.clearFiles()
+        }
+        if (this.$refs.viewImg2 !== undefined && this.$refs.viewImg2 !== '') {
+          this.$refs.viewImg2.clearFiles()
+        }
+        if (this.$refs.viewImg3 !== undefined && this.$refs.viewImg3 !== '') {
+          this.$refs.viewImg3.clearFiles()
+        }
+        if (this.$refs.viewImg4 !== undefined && this.$refs.viewImg4 !== '') {
+          this.$refs.viewImg4.clearFiles()
+        }
+        if (this.$refs.viewImg !== undefined && this.$refs.viewImg !== '') {
+          this.$refs.viewImg.clearFiles()
+        }
       }, // 新增
       pauseRecord (row) {
-        if (row.adStatus !== '投放中' || row.adStatus !== '未开始') {
-          alert('只有投放中状态可以暂停')
-        } else {
-          this.$ajax.get(`${baseUrl.cityFencingUrl}/findDictList?type=coupon_mode`, {params: {pauseId: row.id}})
+        console.log(row.adStatus)
+        if (row.adStatus === '投放中' || row.adStatus === '未开始') {
+          this.$ajax.get(`${baseUrl.advertContentHei}/ad/pause`, {params: {pauseId: row.id}})
             .then(res => {
               if (res.data.code === 200) {
                 this.pauseTip = '已暂停'
-                this.query()
+//                this.query()
               } else {
                 this.$message({
                   type: 'error',
@@ -662,6 +716,8 @@
                 message: '状态修改失败'
               })
             })
+        } else {
+          alert('只有投放中或未开始状态可以暂停')
         }
       }, // 暂停
       modifyRecord (id) {
@@ -686,6 +742,21 @@
             if (res.data.code === 200) {
               let resultData = res.data.data
               this.ruleForm = resultData
+              // 图片展示
+              this.ruleForm.displayPic = resultData.display_pic
+              this.ruleForm.topImg = resultData.top_img
+              this.ruleForm.logoImg = resultData.logo_img
+              let imgArr = resultData.rev_img.join(';')
+              if (imgArr[0]) {
+                this.ruleForm.viewImgFirst = imgArr[0]
+              } else if (imgArr[1]) {
+                this.ruleForm.viewImgSecond = imgArr[1]
+              } else if (imgArr[2]) {
+                this.ruleForm.viewImgThree = imgArr[2]
+              } else if (imgArr[3]) {
+                this.ruleForm.viewImgFour = imgArr[3]
+              }
+              // ff
               this.showFlag = resultData.showRule
               this.ruleForm.showRule = this.adStatus[resultData.showRule]
               console.log(this.ruleForm)
@@ -702,48 +773,45 @@
             })
           })
       }, // 获取详情
-      moreSearch (id) { // 地区
-        this.$ajax.get('/setting/role/menuAll', {params: {sessionId: Cookie.get('sessionId'), id: id}})
-          .then(response => {
-            if (response.data.code === 200) {
-              let result = response.data.data
-              this.select_role = result
-              // 循环每个里面有没有roleId和menuId,有的话把id放到checkedRoles数组中
-              searchRole(result, this.checkedCity)
-              this.form.menuIds = this.checkedCity.join(',')
-            } else {
-              this.$message({
-                type: 'error',
-                message: '获取角色列表失败'
-              })
-            }
-          })
-          .catch((err) => {
-            this.$message({
-              type: 'error',
-              message: '获取角色列表异常' + err
-            })
-          })
-      },
       submitForm (ruleForm) {
+        // 标签
+        this.ruleForm.tag = this.sdkLabelArr.join(',')
+        this.ruleForm.sdkLabelArr = this.ruleForm.tag // 默认被选中的值用于字段校验必填
         // 获取地区
         let treeArr = this.$refs.tree.getCheckedKeys()
+        this.ruleForm.checkedCityArr = treeArr // 地区默认被选中的值用于字段校验必填
         this.ruleForm.city_name = treeArr.join(',')
         // 获取版本
-        let treeIosArr = this.$refs.treeIos.getCheckedKeys()
-        this.ruleForm.ios_versions = treeIosArr.join(',')
-        let treeAndroidArr = this.$refs.treeAndroid.getCheckedKeys()
-        this.ruleForm.android_versions = treeAndroidArr.join(',')
+        let treeIosArr = this.$refs.treeIos.getCheckedNodes()
+        this.ruleForm.checkedAdOs = treeIosArr // 投放版本默认被选中的值用于字段校验必填
+        let newIosArr = []
+        for (let i = 0; i < treeIosArr.length; i++) {
+          newIosArr.push(treeIosArr[i].name)
+        }
+        this.ruleForm.ios_versions = newIosArr.join(',')
+        let treeAndroidArr = this.$refs.treeAndroid.getCheckedNodes()
+        let newAndroidArr = []
+        for (let i = 0; i < treeAndroidArr.length; i++) {
+          newAndroidArr.push(treeAndroidArr[i].name)
+        }
+        this.ruleForm.android_versions = newAndroidArr.join(',')
         // 预览图4张图
-        this.ruleForm.rev_img = this.ruleForm.viewImg1 + ',' + this.ruleForm.viewImg2 + ',' + this.ruleForm.viewImg3 + ',' + this.ruleForm.viewImg4
+        let recImg = [this.ruleForm.viewImg1, this.ruleForm.viewImg2, this.ruleForm.viewImg3, this.ruleForm.viewImg4]
+        let recImgArr = []
+        for (let j = 0; j < recImg.length; j++) {
+          if (recImg[j] !== undefined && recImg[j] !== '') {
+            recImgArr.push(recImg[j])
+          }
+        }
+        this.ruleForm.rev_img = recImgArr.join(';')
+        this.ruleForm.update_by = Cookie.get('adminId')
         // 请求
         console.log(this.ruleForm)
         this.$refs[ruleForm].validate((valid) => {
           let url
           if (valid) {
             if (this.ruleForm.id === undefined || this.ruleForm.id === '') {
-              url = `${baseUrl.advertContent}/addAdDetails` // 新增功能
-//              this.ruleForm.showRule = parseInt(this.ruleForm.showRule)
+              url = `${baseUrl.advertContent}/adDetails/addAdDetails` // 新增功能
               console.log(77)
             } else {
               url = `${baseUrl.cityFencingUrl}/update`
@@ -782,10 +850,20 @@
         this.positionVal = val
         if (this.positionVal === '4') {
           this.picType = true
+          this.imgSize = '尺寸：640*100'
         } else if (this.positionVal === '4' && this.picVal === '2') {
           this.picType = true
           this.gifTime = true
-        } else {
+        } else if (this.positionVal === '5') {
+          this.imgSize = '尺寸：636*636'
+          this.gifTime = false
+          this.picType = false
+        } else if (this.positionVal === '6') {
+          this.imgSize = '尺寸：750*1334'
+          this.gifTime = false
+          this.picType = false
+        } else if (this.positionVal === '14') {
+          this.imgSize = '尺寸：690*370'
           this.gifTime = false
           this.picType = false
         }
@@ -800,16 +878,14 @@
           this.gifTime = false
         }
       },
-      iconList () { // 获取标签list
-        this.sdkLabelArr = []
+      iconList () {
         this.sdkLabelObj = {}
-        this.$ajax.post(`${baseUrl.advertContent}/findDictList?type=coupon_mode`, {timeout: 3000})
+        this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
           .then(response => {
             if (response.data.code === 200) {
               let result = response.data.data
-              console.log(result)
               for (let i = 0; i < result.length; i++) {
-                this.sdkLabelArr.push(result[i].label)
+//                this.sdkLabelArr.push(result[i].label)
                 this.sdkLabelObj[result[i].label] = result[i].id
               }
             } else {
@@ -832,26 +908,27 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          let index = this.sdkLabelArr.indexOf(val)
-          if (index > -1) {
-            let id = this.sdkLabelObj[val]
-            this.$ajax.post(`${baseUrl.advertContent}/deletDict`, {id: id, timeout: 3000})
-              .then(res => {
-                if (res.data.code === 200) {
-                  this.$message({
-                    type: 'success',
-                    message: '标签删除成功'
-                  })
-                  this.iconList()
-                }
-              })
-              .catch(() => {
+          console.log(val)
+//          let index = this.sdkLabelArr.indexOf(val)
+//          if (index > -1) {
+//          let id = this.sdkLabelObj[val]
+          this.$ajax.post(`${baseUrl.advertContent}/sysDict/deletDict`, {id: val, timeout: 3000})
+            .then(res => {
+              if (res.data.code === 200) {
                 this.$message({
-                  type: 'info',
-                  message: '标签删除失败'
+                  type: 'success',
+                  message: '标签删除成功'
                 })
+                this.iconList()
+              }
+            })
+            .catch(() => {
+              this.$message({
+                type: 'info',
+                message: '标签删除失败'
               })
-          }
+            })
+//          }
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -860,11 +937,12 @@
         })
       }, // 标签删除
       iconAdd () {
-        console.log(this.label)
-        this.$ajax.post(`${baseUrl.advertContent}/a`, {label: this.label, timeout: 3000})
+        let valueLabel = this.label + new Date().getTime()
+        this.$ajax.post(`${baseUrl.advertContent}/sysDict/addDict`, {label: this.label, value: valueLabel, createBy: Cookie.get('adminId'), timeout: 3000})
           .then(response => {
             if (response.data.code === 200) {
               this.iconList()
+              this.label = ''
               this.$message({
                 type: 'success',
                 message: '添加标签成功'
@@ -917,21 +995,24 @@
         return new Promise((resolve) => {
           this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'advertContent'}})
             .then((res) => {
-              this.Token2 = res.data.data
-              this.Token2.OSSAccessKeyId = res.data.data.accessid
+              console.log(2222, res)
+              this.Token2 = res.data
+              this.Token2.OSSAccessKeyId = res.data.accessid
               this.Token2.key = this.Token2.dir + '/' + (+new Date()) + file.name
+              console.log(this.Token2)
               resolve()
             })
-            .catch(err => {
+            .catch(() => {
               this.$message({
-                message: err.data.msg,
+                message: '图片秘钥获取失败',
                 type: 'error'
               })
             })
         })
       }, // 公用
       successPic1 (response, file, fileList) {
-        successImg(this.ruleForm.display_pic, this.Token1.key)
+//        successImg(this.ruleForm.display_pic, this.Token1.key)
+        this.ruleForm.display_pic = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
       },
       successSdkUrl (response, file, fileList) {
         this.ruleForm.top_img = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
@@ -953,7 +1034,10 @@
       },
       // 上传之前 清除原有图片
       clearUploadedPic1 (val) {
-        clearUploadedImg(this.ruleForm.display_pic, this.$refs.adPic1)
+//        clearUploadedImg(this.ruleForm.display_pic, this.$refs.adPic1)
+        if (this.ruleForm.display_pic) {
+          this.$refs.display_pic.clearFiles()
+        }
         this.ruleForm.display_pic = ''
       },
       clearUploadedSdkUrl () {
@@ -1018,32 +1102,6 @@
     }
   }
 
-  function successImg (formImg, Token) {
-    let Img = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + Token
-    formImg = Img
-    return formImg
-  }
-
-  function clearUploadedImg (formImg, refImg) {
-    // 如果有就清除
-    if (formImg) {
-      refImg.clearFiles()
-    }
-  }
-
-  function searchRole (result, checkedCity) {
-    for (let i = 0; i < result.length; i++) {
-      let item = result[i]
-      if (item.children !== undefined && item.children.length > 0) {
-        // 递归
-        searchRole(item.children, checkedCity)
-      }
-      if (item.roleId && item.roleId) {
-        let arr = checkedCity.push(item.id)
-        return arr
-      }
-    }
-  }
 </script>
 <style scoped>
   /*图片开始*/
@@ -1058,10 +1116,11 @@
 
   .viewImg {
     float: left;
+    margin-right:20px;
   }
 
   .imgTime {
-    width: 100px;
+    width: 140px;
   }
 
   .keySearch {
@@ -1080,12 +1139,12 @@
   }
 
   .treeAdOs {
-    width: 100px;
+    width: 110px;
     height: 150px;
     overflow: auto;
     border-radius: 4px;
     border: 1px solid #bfcbd9;
-    padding: 3px 5px;
+    padding: 3px 0px 3px 5px;
     box-sizing: border-box;
   }
 
