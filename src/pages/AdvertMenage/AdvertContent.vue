@@ -306,6 +306,7 @@
               <el-input v-model="label" class="width"></el-input>
               <button @click="iconAdd">保存</button>
             </el-form-item>
+            <a v-show = false>{{handerClick}}</a>
             <el-form-item label="一句话简介：" prop="sec_title">
               <el-input v-model="ruleForm.sec_title" class="widthUrl" placeholder="不超过50个中文字符"></el-input>
             </el-form-item>
@@ -461,8 +462,6 @@
           type: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
           display_pic: [{required: true, message: '请上传广告图片', trigger: 'blur'}],
           sort: [{required: true, message: '请输入展示顺序', trigger: 'blur'}],
-          city_name: [{required: true, message: '请选择地区', trigger: 'blur'}],
-          adAppVosing: [{required: true, message: '请选择投放版本', trigger: 'blur'}],
           is_download: [{required: true, message: '请选择投放形式', trigger: 'blur'}],
           action_url: [{required: true, message: '请输入地址', trigger: 'blur'}],
           downloadWay: [{required: true, message: '请选择下载形式', trigger: 'blur'}],
@@ -474,11 +473,12 @@
           version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
           install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}],
           viewImg1: [{required: true, message: '请上传预览图', trigger: 'blur'}],
-          sdkLabelArr: [{required: true, message: '请选择标签'}],
+          sdkLabelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
           checkedAdOs: [{required: true, message: '请选择投放版本'}],
           checkedCityArr: [{required: true, message: '请选择地区'}]
         },
         fileList2: [],
+        handerClick: [],
         defaultProps: {
           children: 'children',
           label: 'name'
@@ -537,7 +537,7 @@
           this.title = '广告内容新增'
         } else if (this.title === '广告内容新增') {
           this.ruleForm = {}
-          this.checkedCity = []
+//          this.checkedCity = []
           this.checkedAdOs = []
           this.checkedAndroid = []
           this.tip = '立即创建'
@@ -564,6 +564,9 @@
           if (this.$refs.viewImg !== undefined && this.$refs.viewImg !== '') {
             this.$refs.viewImg.clearFiles()
           }
+          this.$refs.tree.setCheckedKeys([])
+          this.$refs.treeIos.setCheckedKeys([])
+          this.$refs.treeAndroid.setCheckedKeys([])
         }
       },
       handleSizeChange (val) {
@@ -588,7 +591,6 @@
         this.$ajax.get(`${baseUrl.advertContent}/district/list`, {params: {timeout: 3000}})
           .then((res) => {
             if (res.data.code === 200) {
-              console.log(res.data.data)
               this.selectSection = res.data.data
             } else {
               this.$message({
@@ -669,7 +671,6 @@
         this.title = '广告内容新增'
         this.tip = '立即创建'
         this.ruleForm = {}
-        this.checkedCity = []
         this.checkedAdOs = []
         this.checkedAndroid = []
         this.$refs.ruleForm.resetFields()
@@ -695,6 +696,9 @@
         if (this.$refs.viewImg !== undefined && this.$refs.viewImg !== '') {
           this.$refs.viewImg.clearFiles()
         }
+        this.$refs.tree.setCheckedKeys([])
+        this.$refs.treeIos.setCheckedKeys([])
+        this.$refs.treeAndroid.setCheckedKeys([])
       }, // 新增
       pauseRecord (row) {
         console.log(row.adStatus)
@@ -880,27 +884,52 @@
       },
       iconList () {
         this.sdkLabelObj = {}
-        this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
-          .then(response => {
-            if (response.data.code === 200) {
-              let result = response.data.data
-              for (let i = 0; i < result.length; i++) {
-//                this.sdkLabelArr.push(result[i].label)
-                this.sdkLabelObj[result[i].label] = result[i].id
+        return new Promise((resolve) => {
+          this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
+            .then(response => {
+              if (response.data.code === 200) {
+                let result = response.data.data
+                for (let i = 0; i < result.length; i++) {
+                  this.sdkLabelObj[result[i].label] = result[i].id
+                }
+                this.handerClick.push(1)
+                this.handerClick.pop()
+              } else {
+                this.$message({
+                  type: 'error',
+                  message: '获取标签失败'
+                })
               }
-            } else {
+              resolve()
+            })
+            .catch(() => {
               this.$message({
                 type: 'error',
-                message: '获取标签失败'
+                message: '获取标签异常'
               })
-            }
-          })
-          .catch(() => {
-            this.$message({
-              type: 'error',
-              message: '获取标签异常'
             })
-          })
+        })
+//        this.sdkLabelObj = {}
+//        this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
+//          .then(response => {
+//            if (response.data.code === 200) {
+//              let result = response.data.data
+//              for (let i = 0; i < result.length; i++) {
+//                this.sdkLabelObj[result[i].label] = result[i].id
+//              }
+//            } else {
+//              this.$message({
+//                type: 'error',
+//                message: '获取标签失败'
+//              })
+//            }
+//          })
+//          .catch(() => {
+//            this.$message({
+//              type: 'error',
+//              message: '获取标签异常'
+//            })
+//          })
       },
       iconDelete (val) {
         this.$confirm('确定删除?', '提示', {
