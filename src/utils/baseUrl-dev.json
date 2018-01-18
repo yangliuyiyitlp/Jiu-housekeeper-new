@@ -8,5 +8,6 @@
   "serviceConfigUrl":"http://139.196.194.172:8080",
   "OperateUrl":"http://172.16.20.213:8888",
   "advertContent":"http://192.168.0.87:10006",
-  "advertContentHei":"http://192.168.0.123:8088"
+  "advertContentHei":"http://192.168.0.123:8088",
+  "ActivityMsgPlan":"http://192.168.0.167:10006"
 }

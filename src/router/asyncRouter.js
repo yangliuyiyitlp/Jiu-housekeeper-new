@@ -77,6 +77,15 @@ const asyncRouter = [
     path: '/404',
     name: '404',
     component: r => require.ensure([], () => r(require('@/components/commons/NotFound.vue')), 'NotFound')
+  },
+  // 活动相关
+  {
+    path: '/activity/message/plan',
+    name: 'activity.message.plan',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Activity/ActivityMessagePlan.vue')), 'ActivityMessagePlan')
   }
 ]
 
