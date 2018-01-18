@@ -5,12 +5,12 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="状态：">
             <el-select v-model="formInline.adStatus" clearable>
-              <el-option v-for="(val,key) in adStatus" v-bind:key=key :label=adStatus[key] :value=key></el-option>
+              <el-option v-for="(val,key) in adStatus" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="位置：">
             <el-select v-model="formInline.type" clearable>
-              <el-option v-for="(key,val) in type" v-bind:key=key :label=type[key] :value=key></el-option>
+              <el-option v-for="(val,key) in type" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="投放时间：">
@@ -62,7 +62,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="download_type"
+            prop="is_download"
             label="形式">
           </el-table-column>
           <el-table-column
@@ -75,6 +75,7 @@
             header-align="center"
             align="center"
             prop="adDate"
+            :show-overflow-tooltip = true
             label="投放日期">
           </el-table-column>
           <el-table-column
@@ -86,7 +87,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="updateByName"
+            prop="update_by"
             label="操作人">
           </el-table-column>
           <el-table-column
@@ -108,7 +109,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNum"
+          :current-page="pagination.pageNo"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -151,6 +152,7 @@
                 ref="adPic1"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                :limit =1
                 :data="Token2"
                 :on-remove="removePic1"
                 :on-success="successPic1"
@@ -418,14 +420,14 @@
         create: true,
         Pic1: true,
         title: '广告内容新增',
-        adStatus: {'': '全部', '1': '投放中', '2': '未开始', '3': '已结束', '4': '已暂停'},
+        adStatus: {'': '全部', '1': '投放中', '0': '未开始', '2': '已结束', '3': '已暂停'},
         type: {'': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
         pauseTip: '暂停',
         updateDelete: '',
         Token2: {},
-        tableData: [{'id': 22, 'adStatus': '投放中'}, {'id': 33, 'adStatus': '投放'}],
+        tableData: [],
         checkedPosition: [],
         adCheckedPosition: {'6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         adCheckedPic: {'1': '图片', '2': 'GIF'},
@@ -453,7 +455,7 @@
         sdkLabelArr: [],
         formInline: {
           pageSize: 30,
-          pageNum: 1
+          pageNo: 1
         },
         ruleForm: {},
         rules: {
@@ -483,7 +485,7 @@
           children: 'children',
           label: 'name'
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         adminId: '',
         path: '',
         permissionList: ['advert/content/view', 'advert/content/create', 'advert/content/update', 'advert/content/pause']
@@ -575,8 +577,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNum = val
-        this.pagination.pageNum = val
+        this.formInline.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       filterNode (value, data) {
@@ -588,7 +590,7 @@
         this.filterId = data.id // 弹框树模型点击输入值
       },
       selectCity () {
-        this.$ajax.get(`${baseUrl.advertContent}/district/list`, {params: {timeout: 3000}})
+        this.$ajax.get(`${baseUrl.advertContentHei}/district/list`, {params: {timeout: 3000}})
           .then((res) => {
             if (res.data.code === 200) {
               this.selectSection = res.data.data
@@ -640,17 +642,22 @@
           })
       },
       query () {
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/list`, {params: this.formInline, timeout: 3000})
+        if (this.formInline.display_time > this.formInline.del_time) {
+          alert('开始时间不能晚于结束时间')
+          return
+        }
+        this.$ajax.get(`${baseUrl.advertContentHei}/ad/list`, {params: this.formInline, timeout: 3000})
           .then((res) => {
             if (res.data.code === 200) {
-              let result = res.data.data
-              this.tableData = result
-              this.pagination.count = res.data.total
+              let resultForm = res.data.data
+              this.tableData = resultForm.result
+              this.pagination.count = resultForm.total
               // 状态  形式 位置
-              for (let i = 0; i < result.length; i++) {
-                this.tableData[i].adStatus = this.adStatus[result[i].adStatus]
-                this.tableData[i].download_type = this.adStyleObj[result[i].download_type]
-                this.tableData[i].type = this.type[result[i].type]
+              for (let i = 0; i < resultForm.result.length; i++) {
+                this.tableData[i].adStatus = this.adStatus[resultForm.result[i].adStatus]
+                this.tableData[i].type = this.type[resultForm.result[i].type]
+                this.tableData[i].is_download = this.adStyleObj[resultForm.result[i].is_download]
+                this.tableData[i].adDate = resultForm.result[i].display_time + '—' + resultForm.result[i].del_time
               }
             } else {
               this.$message({
@@ -828,6 +835,7 @@
                     type: 'success',
                     message: response.data.msg
                   })
+                  this.ruleForm = {}
                   this.back()
                   // 刷新页面
                   this.query()
@@ -1065,7 +1073,7 @@
       clearUploadedPic1 (val) {
 //        clearUploadedImg(this.ruleForm.display_pic, this.$refs.adPic1)
         if (this.ruleForm.display_pic) {
-          this.$refs.display_pic.clearFiles()
+          this.$refs.adPic1.clearFiles()
         }
         this.ruleForm.display_pic = ''
       },
