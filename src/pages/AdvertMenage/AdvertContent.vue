@@ -91,7 +91,7 @@
             label="操作人">
           </el-table-column>
           <el-table-column
-            v-if='updateDelete'
+            v-if="hasPermission('advert/content/pause') || hasPermission('advert/content/update')"
             header-align="center"
             align="center"
             width="100"
@@ -117,7 +117,7 @@
         </el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane :label="title" name="second" v-if="create">
+      <el-tab-pane :label="title" name="second" v-if="hasPermission('advert/content/create')">
         <!--<el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="ruleForm">-->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <h2>广告素材</h2>
@@ -239,21 +239,21 @@
             </el-radio-group>
           </el-form-item>
           <!--落地页-->
-          <el-form-item label="落地页地址：" v-if="isLandingUrl" prop="action_url">
+          <el-form-item label="落地页地址：" v-show="isLandingUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入H5页面链接"></el-input>
           </el-form-item>
           <!--应用下载-->
-          <el-form-item label="下载形式：" prop="downloadWay" v-if="isDownloadWay">
+          <el-form-item label="下载形式：" prop="downloadWay" v-show="isDownloadWay">
             <el-radio-group v-model="ruleForm.downloadWay" @change="handleCheckedLoadWay">
               <el-radio v-for="(val, key) in downloadWayObj" :key="key" :label="key">{{val}}</el-radio>
             </el-radio-group>
           </el-form-item>
           <!--应用下载-有下载页-->
-          <el-form-item label="下载页地址：" v-if="isDownloadPageUrl" prop="action_url">
+          <el-form-item label="下载页地址：" v-show="isDownloadPageUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入下载页面地址"></el-input>
           </el-form-item>
           <!--应用下载-直接下载-->
-          <el-form-item label="下载地址：" v-if="isDownloadUrl" prop="action_url">
+          <el-form-item label="下载地址：" v-show="isDownloadUrl" prop="action_url">
             <el-input v-model="ruleForm.action_url" class="widthUrl" placeholder="请输入应用下载地址"></el-input>
           </el-form-item>
           <!--应用下载-使用模板-->
@@ -424,14 +424,14 @@
         filterText: '',
         filterId: '',
         activeName2: 'first',
-        create: true,
+//        create: true,
         Pic1: true,
         title: '广告内容新增',
         adStatus: {'': '全部', '1': '投放中', '0': '未开始', '2': '已结束', '3': '已暂停'},
         type: {'': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
-        updateDelete: '',
+//        updateDelete: true,
         Token2: {},
         tableData: [],
         checkedPosition: [],
@@ -499,7 +499,7 @@
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         adminId: '',
         path: '',
-        permissionList: ['advert/content/view', 'advert/content/create', 'advert/content/update', 'advert/content/pause']
+        permissionList: []
       }
     },
     created () {
@@ -510,16 +510,16 @@
       this.selectCity()
       this.iconList()
       this.selectVersion()
-      if (this.hasPermission('advert/content/create')) {
-        this.create = true
-      } else {
-        this.create = false
-      }
-      if (this.hasPermission('advert/content/update') || this.hasPermission('advert/content/pause')) {
-        this.updateDelete = true
-      } else {
-        this.updateDelete = false
-      }
+//      if (this.hasPermission('advert/content/create')) {
+//        this.create = true
+//      } else {
+//        this.create = false
+//      }
+//      if (this.hasPermission('advert/content/update')) {
+//        this.updateDelete = true
+//      } else {
+//        this.updateDelete = false
+//      }
     },
     watch: {
       filterText (val) {
@@ -784,20 +784,16 @@
             if (res.data.code === 200) {
               let resultData = res.data.data
               this.ruleForm = resultData
-              console.log(66, JSON.stringify(resultData))
               // 下载形式显示对应的
               if (resultData.downloadWay === '0') {
-                alert(0)
                 this.isDownloadPageUrl = true
                 this.isDownloadUrl = false
                 this.isDownloadModule = false
               } else if (resultData.downloadWay === '1') {
-                alert(1)
                 this.isDownloadPageUrl = false
                 this.isDownloadUrl = true
                 this.isDownloadModule = true
               } else if (resultData.downloadWay === '2') {
-                alert(2)
                 this.isDownloadPageUrl = false
                 this.isDownloadUrl = true
                 this.isDownloadModule = false

@@ -51,6 +51,7 @@ export default {
             for (let i = 0; i < res.data.data.length; i++) {
               if (res.data.data[i].permission !== '' && res.data.data[i].permission !== undefined) {
                 permissionList.push(res.data.data[i].permission)
+                console.log(permissionList)
               }
             }
             router.push({path: path})
