@@ -125,11 +125,11 @@
             <el-input v-model="ruleForm.description" class="width" placeholder="请输入广告标题"></el-input>
           </el-form-item>
 
-          <!--<el-form-item label="广告渠道：">-->
-            <!--<el-select v-model="ruleForm.adWays" clearable>-->
-              <!--<el-option v-for="(val,key) in adWays" v-bind:key=key :label=val :value=key></el-option>-->
-            <!--</el-select>-->
-          <!--</el-form-item>-->
+          <el-form-item label="广告渠道：" prop ='adChannel'>
+            <el-select v-model="ruleForm.adChannel" clearable>
+              <el-option v-for="(val,key) in adChannel" v-bind:key=key :label=val :value=val></el-option>
+            </el-select>
+          </el-form-item>
 
           <el-form-item label="投放时间：" prop="display_time">
             <el-date-picker
@@ -437,14 +437,13 @@
         filterText: '',
         filterId: '',
         activeName2: 'first',
-//        create: true,
         Pic1: true,
         title: '广告内容新增',
         adStatus: {'': '全部', '1': '投放中', '0': '未开始', '2': '已结束', '3': '已暂停'},
         type: {'': '全部', '6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
         showFlag: '',
         tip: '立即创建',
-//        adWays: {},
+        adChannel: {},
         Token2: {},
         tableData: [],
         checkedPosition: [],
@@ -478,6 +477,7 @@
         ruleForm: {},
         rules: {
           description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
+          adChannel: [{required: true, message: '请选择广告渠道', trigger: 'blur'}],
           display_time: [{required: true, message: '请选择投放时间'}],
           type: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
           display_pic: [{required: true, message: '请上传广告图片', trigger: 'blur'}],
@@ -525,7 +525,7 @@
       this.selectCity()
       this.iconList()
       this.selectVersion()
-//      this.selectAdWays()
+      this.selectAdChannel()
     },
     watch: {
       filterText (val) {
@@ -647,26 +647,30 @@
             })
           })
       },
-//      selectAdWays () {
-//        this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': 0, timeout: 3000}})
-//          .then((res) => {
-//            if (res.data.code === 200) {
-//             this.adWays = res.data.data
-//              this.adWays = {'0': '哈哈', '1': '呵呵', '2': '走开'}
-//            } else {
-//              this.$message({
-//                type: 'info',
-//                message: res.data.msg
-//              })
-//            }
-//          })
-//          .catch(() => {
-//            this.$message({
-//              type: 'info',
-//              message: '广告渠道获取异常'
-//            })
-//          })
-//      },
+      selectAdChannel () {
+        this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'ad_channel', timeout: 3000})
+          .then((res) => {
+            if (res.data.code === 200) {
+              let result = res.data.data
+              if (result) {
+                for (let i = 0; i < result.length; i++) {
+                  this.adChannel[result[i].id] = result[i].label
+                }
+              }
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              })
+            }
+          })
+          .catch((err) => {
+            this.$message({
+              type: 'info',
+              message: '广告渠道获取异常' + err
+            })
+          })
+      },
       query () {
         if (this.formInline.display_time > this.formInline.del_time) {
           alert('开始时间不能晚于结束时间')
@@ -869,7 +873,6 @@
               let labelArr = resultData.tag.split(',')
               this.sdkLabelArr = labelArr
               console.log(resultData)
-              // 广告渠道
             } else {
               this.$message({
                 type: 'error',
@@ -1012,7 +1015,7 @@
       iconList () {
         this.sdkLabelObj = {}
         return new Promise((resolve) => {
-          this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 10000})
+          this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
             .then(response => {
               if (response.data.code === 200) {
                 let result = response.data.data

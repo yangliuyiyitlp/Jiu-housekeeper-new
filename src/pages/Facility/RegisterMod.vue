@@ -142,31 +142,7 @@
           </el-form-item>
 
           <el-form-item label="视频上传：">
-            <el-input v-model="ruleForm.top_img" v-show='false'></el-input>
-            <img width="100%" :src="ruleForm.topImg" alt="视频上传">
-            <el-upload
-              ref="top_img"
-              list-type="picture-card"
-              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-              :data="Token2"
-              :on-remove="removeSdkUrl"
-              :on-success="successSdkUrl"
-              :before-upload="beforeUploadPic2">
-              <el-button type="primary" @click="clearUploadedSdkUrl">上传视频
-                <i class="el-icon-upload el-icon--right"></i>
-              </el-button>
-            </el-upload>
-
-            <el-upload
-              class="upload-demo"
-              action="http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com"
-              :on-preview="handlePreview"
-              :on-remove="handleRemove"
-              :file-list="fileList">
-              <el-button size="small" type="primary">点击上传</el-button>
-              <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-            </el-upload>
-
+            <input type="file" id="file_upload" name="file_upload" accept="video/*">
           </el-form-item>
 
           <el-form-item>
@@ -188,6 +164,7 @@
   export default {
     data () {
       return {
+        fileList: [],
         activeName2: 'first',
         update: true,
         create: true,
@@ -231,36 +208,6 @@
       }
     },
     methods: {
-      beforeUploadPic2 (file) {
-        return new Promise((resolve) => {
-          this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'ceshi'}})
-            .then((res) => {
-              console.log(2222, res)
-              this.Token2 = res.data
-              this.Token2.OSSAccessKeyId = res.data.accessid
-              this.Token2.key = this.Token2.dir + '/' + (+new Date()) + file.name
-              resolve()
-            })
-            .catch(() => {
-              this.$message({
-                message: '图片秘钥获取失败',
-                type: 'error'
-              })
-            })
-        })
-      },
-      successSdkUrl (response, file, fileList) {
-        this.ruleForm.top_img = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
-      },
-      clearUploadedSdkUrl () {
-        if (this.ruleForm.top_img) {
-          this.$refs.top_img.clearFiles()
-        }
-        this.ruleForm.top_img = ''
-      },
-      removeSdkUrl () {
-        this.ruleForm.top_img = ''
-      },
       onBeginTimeChange (val) {
         this.formInline.beginTime = new Date(val).getTime()
       },
@@ -437,6 +384,7 @@
         this.ruleForm = {}
       },
       submitForm (ruleForm) {
+        console.log(66, this.ruleForm)
         this.$refs[ruleForm].validate((valid) => {
           let url
           if (valid) {
