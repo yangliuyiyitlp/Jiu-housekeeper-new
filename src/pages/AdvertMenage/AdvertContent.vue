@@ -168,7 +168,7 @@
           <el-form-item label="广告图片：" prop="display_pic">
             <div v-show="Pic1">
               <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
-                <img width="100%" :src="ruleForm.displayPic" alt="广告图片">
+              <img width="100%" :src="ruleForm.displayPic" alt="广告图片">
               <el-upload
                 ref="adPic1"
                 list-type="picture-card"
@@ -1280,19 +1280,19 @@
     }
   }
 
-//  function searchRole (result, checkedRoles) {
-//    for (let i = 0; i < result.length; i++) {
-//      let item = result[i]
-//      if (item.children !== undefined && item.children.length > 0) {
-//        // 递归
-//        searchRole(item.children, checkedRoles)
-//      }
-//      if (item.roleId && item.roleId) {
-//        let arr = checkedRoles.push(item.id)
-//        return arr
-//      }
-//    }
-//  }
+  //  function searchRole (result, checkedRoles) {
+  //    for (let i = 0; i < result.length; i++) {
+  //      let item = result[i]
+  //      if (item.children !== undefined && item.children.length > 0) {
+  //        // 递归
+  //        searchRole(item.children, checkedRoles)
+  //      }
+  //      if (item.roleId && item.roleId) {
+  //        let arr = checkedRoles.push(item.id)
+  //        return arr
+  //      }
+  //    }
+  //  }
 </script>
 <style scoped>
   .textarea{
