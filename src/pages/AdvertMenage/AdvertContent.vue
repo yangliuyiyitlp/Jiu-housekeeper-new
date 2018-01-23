@@ -48,6 +48,7 @@
             header-align="center"
             align="center"
             label="广告标题"
+            :show-overflow-tooltip = true
             prop="description">
           </el-table-column>
 
@@ -56,7 +57,6 @@
             align="center"
             prop="adStatus"
             label="状态">
-
           </el-table-column>
 
           <el-table-column
@@ -70,6 +70,20 @@
             align="center"
             prop="type"
             label="位置">
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="adSecretKey"
+            :show-overflow-tooltip = true
+            label="密钥">
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="adUrl"
+            :show-overflow-tooltip = true
+            label="地址">
           </el-table-column>
           <el-table-column
             header-align="center"
@@ -127,7 +141,7 @@
 
           <el-form-item label="广告渠道：" prop ='adChannel'>
             <el-select v-model="ruleForm.adChannel" clearable>
-              <el-option v-for="(val,key) in adChannel" v-bind:key=key :label=val :value=val></el-option>
+              <el-option v-for="(val,key) in adChannel" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
           </el-form-item>
 

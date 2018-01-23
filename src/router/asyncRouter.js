@@ -73,6 +73,15 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/AdvertMenage/AdvertData.vue')), 'AdvertData')
   },
+  // 版本管理
+  {
+    path: '/version/manage',
+    name: 'version.manage',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Mypanner/VersionManage.vue')), 'VersionManage')
+  },
   {
     path: '/404',
     name: '404',
