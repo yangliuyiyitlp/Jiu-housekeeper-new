@@ -4,8 +4,8 @@
       <el-tab-pane label="版本内容信息" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="平台：">
-            <el-select v-model="formInline.adStatus" clearable>
-              <el-option v-for="(val,key) in adStatus" v-bind:key=key :label=val :value=key></el-option>
+            <el-select v-model="formInline.os" clearable>
+              <el-option v-for="(val,key) in osPlatform" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-if="hasPermission('version/manage/view')">
@@ -30,13 +30,13 @@
             header-align="center"
             align="center"
             label="版本号"
-            prop="description">
+            prop="version">
           </el-table-column>
 
           <el-table-column
             header-align="center"
             align="center"
-            prop="adStatus"
+            prop="os"
             label="平台">
           </el-table-column>
 
@@ -44,27 +44,22 @@
             header-align="center"
             align="center"
             :show-overflow-tooltip = true
-            prop="is_download"
+            prop="releaseNotes"
             label="更新通知内容">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="type"
+            prop="remarks"
             label="版本修改内容">
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
-            prop="adDate"
+            prop="createDate"
             label="添加时间">
           </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="sort"
-            label="展示顺序">
-          </el-table-column>
+
           <el-table-column
             v-if="hasPermission('version/manage/update') || hasPermission('advert/content/update')"
             header-align="center"
@@ -81,7 +76,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNo"
+          :current-page="pagination.pageNum"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -172,7 +167,7 @@
       return {
         activeName2: 'first',
         title: '版本内容新增',
-        adStatus: {'': '全部', '1': '投放中', '0': '未开始', '2': '已结束', '3': '已暂停'},
+        osPlatform: {'': '全部', '0': 'ios', '1': 'andriod'},
         tip: '立即创建',
         tableData: [],
         sdkLabelObj: {},
@@ -187,13 +182,13 @@
         },
         formInline: {
           pageSize: 30,
-          pageNo: 1
+          pageNum: 1
         },
         ruleForm: {},
         rules: {
           description: [{required: true, message: '请输入广告标题', trigger: 'blur'}]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         adminId: '',
         path: '',
         permissionList: []
@@ -204,6 +199,7 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
+      this.selectVersion()
     },
     methods: {
       hasPermission (data) {
@@ -230,20 +226,40 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNo = val
-        this.pagination.pageNo = val
+        this.formInline.pageNum = val
+        this.pagination.pageNum = val
         this.query()
       },
+      selectVersion () {
+        this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': 0, timeout: 3000}})
+          .then((res) => {
+            let result = res.data.data
+            if (res.data.code === 200 && result.ios_versions && result.android_versions) {
+              this.selectAdOs = result.ios_versions
+              this.selectAndroid = result.android_versions
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              })
+            }
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '版本列表获取异常'
+            })
+          })
+      },
       query () {
-        this.$ajax.get(`${baseUrl.advertContent}/ad/list`, {params: this.formInline, timeout: 3000})
+        this.$ajax.get(`${baseUrl.advertContent}/version/listApp`, {params: this.formInline, timeout: 3000})
           .then((res) => {
             if (res.data.code === 200) {
               let resultForm = res.data.data
               this.tableData = resultForm.result
               this.pagination.count = resultForm.total
-              // 状态  形式 位置
               for (let i = 0; i < resultForm.result.length; i++) {
-                this.tableData[i].adStatus = this.adStatus[resultForm.result[i].adStatus]
+                this.tableData[i].os = this.osPlatform[resultForm.result[i].os]
               }
             } else {
               this.$message({
@@ -370,7 +386,7 @@
   }
 </script>
 <style scoped>
-  @import '../../assets/css/treecss.css';
+  /*@import '../../assets/css/treecss.css';*/
   .textarea{
     width:300px;
   }
