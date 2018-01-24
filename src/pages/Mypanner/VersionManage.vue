@@ -113,16 +113,51 @@
             </el-input>
           </el-form-item>
 
+          <!--<el-form-item label="强制更新版本：">-->
+            <!--<div class="treeIos">-->
+              <!--<div class="areaAdOs">-->
+                <!--<el-tree-->
+                  <!--:data="selectDate"-->
+                  <!--show-checkbox-->
+                  <!--default-expand-all-->
+                  <!--node-key="id"-->
+                  <!--:default-checked-keys="checkedAdOs"-->
+                  <!--ref="treeIos"-->
+                  <!--class="treeAdOs"-->
+                  <!--accordion-->
+                  <!--:props="defaultCity">-->
+                <!--</el-tree>-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</el-form-item>-->
+
           <el-form-item label="强制更新版本：">
-            <div class="treeIos">
+            <div class="treeIos" v-show="isIos">
+              <p>ios强制更新版本：</p>
               <div class="areaAdOs">
                 <el-tree
-                  :data="selectDate"
+                  :data="selectAdOs"
                   show-checkbox
                   default-expand-all
                   node-key="id"
                   :default-checked-keys="checkedAdOs"
                   ref="treeIos"
+                  class="treeAdOs"
+                  accordion
+                  :props="defaultCity">
+                </el-tree>
+              </div>
+            </div>
+            <div v-show="!isIos">
+              <p>安卓强制更新版本：</p>
+              <div class="areaAdOs">
+                <el-tree
+                  :data="selectAndroid"
+                  show-checkbox
+                  default-expand-all
+                  node-key="id"
+                  :default-checked-keys="checkedAndroid"
+                  ref="treeAndroid"
                   class="treeAdOs"
                   accordion
                   :props="defaultCity">
@@ -144,6 +179,7 @@
 <script>
   import a from '../../assets/js/getsessionId.js'
   import baseUrl from '../../utils/baseUrl'
+  import Cookie from 'js-cookie'
 
   export default {
     data () {
@@ -155,9 +191,11 @@
         tip: '立即创建',
         tableData: [],
         checkedAdOs: [],
+        checkedAndroid: [],
         selectDate: [],
         selectAdOs: [],
         selectAndroid: [],
+        isIos: true,
         defaultCity: {
           children: 'children',
           label: 'version'
@@ -207,6 +245,7 @@
           this.tip = '立即创建'
           this.$refs.ruleForm.resetFields()
           this.$refs.treeIos.setCheckedKeys([])
+          this.$refs.treeAndroid.setCheckedKeys([])
         }
       },
       handleSizeChange (val) {
@@ -221,11 +260,12 @@
       },
       osChange (val) {
         if (val === '0') {
-          this.selectDate = this.selectAdOs
+          this.isIos = true
         } else if (val === '1') {
-          this.selectDate = this.selectAndroid
+          this.isIos = false
         }
-        this.$refs.treeIos.setCheckedKeys([])
+//        this.$refs.treeIos.setCheckedKeys([])
+//        this.$refs.treeAndroid.setCheckedKeys([])
       },
       selectVersion () {
         this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': 0, timeout: 3000}})
@@ -278,8 +318,10 @@
         this.tip = '立即创建'
         this.ruleForm = {}
         this.checkedAdOs = []
+        this.checkedAndroid = []
         this.$refs.ruleForm.resetFields()
         this.$refs.treeIos.setCheckedKeys([])
+        this.$refs.treeAndroid.setCheckedKeys([])
       }, // 新增
       modifyRecord (id) {
         this.activeName2 = 'second'
@@ -296,6 +338,7 @@
       resetForm (ruleForm) {
         this.ruleForm = {}
         this.checkedAdOs = []
+        this.checkedAndroid = []
         this.$refs.ruleForm.resetFields()
       },
       getMore (id) {
@@ -306,13 +349,19 @@
               this.ruleForm = resultData
               // 版本
               if (resultData.os === '0') {
-                this.selectDate = this.selectAdOs
+                this.isIos = true
+                if (resultData.forceUpdateVersionId) {
+                  this.checkedAdOs = resultData.forceUpdateVersionId.split(',')
+                  this.$refs.treeIos.setCheckedKeys(this.checkedAdOs)
+                }
+                this.$refs.treeAndroid.setCheckedKeys([])
               } else if (resultData.os === '1') {
-                this.selectDate = this.selectAndroid
-              }
-              if (resultData.forceUpdateVersion) {
-                this.checkedAdOs = resultData.forceUpdateVersion.split(',')
-                this.$refs.treeIos.setCheckedKeys(this.checkedAdOs)
+                this.isIos = false
+                if (resultData.forceUpdateVersionId) {
+                  this.checkedAndroid = resultData.forceUpdateVersionId.split(',')
+                  this.$refs.treeAndroid.setCheckedKeys(this.checkedAndroid)
+                }
+                this.$refs.treeIos.setCheckedKeys([])
               }
             } else {
               this.$message({
@@ -328,13 +377,47 @@
           })
       }, // 获取详情
       submitForm (ruleForm) {
-        // 标签
-        let treeIosArrIds = this.$refs.treeIos.getCheckedKeys()
-        this.ruleForm.forceUpdateVersion = treeIosArrIds.join(',')
-        console.log(33, this.ruleForm.forceUpdateVersion)
+        // 版本
+        let treeIosArrIds
+        if (this.isIos) {
+          treeIosArrIds = this.$refs.treeIos.getCheckedKeys()
+          this.ruleForm.forceUpdateVersion = ''
+          let versionArr = []
+          let versionObj = {}
+          if (treeIosArrIds) {
+            this.ruleForm.forceUpdateVersionId = treeIosArrIds.join(',')
+            for (let i = 0; i < this.selectAdOs.length; i++) {
+              versionObj[this.selectAdOs[i].id] = this.selectAdOs[i].version
+            }
+            for (let i = 0; i < treeIosArrIds.length; i++) {
+              versionArr.push(versionObj[treeIosArrIds[i]])
+            }
+            this.ruleForm.forceUpdateVersion = versionArr.join(',')
+          }
+        } else {
+          treeIosArrIds = this.$refs.treeAndroid.getCheckedKeys()
+          this.ruleForm.forceUpdateVersion = ''
+          let versionArr = []
+          let versionObj = {}
+          if (treeIosArrIds) {
+            this.ruleForm.forceUpdateVersionId = treeIosArrIds.join(',')
+            for (let i = 0; i < this.selectAndroid.length; i++) {
+              versionObj[this.selectAndroid[i].id] = this.selectAndroid[i].version
+            }
+            for (let i = 0; i < treeIosArrIds.length; i++) {
+              versionArr.push(versionObj[treeIosArrIds[i]])
+            }
+            this.ruleForm.forceUpdateVersion = versionArr.join(',')
+          }
+        }
         // 请求
         this.$refs[ruleForm].validate((valid) => {
-          let url = `${baseUrl.advertContent}/adDetails/addAdDetails`
+          if (this.ruleForm.id) {
+            this.ruleForm.updateBy = Cookie.get('adminId')
+          } else {
+            this.ruleForm.createBy = Cookie.get('adminId')
+          }
+          let url = `${baseUrl.advertContent}/version/operate`
           if (valid) {
             this.$ajax.post(url, this.ruleForm)
               .then(response => {
@@ -348,6 +431,7 @@
                   this.back()
                   // 刷新页面
                   this.query()
+                  this.selectVersion()
                 } else {
                   this.$message({
                     type: 'error',
