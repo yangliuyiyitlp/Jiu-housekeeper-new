@@ -131,7 +131,7 @@
         </el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane :label="title" name="second" v-if="hasPermission('advert/content/create')">
+      <el-tab-pane :label="title" name="second" v-if="hasPermission('advert/content/create') || hasPermission('advert/content/update')">
         <!--<el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="ruleForm">-->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <h2>广告素材</h2>
@@ -566,7 +566,14 @@
         return false
       },
       handleClick () {
-        if (this.activeName2 === 'first' && this.create) {
+        if (this.activeName2 === 'first') {
+          this.formInline = {
+            pageSize: 30,
+            pageNum: 1
+          }
+          this.query()
+        }
+        if (this.activeName2 === 'first' && this.hasPermission('advert/content/create')) {
           this.title = '广告内容新增'
         } else if (this.title === '广告内容新增') {
           this.ruleForm = {}
@@ -779,14 +786,13 @@
       }, // 暂停
       modifyRecord (id) {
         this.activeName2 = 'second'
-        this.create = true
         this.title = '广告内容修改'
         this.tip = '提交修改'
         this.getMore(id)
       }, // 修改
       back () {
         this.activeName2 = 'first'
-        if (this.create) {
+        if (this.hasPermission('advert/content/create')) {
           this.title = '广告内容新增'
         }
       },

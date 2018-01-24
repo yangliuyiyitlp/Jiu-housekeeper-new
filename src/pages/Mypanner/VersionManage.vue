@@ -86,60 +86,43 @@
 
       <el-tab-pane :label="title" name="second" v-if="hasPermission('version/manage/create')">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-          <el-form-item label="版本号：" prop="description">
-            <el-input v-model="ruleForm.description" class="width"></el-input>
-          </el-form-item>
-          <el-form-item label="平台：" prop="description">
-            <el-checkbox-group v-model="sdkLabelArr" class="sdkwidth">
-              <el-checkbox v-for="(val, key) in sdkLabelObj" :key="val" :label="key">{{key}}
-              </el-checkbox>
-            </el-checkbox-group>
+          <el-form-item label="版本号：" prop="version">
+            <el-input v-model="ruleForm.version" class="width"></el-input>
           </el-form-item>
 
-          <el-form-item label="更新通知内容：" prop="description">
+          <el-form-item label="平台：" prop="os">
+            <el-radio-group v-model="ruleForm.os" @change="osChange">
+              <el-radio v-for="(val, key) in osObj" :key="key" :label="key">{{val}}</el-radio>
+            </el-radio-group>
+          </el-form-item>
+
+          <el-form-item label="更新通知内容：" prop="releaseNotes">
             <el-input
               type="textarea"
               autosize
               class="textarea"
-              v-model="ruleForm.textarea">
+              v-model="ruleForm.releaseNotes">
             </el-input>
           </el-form-item>
-          <el-form-item label="APP修改内容：" prop="textarea">
+          <el-form-item label="APP修改内容：">
             <el-input
               type="textarea"
               autosize
               class="textarea"
-              v-model="ruleForm.textarea">
+              v-model="ruleForm.remarks">
             </el-input>
           </el-form-item>
 
           <el-form-item label="强制更新版本：">
             <div class="treeIos">
-              <p>ios更新版本：</p>
               <div class="areaAdOs">
                 <el-tree
-                  :data="selectAdOs"
+                  :data="selectDate"
                   show-checkbox
                   default-expand-all
                   node-key="id"
                   :default-checked-keys="checkedAdOs"
                   ref="treeIos"
-                  class="treeAdOs"
-                  accordion
-                  :props="defaultCity">
-                </el-tree>
-              </div>
-            </div>
-            <div>
-              <p>安卓更新版本：</p>
-              <div class="areaAdOs">
-                <el-tree
-                  :data="selectAndroid"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  :default-checked-keys="checkedAndroid"
-                  ref="treeAndroid"
                   class="treeAdOs"
                   accordion
                   :props="defaultCity">
@@ -168,12 +151,11 @@
         activeName2: 'first',
         title: '版本内容新增',
         osPlatform: {'': '全部', '0': 'ios', '1': 'andriod'},
+        osObj: {'0': 'ios', '1': 'andriod'},
         tip: '立即创建',
         tableData: [],
-        sdkLabelObj: {},
-        sdkLabelArr: [],
         checkedAdOs: [],
-        checkedAndroid: [],
+        selectDate: [],
         selectAdOs: [],
         selectAndroid: [],
         defaultCity: {
@@ -186,7 +168,9 @@
         },
         ruleForm: {},
         rules: {
-          description: [{required: true, message: '请输入广告标题', trigger: 'blur'}]
+          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
+          os: [{required: true, message: '请选择平台', trigger: 'blur'}],
+          releaseNotes: [{required: true, message: '请输入更新通知内容', trigger: 'blur'}]
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         adminId: '',
@@ -209,15 +193,20 @@
         return false
       },
       handleClick () {
-        if (this.activeName2 === 'first' && this.create) {
+        if (this.activeName2 === 'first') {
+          this.formInline = {
+            pageSize: 30,
+            pageNum: 1
+          }
+          this.query()
+        }
+        if (this.activeName2 === 'first' && this.hasPermission('version/manage/create')) {
           this.title = '版本内容新增'
         } else if (this.title === '版本内容新增') {
           this.ruleForm = {}
-          this.sdkLabelArr = []
           this.tip = '立即创建'
           this.$refs.ruleForm.resetFields()
           this.$refs.treeIos.setCheckedKeys([])
-          this.$refs.treeAndroid.setCheckedKeys([])
         }
       },
       handleSizeChange (val) {
@@ -229,6 +218,14 @@
         this.formInline.pageNum = val
         this.pagination.pageNum = val
         this.query()
+      },
+      osChange (val) {
+        if (val === '0') {
+          this.selectDate = this.selectAdOs
+        } else if (val === '1') {
+          this.selectDate = this.selectAndroid
+        }
+        this.$refs.treeIos.setCheckedKeys([])
       },
       selectVersion () {
         this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': 0, timeout: 3000}})
@@ -281,11 +278,8 @@
         this.tip = '立即创建'
         this.ruleForm = {}
         this.checkedAdOs = []
-        this.checkedAndroid = []
-        this.sdkLabelArr = []
         this.$refs.ruleForm.resetFields()
         this.$refs.treeIos.setCheckedKeys([])
-        this.$refs.treeAndroid.setCheckedKeys([])
       }, // 新增
       modifyRecord (id) {
         this.activeName2 = 'second'
@@ -302,31 +296,24 @@
       resetForm (ruleForm) {
         this.ruleForm = {}
         this.checkedAdOs = []
-        this.checkedAndroid = []
-        this.sdkLabelArr = []
         this.$refs.ruleForm.resetFields()
       },
       getMore (id) {
-        this.$ajax.get(`${baseUrl.advertContent}/ad/show`, {params: {id: id, timeout: 4000}})
+        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {id: id, timeout: 4000}})
           .then(res => {
             if (res.data.code === 200) {
               let resultData = res.data.data
               this.ruleForm = resultData
               // 版本
-              if (resultData.ios_version_ids) {
-                this.checkedAdOs = resultData.ios_version_ids.split(',')
+              if (resultData.os === '0') {
+                this.selectDate = this.selectAdOs
+              } else if (resultData.os === '1') {
+                this.selectDate = this.selectAndroid
+              }
+              if (resultData.forceUpdateVersion) {
+                this.checkedAdOs = resultData.forceUpdateVersion.split(',')
                 this.$refs.treeIos.setCheckedKeys(this.checkedAdOs)
-                console.log('checkedAdOs', this.checkedAdOs)
               }
-              if (resultData.android_version_ids) {
-                this.checkedAndroid = resultData.android_version_ids.split(',')
-                this.$refs.treeAndroid.setCheckedKeys(this.checkedAndroid)
-                console.log('checkedAndroid', this.checkedAndroid)
-              }
-              // 标签
-              let labelArr = resultData.tag.split(',')
-              this.sdkLabelArr = labelArr
-              console.log(resultData)
             } else {
               this.$message({
                 type: 'error',
@@ -342,12 +329,9 @@
       }, // 获取详情
       submitForm (ruleForm) {
         // 标签
-        this.ruleForm.tag = this.sdkLabelArr.join(',')
-        this.ruleForm.sdkLabelArr = this.ruleForm.tag // 默认被选中的值用于字段校验必填
         let treeIosArrIds = this.$refs.treeIos.getCheckedKeys()
-        this.ruleForm.ios_version_ids = treeIosArrIds.join(',')
-        let treeAndroidArrIds = this.$refs.treeAndroid.getCheckedKeys()
-        this.ruleForm.android_version_ids = treeAndroidArrIds.join(',')
+        this.ruleForm.forceUpdateVersion = treeIosArrIds.join(',')
+        console.log(33, this.ruleForm.forceUpdateVersion)
         // 请求
         this.$refs[ruleForm].validate((valid) => {
           let url = `${baseUrl.advertContent}/adDetails/addAdDetails`
@@ -386,7 +370,7 @@
   }
 </script>
 <style scoped>
-  /*@import '../../assets/css/treecss.css';*/
+  @import '../../assets/css/treecss.css';
   .textarea{
     width:300px;
   }
@@ -400,10 +384,6 @@
     box-sizing: border-box;
   }
 
-  .treeIos {
-    float: left;
-    margin-right: 50px;
-  }
   html, body {
     height: 100%;
   }

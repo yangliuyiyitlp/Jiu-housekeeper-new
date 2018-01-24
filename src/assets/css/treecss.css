@@ -3,10 +3,10 @@
   height: 20px!important;
 }
 
-.el-form> .el-form-item > .el-form-item__label {
-  width: 150px !important;
+.ruleForm> .el-form-item > .el-form-item__label {
+  width: 120px !important;
 }
 
-.el-form > .el-form-item > .el-form-item__content {
-  margin-left: 150px !important;
+.ruleForm > .el-form-item > .el-form-item__content {
+  margin-left: 120px !important;
 }
