@@ -93,6 +93,15 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/Activity/DynamicMenu.vue')), 'DynamicMenu')
   }, // 动态菜单
+  // 版本管理
+  {
+    path: '/version/manage',
+    name: 'version.manage',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Mypanner/VersionManage.vue')), 'VersionManage')
+  },
   // 404
   {
     path: '/404',

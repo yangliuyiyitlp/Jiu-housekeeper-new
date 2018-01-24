@@ -172,7 +172,7 @@
         this.cityTree()
       },
       cityTree () {
-        this.$ajax.get(`${baseUrl.cityFencingUrl}/area/list`).then(res => {
+        this.$ajax.get(`${baseUrl.lockNodesUrl}/sys/area/list`).then(res => {
           if (res.data.code === 200) {
             this.select = res.data.data
           } else {

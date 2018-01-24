@@ -102,23 +102,23 @@
             <a>填写的必须为数字(若不是数字,默认为0)</a>
           </el-form-item>
 
-          <el-form-item label="图标图片：">
-            <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
-            <img width="100%" :src="ruleForm.iconUrl" alt="图标图片">
-            <el-upload
-              :disabled="!update"
-              ref="loadFile"
-              list-type="picture-card"
-              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-              :data="Token"
-              :on-remove="removeImgPath"
-              :on-success="successImgPath"
-              :before-upload="beforeUploadImgPath">
-              <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传图片
-                <i class="el-icon-upload el-icon--right"></i>
-              </el-button>
-            </el-upload>
-          </el-form-item>
+          <!--<el-form-item label="图标图片：">-->
+            <!--<el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>-->
+            <!--<img width="100%" :src="ruleForm.iconUrl" alt="图标图片">-->
+            <!--<el-upload-->
+              <!--:disabled="!update"-->
+              <!--ref="loadFile"-->
+              <!--list-type="picture-card"-->
+              <!--action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'-->
+              <!--:data="Token"-->
+              <!--:on-remove="removeImgPath"-->
+              <!--:on-success="successImgPath"-->
+              <!--:before-upload="beforeUploadImgPath">-->
+              <!--<el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传图片-->
+                <!--<i class="el-icon-upload el-icon&#45;&#45;right"></i>-->
+              <!--</el-button>-->
+            <!--</el-upload>-->
+          <!--</el-form-item>-->
 
           <el-form-item label="展示图片：">
             <el-input v-model="ruleForm.displayUrl" v-show='false'></el-input>
@@ -140,6 +140,30 @@
           <el-form-item label="备注：">
             <el-input type="textarea" v-model="ruleForm.remarks" class="width"></el-input>
           </el-form-item>
+
+          <!--<input type="file" id="file_upload" name="file_upload" accept="video/*">-->
+          <el-form-item label="视频上传：">
+            <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
+            <video controls="controls" :src="ruleForm.iconUrl" class="video">
+              <source :src="ruleForm.iconUrl" type="video/*">
+            </video>
+            <el-upload
+              ref="loadFile"
+              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+              :data="Token2"
+              :on-preview="handlePreview"
+              :file-list="fileList"
+              :multiple = false
+              :on-remove="removeImgPath"
+              :on-success="successImgPath"
+              :before-upload="beforeUploadImgPath">
+              <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传视频
+                <i class="el-icon-upload el-icon--right"></i>
+              </el-button>
+            </el-upload>
+          </el-form-item>
+
+
           <el-form-item>
             <el-button v-if="update" type="primary" @click="submitForm('ruleForm')">{{tip}}</el-button>
             <el-button v-if='update' @click="resetForm('ruleForm')">重置</el-button>
@@ -159,6 +183,7 @@
   export default {
     data () {
       return {
+        fileList: [],
         activeName2: 'first',
         update: true,
         create: true,
@@ -170,6 +195,7 @@
         updateDelete: '',
         Token: {},
         Token1: {},
+        Token2: {},
         tableData: [],
         formInline: {},
         ruleForm: {},
@@ -201,6 +227,9 @@
       }
     },
     methods: {
+      handlePreview (file) {
+        console.log(file)
+      },
       onBeginTimeChange (val) {
         this.formInline.beginTime = new Date(val).getTime()
       },
@@ -377,6 +406,7 @@
         this.ruleForm = {}
       },
       submitForm (ruleForm) {
+        console.log(66, this.ruleForm)
         this.$refs[ruleForm].validate((valid) => {
           let url
           if (valid) {
@@ -433,24 +463,26 @@
       // 上传组件获取oss相关 图片上传之前获取oss秘钥
       beforeUploadImgPath (file) {
         return new Promise((resolve) => {
-          this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'cityFencingInfo'}})
+          this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'advertContent'}})
             .then((res) => {
-              console.log(96, res)
-              this.Token = res.data.data
-              this.Token.OSSAccessKeyId = res.data.data.accessid
-              this.Token.key = this.Token.dir + '/' + (+new Date()) + '_' + file.name
+              console.log(2222, res)
+              this.Token2 = res.data
+              this.Token2.OSSAccessKeyId = res.data.accessid
+              this.Token2.key = this.Token2.dir + '/' + (+new Date()) + file.name
               resolve()
             })
-            .catch(err => {
+            .catch(() => {
               this.$message({
-                message: err.data.msg,
+                message: '图片秘钥获取失败',
                 type: 'error'
               })
             })
         })
       },
       successImgPath (response, file, fileList) {
-        this.ruleForm.iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+        console.log(23, fileList)
+        this.ruleForm.iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
+        this.fileList = fileList
       },
       beforeUploadCoverPath (file) {
         return new Promise((resolve) => {
@@ -503,7 +535,10 @@
     width: 148px;
     height: 148px;
   }
-
+ .video{
+   width:300px;
+   height:200px;
+ }
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

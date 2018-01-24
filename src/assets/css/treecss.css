@@ -2,3 +2,11 @@
   line-height: 20px!important;
   height: 20px!important;
 }
+
+.ruleForm> .el-form-item > .el-form-item__label {
+  width: 120px !important;
+}
+
+.ruleForm > .el-form-item > .el-form-item__content {
+  margin-left: 120px !important;
+}
