@@ -10,11 +10,6 @@ const asyncRouter = [
     component: r => require.ensure([], () => r(require('@/pages/Login/Login.vue')), 'Login')
   },
   {
-    path: '/404',
-    name: '404',
-    component: r => require.ensure([], () => r(require('@/components/commons/NotFound.vue')), 'NotFound')
-  },
-  {
     path: '/facility/tabs',
     name: 'tabs',
     meta: {
@@ -73,6 +68,31 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/AdvertMenage/AdvertData.vue')), 'AdvertData')
   },
+  // 活动相关
+  {
+    path: '/activity/message/inform',
+    name: 'activity.message.inform',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Activity/MessageInform.vue')), 'MessageInform')
+  }, // 消息通知
+  {
+    path: '/activity/message/plan',
+    name: 'activity.message.plan',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Activity/ActivityMessagePlan.vue')), 'ActivityMessagePlan')
+  }, // 推送计划
+  {
+    path: '/activity/dynamic/menu',
+    name: 'activity.dynamic.menu',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Activity/DynamicMenu.vue')), 'DynamicMenu')
+  }, // 动态菜单
   // 版本管理
   {
     path: '/version/manage',
@@ -82,6 +102,7 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/Mypanner/VersionManage.vue')), 'VersionManage')
   },
+  // 404
   {
     path: '/404',
     name: '404',
