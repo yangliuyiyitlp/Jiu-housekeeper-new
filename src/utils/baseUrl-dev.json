@@ -9,5 +9,6 @@
   "OperateUrl":"http://172.16.20.213:8888",
   "advertContent":"http://192.168.0.87:10006",
   "advertContentHei":"http://192.168.0.123:8088",
-  "ActivityMsgPlan":"http://192.168.0.167:10006"
+  "ActivityMsgPlan": "http://192.168.0.167:10006",
+  "ActivityArea": "http://192.168.0.167:10001/a"
 }
