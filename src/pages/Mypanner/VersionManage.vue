@@ -2,19 +2,6 @@
   <div>
     <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
       <el-tab-pane label="版本内容信息" name="first">
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <el-form-item label="平台：">
-            <el-select v-model="formInline.os" clearable>
-              <el-option v-for="(val,key) in osPlatform" v-bind:key=key :label=val :value=key></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="hasPermission('version/manage/view')">
-            <el-button type="primary" @click="query">查询</el-button>
-          </el-form-item>
-          <el-form-item v-if="hasPermission('version/manage/create')">
-            <el-button type="primary" @click="addNewRecord">新增</el-button>
-          </el-form-item>
-        </el-form>
         <el-table
           :data="tableData"
           border
@@ -22,80 +9,68 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="id"
-            label="版本ID">
-          </el-table-column>
-
-          <el-table-column
-            header-align="center"
-            align="center"
-            label="版本号"
-            prop="version">
+            prop="pdId"
+            label="产品类型">
           </el-table-column>
 
           <el-table-column
             header-align="center"
             align="center"
             prop="os"
-            label="平台">
+            label="操作系统">
           </el-table-column>
 
           <el-table-column
             header-align="center"
             align="center"
             :show-overflow-tooltip = true
+            prop="version"
+            label="更新的版本号">
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
+            prop="forceUpdateVersion"
+            label="强制更新的最低版本">
+          </el-table-column>
+          <el-table-column
+            header-align="center"
+            align="center"
             prop="releaseNotes"
             label="更新通知内容">
           </el-table-column>
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="targetUsers"-->
+            <!--label="更新用户范围">-->
+          <!--</el-table-column>-->
           <el-table-column
-            header-align="center"
-            align="center"
-            prop="remarks"
-            label="版本修改内容">
-          </el-table-column>
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="createDate"
-            label="添加时间">
-          </el-table-column>
-
-          <el-table-column
-            v-if="hasPermission('version/manage/update') || hasPermission('advert/content/update')"
+            v-if="hasPermission('version/manage/update')"
             header-align="center"
             align="center"
             width="100"
             label="操作">
             <template slot-scope="scope">
-              <el-button v-if="hasPermission('version/manage/update')" @click="modifyRecord(scope.row.id)" type="text"
+              <el-button @click="modifyRecord(scope.row.id)" type="text"
                          size="small">修改
               </el-button>
             </template>
           </el-table-column>
         </el-table>
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="pagination.pageNum"
-          :page-sizes="pagination.pageSizes"
-          :page-size="pagination.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.count">
-        </el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane :label="title" name="second" v-if="hasPermission('version/manage/create')">
+      <el-tab-pane label="版本更新" name="second" v-if="update">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
-          <el-form-item label="版本号：" prop="version">
+          <el-form-item label="产品类型：">
+            <el-input v-model="ruleForm.pdId" class="width" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="操作系统：">
+            <el-input v-model="ruleForm.os" class="width" :disabled="true"></el-input>
+          </el-form-item>
+          <el-form-item label="更新的版本号：" prop="version">
             <el-input v-model="ruleForm.version" class="width"></el-input>
           </el-form-item>
-
-          <el-form-item label="平台：" prop="os">
-            <el-radio-group v-model="ruleForm.os" @change="osChange">
-              <el-radio v-for="(val, key) in osObj" :key="key" :label="key">{{val}}</el-radio>
-            </el-radio-group>
-          </el-form-item>
-
           <el-form-item label="更新通知内容：" prop="releaseNotes">
             <el-input
               type="textarea"
@@ -104,73 +79,42 @@
               v-model="ruleForm.releaseNotes">
             </el-input>
           </el-form-item>
-          <el-form-item label="APP修改内容：">
-            <el-input
-              type="textarea"
-              autosize
-              class="textarea"
-              v-model="ruleForm.remarks">
-            </el-input>
+          <el-form-item label="强制更新的最低版本：" prop="forceUpdateVersion">
+            <el-input v-model="ruleForm.forceUpdateVersion" class="width"></el-input>
           </el-form-item>
-
-          <!--<el-form-item label="强制更新版本：">-->
-            <!--<div class="treeIos">-->
-              <!--<div class="areaAdOs">-->
-                <!--<el-tree-->
-                  <!--:data="selectDate"-->
-                  <!--show-checkbox-->
-                  <!--default-expand-all-->
-                  <!--node-key="id"-->
-                  <!--:default-checked-keys="checkedAdOs"-->
-                  <!--ref="treeIos"-->
-                  <!--class="treeAdOs"-->
-                  <!--accordion-->
-                  <!--:props="defaultCity">-->
-                <!--</el-tree>-->
-              <!--</div>-->
-            <!--</div>-->
+          <!--<el-form-item label="更新用户范围：" prop="releaseNotes">-->
+            <!--<el-input-->
+              <!--type="textarea"-->
+              <!--autosize-->
+              <!--class="textarea"-->
+              <!--v-model="ruleForm.releaseNotes">-->
+            <!--</el-input>-->
+            <!--<el-button type="primary" class="update" @click="dialogFormVisible = true">修改</el-button>-->
           <!--</el-form-item>-->
-
-          <el-form-item label="强制更新版本：">
-            <div class="treeIos" v-show="isIos">
-              <p>ios强制更新版本：</p>
-              <div class="areaAdOs">
-                <el-tree
-                  :data="selectAdOs"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  :default-checked-keys="checkedAdOs"
-                  ref="treeIos"
-                  class="treeAdOs"
-                  accordion
-                  :props="defaultCity">
-                </el-tree>
-              </div>
-            </div>
-            <div v-show="!isIos">
-              <p>安卓强制更新版本：</p>
-              <div class="areaAdOs">
-                <el-tree
-                  :data="selectAndroid"
-                  show-checkbox
-                  default-expand-all
-                  node-key="id"
-                  :default-checked-keys="checkedAndroid"
-                  ref="treeAndroid"
-                  class="treeAdOs"
-                  accordion
-                  :props="defaultCity">
-                </el-tree>
-              </div>
-            </div>
-          </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">{{tip}}</el-button>
+            <el-button type="primary" @click="submitForm('ruleForm')">提交修改</el-button>
             <el-button @click="resetForm('ruleForm')">重置所有</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
+        <!--<el-dialog title="收货地址" :visible.sync="dialogFormVisible" size="small">-->
+          <!--<el-form :model="userForm">-->
+              <!--<el-input v-model="userForm.name" placeholder="请输入用户名" class="visibelInput"></el-input>-->
+              <!--<el-button type="primary" @click="submitForm('ruleForm')">查询</el-button>-->
+            <!--<el-pagination-->
+              <!--@size-change="handleSizeChange"-->
+              <!--@current-change="handleCurrentChange"-->
+              <!--:current-page="pagination.pageNum"-->
+              <!--:page-sizes="pagination.pageSizes"-->
+              <!--:page-size="pagination.pageSize"-->
+              <!--layout="total, sizes, prev, pager, next, jumper"-->
+              <!--:total="pagination.count">-->
+            <!--</el-pagination>-->
+          <!--</el-form>-->
+          <!--<div slot="footer" class="dialog-footer">-->
+            <!--<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>-->
+          <!--</div>-->
+        <!--</el-dialog>-->
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -185,32 +129,19 @@
     data () {
       return {
         activeName2: 'first',
-        title: '版本内容新增',
-        osPlatform: {'': '全部', '0': 'ios', '1': 'andriod'},
-        osObj: {'0': 'ios', '1': 'andriod'},
-        tip: '立即创建',
-        tableData: [],
-        checkedAdOs: [],
-        checkedAndroid: [],
-        selectDate: [],
-        selectAdOs: [],
-        selectAndroid: [],
-        isIos: true,
-        defaultCity: {
-          children: 'children',
-          label: 'version'
-        },
-        formInline: {
-          pageSize: 30,
-          pageNum: 1
-        },
+        update: false,
+//        dialogFormVisible: false,
+        tableData: [{'id': '1'}],
+        osObj: {'0':'ios', '1':'andriod'},
+        pdIdObj: {'0':'赳赳单车', '1':'赳猎人'},
+        formInline: {},
         ruleForm: {},
+        userForm: {},
         rules: {
-          version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
-          os: [{required: true, message: '请选择平台', trigger: 'blur'}],
+          version: [{required: true, message: '请输入更新版本号', trigger: 'blur'}],
+          forceUpdateVersion: [{required: true, message: '请输入强制更新的最低版本', trigger: 'blur'}],
           releaseNotes: [{required: true, message: '请输入更新通知内容', trigger: 'blur'}]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         adminId: '',
         path: '',
         permissionList: []
@@ -221,7 +152,7 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-      this.selectVersion()
+      this.query()
     },
     methods: {
       hasPermission (data) {
@@ -232,71 +163,20 @@
       },
       handleClick () {
         if (this.activeName2 === 'first') {
-          this.formInline = {
-            pageSize: 30,
-            pageNum: 1
-          }
+          this.update = false
+          this.formInline = {}
           this.query()
         }
-        if (this.activeName2 === 'first' && this.hasPermission('version/manage/create')) {
-          this.title = '版本内容新增'
-        } else if (this.title === '版本内容新增') {
-          this.ruleForm = {}
-          this.tip = '立即创建'
-          this.$refs.ruleForm.resetFields()
-          this.$refs.treeIos.setCheckedKeys([])
-          this.$refs.treeAndroid.setCheckedKeys([])
-        }
-      },
-      handleSizeChange (val) {
-        this.formInline.pageSize = val
-        this.pagination.pageSize = val
-        this.query()
-      },
-      handleCurrentChange (val) {
-        this.formInline.pageNum = val
-        this.pagination.pageNum = val
-        this.query()
-      },
-      osChange (val) {
-        if (val === '0') {
-          this.isIos = true
-        } else if (val === '1') {
-          this.isIos = false
-        }
-//        this.$refs.treeIos.setCheckedKeys([])
-//        this.$refs.treeAndroid.setCheckedKeys([])
-      },
-      selectVersion () {
-        this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': 0, timeout: 3000}})
-          .then((res) => {
-            let result = res.data.data
-            if (res.data.code === 200 && result.ios_versions && result.android_versions) {
-              this.selectAdOs = result.ios_versions
-              this.selectAndroid = result.android_versions
-            } else {
-              this.$message({
-                type: 'info',
-                message: res.data.msg
-              })
-            }
-          })
-          .catch(() => {
-            this.$message({
-              type: 'info',
-              message: '版本列表获取异常'
-            })
-          })
       },
       query () {
         this.$ajax.get(`${baseUrl.advertContent}/version/listApp`, {params: this.formInline, timeout: 3000})
           .then((res) => {
             if (res.data.code === 200) {
-              let resultForm = res.data.data
-              this.tableData = resultForm.result
-              this.pagination.count = resultForm.total
-              for (let i = 0; i < resultForm.result.length; i++) {
-                this.tableData[i].os = this.osPlatform[resultForm.result[i].os]
+              let resultForm = res.data.data.result
+              this.tableData = resultForm
+              for (let i=0; i < resultForm.length; i++) {
+                this.tableData[i].os = this.osObj[resultForm[i].os]
+                this.tableData[i].pdId = this.pdIdObj[resultForm[i].pdId]
               }
             } else {
               this.$message({
@@ -312,57 +192,26 @@
             })
           })
       },
-      addNewRecord () {
-        this.activeName2 = 'second'
-        this.title = '版本内容新增'
-        this.tip = '立即创建'
-        this.ruleForm = {}
-        this.checkedAdOs = []
-        this.checkedAndroid = []
-        this.$refs.ruleForm.resetFields()
-        this.$refs.treeIos.setCheckedKeys([])
-        this.$refs.treeAndroid.setCheckedKeys([])
-      }, // 新增
       modifyRecord (id) {
+        this.update = true
         this.activeName2 = 'second'
-        this.title = '版本内容修改'
-        this.tip = '提交修改'
-        this.getMore(id)
+//        this.getMore(id)
       }, // 修改
       back () {
         this.activeName2 = 'first'
-        if (this.create) {
-          this.title = '版本内容新增'
-        }
+        this.update = false
       },
       resetForm (ruleForm) {
         this.ruleForm = {}
-        this.checkedAdOs = []
-        this.checkedAndroid = []
-        this.$refs.ruleForm.resetFields()
       },
       getMore (id) {
-        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {id: id, timeout: 4000}})
+        this.$ajax.get(``, {params: {id: id, timeout: 1000}})
           .then(res => {
             if (res.data.code === 200) {
-              let resultData = res.data.data
+              let resultData  = res.data.data
               this.ruleForm = resultData
-              // 版本
-              if (resultData.os === '0') {
-                this.isIos = true
-                if (resultData.forceUpdateVersionId) {
-                  this.checkedAdOs = resultData.forceUpdateVersionId.split(',')
-                  this.$refs.treeIos.setCheckedKeys(this.checkedAdOs)
-                }
-                this.$refs.treeAndroid.setCheckedKeys([])
-              } else if (resultData.os === '1') {
-                this.isIos = false
-                if (resultData.forceUpdateVersionId) {
-                  this.checkedAndroid = resultData.forceUpdateVersionId.split(',')
-                  this.$refs.treeAndroid.setCheckedKeys(this.checkedAndroid)
-                }
-                this.$refs.treeIos.setCheckedKeys([])
-              }
+              this.ruleForm.os = this.osObj[resultData.os]
+              this.ruleForm.pdId = this.pdIdObj[resultData.pdId]
             } else {
               this.$message({
                 type: 'error',
@@ -377,46 +226,9 @@
           })
       }, // 获取详情
       submitForm (ruleForm) {
-        // 版本
-        let treeIosArrIds
-        if (this.isIos) {
-          treeIosArrIds = this.$refs.treeIos.getCheckedKeys()
-          this.ruleForm.forceUpdateVersion = ''
-          let versionArr = []
-          let versionObj = {}
-          if (treeIosArrIds) {
-            this.ruleForm.forceUpdateVersionId = treeIosArrIds.join(',')
-            for (let i = 0; i < this.selectAdOs.length; i++) {
-              versionObj[this.selectAdOs[i].id] = this.selectAdOs[i].version
-            }
-            for (let i = 0; i < treeIosArrIds.length; i++) {
-              versionArr.push(versionObj[treeIosArrIds[i]])
-            }
-            this.ruleForm.forceUpdateVersion = versionArr.join(',')
-          }
-        } else {
-          treeIosArrIds = this.$refs.treeAndroid.getCheckedKeys()
-          this.ruleForm.forceUpdateVersion = ''
-          let versionArr = []
-          let versionObj = {}
-          if (treeIosArrIds) {
-            this.ruleForm.forceUpdateVersionId = treeIosArrIds.join(',')
-            for (let i = 0; i < this.selectAndroid.length; i++) {
-              versionObj[this.selectAndroid[i].id] = this.selectAndroid[i].version
-            }
-            for (let i = 0; i < treeIosArrIds.length; i++) {
-              versionArr.push(versionObj[treeIosArrIds[i]])
-            }
-            this.ruleForm.forceUpdateVersion = versionArr.join(',')
-          }
-        }
         // 请求
         this.$refs[ruleForm].validate((valid) => {
-          if (this.ruleForm.id) {
-            this.ruleForm.updateBy = Cookie.get('adminId')
-          } else {
-            this.ruleForm.createBy = Cookie.get('adminId')
-          }
+          this.ruleForm.updateBy = Cookie.get('adminId')
           let url = `${baseUrl.advertContent}/version/operate`
           if (valid) {
             this.$ajax.post(url, this.ruleForm)
@@ -431,7 +243,7 @@
                   this.back()
                   // 刷新页面
                   this.query()
-                  this.selectVersion()
+                  this.update = false
                 } else {
                   this.$message({
                     type: 'error',
@@ -458,16 +270,13 @@
   .textarea{
     width:300px;
   }
-  .treeAdOs {
-    width: 110px;
-    height: 150px;
-    overflow: auto;
-    border-radius: 4px;
-    border: 1px solid #bfcbd9;
-    padding: 3px 0px 3px 5px;
-    box-sizing: border-box;
+  .visibelInput{
+    float:left;
+    width:200px;
   }
-
+ .update{
+   padding: 7px 7px 8px!important;
+ }
   html, body {
     height: 100%;
   }
