@@ -68,7 +68,8 @@
             class="btn">保存
           </el-button>
           <el-button
-            v-show="stopBtn && hasPermission('activity/message/inform/edit')" type="danger" @click="stopMsg" class="btn">停用
+            v-show="stopBtn && hasPermission('activity/message/inform/edit')" type="danger" @click="stopMsg"
+            class="btn">停用
           </el-button>
         </el-form-item>
 
@@ -82,7 +83,6 @@
       </div>
     </el-col>
   </el-row>
-
 
 </template>
 
@@ -188,7 +188,7 @@
                   form.cityId = form.cityNo.split(',')
                 }
                 this.form = form
-                console.log(this.form)
+                // console.log(this.form)
               } else {
                 // 若数据库中无信息,新建内容
                 this.status = '请新建信息' // 信息初始化状态
@@ -203,6 +203,8 @@
                 this.releaseBtn = false
                 this.saveBtn = true
                 this.stopBtn = false
+                this.isDisabled = false // 是否禁止输入
+                this.isDisabledCity = false // 是否禁止选择推送城市
               }
             }
           })
@@ -257,11 +259,10 @@
           type: 'warning'
         }).then(() => {
           // 发送请求
-          console.log('releaseMsg')
           this.form.delFlag = '0'
           this.$ajax.post(`${baseUrl.MessageInform}/save`, this.form)
             .then(res => {
-              console.log(res)
+              // console.log(res)
               this.searchMsg()
             })
             .catch(err => {
@@ -286,12 +287,10 @@
           type: 'warning'
         }).then(() => {
           // 发送请求
-          console.log('stopMsg')
           this.form.delFlag = '2'
           this.$ajax.post(`${baseUrl.MessageInform}/save`, this.form)
             .then(res => {
-              console.log('stopMsg')
-              console.log(res)
+              // console.log(res)
               this.searchMsg()
             })
             .catch(err => {

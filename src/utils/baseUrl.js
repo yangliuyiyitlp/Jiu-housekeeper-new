@@ -17,7 +17,7 @@ let baseUrl
 
 // 系统重构后
 
-baseUrl = require('./baseUrl-dev.json')
-// baseUrl = require('./baseUrl-test.json')
+// baseUrl = require('./baseUrl-dev.json')
+baseUrl = require('./baseUrl-test.json')
 
 module.exports = baseUrl
