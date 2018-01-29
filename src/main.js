@@ -25,9 +25,10 @@ Axios.defaults.baseURL = baseUrl
 Axios.defaults.headers.post['Content-Type'] = 'application/json'
 
 // 超时设置
-Axios.create({
-  timeout: 5000                // 请求超时时间
-})
+Axios.defaults.timeout = 5000
+// Axios.create({
+//   timeout: 5000                // 请求超时时间
+// })
 // http request 拦截器
 // 每次请求都为http头增加Authorization字段，其内容为token
 Axios.interceptors.request.use(
