@@ -75,22 +75,22 @@
             header-align="center"
             align="center"
             prop="adSecretKey"
-            :show-overflow-tooltip = true
-            label="密钥">
+            label="密钥"
+            :show-overflow-tooltip = true>
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
             prop="adUrl"
-            :show-overflow-tooltip = true
-            label="地址">
+            label="地址"
+            :show-overflow-tooltip = true>
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
             prop="adDate"
-            :show-overflow-tooltip = true
-            label="投放日期">
+            label="投放日期"
+            :show-overflow-tooltip = true>
           </el-table-column>
           <el-table-column
             header-align="center"
@@ -762,7 +762,6 @@
         this.$refs.treeAndroid.setCheckedKeys([])
       }, // 新增
       pauseRecord (row) {
-        console.log(row.adStatus)
         if (row.adStatus === '投放中' || row.adStatus === '未开始') {
           this.$ajax.get(`${baseUrl.advertContent}/ad/pause`, {params: {pauseId: row.id}})
             .then(res => {
@@ -858,7 +857,6 @@
               let imgArr = []
               if (resultData.rev_img) {
                 imgArr = resultData.rev_img.split(';')
-                console.log('imgArr', imgArr)
                 if (imgArr[0]) {
                   this.ruleForm.viewImgFirst = imgArr[0]
                   this.ruleForm.viewImg1 = imgArr[0]
@@ -875,19 +873,15 @@
                 this.checkedCity = resultData.district_ids.split(',')
                 this.$refs.tree.setCheckedKeys(this.checkedCity)
               }
-              console.log('checkedCity', this.checkedCity)
               // 版本
-              console.log(2323, resultData)
               // ios_version_ids   android_version_ids
               if (resultData.ios_version_ids) {
                 this.checkedAdOs = resultData.ios_version_ids.split(',')
                 this.$refs.treeIos.setCheckedKeys(this.checkedAdOs)
-                console.log('checkedAdOs', this.checkedAdOs)
               }
               if (resultData.android_version_ids) {
                 this.checkedAndroid = resultData.android_version_ids.split(',')
                 this.$refs.treeAndroid.setCheckedKeys(this.checkedAndroid)
-                console.log('checkedAndroid', this.checkedAndroid)
               }
               // 标签
               let labelArr = resultData.tag.split(',')
@@ -960,7 +954,6 @@
         }
         if (recImg !== [] && recImg !== undefined) {
           this.ruleForm.rev_img = recImg.join(';')
-          console.log(66, this.ruleForm.rev_img)
         } else {
           this.ruleForm.rev_img = ''
         }
@@ -1016,7 +1009,6 @@
         })
       },
       handleCheckedPositionChange (val) {
-        console.log(val)
         this.positionVal = val
         if (this.positionVal === '4') {
           this.gifTime = false
@@ -1087,7 +1079,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log(val)
 //          let index = this.sdkLabelArr.indexOf(val)
 //          if (index > -1) {
 //          let id = this.sdkLabelObj[val]
@@ -1180,7 +1171,6 @@
         return new Promise((resolve) => {
           this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'advertContent'}})
             .then((res) => {
-              console.log(2222, res)
               this.Token2 = res.data
               this.Token2.OSSAccessKeyId = res.data.accessid
               this.Token2.key = this.Token2.dir + '/' + (+new Date()) + file.name

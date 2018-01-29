@@ -30,7 +30,7 @@
           <el-table-column
             header-align="center"
             align="center"
-            prop="forceUpdateVersion"
+            prop="minVersion"
             label="强制更新的最低版本">
           </el-table-column>
           <el-table-column
@@ -52,7 +52,7 @@
             width="100"
             label="操作">
             <template slot-scope="scope">
-              <el-button @click="modifyRecord(scope.row.id)" type="text"
+              <el-button @click="modifyRecord(scope.row)" type="text"
                          size="small">修改
               </el-button>
             </template>
@@ -79,8 +79,8 @@
               v-model="ruleForm.releaseNotes">
             </el-input>
           </el-form-item>
-          <el-form-item label="强制更新的最低版本：" prop="forceUpdateVersion">
-            <el-input v-model="ruleForm.forceUpdateVersion" class="width"></el-input>
+          <el-form-item label="强制更新的最低版本：">
+            <el-input v-model="ruleForm.minVersion" class="width"></el-input>
           </el-form-item>
           <!--<el-form-item label="更新用户范围：" prop="releaseNotes">-->
             <!--<el-input-->
@@ -93,7 +93,6 @@
           <!--</el-form-item>-->
           <el-form-item>
             <el-button type="primary" @click="submitForm('ruleForm')">提交修改</el-button>
-            <el-button @click="resetForm('ruleForm')">重置所有</el-button>
             <el-button @click="back">返回</el-button>
           </el-form-item>
         </el-form>
@@ -131,15 +130,14 @@
         activeName2: 'first',
         update: false,
 //        dialogFormVisible: false,
-        tableData: [{'id': '1'}],
+        tableData: [],
         osObj: {'0':'ios', '1':'andriod'},
-        pdIdObj: {'0':'赳赳单车', '1':'赳猎人'},
+        pdIdObj: {'0':'赳赳单车', '1':'赳猎人', '2':'小程序'},
         formInline: {},
         ruleForm: {},
         userForm: {},
         rules: {
           version: [{required: true, message: '请输入更新版本号', trigger: 'blur'}],
-          forceUpdateVersion: [{required: true, message: '请输入强制更新的最低版本', trigger: 'blur'}],
           releaseNotes: [{required: true, message: '请输入更新通知内容', trigger: 'blur'}]
         },
         adminId: '',
@@ -169,10 +167,10 @@
         }
       },
       query () {
-        this.$ajax.get(`${baseUrl.advertContent}/version/listApp`, {params: this.formInline, timeout: 3000})
+        this.$ajax.get(`${baseUrl.advertContent}/version/showAppVersion`, {timeout: 3000})
           .then((res) => {
             if (res.data.code === 200) {
-              let resultForm = res.data.data.result
+              let resultForm = res.data.data
               this.tableData = resultForm
               for (let i=0; i < resultForm.length; i++) {
                 this.tableData[i].os = this.osObj[resultForm[i].os]
@@ -192,20 +190,29 @@
             })
           })
       },
-      modifyRecord (id) {
+      modifyRecord (row) {
         this.update = true
         this.activeName2 = 'second'
-//        this.getMore(id)
-      }, // 修改
+        this.getMore(row)
+      },
       back () {
         this.activeName2 = 'first'
         this.update = false
       },
-      resetForm (ruleForm) {
-        this.ruleForm = {}
-      },
-      getMore (id) {
-        this.$ajax.get(``, {params: {id: id, timeout: 1000}})
+      getMore (row) {
+        let os
+        for(let osKey in this.osObj){
+          if(this.osObj[osKey] === row.os){
+            os = osKey
+          }
+        }
+        let pdId
+        for(let pdIdKey in this.pdIdObj){
+          if(this.pdIdObj[pdIdKey] === row.pdId){
+            pdId = pdIdKey
+          }
+        }
+        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {pdId: pdId, os: os, timeout: 3000}})
           .then(res => {
             if (res.data.code === 200) {
               let resultData  = res.data.data
@@ -224,11 +231,21 @@
               message: '查询异常'
             })
           })
-      }, // 获取详情
+      },
       submitForm (ruleForm) {
         // 请求
         this.$refs[ruleForm].validate((valid) => {
           this.ruleForm.updateBy = Cookie.get('adminId')
+          for(let osKey in this.osObj){
+            if(this.osObj[osKey] === this.ruleForm.os){
+              this.ruleForm.os = osKey
+            }
+          }
+          for(let pdIdKey in this.pdIdObj){
+            if(this.pdIdObj[pdIdKey] === this.ruleForm.pdId){
+              this.ruleForm.pdId = pdIdKey
+            }
+          }
           let url = `${baseUrl.advertContent}/version/operate`
           if (valid) {
             this.$ajax.post(url, this.ruleForm)
