@@ -142,7 +142,7 @@
 
 <script>
   import qs from 'qs'
-  import Tools from '../../utils/tools.js'
+  import Tools from '../../../static/js/tools.js'
   import arr2tree from '../../utils/arr2tree.js'
 
   export default {

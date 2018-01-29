@@ -1,6 +1,7 @@
+'use strict'
 const path = require('path')
 const utils = require('./utils')
-const config = require('../config')
+// const config = require('../config')
 const vueLoaderConfig = require('./vue-loader.conf')
 const webpack = require('webpack')
 
@@ -12,19 +13,26 @@ module.exports = {
   entry: {
     app: ['babel-polyfill', './src/main.js']
   },
-  externals:{
-    'BMap':'BMap'
-  },// 百度地图新增
+  externals: {
+    'BMap': 'BMap'
+  }, // 百度地图新增
   output: {
     // path: config.build.assetsRoot,    12.22 号修改 因打包后报错chunk loading faild
     path: '/dist',
     filename: '[name].js',
     publicPath: '/',
-    chunkFilename:'js/[id].[chunkhash].js',  // 12.22 号增加
+    chunkFilename: 'js/[id].[chunkhash].js'  // 12.22 号增加
     // publicPath: process.env.NODE_ENV === 'production'  12.22 号修改
     //   ? config.build.assetsPublicPath
     //   : config.dev.assetsPublicPath
   },
+  // output: {
+  //   path: config.build.assetsRoot,
+  //   filename: '[name].js',
+  //   publicPath: process.env.NODE_ENV === 'production'
+  //     ? config.build.assetsPublicPath
+  //     : config.dev.assetsPublicPath
+  // },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
@@ -40,7 +48,7 @@ module.exports = {
         loader: 'eslint-loader',
         enforce: 'pre',
         include: [resolve('src'), resolve('test')],
-        exclude: [/node_modules/, /js/],// 后面加的 不检查js
+        exclude: [/node_modules/, /js/], // 后面加的 不检查js
         options: {
           formatter: require('eslint-friendly-formatter')
         }
@@ -93,7 +101,6 @@ module.exports = {
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('common.js'),
-    new webpack.ProvidePlugin({
-    })
+    new webpack.ProvidePlugin({})
   ]
 }

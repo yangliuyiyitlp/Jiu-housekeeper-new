@@ -10,6 +10,8 @@
   "advertContent":"http://192.168.0.123:8088",
   "lockNodesUrl":"http://192.168.0.151:8888",
   "ActivityMsgPlan": "http://192.168.0.167:10006",
-  "ActivityArea": "http://192.168.0.167:10001/a"
+  "ActivityArea": "http://192.168.0.167:10001/a",
+  "MessageInform":"http://192.168.0.151:8080/message/prompt",
+  "DynamicMenu":"http://192.168.0.31:8080/appMenu"
 }
 

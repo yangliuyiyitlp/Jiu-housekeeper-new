@@ -7,7 +7,9 @@
   "serviceConfigUrl": "http://139.196.194.172:8080",
   "serviceConfigName": "http://139.196.194.172:8280",
   "OperateUrl": "http://172.16.20.213:8888",
-  "ActivityMsgPlan": "http://139.196.194.172:8085/pushService/",
-  "ActivityArea": " http://139.196.194.172:8085/jjbike_web/a",
-  "advertContent": "http://139.196.194.172:8086/AdvertisementComPro"
+  "ActivityMsgPlan": "http://139.196.194.172:8085/pushService",
+  "ActivityArea": "http://139.196.194.172:8085/jjbike_web/a",
+  "advertContent": "http://139.196.194.172:8086/AdvertisementComPro",
+  "MessageInform":"http://192.168.0.151:8080/message/prompt",
+  "DynamicMenu":"http://192.168.0.31:8080/appMenu"
 }

@@ -90,7 +90,6 @@
             width="180">
           </el-table-column>
 
-
           <el-table-column
             show-overflow-tooltip
             header-align="center"
@@ -170,6 +169,9 @@
             header-align="center"
             label="操作"
             width="161">
+            <template slot-scope="scope" v-if="!hasPermission('activity/message/plan/edit')">
+              <el-button type="text" size="small" @click="viewData(scope.row.id,scope.row.area.id)">查看详情</el-button>
+            </template>
             <template slot-scope="scope" v-if="hasPermission('activity/message/plan/edit')">
               <el-button type="text" size="small" @click="modifyData(scope.row.id,scope.row.area.id)">修改</el-button>
               <el-button type="text" size="small" @click="open2(scope.row.id)">移除</el-button>
@@ -310,8 +312,10 @@
           </div>
 
           <el-form-item>
-            <el-button type="primary" @click="resetForm">清空</el-button>
-            <el-button type="primary" @click="saveData">保存</el-button>
+            <el-button type="primary" @click="resetForm" v-if="hasPermission('activity/message/plan/edit')">清空
+            </el-button>
+            <el-button type="primary" @click="saveData" v-if="hasPermission('activity/message/plan/edit')">保存
+            </el-button>
             <el-button @click="goBack">返回</el-button>
           </el-form-item>
 
@@ -319,13 +323,14 @@
 
       </el-tab-pane>
 
+
     </el-tabs>
   </div>
 </template>
 
 <script>
   import Moment from 'moment'
-  import Tools from '../../utils/tools.js'
+  import Tools from '../../../static/js/tools.js'
   import baseUrl from '../../utils/baseUrl'
   import qs from 'qs'
   import a from '../../assets/js/getsessionId.js'
@@ -422,8 +427,12 @@
         this.$ajax.get(`${baseUrl.ActivityArea}/electric/userUtilsInterface/interface/getBikeAreaList`)
           .then(res => {
             if (res.data.code === 0) {
-              res.data.bikeAreaList.unshift({id: '-1', name: '全国'})
-              this.areaRelation = Tools.nameRelation(res.data.bikeAreaList, 'id', 'name')
+              // console.log(res.data.bikeAreaList)
+              let bikeAreaList = res.data.bikeAreaList
+              bikeAreaList.unshift({id: '-1', name: '全国'})
+              let relation = Tools.nameRelation(bikeAreaList, 'id', 'name')
+              // let relation = this.nameRelation(bikeAreaList, 'id', 'name')
+              this.areaRelation = relation
             }
           })
           .then(() => {
@@ -431,6 +440,7 @@
             this.showForm()
           })
           .catch(err => {
+            console.log('getCityRelation报错')
             console.error(err)
           })
       },
@@ -441,11 +451,13 @@
             if (res.data.code === 0) {
               // console.log(res.data.list)
               let arr = res.data.list
-              this.activtyRelation = Tools.nameRelation(arr, 'id', 'description')
-              this.activtyRelations = Tools.nameRelation(arr, 'id', 'description')
+              let relation = Tools.nameRelation(arr, 'id', 'description')
+              // let relation = this.nameRelation(arr, 'id', 'description')
+              this.activtyRelation = relation
             }
           })
           .catch(err => {
+            console.log('获取生效活动列表报错')
             console.log(err)
           })
       },
@@ -464,6 +476,7 @@
               // 推荐位
               for (let i = 0; i < this.list.length; i++) {
                 this.list[i].pushName = Tools.k2value(this.pushStateRelation, this.list[i].pushState)
+                // this.list[i].pushName = this.k2value(this.pushStateRelation, this.list[i].pushState)
                 // 没有推送城市 默认为全国
                 if (!this.list[i].area || +this.list[i].area.id === -1) {
                   this.list[i].area = {}
@@ -476,6 +489,10 @@
           .catch(err => {
             console.log(err)
           })
+      },
+      // 查看详情
+      viewData (id, areaId) {
+        this.modifyData(id, areaId)
       },
       // 修改详情
       modifyData (id, areaId) {
@@ -606,19 +623,6 @@
               // os 由列表转换为字符串
               this.form.os = this.form.osList ? this.form.osList.join(',') : ''
               console.log(this.form)
-              // let formData = new FormData()
-              // let buildModel = (Model)=>{
-              //   for (let k in Model) {
-              //     if(Model[k] != null){
-              //       if(Model[k].constructor == Object){
-              //         buildModel(Model[k])
-              //       }else{
-              //         formData.append(k, Model[k])
-              //       }
-              //     }
-              //   }
-              // }
-              // buildModel(this.form)
 
               // 发送保存请求
               this.$ajax.post(`${baseUrl.ActivityMsgPlan}/tpushplan/tPushPlan/save`, this.form)
@@ -757,6 +761,26 @@
         }
         return false
       },
+      // 将数组中所需要的两个值相互对应 如:{id:name,id:name...}
+      nameRelation (arr, k, val) {
+        let obj = {}
+        for (let i = 0; i < arr.length; i++) {
+          obj[arr[i][k]] = arr[i][val]
+        }
+        return obj
+      },
+      // 在一一对应的值中 通过k或值找到所需要的值
+      k2value (obj, query) {
+        for (let k in obj) {
+          // 通过k查询值
+          if (query === k) {
+            return obj[k]
+            // 通过值查询k
+          } else if (query === obj[k]) {
+            return k
+          }
+        }
+      }
     }
   }
 </script>
