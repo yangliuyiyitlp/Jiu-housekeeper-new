@@ -139,7 +139,7 @@
             <el-input v-model="ruleForm.description" class="width" placeholder="请输入广告标题"></el-input>
           </el-form-item>
 
-          <el-form-item label="广告渠道：" prop ='adChannel'>
+          <el-form-item label="广告渠道：">
             <el-select v-model="ruleForm.adChannel" clearable>
               <el-option v-for="(val,key) in adChannel" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
@@ -491,7 +491,6 @@
         ruleForm: {},
         rules: {
           description: [{required: true, message: '请输入广告标题', trigger: 'blur'}],
-          adChannel: [{required: true, message: '请选择广告渠道', trigger: 'blur'}],
           display_time: [{required: true, message: '请选择投放时间'}],
           type: [{required: true, message: '请选择广告位置', trigger: 'blur'}],
           display_pic: [{required: true, message: '请上传广告图片', trigger: 'blur'}],

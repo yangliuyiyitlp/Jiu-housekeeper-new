@@ -93,7 +93,14 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/Activity/DynamicMenu.vue')), 'DynamicMenu')
   }, // 动态菜单
-  // 版本管理
+  {
+    path: '/new/activity/enjoy',
+    name: 'new.activity.enjoy',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Activity/NewAcitivityEnjoy.vue')), 'NewActivityEnjoy')
+  }, // 赳赳乐享
   {
     path: '/version/manage',
     name: 'version.manage',
@@ -101,7 +108,7 @@ const asyncRouter = [
       permission: []
     },
     component: r => require.ensure([], () => r(require('../pages/Mypanner/VersionManage.vue')), 'VersionManage')
-  },
+  }, // 版本管理
   // 404
   {
     path: '/404',
