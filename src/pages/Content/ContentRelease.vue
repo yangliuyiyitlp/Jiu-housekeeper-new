@@ -294,7 +294,7 @@
   // 富文本编辑器引入
   // arr2tree引入
   import arr2tree from '../../utils/arr2tree.js'
-  import Tools from '../../utils/tools.js'
+  import Tools from '../../../static/js/tools.js'
   import Moment from 'moment'
   import qs from 'qs'
 

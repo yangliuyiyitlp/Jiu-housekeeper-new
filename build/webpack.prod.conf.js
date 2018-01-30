@@ -31,7 +31,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    //注释压缩插件
+    // 注释压缩插件
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
