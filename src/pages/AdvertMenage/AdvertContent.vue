@@ -48,7 +48,7 @@
             header-align="center"
             align="center"
             label="广告标题"
-            :show-overflow-tooltip = true
+            :show-overflow-tooltip=true
             prop="description">
           </el-table-column>
 
@@ -76,21 +76,21 @@
             align="center"
             prop="adSecretKey"
             label="密钥"
-            :show-overflow-tooltip = true>
+            :show-overflow-tooltip=true>
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
             prop="adUrl"
             label="地址"
-            :show-overflow-tooltip = true>
+            :show-overflow-tooltip=true>
           </el-table-column>
           <el-table-column
             header-align="center"
             align="center"
             prop="adDate"
             label="投放日期"
-            :show-overflow-tooltip = true>
+            :show-overflow-tooltip=true>
           </el-table-column>
           <el-table-column
             header-align="center"
@@ -131,7 +131,8 @@
         </el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane :label="title" name="second" v-if="hasPermission('advert/content/create') || hasPermission('advert/content/update')">
+      <el-tab-pane :label="title" name="second"
+                   v-if="hasPermission('advert/content/create') || hasPermission('advert/content/update')">
         <!--<el-form :model="ruleForm" ref="ruleForm" label-width="100px" class="ruleForm">-->
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <h2>广告素材</h2>
@@ -173,7 +174,7 @@
                 ref="adPic1"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-                :limit =1
+                :limit=1
                 :data="Token2"
                 :on-remove="removePic1"
                 :on-success="successPic1"
@@ -184,7 +185,7 @@
               </el-upload>
               {{imgSize}}
               <div>
-                <el-radio-group v-model="ruleForm.show_type"  prop="show_type">
+                <el-radio-group v-model="ruleForm.show_type" prop="show_type">
                   <el-radio label="1">图片</el-radio>
                   <el-radio label="2">GIF</el-radio>
                 </el-radio-group>
@@ -328,14 +329,15 @@
             </el-form-item>
             <el-form-item label="标签：" prop="sdkLabelArr">
               <el-checkbox-group v-model="sdkLabelArr" class="sdkwidth">
-                <el-checkbox v-for="(val, key) in sdkLabelObj" :key="val" :label="key">{{key}} <i class="el-icon-close" @click="iconDelete(val)"></i>
+                <el-checkbox v-for="(val, key) in sdkLabelObj" :key="val" :label="key">{{key}} <i class="el-icon-close"
+                                                                                                  @click="iconDelete(val)"></i>
                 </el-checkbox>
               </el-checkbox-group>
               <label>自定义标签：</label>
               <el-input v-model="label" class="width"></el-input>
               <a @click="iconAdd">保存</a>
             </el-form-item>
-            <a v-show = false>{{handerClick}}</a>
+            <a v-show=false>{{handerClick}}</a>
             <el-form-item label="一句话简介：" prop="sec_title">
               <el-input v-model="ruleForm.sec_title" class="widthUrl" placeholder="不超过50个中文字符"></el-input>
             </el-form-item>
@@ -773,11 +775,11 @@
                 })
               }
             }).catch(() => {
-              this.$message({
-                type: 'error',
-                message: '状态修改失败'
-              })
+            this.$message({
+              type: 'error',
+              message: '状态修改失败'
             })
+          })
         } else {
           alert('只有投放中或未开始状态可以暂停')
         }
@@ -859,12 +861,18 @@
                 if (imgArr[0]) {
                   this.ruleForm.viewImgFirst = imgArr[0]
                   this.ruleForm.viewImg1 = imgArr[0]
-                } if (imgArr[1]) {
+                }
+                if (imgArr[1]) {
                   this.ruleForm.viewImgSecond = imgArr[1]
-                } if (imgArr[2]) {
+                  this.ruleForm.viewImg2 = imgArr[1]
+                }
+                if (imgArr[2]) {
                   this.ruleForm.viewImgThree = imgArr[2]
-                } if (imgArr[3]) {
+                  this.ruleForm.viewImg3 = imgArr[2]
+                }
+                if (imgArr[3]) {
                   this.ruleForm.viewImgFour = imgArr[3]
+                  this.ruleForm.viewImg4 = imgArr[3]
                 }
               }
               // 地区
@@ -893,11 +901,11 @@
               })
             }
           }).catch(() => {
-            this.$message({
-              type: 'error',
-              message: '查询异常'
-            })
+          this.$message({
+            type: 'error',
+            message: '查询异常'
           })
+        })
       }, // 获取详情
       submitForm (ruleForm) {
         // 下载地址this.ruleForm.iosUrl this.ruleForm.androidUrl
@@ -918,23 +926,6 @@
         } else {
           this.ruleForm.city_name = treeArr.join(',')
         }
-        // 获取版本名称
-//        this.arrIos = []
-//        this.arrAndroid = []
-//        let treeIosArr = this.$refs.treeIos.getCheckedNodes()
-//        for (let j = 0; j < treeIosArr.length; j++) {
-//          this.arrIos.push(treeIosArr[j].version)
-//        }
-//        if (this.arrIos !== []) {
-//          this.ruleForm.ios_versions = this.arrIos.join(',')
-//        }
-//        let treeAndroidArr = this.$refs.treeAndroid.getCheckedNodes()
-//        for (let i = 0; i < treeAndroidArr.length; i++) {
-//          this.arrAndroid.push(treeIosArr[i].version)
-//        }
-//        if (this.arrAndroid !== []) {
-//          this.ruleForm.android_versions = this.arrAndroid.join(',')
-//        }
         // 获取版本id
         let treeIosArrIds = this.$refs.treeIos.getCheckedKeys()
         this.ruleForm.ios_version_ids = treeIosArrIds.join(',')
@@ -944,11 +935,14 @@
         let recImg = []
         if (this.ruleForm.viewImg1) {
           recImg.push(this.ruleForm.viewImg1)
-        } if (this.ruleForm.viewImg2) {
+        }
+        if (this.ruleForm.viewImg2) {
           recImg.push(this.ruleForm.viewImg2)
-        } if (this.ruleForm.viewImg3) {
+        }
+        if (this.ruleForm.viewImg3) {
           recImg.push(this.ruleForm.viewImg3)
-        } if (this.ruleForm.viewImg4) {
+        }
+        if (this.ruleForm.viewImg4) {
           recImg.push(this.ruleForm.viewImg4)
         }
         if (recImg !== [] && recImg !== undefined) {
@@ -956,21 +950,6 @@
         } else {
           this.ruleForm.rev_img = ''
         }
-        // 预览图4张图
-//        let recImg = [this.ruleForm.viewImg1, this.ruleForm.viewImg2, this.ruleForm.viewImg3, this.ruleForm.viewImg4]
-//        let imgListArr = []
-//        for (let j = 0; j < recImg.length; j++) {
-//          if (recImg[j] !== undefined && recImg[j] !== '') {
-//            imgListArr.push(recImg[j])
-//          }
-//        }
-//        console.log('imgListArr', imgListArr)
-//        if (imgListArr !== [] && imgListArr !== undefined) {
-//          this.ruleForm.rev_img = imgListArr.join(';')
-//          console.log(66, this.ruleForm.rev_img)
-//        } else {
-//          this.ruleForm.rev_img = ''
-//        }
         this.ruleForm.update_by = Cookie.get('adminId')
         console.log(this.ruleForm)
         // 请求
@@ -1012,19 +991,23 @@
         if (this.positionVal === '4') {
           this.gifTime = false
           this.imgSize = '尺寸：640*100'
-        } if (this.positionVal === '5') {
+        }
+        if (this.positionVal === '5') {
           this.imgSize = '尺寸：636*636'
           this.gifTime = false
-        } if (this.positionVal === '6') {
+        }
+        if (this.positionVal === '6') {
           this.imgSize = '尺寸：750*1334'
           this.gifTime = true
-        } if (this.positionVal === '14') {
+        }
+        if (this.positionVal === '14') {
           this.imgSize = '尺寸：690*370'
           this.gifTime = false
         }
       },
       iconList () {
         this.sdkLabelObj = {}
+//        this.sdkLabelArr = []
         return new Promise((resolve) => {
           this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
             .then(response => {
@@ -1050,27 +1033,6 @@
               })
             })
         })
-//        this.sdkLabelObj = {}
-//        this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
-//          .then(response => {
-//            if (response.data.code === 200) {
-//              let result = response.data.data
-//              for (let i = 0; i < result.length; i++) {
-//                this.sdkLabelObj[result[i].label] = result[i].id
-//              }
-//            } else {
-//              this.$message({
-//                type: 'error',
-//                message: '获取标签失败'
-//              })
-//            }
-//          })
-//          .catch(() => {
-//            this.$message({
-//              type: 'error',
-//              message: '获取标签异常'
-//            })
-//          })
       },
       iconDelete (val) {
         this.$confirm('确定删除?', '提示', {
@@ -1078,18 +1040,19 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-//          let index = this.sdkLabelArr.indexOf(val)
-//          if (index > -1) {
-//          let id = this.sdkLabelObj[val]
           this.$ajax.post(`${baseUrl.advertContent}/sysDict/deletDict`, {id: val, timeout: 3000})
             .then(res => {
               if (res.data.code === 200) {
-                this.$message({
-                  type: 'success',
-                  message: '标签删除成功'
-                })
-                this.iconList()
-              }
+                let index = this.sdkLabelArr.indexOf(val)
+                if (index > -1) {
+                  this.sdkLabelArr.splice(index,1)
+                }
+                  this.$message({
+                    type: 'success',
+                    message: '标签删除成功'
+                  })
+                  this.iconList()
+                }
             })
             .catch(() => {
               this.$message({
@@ -1111,7 +1074,12 @@
           return false
         } else if (this.label.trim() !== '') {
           let valueLabel = this.label + new Date().getTime()
-          this.$ajax.post(`${baseUrl.advertContent}/sysDict/addDict`, {label: this.label, value: valueLabel, createBy: Cookie.get('adminId'), timeout: 3000})
+          this.$ajax.post(`${baseUrl.advertContent}/sysDict/addDict`, {
+            label: this.label,
+            value: valueLabel,
+            createBy: Cookie.get('adminId'),
+            timeout: 3000
+          })
             .then(response => {
               if (response.data.code === 200) {
                 this.$message({
@@ -1231,24 +1199,28 @@
           this.$refs.viewImg1.clearFiles()
         }
         this.ruleForm.viewImg1 = ''
+        this.ruleForm.viewImgFirst = ''
       },
       clearUploadedViewImg2 () {
         if (this.ruleForm.viewImg2) {
           this.$refs.viewImg2.clearFiles()
         }
         this.ruleForm.viewImg2 = ''
+        this.ruleForm.viewImgSecond = ''
       },
       clearUploadedViewImg3 () {
         if (this.ruleForm.viewImg3) {
           this.$refs.viewImg3.clearFiles()
         }
         this.ruleForm.viewImg3 = ''
+        this.ruleForm.viewImgThree = ''
       },
       clearUploadedViewImg4 () {
         if (this.ruleForm.viewImg4) {
           this.$refs.viewImg4.clearFiles()
         }
         this.ruleForm.viewImg4 = ''
+        this.ruleForm.viewImgFour = ''
       },
       // 移除图片时清空form表单中的图片地址
       removePic1 () {
@@ -1290,12 +1262,14 @@
   //  }
 </script>
 <style scoped>
-  .textarea{
-    width:350px;
+  .textarea {
+    width: 350px;
   }
-  .sdkwidth{
+
+  .sdkwidth {
     margin-bottom: 10px;
   }
+
   /*图片开始*/
   img {
     width: 148px;
@@ -1308,7 +1282,7 @@
 
   .viewImg {
     float: left;
-    margin-right:20px;
+    margin-right: 20px;
   }
 
   .imgTime {
