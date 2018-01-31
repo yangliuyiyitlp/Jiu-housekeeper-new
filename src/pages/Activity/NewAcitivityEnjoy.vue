@@ -18,7 +18,7 @@
           <div class="view">
             <div class="sidebar">
               <div class="pageTop"><img src="../../assets/images/timg.jpg"></div>
-              <div v-if="pageHeader" class="pageHeader"><div class="headerContent">页头①点击取消编辑</div></div>
+              <div v-if="pageHeader" class="pageHeader"><div class="headerContent">页头①点击取消编辑<i class="iconfont">&#xe73d;</i></div></div>
               <div v-else="pageHeader" class="pageHeader"><div class="headerContent">页头①点击取消编辑</div></div>
               <div v-if="pageCarousel" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
               <div v-else="pageCarousel" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
@@ -114,6 +114,7 @@
   }
 </script>
 <style scoped>
+  @import '../../assets/icon_font/iconfont.css';
   .width {
     width: 100px;
   }
