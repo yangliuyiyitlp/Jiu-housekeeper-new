@@ -168,6 +168,7 @@
 
           <el-form-item label="广告图片：" prop="display_pic">
             <div v-show="Pic1">
+              <div v-show="isPic">
               <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
               <img width="100%" :src="ruleForm.displayPic" alt="广告图片">
               <el-upload
@@ -184,14 +185,35 @@
                 </el-button>
               </el-upload>
               {{imgSize}}
+              </div>
+              <div v-show="isVideo">
+                <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
+                <video controls="controls" :src="ruleForm.display_pic" class="video">
+                  <source :src="ruleForm.display_pic" type="video/*">
+                </video>
+                <el-upload
+                  ref="videoFile"
+                  action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                  :data="Token2"
+                  :file-list="fileList"
+                  :multiple = false
+                  :on-remove="removePic1"
+                  :on-success="successVideo"
+                  :before-upload="beforeUploadPic2">
+                  <el-button  type="primary" @click="clearUploadedVideo" class="videoBtn">上传视频
+                    <i class="el-icon-upload el-icon--right"></i>
+                  </el-button>
+                </el-upload>
+              </div>
               <div>
-                <el-radio-group v-model="ruleForm.show_type" prop="show_type">
+                <el-radio-group v-model="ruleForm.show_type" prop="show_type" @change="handleCheckedTypeChange">
                   <el-radio label="1">图片</el-radio>
                   <el-radio label="2">GIF</el-radio>
+                  <el-radio v-show='videoShow' label="3">视频</el-radio>
                 </el-radio-group>
               </div>
               <el-input v-model="ruleForm.gif_countdown" class="imgTime" v-if="gifTime"
-                        placeholder="GIF倒计时(单位s)" prop="gif_countdown"></el-input>
+                        placeholder="GIF/视频倒计时(单位s)" prop="gif_countdown"></el-input>
             </div>
           </el-form-item>
 
@@ -479,6 +501,10 @@
         isDownloadUrl: false,
         isDownloadModule: false,
         gifTime: false,
+        videoShow: false,
+        fileList: [],
+        isPic: false,
+        isVideo: false,
         positionVal: '',
         picVal: '',
         sdkUrlToken: {},
@@ -915,6 +941,10 @@
           this.ruleForm.down_url['2'] = this.ruleForm.iosUrl
           this.ruleForm.down_url = JSON.stringify(this.ruleForm.down_url)
         }
+        // 广告图片
+        if(this.ruleForm.show_type === '1'){
+          this.ruleForm.gif_countdown = ''
+        }
         // 标签
         this.ruleForm.tag = this.sdkLabelArr.join(',')
         this.ruleForm.sdkLabelArr = this.ruleForm.tag // 默认被选中的值用于字段校验必填
@@ -989,25 +1019,61 @@
       handleCheckedPositionChange (val) {
         this.positionVal = val
         if (this.positionVal === '4') {
-          this.gifTime = false
           this.imgSize = '尺寸：640*100'
+          this.gifTime = false
+          this.videoShow = false
+          this.isPic = true
+          this.isVideo = false
         }
         if (this.positionVal === '5') {
           this.imgSize = '尺寸：636*636'
           this.gifTime = false
+          this.videoShow = false
+          this.isPic = true
+          this.isVideo = false
         }
-        if (this.positionVal === '6') {
+        if (this.positionVal === '6' && this.ruleForm.show_type === '3') {
           this.imgSize = '尺寸：750*1334'
           this.gifTime = true
+          this.videoShow = true
+          this.isPic = false
+          this.isVideo = true
+        }else if (this.positionVal === '6') {
+          this.imgSize = '尺寸：750*1334'
+          this.gifTime = true
+          this.videoShow = true
+          this.isPic = true
+          this.isVideo = false
         }
-        if (this.positionVal === '14') {
+        if (this.positionVal === '14'&& this.ruleForm.show_type === '3') {
           this.imgSize = '尺寸：690*370'
           this.gifTime = false
+          this.videoShow = true
+          this.isPic = false
+          this.isVideo = true
+        } else if (this.positionVal === '14') {
+          this.imgSize = '尺寸：690*370'
+          this.gifTime = false
+          this.videoShow = true
+          this.isPic = true
+          this.isVideo = false
+        }
+      },
+      handleCheckedTypeChange(val){
+        if(val === '1'){
+          this.isPic = true
+          this.isVideo = false
+        } else if(val === '2'){
+          this.isPic = true
+          this.isVideo = false
+        } else if(val === '3'){
+          this.isPic = false
+          this.isVideo = true
         }
       },
       iconList () {
         this.sdkLabelObj = {}
-//        this.sdkLabelArr = []
+        this.sdkLabelArr = []
         return new Promise((resolve) => {
           this.$ajax.post(`${baseUrl.advertContent}/sysDict/findDictList`, {type: 'addict', timeout: 3000})
             .then(response => {
@@ -1173,6 +1239,10 @@
       successViewImg4 (response, file, fileList) {
         this.ruleForm.viewImg4 = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
       },
+      successVideo (response, file, fileList) {
+        this.ruleForm.display_pic = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
+        this.fileList = fileList
+      },
       // 上传之前 清除原有图片
       clearUploadedPic1 (val) {
 //        clearUploadedImg(this.ruleForm.display_pic, this.$refs.adPic1)
@@ -1222,9 +1292,16 @@
         this.ruleForm.viewImg4 = ''
         this.ruleForm.viewImgFour = ''
       },
+      clearUploadedVideo () {
+        if (this.ruleForm.display_pic) {
+          this.$refs.videoFile.clearFiles()
+        }
+        this.ruleForm.display_pic = ''
+      },
       // 移除图片时清空form表单中的图片地址
       removePic1 () {
         this.ruleForm.display_pic = ''
+        this.fileList = []
       },
       removeSdkUrl () {
         this.ruleForm.top_img = ''
@@ -1392,9 +1469,16 @@
   a {
     color: red;
   }
-
+ .imgTime{
+   font-size: 8px;
+ }
   .el-icon-close {
     font-size: 3px !important;
     color: red;
   }
+  .video{
+    width:300px;
+    height:200px;
+  }
+
 </style>

@@ -18,16 +18,36 @@
           <div class="view">
             <div class="sidebar">
               <div class="pageTop"><img src="../../assets/images/timg.jpg"></div>
-              <div v-if="pageHeader" class="pageHeader"><div class="headerContent">页头①点击取消编辑<i class="iconfont">&#xe73d;</i></div></div>
-              <div v-else="pageHeader" class="pageHeader"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-if="pageCarousel" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-else="pageCarousel" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-if="pageActivity" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-else="pageActivity" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-if="pageFoot" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-else="pageFoot" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-if="pageFoot" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
-              <div v-else="pageFoot" class="pageCarousel"><div class="headerContent">页头①点击取消编辑</div></div>
+              <div v-if="pageHeader" class="pageHeader">
+                <div class="headerContent">页头①点击取消编辑<i class="iconfont">&#xe73d;</i></div>
+              </div>
+              <div v-else="pageHeader" class="pageHeader">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-if="pageCarousel" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-else="pageCarousel" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-if="pageActivity" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-else="pageActivity" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-if="pageFoot" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-else="pageFoot" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-if="pageFoot" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
+              <div v-else="pageFoot" class="pageCarousel">
+                <div class="headerContent">页头①点击取消编辑</div>
+              </div>
             </div>
           </div>
         </el-col>
@@ -71,7 +91,7 @@
         cityVisible: false,
         filterText: '',
         filterId: '',
-        select: [],
+        select: [{'id': '1', 'label': '全国', 'children': [{'id': '2', 'label': '北京'}, {'id': '3', 'label': '上海'}]}],
         pageHeader: true,
         pageCarousel: true,
         pageActivity: true,
@@ -95,6 +115,7 @@
       },
       doModify () {
         let treeArr = this.$refs.tree.getCheckedKeys()
+        let treeCity = this.$refs.tree.getCheckedNodes()
 
         this.form.cityName = this.filterText
         this.form.Id = this.filterId
@@ -112,18 +133,36 @@
       }
     }
   }
+
+  function searchRole (result, checkedRoles) {
+    for (let i = 0; i < result.length; i++) {
+      let item = result[i]
+      if (item.children !== undefined && item.children.length > 0) {
+        // 递归
+        searchRole(item.children, checkedRoles)
+      }
+      if (item.roleId && item.roleId) {
+        let arr = checkedRoles.push(item.id)
+        return arr
+      }
+    }
+  }
 </script>
 <style scoped>
   @import '../../assets/icon_font/iconfont.css';
+
   .width {
     width: 100px;
   }
+
   .pageWidth {
     padding: 0px 40px 20px;
   }
+
   .showWidth {
     margin-top: 100px;
   }
+
   .view {
     overflow: auto;
     border: 1px solid rgba(0, 0, 0, 0.06);
@@ -141,11 +180,13 @@
     -moz-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
     box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
   }
+
   .view .sidebar {
     width: 100%;
     height: 100%;
     background-color: #fff;
   }
+
   .viewRight {
     border: 1px solid rgba(0, 0, 0, 0.06);
     -webkit-box-sizing: border-box;
@@ -161,33 +202,42 @@
     -moz-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07);
     box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07);
   }
+
   .viewRight .sidebarRight {
     width: 100%;
     height: 100%;
     background-color: #fff;
   }
-  .pageTop{
+
+  .pageTop {
     width: 100%;
     height: 5%;
   }
-  .pageTop img{
+
+  .pageTop img {
     width: 100%;
     height: 100%;
   }
+
   .pageHeader {
     position: relative;
     width: 100%;
     height: 10%;
     background-color: #DB5050;
   }
-  .headerContent{
-    position: absolute;top:50%;left: 50%;transform:translateX(-50%) translateY(-50%);
+
+  .headerContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
   }
+
   .pageCarousel {
     position: relative;
     width: 100%;
     height: 27%;
     background-color: #ccc;
-    margin-bottom:10px;
+    margin-bottom: 10px;
   }
 </style>
