@@ -61,7 +61,7 @@
         <el-form-item>
           <el-button
             v-show="releaseBtn && hasPermission('activity/message/inform/edit')"
-            type="success" @click="releaseMsg" class="btn1">发布
+            type="success" @click="releaseMsg" class="btn">发布
           </el-button>
           <el-button
             v-show="saveBtn && hasPermission('activity/message/inform/edit')" type="primary" @click="saveMsg"
@@ -370,12 +370,6 @@
 
   .btn {
     margin-top: 50px;
-    height: 70px;
-    width: 150px;
-    font-size: 40px;
-  }
-
-  .btn1 {
     height: 70px;
     width: 150px;
     font-size: 40px;

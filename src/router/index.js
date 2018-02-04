@@ -35,8 +35,8 @@ router.beforeEach((to, from, next) => {
   //     routes.push(s)
   //   }
   // })
-  console.log('to.path', to.path)
-  console.log('from.path', from.path)
+  // console.log('to.path', to.path)
+  // console.log('from.path', from.path)
   // console.log(router)
   // if (Cookie.get('username') === '' || Cookie.get('username') === undefined) {
   //   router.replace('/login')
