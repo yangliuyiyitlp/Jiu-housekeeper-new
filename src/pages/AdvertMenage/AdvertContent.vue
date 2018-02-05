@@ -486,7 +486,6 @@
         tableData: [],
         checkedPosition: [],
         adCheckedPosition: {'6': '开屏', '4': '活动条', '5': '二级弹框', '14': '骑行结束页'},
-        adCheckedPic: {'1': '图片', '2': 'GIF'},
         imgSize: '尺寸：750*1334',
         checkedCity: [],
         selectAdOs: [],
@@ -538,9 +537,8 @@
           iosUrl: [{required: true, message: '请输入ios地址', trigger: 'blur'}],
           androidUrl: [{required: true, message: '请输入安卓地址', trigger: 'blur'}],
           checkedCityArr: [{required: true, message: '请选择地区'}],
-          textarea: [{required: true, message: '请输入应用描述'}]
+          textarea: [{required: true, message: '请输入应用描述', trigger: 'blur'}]
         },
-        fileList2: [],
         handerClick: [],
         defaultProps: {
           children: 'children',
@@ -942,8 +940,14 @@
           this.ruleForm.down_url = JSON.stringify(this.ruleForm.down_url)
         }
         // 广告图片
-        if(this.ruleForm.show_type === '1'){
-          this.ruleForm.gif_countdown = ''
+        if(this.ruleForm.type !== '6'){
+          this.ruleForm.gif_countdown = null
+        }
+        if(this.ruleForm.show_type !== '3'){
+          this.$refs.videoFile.clearFiles()
+          this.fileList = []
+        } else if(this.ruleForm.show_type === '3'){
+          this.ruleForm.displayPic = ''
         }
         // 标签
         this.ruleForm.tag = this.sdkLabelArr.join(',')

@@ -26,11 +26,11 @@
               <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
             </el-select>
           </el-form-item>
-          <!--<el-form-item label="位置：">-->
-          <!--<el-select v-model="formInline.showRule" clearable>-->
-          <!--<el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>-->
-          <!--</el-select>-->
-          <!--</el-form-item>-->
+          <el-form-item label="位置：">
+            <el-select v-model="formInline.showRule" clearable>
+              <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
+            </el-select>
+          </el-form-item>
 
           <el-form-item v-if="hasPermission('advert/data/view')">
             <el-button type="primary" @click="query">查询</el-button>
@@ -107,11 +107,11 @@
           <el-select v-model="formInline.showRule" clearable>
             <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
           </el-select>
-          <el-select v-model="formInline.showRule" clearable>
-            <el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>
-          </el-select>
+          <!--<el-select v-model="formInline.showRule" clearable>-->
+            <!--<el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>-->
+          <!--</el-select>-->
         </el-form>
-        <div id="myChart" :style="{width: '900px', height: '300px'}" ></div>
+        <div id="myChart" :style="{width:'900px', height:'400px'}"></div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -131,7 +131,7 @@
     data () {
       return {
         activeName2: 'first',
-        opFlag: {0: '都不显示', 1: '围栏外显示', 2: '围栏内显示', 3: '都显示'},
+        opFlag: {0: '展示次数', 1: '点击次数', 2: '点击率', 3: '激活数'},
         showFlag: '',
         moreData: true,
         tableData: [],
@@ -139,26 +139,6 @@
         adminId: '',
         path: '',
         permissionList: ['advert/data/view', 'advert/data/export', 'advert/data/more']
-//        data: {
-//          legend: {
-//           data: [ '页面PV', '页面UV', '下载PV', '下载UV', '激活量', '注册量' ]
-//          },
-//          xAxis: [
-//            {
-//              type: 'category',
-//              data: [ '20170201', '20170202', '20170203', '20170204', '20170205', '20170206', '20170207' ]
-//            }
-//          ],
-//          series: [
-//            {
-//              name: '页面22',
-//              type: 'line',
-//              stack: '总量',
-//              areaStyle: { normal: {} },
-//              data: [ 400, 332, 301, 334, 390, 330, 2 ]
-//            }
-//          ]
-//        }
       }
     },
     created () {
@@ -178,17 +158,17 @@
         // 绘制图表
         myChart.setOption({
           title: {
-            text: '折线图堆叠'
+            text: '广告数据'
           },
           tooltip: {
             trigger: 'axis'
           },
           legend: {
-            data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+            data: ['活动条', '二级弹框', '开屏', '骑行结束页']
           },
           grid: {
             left: '3%',
-            right: '4%',
+            right: '0%',
             bottom: '3%',
             containLabel: true
           },
@@ -200,41 +180,37 @@
           xAxis: {
             type: 'category',
             boundaryGap: false,
-            data: ['00:00-00:59', '01:00-01:59', '02:00-02:59', '03:00-03:59', '04:00-04:59', '05:00-05:59', '06:00-06:59']
+            data: ['00:00-00:59', '01:00-01:59', '02:00-02:59', '03:00-03:59', '04:00-04:59', '05:00-05:59', '06:00-06:59', '07:00-07:59', '08:00-08:59', '09:00-09:59',
+              '10:00-10:59', '11:00-11:59', '12:00-12:59', '13:00-13:59', '14:00-14:59', '15:00-15:59', '16:00-16:59', '17:00-17:59', '18:00-18:59', '19:00-19:59',
+              '20:00-20:59', '21:00-21:59', '22:00-22:59', '23:00-23:59']
           },
           yAxis: {
             type: 'value'
           },
           series: [
             {
-              name: '邮件营销',
+              name: '活动条',
               type: 'line',
-              stack: '总量',
-              data: [120, 132, 101, 134, 90, 230, 210]
+              stack: '展示次数',
+              data: [120, 132, 101, 134, 90, 230, 210,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310]
             },
             {
-              name: '联盟广告',
+              name: '二级弹框',
               type: 'line',
-              stack: '总量',
-              data: [220, 182, 191, 234, 290, 330, 310]
+              stack: '展示次数',
+              data: [120, 132, 101, 134, 90, 230, 210,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310]
             },
             {
-              name: '视频广告',
+              name: '开屏',
               type: 'line',
-              stack: '总量',
-              data: [150, 232, 201, 154, 190, 330, 410]
+              stack: '展示次数',
+              data: [120, 132, 101, 134, 90, 230, 210,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310]
             },
             {
-              name: '直接访问',
+              name: '骑行结束页',
               type: 'line',
-              stack: '总量',
-              data: [320, 332, 301, 334, 390, 330, 320]
-            },
-            {
-              name: '搜索引擎',
-              type: 'line',
-              stack: '总量',
-              data: [820, 932, 901, 934, 1290, 1330, 1320]
+              stack: '展示次数',
+              data: [120, 132, 101, 134, 90, 230, 210,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310,220, 182, 191, 234, 290, 330, 310]
             }
           ]
         })
@@ -281,83 +257,39 @@
         this.$ajax.get(`${baseUrl.cityFencingUrl}/remind/one`, {params: {ruleId: id}})
           .then(res => {
             if (res.data.code === 200) {
-              let resultData = res.data.data
-              this.ruleForm = resultData
-              this.showFlag = resultData.showRule
-              this.ruleForm.showRule = this.opFlag[resultData.showRule]
+
               console.log(this.ruleForm)
-            } else if (res.data.code === 500) {
+            } else {
               this.$message({
                 type: 'error',
                 message: res.data.msg
               })
             }
           }).catch(() => {
-            this.$message({
-              type: 'error',
-              message: '查询异常'
-            })
+          this.$message({
+            type: 'error',
+            message: '查询异常'
           })
+        })
       },
       more (row, column, cell, event) {
         if (column.property !== 'id') {
           return false
         } else {
           this.activeName2 = 'second'
-          this.create = true
-          this.update = false
-          this.title = '电子围栏基础信息详情'
           this.getMore(row.id)
-          console.log(row.id)
+          this.moreData = true
+          this.drawLine()
         }
       },
       back () {
         this.activeName2 = 'first'
-        if (this.create) {
-          this.title = '电子围栏基础信息新增'
-        }
-      },
-      resetForm (ruleForm) {
-        this.ruleForm = {}
+        this.moreData = false
       }
     }
   }
 </script>
 <style scoped>
-  /*图片开始*/
-  img {
-    width: 148px;
-    height: 148px;
-  }
-
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .avatar-uploader .el-upload:hover {
-    border-color: #20a0ff;
-  }
-
-  .avatar-uploader-icon {
-    font-size: 28px;
-    color: #8c939d;
-    width: 178px;
-    height: 178px;
-    line-height: 178px;
-    text-align: center;
-  }
-
-  .avatar {
-    width: 178px;
-    height: 178px;
-    display: block;
-  }
-
-  /*图片结束 */
   html, body {
     height: 100%;
   }
@@ -374,19 +306,5 @@
     padding-left: 10px;
   }
 
-  .el-dialog__header {
-    text-align: center;
-  }
 
-  .ruleForm > .el-form-item > .el-form-item__label {
-    width: 100px !important;
-  }
-
-  .ruleForm > .el-form-item > .el-form-item__content {
-    margin-left: 100px !important;
-  }
-  #myChart{
-    width:100%;
-    height:400px;
-  }
 </style>

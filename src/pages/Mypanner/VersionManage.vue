@@ -79,8 +79,11 @@
               v-model="ruleForm.releaseNotes">
             </el-input>
           </el-form-item>
+
           <el-form-item label="强制更新的最低版本：">
-            <el-input v-model="ruleForm.minVersion" class="width"></el-input>
+            <el-select v-model="ruleForm.minVersion" clearable>
+              <el-option v-for="(val,key) in versionSelect" v-bind:key=key :label=val :value=key></el-option>
+            </el-select>
           </el-form-item>
           <!--<el-form-item label="更新用户范围：" prop="releaseNotes">-->
             <!--<el-input-->
@@ -133,6 +136,7 @@
         tableData: [],
         osObj: {'0':'ios', '1':'andriod'},
         pdIdObj: {'0':'赳赳单车', '1':'赳猎人', '2':'小程序'},
+        versionSelect: {},
         formInline: {},
         ruleForm: {},
         userForm: {},
@@ -219,6 +223,29 @@
               this.ruleForm = resultData
               this.ruleForm.os = this.osObj[resultData.os]
               this.ruleForm.pdId = this.pdIdObj[resultData.pdId]
+              // 获取版本
+              this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': pdId,'os': os, timeout: 3000}})
+                .then((res) => {
+                  let result = res.data.data
+                  if (res.data.code === 200 ) {
+                    if (os === '0') {
+                      this.versionSelect = getVersion(result.ios_versions)
+                    }else if (os === '1'){
+                      this.versionSelect = getVersion(result.android_versions)
+                    }
+                  } else {
+                    this.$message({
+                      type: 'info',
+                      message: res.data.msg
+                    })
+                  }
+                })
+                .catch(() => {
+                  this.$message({
+                    type: 'info',
+                    message: '版本列表获取异常'
+                  })
+                })
             } else {
               this.$message({
                 type: 'error',
@@ -280,6 +307,14 @@
         })
       }
     }
+  }
+
+  function getVersion(val){
+    let versionObj = {}
+    for(let i=0 ; i<val.length; i++){
+      versionObj[val[i].version] = val[i].version
+    }
+    return versionObj
   }
 </script>
 <style scoped>
