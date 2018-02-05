@@ -143,25 +143,25 @@
 
           <!--<input type="file" id="file_upload" name="file_upload" accept="video/*">-->
           <el-form-item label="视频上传：">
-            <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
-            <video controls="controls" :src="ruleForm.iconUrl" class="video">
-              <source :src="ruleForm.iconUrl" type="video/*">
-            </video>
-            <el-upload
-              ref="loadFile"
-              action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-              :data="Token2"
-              :on-preview="handlePreview"
-              :file-list="fileList"
-              :multiple = false
-              :on-remove="removeImgPath"
-              :on-success="successImgPath"
-              :before-upload="beforeUploadImgPath">
-              <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传视频
-                <i class="el-icon-upload el-icon--right"></i>
-              </el-button>
-            </el-upload>
-          </el-form-item>
+          <el-input v-model="ruleForm.iconUrl" v-show='false'></el-input>
+          <video controls="controls" :src="ruleForm.iconUrl" class="video">
+            <source :src="ruleForm.iconUrl" type="video/*">
+          </video>
+          <el-upload
+            ref="loadFile"
+            action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+            :data="Token2"
+            :on-preview="handlePreview"
+            :file-list="fileList"
+            :multiple = false
+            :on-remove="removeImgPath"
+            :on-success="successImgPath"
+            :before-upload="beforeUploadImgPath">
+            <el-button :disabled="!update" type="primary" @click="clearUploadedImgPath">上传视频
+              <i class="el-icon-upload el-icon--right"></i>
+            </el-button>
+          </el-upload>
+        </el-form-item>
 
 
           <el-form-item>

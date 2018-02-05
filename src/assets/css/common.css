@@ -29,3 +29,7 @@ body{
   margin:0!important;
 }
 
+.el-upload-list{
+  width:320px!important;
+}
+
