@@ -111,7 +111,7 @@
             <!--<el-option v-for="(val,key) in opFlag" v-bind:key=key :label=opFlag[key] :value=key></el-option>-->
           <!--</el-select>-->
         </el-form>
-        <div id="myChart" :style="{width:'900px', height:'400px'}"></div>
+        <div id="myChart" :style="{'width':'900px', 'height':'400px', 'margin-top':'10px'}"></div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -127,6 +127,7 @@
   // 引入提示框和title组件
   require('echarts/lib/component/tooltip')
   require('echarts/lib/component/title')
+  require("echarts/lib/component/legendScroll");
   export default {
     data () {
       return {

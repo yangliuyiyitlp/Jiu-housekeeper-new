@@ -175,7 +175,7 @@
                 ref="adPic1"
                 list-type="picture-card"
                 action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-                :limit=1
+                :limit='1'
                 :data="Token2"
                 :on-remove="removePic1"
                 :on-success="successPic1"
@@ -187,38 +187,49 @@
               {{imgSize}}
               </div>
               <div v-show="isVideo">
-                <el-input v-model="ruleForm.display_pic" v-show='false'></el-input>
-                <video controls="controls" :src="ruleForm.display_pic" class="video">
-                  <source :src="ruleForm.display_pic" type="video/*">
-                </video>
+                <el-input v-model="ruleForm.display_pic" class="maxWidth"></el-input>
+                <!--<video controls="controls" :src="ruleForm.display_pic" class="video">-->
+                  <!--<source :src="ruleForm.display_pic" type="video/*">-->
+                <!--</video>-->
+                <!--<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="624" height="351" style="margin-top: -10px;margin-left: -8px;" id="FLVPlayer1">-->
+                  <!--<param name="movie" value="http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/advertContent/1517900017261flv.flv" />-->
+                  <!--<param name="quality" value="high" />-->
+                  <!--<param name="wmode" value="opaque" />-->
+                  <!--<param name="scale" value="noscale" />-->
+                  <!--<param name="salign" value="lt" />-->
+                  <!--<param name="FlashVars" value="&MM_ComponentVersion=1&skinName=public/swf/Clear_Skin_3&streamName=public/video/test&autoPlay=false&autoRewind=false" />-->
+                  <!--<param name="swfversion" value="8,0,0,0" />-->
+                <!--</object>-->
+
                 <el-upload
                   ref="videoFile"
                   action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
                   :data="Token2"
                   :file-list="fileList"
                   :multiple = false
+                  :limit="1"
                   :on-remove="removePic1"
                   :on-success="successVideo"
-                  :before-upload="beforeUploadPic2">
+                  :before-upload="beforeUploadVideo">
                   <el-button  type="primary" @click="clearUploadedVideo" class="videoBtn">上传视频
                     <i class="el-icon-upload el-icon--right"></i>
-                  </el-button>
+                  </el-button><a v-show = "isFlv">视频文件名需为“xxxx.flv”格式</a>
                 </el-upload>
               </div>
               <div>
-                <el-radio-group v-model="ruleForm.show_type" prop="show_type" @change="handleCheckedTypeChange">
+                <el-radio-group v-model="ruleForm.show_type"  @change="handleCheckedTypeChange">
                   <el-radio label="1">图片</el-radio>
                   <el-radio label="2">GIF</el-radio>
-                  <el-radio v-show='videoShow' label="3">视频</el-radio>
-                </el-radio-group>
+                  <el-radio v-if='videoShow' label="3">视频</el-radio>
+                </el-radio-group>&nbsp;&nbsp;<a v-show="isShowType">请选择类型</a>
               </div>
-              <el-input v-model="ruleForm.gif_countdown" class="imgTime" v-if="gifTime"
+              <el-input v-model="ruleForm.gif_countdown" class="minWidth" v-if="gifTime"
                         placeholder="GIF/视频倒计时(单位s)" prop="gif_countdown"></el-input>
             </div>
           </el-form-item>
 
           <el-form-item label="展示顺序：" prop="sort">
-            <el-input v-model="ruleForm.sort" class="width" placeholder="请输入展示顺序（数字格式）"></el-input>
+            <el-input v-model="ruleForm.sort" class="minWidth" placeholder="请输入展示顺序（数字格式）"></el-input>
           </el-form-item>
           <hr>
           <h2>广告受众</h2>
@@ -504,6 +515,8 @@
         fileList: [],
         isPic: false,
         isVideo: false,
+        isFlv: false,
+        isShowType: false,
         positionVal: '',
         picVal: '',
         sdkUrlToken: {},
@@ -532,7 +545,7 @@
           sec_title: [{required: true, message: '请输入一句话简介', trigger: 'blur'}],
           version: [{required: true, message: '请输入版本号', trigger: 'blur'}],
           install_Size: [{required: true, message: '请输入安装包大小', trigger: 'blur'}],
-          viewImg1: [{required: true, message: '请上传预览图', trigger: 'blur'}],
+          viewImg1: [{required: true, message: '请依次上传第一张预览图', trigger: 'blur'}],
           sdkLabelArr: [{required: true, message: '请选择标签', trigger: 'blur'}],
           iosUrl: [{required: true, message: '请输入ios地址', trigger: 'blur'}],
           androidUrl: [{required: true, message: '请输入安卓地址', trigger: 'blur'}],
@@ -719,7 +732,10 @@
       },
       query () {
         if (this.formInline.display_time > this.formInline.del_time) {
-          alert('开始时间不能晚于结束时间')
+          this.$message({
+            type: 'info',
+            message: "开始时间不能晚于结束时间"
+          })
           return
         }
         this.$ajax.get(`${baseUrl.advertContent}/ad/list`, {params: this.formInline, timeout: 3000})
@@ -805,7 +821,10 @@
             })
           })
         } else {
-          alert('只有投放中或未开始状态可以暂停')
+          this.$message({
+            type: 'info',
+            message: "只有投放中或未开始状态可以暂停"
+          })
         }
       }, // 暂停
       modifyRecord (id) {
@@ -858,7 +877,10 @@
             if (res.data.code === 200) {
               let resultData = res.data.data
               this.ruleForm = resultData
-              // 下载形式显示对应的
+              // 下载形式显示对应的 因为v-if有惰性 先让true，再根据情况赋值
+              this.isDownloadPageUrl = true
+              this.isDownloadUrl = true
+              this.isDownloadModule = true
               if (resultData.downloadWay === '0') {
                 this.isDownloadWay = true
                 this.isDownloadPageUrl = true
@@ -877,6 +899,10 @@
               }
               // 图片展示
               this.ruleForm.displayPic = resultData.display_pic
+//              if(resultData.show_type === '3'){
+//                this.fileList.push(resultData.display_pic)
+//                console.log(this.fileList)
+//              }
               this.ruleForm.topImg = resultData.top_img
               this.ruleForm.logoImg = resultData.logo_img
               let imgArr = []
@@ -940,7 +966,17 @@
           this.ruleForm.down_url = JSON.stringify(this.ruleForm.down_url)
         }
         // 广告图片
+        if(this.ruleForm.type === '4' || this.ruleForm.type === '5'){
+          if(this.ruleForm.show_type === '3'){
+            this.isShowType = true
+            return false
+          }else{
+            this.isShowType = false
+          }
+        }
         if(this.ruleForm.type !== '6'){
+          this.ruleForm.gif_countdown = null
+        } else if( this.ruleForm.type === '6' && this.ruleForm.show_type === '1'){
           this.ruleForm.gif_countdown = null
         }
         if(this.ruleForm.show_type !== '3'){
@@ -948,6 +984,13 @@
           this.fileList = []
         } else if(this.ruleForm.show_type === '3'){
           this.ruleForm.displayPic = ''
+          this.$refs.adPic1.clearFiles()
+        }
+        if(this.ruleForm.show_type === ''){
+          this.isShowType = true
+          return false
+        }else {
+          this.isShowType = false
         }
         // 标签
         this.ruleForm.tag = this.sdkLabelArr.join(',')
@@ -1140,7 +1183,10 @@
       }, // 标签删除
       iconAdd () {
         if (this.label.trim() === '') {
-          alert('请填写新标签')
+          this.$message({
+            type: 'info',
+            message: "请填写新标签"
+          })
           return false
         } else if (this.label.trim() !== '') {
           let valueLabel = this.label + new Date().getTime()
@@ -1221,6 +1267,16 @@
             })
         })
       }, // 公用
+      beforeUploadVideo (file) {
+        if(file.name.split('.')[1] === 'flv' || file.name.split('.')[1] === 'FLV'){
+          this.isFlv = false
+          this.beforeUploadPic2(file)
+        }else {
+          this.isFlv = true
+          return false
+        }
+
+      }, // 视频
       successPic1 (response, file, fileList) {
 //        successImg(this.ruleForm.display_pic, this.Token1.key)
         this.ruleForm.display_pic = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token2.key
@@ -1328,25 +1384,17 @@
     }
   }
 
-  //  function searchRole (result, checkedRoles) {
-  //    for (let i = 0; i < result.length; i++) {
-  //      let item = result[i]
-  //      if (item.children !== undefined && item.children.length > 0) {
-  //        // 递归
-  //        searchRole(item.children, checkedRoles)
-  //      }
-  //      if (item.roleId && item.roleId) {
-  //        let arr = checkedRoles.push(item.id)
-  //        return arr
-  //      }
-  //    }
-  //  }
 </script>
 <style scoped>
   .textarea {
     width: 350px;
   }
-
+.minWidth{
+  width:110px;
+}
+.maxWidth{
+  width:378px;
+}
   .sdkwidth {
     margin-bottom: 10px;
   }

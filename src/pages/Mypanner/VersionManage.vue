@@ -34,6 +34,7 @@
             label="强制更新的最低版本">
           </el-table-column>
           <el-table-column
+            :show-overflow-tooltip = true
             header-align="center"
             align="center"
             prop="releaseNotes"
@@ -81,7 +82,7 @@
           </el-form-item>
 
           <el-form-item label="强制更新的最低版本：">
-            <el-select v-model="ruleForm.minVersion" clearable>
+            <el-select v-model="ruleForm.minVersion" clearable class="width">
               <el-option v-for="(val,key) in versionSelect" v-bind:key=key :label=val :value=key></el-option>
             </el-select>
           </el-form-item>
@@ -136,7 +137,10 @@
         tableData: [],
         osObj: {'0':'ios', '1':'andriod'},
         pdIdObj: {'0':'赳赳单车', '1':'赳猎人', '2':'小程序'},
+        os:'',
+        pdId:'',
         versionSelect: {},
+        versionObj:{},
         formInline: {},
         ruleForm: {},
         userForm: {},
@@ -203,20 +207,25 @@
         this.activeName2 = 'first'
         this.update = false
       },
+      getVersion(val){
+        this.versionObj = {}
+        for(let i=0 ; i<val.length; i++){
+          this.versionObj[val[i].version] = val[i].version
+        }
+        return this.versionObj
+      },
       getMore (row) {
-        let os
         for(let osKey in this.osObj){
           if(this.osObj[osKey] === row.os){
-            os = osKey
+           this.os = osKey
           }
         }
-        let pdId
         for(let pdIdKey in this.pdIdObj){
           if(this.pdIdObj[pdIdKey] === row.pdId){
-            pdId = pdIdKey
+            this.pdId = pdIdKey
           }
         }
-        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {pdId: pdId, os: os, timeout: 3000}})
+        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {pdId: this.pdId, os: this.os, timeout: 3000}})
           .then(res => {
             if (res.data.code === 200) {
               let resultData  = res.data.data
@@ -224,15 +233,16 @@
               this.ruleForm.os = this.osObj[resultData.os]
               this.ruleForm.pdId = this.pdIdObj[resultData.pdId]
               // 获取版本
-              this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': pdId,'os': os, timeout: 3000}})
+              this.$ajax.get(`${baseUrl.advertContent}/version/list`, {params: {'pdId': this.pdId,'os': this.os, timeout: 3000}})
                 .then((res) => {
                   let result = res.data.data
                   if (res.data.code === 200 ) {
-                    if (os === '0') {
-                      this.versionSelect = getVersion(result.ios_versions)
-                    }else if (os === '1'){
-                      this.versionSelect = getVersion(result.android_versions)
+                    if (this.os === '0') {
+                      this.versionSelect = this.getVersion(result.ios_versions)
+                    }else if (this.os === '1'){
+                      this.versionSelect = this.getVersion(result.android_versions)
                     }
+                    console.log(this.versionSelect)
                   } else {
                     this.$message({
                       type: 'info',
@@ -240,7 +250,8 @@
                     })
                   }
                 })
-                .catch(() => {
+                .catch((err) => {
+                console.log(err)
                   this.$message({
                     type: 'info',
                     message: '版本列表获取异常'
@@ -260,6 +271,15 @@
           })
       },
       submitForm (ruleForm) {
+        if(this.ruleForm.version === this.ruleForm.minVersion){
+          this.$message({
+            type: 'info',
+            message: "'更新的版本号' 和 '强制更新的最低版本号' 不能一样"
+          })
+          return false
+        }
+
+
         // 请求
         this.$refs[ruleForm].validate((valid) => {
           this.ruleForm.updateBy = Cookie.get('adminId')
@@ -309,13 +329,6 @@
     }
   }
 
-  function getVersion(val){
-    let versionObj = {}
-    for(let i=0 ; i<val.length; i++){
-      versionObj[val[i].version] = val[i].version
-    }
-    return versionObj
-  }
 </script>
 <style scoped>
   @import '../../assets/css/treecss.css';
