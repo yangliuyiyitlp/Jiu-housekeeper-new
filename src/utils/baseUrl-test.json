@@ -11,5 +11,5 @@
   "ActivityArea": "http://139.196.194.172:8085/jjbike_web/a",
   "advertContent": "http://139.196.194.172:8086/AdvertisementComPro",
   "MessageInform":"http://139.196.194.172:8086/AdvertisementComPro/message/prompt",
-  "DynamicMenu":"http://192.168.0.31:8080/appMenu"
+  "DynamicMenu":"http://139.196.194.172:8085/jjenjoymenu/appMenu"
 }
