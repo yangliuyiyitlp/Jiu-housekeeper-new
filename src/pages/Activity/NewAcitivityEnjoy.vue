@@ -2,13 +2,14 @@
   <div class="pageWidth">
     <el-form ref="menuForm" :model="form">
       <h2>地址选择</h2>
-      <el-input
-        class="width"
-        :disabled=true
-        :on-icon-click="searchCity"
-        icon="search"
-        v-model="form.cityName">
-      </el-input>
+      <a>选择城市</a>&nbsp;<i class="el-icon-search" @click="searchCity"></i>
+      <!--<el-input-->
+        <!--class="width"-->
+        <!--:disabled=true-->
+        <!--:on-icon-click="searchCity"-->
+        <!--icon="search"-->
+        <!--v-model="form.cityName">-->
+      <!--</el-input>-->
     </el-form>
 
     <div class="showWidth">
@@ -17,9 +18,9 @@
         <el-col :span="8">
           <div class="view">
             <div class="sidebar">
-              <div class="pageTop"><img src="../../assets/images/timg.jpg"></div>
+              <div class="pageTop"><img src="../../assets/images/activity/phoheader.png"></div>
               <div v-if="pageHeader" class="pageHeader">
-                <div class="headerContent">页头①点击取消编辑<i class="iconfont">&#xe73d;</i></div>
+                <div class="headerContent">页头①点击取消编辑<i class=""></i></div>
               </div>
               <div v-else="pageHeader" class="pageHeader">
                 <div class="headerContent">页头①点击取消编辑</div>
