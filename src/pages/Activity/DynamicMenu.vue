@@ -5,7 +5,9 @@
       <el-col :span="8">
 
         <h2>城市选择</h2>
-        <el-select v-model="searchForm.cityId" placeholder="推送城市添加" style="width: 320px" @change="changeCity">
+        <el-select v-model="searchForm.cityId"
+                   disabled
+                   placeholder="推送城市添加" style="width: 320px" @change="changeCity">
           <el-option
             v-for="(item,index) in areaRelation"
             :key="index"
@@ -32,20 +34,34 @@
                 <p>188****8888</p>
               </div>
               <div class="bottom">
-                <ul v-show="menuList==null ? false:true">
+                <ul v-show="menuList==null ? false:true" ref="menuUl">
 
                   <li v-for="(item,index) in menuList" :key="item.id" @click="choiceMenu(index)">
-                    <i class="el-icon-edit" @click="editMenu(item.id)"></i>
+                    <i class="el-icon-edit" @click="editMenu(item.id)"
+                       v-if="hasPermission('activity/dynamic/menu/view')"></i>
                     <img :src="item.iconUrl" alt="">
-                    <span>{{item.menuName}}</span>
-                    <span @click="deleteMenu(item.id)"><i class="el-icon-delete"></i></span>
-                    <span @click="upRank(index)"><i class="el-icon-caret-top"></i></span>
-                    <span @click="downRank(index)"><i class="el-icon-caret-bottom"></i></span>
+                    <span class="menuName">{{item.menuName}}</span>
+
+                    <i class="btns" v-if="hasPermission('activity/dynamic/menu/edit')">
+                      <span @click="deleteMenu(item.id)"><i class="el-icon-delete"></i></span>
+                      <span @click="upRank(index)"><i class="el-icon-caret-top"></i></span>
+                      <span @click="downRank(index)"><i class="el-icon-caret-bottom"></i></span>
+                    </i>
+
                   </li>
 
                 </ul>
-                <div class="newEdit" @click="newMenu" style="margin-bottom: 10px;margin-top: 30px"> + 点击新建菜单</div>
-                <div class="newEdit" @click="saveRank">保存当前排序</div>
+                <div class="newEdit"
+                     @click="newMenu"
+                     style="margin-bottom: 10px;margin-top: 30px"
+                     v-if="hasPermission('activity/dynamic/menu/edit')"
+                > + 点击新建菜单
+                </div>
+                <div class="newEdit"
+                     @click="saveRank"
+                     v-if="hasPermission('activity/dynamic/menu/edit')"
+                >保存当前排序
+                </div>
               </div>
             </div>
           </div>
@@ -54,10 +70,12 @@
       </el-col>
 
       <el-col :span="14" :offset="1">
-        <div class="releaseBtn">
+        <div class="releaseBtn" style="margin-top: 100px;cursor: pointer"
+             v-if="hasPermission('activity/dynamic/menu/edit')"
+             @click="isRelease">
           <el-button type="danger" round style="background-color: #DB5050">发布</el-button>
         </div>
-        <div class="rightForm" v-show=isShowForm>
+        <div class="rightForm" v-if="isShowForm && hasPermission('activity/dynamic/menu/view')">
           <h2 v-text="form.id?'修改菜单':'新建菜单'"></h2>
           <el-row :gutter="0">
             <el-col :span="4">
@@ -75,7 +93,8 @@
             </el-col>
 
             <el-col :span="19" :offset="1">
-              <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+              <el-form ref="form" :rules="rules" :model="form"></el-form>
+              <el-form ref="formData" :rules="rules" :model="form" label-width="100px">
 
                 <el-form-item label="id：" v-if=0>
                   <el-input v-model="form.id"></el-input>
@@ -89,19 +108,20 @@
                   <el-input v-model="form.rank"></el-input>
                 </el-form-item>
 
-                <el-form-item label="图片url：">
+                <el-form-item label="图片url：" v-if=0>
                   <el-input v-model="form.iconUrl"></el-input>
                 </el-form-item>
 
                 <el-form-item label="菜单名称：" prop="menuName">
-                  <el-input v-model="form.menuName"></el-input>
+                  <el-input v-model="form.menuName" style="width:215px"></el-input>
                 </el-form-item>
 
                 <el-form-item label="跳转类型：">
-                  <el-select v-model="form.actionType" placeholder="请选择跳转类型">
-                    <el-option label="app原生跳转" value='0'>app原生跳转</el-option>
-                    <el-option label="跳转h5" value='1'>跳转h5</el-option>
-                  </el-select>
+                  <el-radio-group v-model="form.actionType">
+                    <el-radio :label=0>app原生跳转</el-radio>
+                    <el-radio :label=1>跳转h5</el-radio>
+                  </el-radio-group>
+
                   <el-form-item prop="actionUrl">
                     <el-input v-model="form.actionUrl"
                               style="margin-top: 10px"
@@ -111,11 +131,10 @@
                 </el-form-item>
 
                 <el-form-item label="是否登录：">
-                  <el-switch
-                    v-model="form.needLogin"
-                    on-value="1"
-                    off-value="0">
-                  </el-switch>
+                  <el-radio-group v-model="form.needLogin">
+                    <el-radio :label="0">不登录</el-radio>
+                    <el-radio :label="1">登录</el-radio>
+                  </el-radio-group>
                 </el-form-item>
 
                 <el-form-item label="生效时间：" prop="beginTime">
@@ -135,7 +154,16 @@
                 </el-form-item>
 
                 <el-form-item>
-                  <el-button round style="background-color:#DB5050;color:#fff" @click="CreateMenu">立即创建</el-button>
+                  <el-button round
+                             style="background-color:#DB5050;color:#fff"
+                             @click="CreateMenu"
+                             v-if="hasPermission('activity/dynamic/menu/edit')"
+                  >立即创建
+                  </el-button>
+                  <el-button @click="clearMenu"
+                             v-if="hasPermission('activity/dynamic/menu/edit')"
+                  >重置
+                  </el-button>
                   <el-button round style="background-color:#4F4D4D;color:#fff" @click="cancelCreate">取消</el-button>
                 </el-form-item>
 
@@ -153,6 +181,8 @@
   import baseUrl from '../../utils/baseUrl'
   import Tools from '../../../static/js/tools.js'
   import Moment from 'moment'
+  import a from '../../assets/js/getsessionId.js'
+  import Cookie from 'js-cookie'
 
   export default {
     name: 'message-inform',
@@ -163,11 +193,23 @@
           callback(new Error('请选择生效时间!'))
           return
         }
+        let nowDate = +new Date()
+        if (+value < nowDate) {
+          callback(new Error('生效时间必须大于当前时间!'))
+        } else {
+          callback()
+        }
       }
       let endDateRule = (rule, value, callback) => {
         if (!value) {
           callback(new Error('请选择失效时间!'))
           return
+        }
+        let nowDate = +new Date()
+        if (+value < nowDate) {
+          callback(new Error('失效时间必须大于当前时间!'))
+        } else {
+          callback()
         }
       }
       return {
@@ -193,18 +235,31 @@
           os: 0
         }, // 查询列表字符串
         form: {
-          needLogin: '1',
+          needLogin: 0,
+          actionType: 0,
           rank: '99',
           iconUrl: ''
         }, // 单个菜单详情
         iconUrl: '', // 图片上传的url
         Token: {}, // oss秘钥
-        isShowForm: false // 是否展现详情
+        isShowForm: false, // 是否展现详情
+        adminId: '',
+        path: '',
+        permissionList: []
       }
     },
     created () {
+      // 请求按钮权限
+      this.adminId = this.$route.query.adminId
+      this.path = this.$route.path
+      a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.getCityRelation()
       this.searchMenu()
+    },
+    mounted () {
+      this.$nextTick(() => {
+        this.choiceMenu()
+      })
     },
     methods: {
       // 获取城市对应关系
@@ -228,11 +283,11 @@
       searchMenu () {
         this.$ajax.get(`${baseUrl.DynamicMenu}/getAll`, {params: this.searchForm})
           .then(res => {
-            console.log(res.data)
+            // console.log(res.data)
             if (res.data.code === 0) {
               // console.log(res.data.data)
               let menuList = res.data.data
-              console.log(menuList)
+              // console.log(menuList)
               this.menuList = menuList
             } else {
               this.menuList = null
@@ -243,9 +298,9 @@
             console.log(err)
           })
       },
-      // 新建菜单详情
+      // 新建 修改菜单
       CreateMenu () {
-        if(!this.form.iconUrl){
+        if (!this.form.iconUrl) {
           this.$message.error('请上传头像图片!')
           return
         }
@@ -253,9 +308,14 @@
         this.form.os = this.searchForm.os
         this.form.beginTime = Moment(this.form.beginTime).format('YYYY-MM-DD HH:mm:ss')
         this.form.endDate = Moment(this.form.endDate).format('YYYY-MM-DD HH:mm:ss')
+        if (+new Date(this.form.beginTime) >= +new Date(this.form.endDate)) {
+          this.$message.error('失效时间必须大于生效时间!')
+          return
+        }
+        // 操作人员放入表单中
+        this.form.updateBy = this.getUserId()
         console.log(this.form)
-        this.$refs.form.validate((valid) => {
-          console.log(1)
+        this.$refs.formData.validate((valid) => {
           if (valid) {
             console.log('submit!')
             this.$ajax.post(`${baseUrl.DynamicMenu}/upDataMenu`, this.form)
@@ -277,22 +337,31 @@
       },
       // 当前行高亮
       choiceMenu (index) {
+        if (isNaN(index)) {
+          return
+        }
         // console.log(index)
+        // console.log(this.$refs.menuUl.childNodes)
+        // console.log(this.$refs.menuLi)
         // console.log(document.querySelectorAll('.bottom ul li')[index])
         let lis = document.querySelectorAll('.bottom ul li')
+        lis = this.$refs.menuUl.childNodes
+        // console.log(lis)
         for (let i = 0; i < lis.length; i++) {
+          // console.log(lis[i])
           lis[i].classList.remove('active')
         }
         lis[index].classList.add('active')
       },
-      // 编辑当前菜单
+      // 编辑当前菜单 获取详情
       editMenu (id) {
-        console.log(id)
+        // console.log(id)
         this.$ajax.get(`${baseUrl.DynamicMenu}/getMessage`, {params: {id: id}})
           .then(res => {
             // console.log(res)
             if (res.data.code === 0) {
               let form = res.data.data
+              form.actionType = res.data.data.actionType
               console.log(form)
               this.form = form
               this.iconUrl = this.form.iconUrl
@@ -312,26 +381,62 @@
           type: 'warning'
         }).then(() => {
           // 发送请求
-          this.$ajax.post(`${baseUrl.DynamicMenu}/deleteMenu`, {id: id})
+          this.$ajax.post(`${baseUrl.DynamicMenu}/deleteMenu`, {
+            id: id,
+            updateBy: this.getUserId()
+          })
             .then(res => {
               // console.log(res)
               if (res.data.code === 0) {
                 this.searchMenu()
+                this.$message({
+                  type: 'success',
+                  message: '删除菜单成功!'
+                })
               }
             })
             .catch(err => {
               console.log(err)
             })
-          this.$message({
-            type: 'success',
-            message: '删除菜单成功!'
-          })
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
           })
         })
+        this.cancelCreate()
+      },
+      // 正式发布菜单
+      isRelease () {
+        console.log('isRelease')
+        this.$confirm('此操作将正式发布菜单, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            // 发送正式发布请求
+            this.$ajax.get(`${baseUrl.DynamicMenu}/release`,{params: {updateBy: this.getUserId()}})
+              .then(res => {
+                console.log(res)
+                if (res.data.code === 0) {
+                  this.$message({
+                    type: 'success',
+                    message: '正式发布菜单成功!'
+                  })
+                  this.searchMenu()
+                }
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消发布菜单!'
+            })
+          })
       },
       // 升序
       upRank (index) {
@@ -367,36 +472,92 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
-        }).then(() => {
-          // 发送请求
-          let list = this.menuList
-          let rankList = []
-          for (let i = 0; i < list.length; i++) {
-            rankList.push(list[i].id)
-          }
-          let ranks = rankList.join(',')
-          console.log(ranks)
-          this.$ajax.get(`${baseUrl.DynamicMenu}/upDataRank`, {params: {ranks: ranks}})
-            .then(res => {
-              console.log(res)
-              if (res.data.code === 0) {
-                this.searchMenu()
-              }
-            })
-            .catch(err => {
-              console.log(err)
-            })
-          this.$message({
-            type: 'success',
-            message: '保存最新排序成功!'
-          })
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消排序'
-          })
-          this.searchMenu()
         })
+          .then(() => {
+            console.log('进来了么?')
+            // 发送请求
+            let list = this.menuList
+            // console.log(list)
+            // console.log(list.length)
+            let rankList = []
+            for (var i = 0; i < list.length; i++) {
+              rankList.push(list[i].id)
+              // console.log(rankList)
+            }
+            // console.log(rankList)
+            // console.log('遍历结束')
+            let ranks = rankList.join(',')
+            // console.log(ranks)
+            this.$ajax.get(`${baseUrl.DynamicMenu}/upDataRank`, {
+              params:
+                {
+                  ranks: ranks,
+                  updateBy: this.getUserId()
+                }
+            })
+              .then(res => {
+                console.log(res)
+                if (res.data.code === 0) {
+                  this.searchMenu()
+                  this.$message({
+                    type: 'success',
+                    message: '保存最新排序成功!'
+                  })
+                }
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          })
+          .catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消发布菜单!'
+            })
+          })
+        // this.$confirm('此操作将保存最新排序, 是否继续?', '提示', {
+        //   confirmButtonText: '确定',
+        //   cancelButtonText: '取消',
+        //   type: 'warning'
+        // }).then(() => {
+        //   console.log('进来了么?')
+        //   // 发送请求
+        //   let list = this.menuList
+        //   console.log(list)
+        //   let rankList = []
+        //   for (let i = 0; i < list.length; i++) {
+        //     rankList.push(list[i].id)
+        //   }
+        //   let ranks = rankList.join(',')
+        //   console.log(ranks)
+        //   this.$ajax.get(`${baseUrl.DynamicMenu}/upDataRank`, {
+        //     params:
+        //       {
+        //         ranks: ranks,
+        //         updateBy: this.getUserId()
+        //       }
+        //   })
+        //     .then(res => {
+        //       console.log(res)
+        //       if (res.data.code === 0) {
+        //         this.searchMenu()
+        //         this.$message({
+        //           type: 'success',
+        //           message: '保存最新排序成功!'
+        //         })
+        //       }
+        //     })
+        //     .catch(err => {
+        //       console.log(err)
+        //     })
+        // }).catch((err) => {
+        //   console.log(err)
+        //   this.$message({
+        //     type: 'info',
+        //     message: '已取消排序'
+        //   })
+        //   this.searchMenu()
+        // })
       },
       // 更换城市时 查询菜单列表
       changeCity (val) {
@@ -411,7 +572,8 @@
       // 点击新建按钮 出现右边详情空表单
       newMenu () {
         this.form = {
-          needLogin: '1',
+          needLogin: 0,
+          actionType: 0,
           rank: '99'
         }
         this.iconUrl = ''
@@ -420,11 +582,30 @@
       // 点击取消按钮 隐藏右边详情 清空表单
       cancelCreate () {
         this.form = {
-          needLogin: '1',
+          needLogin: 0,
+          actionType: 0,
           rank: '99'
         }
         this.iconUrl = ''
         this.isShowForm = false
+      },
+      // 重置
+      clearMenu () {
+        this.cancelCreate()
+        this.isShowForm = true
+      },
+      // 获取操作人员
+      getUserId () {
+        console.log(Cookie.get('adminId'))
+        return Cookie.get('adminId')
+        // console.log(location)
+        // let arr = location.href.split('?')[1].split('&')
+        // for (let i = 0; i < arr.length; i++) {
+        //   if (arr[i].indexOf('adminId') !== -1) {
+        //     document.cookie = `username=${arr[i].split('=')[1]}; path=/`
+        //     return arr[i].split('=')[1]
+        //   }
+        // }
       },
       // 获取oss秘钥
       beforeAvatarUpload (file) {
@@ -475,6 +656,12 @@
       handleAvatarSuccess () {
         // oss上图片的路径 在表单提交之前拼接
         this.iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
+      hasPermission (data) {
+        if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
+          return true
+        }
+        return false
       }
     }
   }
@@ -571,12 +758,19 @@
     background-color: #000;
   }
 
-  .bottom li span:nth-child(3) {
+  .bottom li .menuName {
     font-size: 12px;
-    margin-right: 38px;
+    line-height: 40px;
   }
 
-  .bottom li span:nth-child(4), .bottom li span:nth-child(5), .bottom li span:nth-child(6) {
+  .btns {
+    display: inline-block;
+    height: 40px;
+    float: right;
+    margin-right: 5px;
+  }
+
+  .btns span {
     display: inline-block;
     width: 26px;
     height: 26px;
