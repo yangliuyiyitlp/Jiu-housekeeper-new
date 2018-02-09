@@ -87,7 +87,8 @@
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload">
                 <img v-if="iconUrl" :src="iconUrl" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                <i v-else class="el-icon-plus
+                avatar-uploader-icon"></i>
               </el-upload>
               <span style="font-size: 12px;color: red">上传图标icon<br/>宽高比10*10</span>
             </el-col>

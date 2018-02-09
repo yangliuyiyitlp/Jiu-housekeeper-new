@@ -2,53 +2,37 @@
   <div class="pageWidth">
     <el-form ref="menuForm" :model="form">
       <h2>地址选择</h2>
-      <a>选择城市</a>&nbsp;<i class="el-icon-search" @click="searchCity"></i>
-      <!--<el-input-->
-        <!--class="width"-->
-        <!--:disabled=true-->
-        <!--:on-icon-click="searchCity"-->
-        <!--icon="search"-->
-        <!--v-model="form.cityName">-->
-      <!--</el-input>-->
+      <a>{{form.cityName}}</a>&nbsp;<i class="el-icon-search" @click="searchCity"></i>
     </el-form>
 
     <div class="showWidth">
-      <h2>展示效果</h2>
+      <div class="showHeader">
+        <a class="showPage">展示效果</a>
+        <div class="introBtn"><el-button class="introduce">发布</el-button></div>
+      </div>
+
       <el-row>
         <el-col :span="8">
           <div class="view">
             <div class="sidebar">
               <div class="pageTop"><img src="../../assets/images/activity/phoheader.png"></div>
-              <div v-if="pageHeader" class="pageHeader">
-                <div class="headerContent">页头①点击取消编辑<i class=""></i></div>
+              <div class="pageFoot">
+                <div class="headerContent">{{}}<i class=""></i></div>
               </div>
-              <div v-else="pageHeader" class="pageHeader">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-if="pageCarousel" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-else="pageCarousel" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-if="pageActivity" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-else="pageActivity" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-if="pageFoot" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-else="pageFoot" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-if="pageFoot" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
-              <div v-else="pageFoot" class="pageCarousel">
-                <div class="headerContent">页头①点击取消编辑</div>
-              </div>
+
+              <!--<div  class="pageHeader" >-->
+                <!--<div class="headerContent">页头 ① 点击编辑</div>-->
+              <!--</div>-->
+              <!--<div  class="pageCarousel">-->
+                <!--<div class="headerContent">轮播区 ② 点击编辑</div>-->
+              <!--</div>-->
+              <!--<div class="pageActivity">-->
+                <!--<div class="headerContent">图标区 ③ 点击编辑</div>-->
+              <!--</div>-->
+              <!--<div class="pageFoot">-->
+                <!--<div class="headerContent">瀑布流 ④ 点击编辑</div>-->
+              <!--</div>-->
+
             </div>
           </div>
         </el-col>
@@ -61,11 +45,10 @@
     </div>
 
     <!--模态框-->
-    <el-dialog title="地址" size="tiny" :visible.sync="cityVisible" center>
+    <el-dialog title="城市" size="tiny" :visible.sync="cityVisible" center>
       关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
       <el-tree
         :data="select"
-        show-checkbox
         default-expand-all
         node-key="id"
         :default-checked-keys="checkedCity"
@@ -89,14 +72,11 @@
   export default {
     data () {
       return {
+        style:false,
         cityVisible: false,
         filterText: '',
         filterId: '',
         select: [{'id': '1', 'label': '全国', 'children': [{'id': '2', 'label': '北京'}, {'id': '3', 'label': '上海'}]}],
-        pageHeader: true,
-        pageCarousel: true,
-        pageActivity: true,
-        pageFoot: true,
         checkedCity: [],
         defaultProps: {
           children: 'children',
@@ -105,7 +85,15 @@
         form: {}
       }
     },
+    watch: {
+      filterText (val) {
+        this.$refs.tree.filter(val);
+      }
+    },
     methods: {
+      styleChange(){
+        this.style=true
+      },
       filterNode (value, data) {
         if (!value) return true
         return data.label.indexOf(value) !== -1
@@ -115,9 +103,6 @@
         this.filterId = data.id
       },
       doModify () {
-        let treeArr = this.$refs.tree.getCheckedKeys()
-        let treeCity = this.$refs.tree.getCheckedNodes()
-
         this.form.cityName = this.filterText
         this.form.Id = this.filterId
         this.cityVisible = false
@@ -165,6 +150,7 @@
   }
 
   .view {
+    cursor: pointer;
     overflow: auto;
     border: 1px solid rgba(0, 0, 0, 0.06);
     -webkit-box-sizing: border-box;
@@ -185,6 +171,7 @@
   .view .sidebar {
     width: 100%;
     height: 100%;
+    position: relative;
     background-color: #fff;
   }
 
@@ -212,21 +199,11 @@
 
   .pageTop {
     width: 100%;
-    height: 5%;
   }
-
   .pageTop img {
     width: 100%;
     height: 100%;
   }
-
-  .pageHeader {
-    position: relative;
-    width: 100%;
-    height: 10%;
-    background-color: #DB5050;
-  }
-
   .headerContent {
     position: absolute;
     top: 50%;
@@ -234,11 +211,55 @@
     transform: translateX(-50%) translateY(-50%);
   }
 
-  .pageCarousel {
+  .pageHeader,.pageCarousel,.pageActivity,.pageFoot {
     position: relative;
     width: 100%;
-    height: 27%;
-    background-color: #ccc;
-    margin-bottom: 10px;
+    background-color: rgba(0,0,0,0.4);
+    margin-bottom: 5px;
+    color:#fff;
+  }
+  .pageHeader {
+    height: 10%;
+  }
+  .active{
+    background-color: #DB5050;
+  }
+  .unactive{
+    background-color: rgba(0,0,0,0.4);
+  }
+  .pageCarousel{
+    height: 25%;
+  }
+  .pageActivity{
+    height: 20%;
+  }
+  .pageFoot{
+    height: 40%;
+  }
+  .showPage{
+    float:left;
+    font-size: 1.5em;
+    font-weight: 700;
+  }
+  .introBtn{
+    float: right;
+    width: 14.666667rem;
+    height: 5.333333rem;
+    line-height: 5.333333rem;
+    box-shadow: 0 0.266667rem 1.066667rem 0 rgba(0, 0, 0, 0.15);
+    text-align: center;
+  }
+  .introduce{
+    width: 12rem;
+    height: 3.333333rem;
+    line-height: 1.4rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1.066667rem;
+    border-radius: 3.333333rem;
+    background-color: #DB5050;
+  }
+  .showHeader{
+    height:40px;
   }
 </style>
