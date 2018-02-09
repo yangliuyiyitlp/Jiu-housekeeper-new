@@ -36,14 +36,17 @@
               <div class="bottom">
                 <ul v-show="menuList==null ? false:true" ref="menuUl">
 
-                  <li v-for="(item,index) in menuList" :key="item.id" @click="choiceMenu(index)">
+                  <li v-for="(item,index) in menuList" :key="item.id"
+                      @dblclick="dblClickMenu(item)"
+                      @click="choiceMenu(index)">
                     <i class="el-icon-edit" @click="editMenu(item.id)"
                        v-if="hasPermission('activity/dynamic/menu/view')"></i>
                     <img :src="item.iconUrl" alt="">
                     <span class="menuName">{{item.menuName}}</span>
 
                     <i class="btns" v-if="hasPermission('activity/dynamic/menu/edit')">
-                      <span @click="deleteMenu(item.id)"><i class="el-icon-delete"></i></span>
+                      <span @click="deleteMenu(item.id)" v-if="item.actionTypeName === 'h5跳转'? true:false">
+                        <i class="el-icon-delete"></i></span>
                       <span @click="upRank(index)"><i class="el-icon-caret-top"></i></span>
                       <span @click="downRank(index)"><i class="el-icon-caret-bottom"></i></span>
                     </i>
@@ -117,12 +120,9 @@
                 </el-form-item>
 
                 <el-form-item label="跳转类型：">
-                  <el-radio-group v-model="form.actionType">
-                    <el-radio :label=0>app原生跳转</el-radio>
-                    <el-radio :label=1>跳转h5</el-radio>
-                  </el-radio-group>
+                  {{form.actionTypeName === 'app原生跳转'? 'app原生跳转':'h5跳转'}}
 
-                  <el-form-item prop="actionUrl">
+                  <el-form-item prop="actionUrl" v-if="form.actionTypeName === 'app原生跳转'? false : true">
                     <el-input v-model="form.actionUrl"
                               style="margin-top: 10px"
                               placeholder="请输入跳转地址">
@@ -130,7 +130,7 @@
                   </el-form-item>
                 </el-form-item>
 
-                <el-form-item label="是否登录：">
+                <el-form-item label="是否登录：" v-if="form.actionTypeName === 'app原生跳转'? false : true">
                   <el-radio-group v-model="form.needLogin">
                     <el-radio :label="0">不登录</el-radio>
                     <el-radio :label="1">登录</el-radio>
@@ -192,10 +192,6 @@
         if (!value) {
           callback(new Error('请选择生效时间!'))
           return
-        }
-        let nowDate = +new Date()
-        if (+value < nowDate) {
-          callback(new Error('生效时间必须大于当前时间!'))
         } else {
           callback()
         }
@@ -204,10 +200,6 @@
         if (!value) {
           callback(new Error('请选择失效时间!'))
           return
-        }
-        let nowDate = +new Date()
-        if (+value < nowDate) {
-          callback(new Error('失效时间必须大于当前时间!'))
         } else {
           callback()
         }
@@ -287,8 +279,20 @@
             if (res.data.code === 0) {
               // console.log(res.data.data)
               let menuList = res.data.data
-              // console.log(menuList)
+              console.log(menuList)
+              for (let i = 0; i < menuList.length; i++) {
+                // 可双击
+                if (menuList[i].systemMenuKey !== 'JJH5') {
+                  menuList[i].actionTypeName = 'app原生跳转'
+                  menuList[i].isDblClick = 1
+                } else {
+                  // 不可双击h5
+                  menuList[i].actionTypeName = 'h5跳转'
+                  menuList[i].isDblClick = 0
+                }
+              }
               this.menuList = menuList
+              console.log(this.menuList)
             } else {
               this.menuList = null
             }
@@ -306,11 +310,26 @@
         }
         this.form.cityId = this.searchForm.cityId
         this.form.os = this.searchForm.os
+        if (!this.form.beginTime) {
+          this.$message.error('请选择生效时间!')
+          return
+        }
+        if (!this.form.endDate) {
+          this.$message.error('请选择失效时间!')
+          return
+        }
         this.form.beginTime = Moment(this.form.beginTime).format('YYYY-MM-DD HH:mm:ss')
         this.form.endDate = Moment(this.form.endDate).format('YYYY-MM-DD HH:mm:ss')
         if (+new Date(this.form.beginTime) >= +new Date(this.form.endDate)) {
           this.$message.error('失效时间必须大于生效时间!')
           return
+        }
+        if (this.form.actionTypeName === 'app原生跳转') {
+          // 原生跳转类型
+          this.form.actionType = 0
+        } else {
+          // h5跳转类型
+          this.form.actionType = 1
         }
         // 操作人员放入表单中
         this.form.updateBy = this.getUserId()
@@ -362,6 +381,11 @@
             if (res.data.code === 0) {
               let form = res.data.data
               form.actionType = res.data.data.actionType
+              if (form.actionType === 0) {
+                form.actionTypeName = 'app原生跳转'
+              } else {
+                form.actionTypeName = 'h5跳转'
+              }
               console.log(form)
               this.form = form
               this.iconUrl = this.form.iconUrl
@@ -406,6 +430,83 @@
         })
         this.cancelCreate()
       },
+      //  todo 双击当前行 隐藏菜单
+      dblClickMenu (data) {
+        console.log(data.id)
+        // console.log('双击')
+        // 如果不是原生的 直接返回
+        if (data.isDblClick === 0) {
+          return
+        }
+        if (data.isShow === 1) {
+          this.$confirm('是否隐藏此行菜单, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 发送请求 隐藏此行菜单
+            this.$ajax.get(`${baseUrl.DynamicMenu}/isshow`, {
+              params: {
+                id: data.id,
+                isShow: 0, // 隐藏
+                updateBy: this.getUserId()
+              }
+            })
+              .then(res => {
+                // console.log(res)
+                if (res.data.code === 0) {
+                  this.searchMenu()
+                  this.$message({
+                    type: 'success',
+                    message: '隐藏此行菜单成功!'
+                  })
+                }
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消关闭此行菜单!'
+            })
+          })
+        } else {
+          this.$confirm('是否显示此行菜单, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            // 发送请求 隐藏此行菜单
+            this.$ajax.get(`${baseUrl.DynamicMenu}/isshow`, {
+              params: {
+                id: data.id,
+                isShow: 1, // 显示
+                updateBy: this.getUserId()
+              }
+            })
+              .then(res => {
+                // console.log(res)
+                if (res.data.code === 0) {
+                  this.searchMenu()
+                  this.$message({
+                    type: 'success',
+                    message: '显示此行菜单成功!'
+                  })
+                }
+              })
+              .catch(err => {
+                console.log(err)
+              })
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '已取消显示此行菜单!'
+            })
+          })
+        }
+        this.cancelCreate()
+      },
       // 正式发布菜单
       isRelease () {
         console.log('isRelease')
@@ -416,7 +517,7 @@
         })
           .then(() => {
             // 发送正式发布请求
-            this.$ajax.get(`${baseUrl.DynamicMenu}/release`,{params: {updateBy: this.getUserId()}})
+            this.$ajax.get(`${baseUrl.DynamicMenu}/release`, {params: {updateBy: this.getUserId()}})
               .then(res => {
                 console.log(res)
                 if (res.data.code === 0) {
@@ -474,7 +575,6 @@
           type: 'warning'
         })
           .then(() => {
-            console.log('进来了么?')
             // 发送请求
             let list = this.menuList
             // console.log(list)
@@ -596,16 +696,8 @@
       },
       // 获取操作人员
       getUserId () {
-        console.log(Cookie.get('adminId'))
+        console.log(`操作人员:${Cookie.get('adminId')}`)
         return Cookie.get('adminId')
-        // console.log(location)
-        // let arr = location.href.split('?')[1].split('&')
-        // for (let i = 0; i < arr.length; i++) {
-        //   if (arr[i].indexOf('adminId') !== -1) {
-        //     document.cookie = `username=${arr[i].split('=')[1]}; path=/`
-        //     return arr[i].split('=')[1]
-        //   }
-        // }
       },
       // 获取oss秘钥
       beforeAvatarUpload (file) {
@@ -662,6 +754,21 @@
           return true
         }
         return false
+      }
+    },
+    watch: {
+      menuList: function () {
+        this.$nextTick(() => {
+          let lis = this.$refs.menuUl.childNodes
+          console.log(lis)
+          for (let i = 0; i < this.menuList.length; i++) {
+            if (this.menuList[i].isShow === 0) {
+              lis[i].style.backgroundColor = 'rgba(0, 0, 0, 0.6)'
+            }else{
+              lis[i].style.backgroundColor = 'rgba(0, 0, 0, 0.1)'
+            }
+          }
+        })
       }
     }
   }
@@ -738,13 +845,13 @@
   .view .bottom li {
     height: 40px;
     padding-left: 10px;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 7px;
     cursor: pointer;
   }
 
   .view .bottom li.active {
-    background-color: rgba(219, 80, 80, 1);
+    background-color: rgba(219, 80, 80, 1) !important;
   }
 
   .view .bottom li > i {
