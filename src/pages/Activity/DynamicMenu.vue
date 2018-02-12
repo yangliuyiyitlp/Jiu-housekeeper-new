@@ -39,11 +39,11 @@
                   <li v-for="(item,index) in menuList" :key="item.id"
                       @dblclick="dblClickMenu(item)"
                       @click="choiceMenu(index)">
+                    <span class="isExpired">{{item.isExpired}}</span>
                     <i class="el-icon-edit" @click="editMenu(item.id)"
                        v-if="hasPermission('activity/dynamic/menu/view')"></i>
                     <img :src="item.iconUrl" alt="">
                     <span class="menuName">{{item.menuName}}</span>
-
                     <i class="btns" v-if="hasPermission('activity/dynamic/menu/edit')">
                       <span @click="deleteMenu(item.id)" v-if="item.actionTypeName === 'h5跳转'? true:false">
                         <i class="el-icon-delete"></i></span>
@@ -263,11 +263,11 @@
               let bikeAreaList = res.data.bikeAreaList
               bikeAreaList.unshift({id: '-1', name: '全国'})
               this.areaRelation = Tools.nameRelation(bikeAreaList, 'id', 'name')
-              console.log(this.areaRelation)
+              // console.log(this.areaRelation)
             }
           })
           .catch(err => {
-            console.log('getCityRelation报错')
+            // console.log('getCityRelation报错')
             console.error(err)
           })
       },
@@ -279,8 +279,20 @@
             if (res.data.code === 0) {
               // console.log(res.data.data)
               let menuList = res.data.data
-              console.log(menuList)
+              // console.log(menuList)
               for (let i = 0; i < menuList.length; i++) {
+                // 未开始
+                if (+new Date(menuList[i].beginTime) > +new Date()) {
+                  menuList[i].isExpired = '待生效'
+                }
+                // 已过期
+                if (+new Date(menuList[i].endDate) < +new Date()) {
+                  menuList[i].isExpired = '已过期'
+                }
+                // 生效中
+                if (+new Date(menuList[i].endDate) > +new Date() && +new Date(menuList[i].beginTime) < +new Date()) {
+                  menuList[i].isExpired = '生效中'
+                }
                 // 可双击
                 if (menuList[i].systemMenuKey !== 'JJH5') {
                   menuList[i].actionTypeName = 'app原生跳转'
@@ -292,7 +304,7 @@
                 }
               }
               this.menuList = menuList
-              console.log(this.menuList)
+              // console.log(this.menuList)
             } else {
               this.menuList = null
             }
@@ -333,10 +345,10 @@
         }
         // 操作人员放入表单中
         this.form.updateBy = this.getUserId()
-        console.log(this.form)
+        // console.log(this.form)
         this.$refs.formData.validate((valid) => {
           if (valid) {
-            console.log('submit!')
+            // console.log('submit!')
             this.$ajax.post(`${baseUrl.DynamicMenu}/upDataMenu`, this.form)
               .then(res => {
                 console.log(res.data)
@@ -349,7 +361,7 @@
                 console.log(err)
               })
           } else {
-            console.log('error submit!!')
+            // console.log('error submit!!')
             return false
           }
         })
@@ -359,12 +371,7 @@
         if (isNaN(index)) {
           return
         }
-        // console.log(index)
-        // console.log(this.$refs.menuUl.childNodes)
-        // console.log(this.$refs.menuLi)
-        // console.log(document.querySelectorAll('.bottom ul li')[index])
-        let lis = document.querySelectorAll('.bottom ul li')
-        lis = this.$refs.menuUl.childNodes
+        let lis = this.$refs.menuUl.childNodes
         // console.log(lis)
         for (let i = 0; i < lis.length; i++) {
           // console.log(lis[i])
@@ -509,7 +516,7 @@
       },
       // 正式发布菜单
       isRelease () {
-        console.log('isRelease')
+        // console.log('isRelease')
         this.$confirm('此操作将正式发布菜单, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -615,49 +622,6 @@
               message: '已取消发布菜单!'
             })
           })
-        // this.$confirm('此操作将保存最新排序, 是否继续?', '提示', {
-        //   confirmButtonText: '确定',
-        //   cancelButtonText: '取消',
-        //   type: 'warning'
-        // }).then(() => {
-        //   console.log('进来了么?')
-        //   // 发送请求
-        //   let list = this.menuList
-        //   console.log(list)
-        //   let rankList = []
-        //   for (let i = 0; i < list.length; i++) {
-        //     rankList.push(list[i].id)
-        //   }
-        //   let ranks = rankList.join(',')
-        //   console.log(ranks)
-        //   this.$ajax.get(`${baseUrl.DynamicMenu}/upDataRank`, {
-        //     params:
-        //       {
-        //         ranks: ranks,
-        //         updateBy: this.getUserId()
-        //       }
-        //   })
-        //     .then(res => {
-        //       console.log(res)
-        //       if (res.data.code === 0) {
-        //         this.searchMenu()
-        //         this.$message({
-        //           type: 'success',
-        //           message: '保存最新排序成功!'
-        //         })
-        //       }
-        //     })
-        //     .catch(err => {
-        //       console.log(err)
-        //     })
-        // }).catch((err) => {
-        //   console.log(err)
-        //   this.$message({
-        //     type: 'info',
-        //     message: '已取消排序'
-        //   })
-        //   this.searchMenu()
-        // })
       },
       // 更换城市时 查询菜单列表
       changeCity (val) {
@@ -716,7 +680,6 @@
         //     console.log(this)
         //     let width = this.width
         //     let height = this.height
-        //     console.log(1)
         //     console.log(width)
         //     if (width > 20 || width < 10) {
         //       _this.$message('图片尺寸必须在10~20之间！', '提示', {confirmButtonText: '确定'})
@@ -760,11 +723,21 @@
       menuList: function () {
         this.$nextTick(() => {
           let lis = this.$refs.menuUl.childNodes
-          console.log(lis)
+          // console.log(lis)
           for (let i = 0; i < this.menuList.length; i++) {
+            // 小标签的背景颜色
+            if (this.menuList[i].isExpired === '生效中') {
+              lis[i].firstChild.style.backgroundColor = '#009933'
+            } else if (this.menuList[i].isExpired === '待生效') {
+              lis[i].firstChild.style.backgroundColor = '#f90'
+            } else if (this.menuList[i].isExpired === '已过期') {
+              // console.log(lis[i].firstChild)
+              lis[i].firstChild.style.backgroundColor = '#ff3333'
+            }
+            // 停用和使用的背景颜色
             if (this.menuList[i].isShow === 0) {
               lis[i].style.backgroundColor = 'rgba(0, 0, 0, 0.6)'
-            }else{
+            } else {
               lis[i].style.backgroundColor = 'rgba(0, 0, 0, 0.1)'
             }
           }
@@ -800,7 +773,7 @@
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    overflow: hidden;
+    /*overflow: hidden;*/
   }
 
   .view .sidebar {
@@ -843,11 +816,27 @@
   }
 
   .view .bottom li {
+    position: relative;
     height: 40px;
-    padding-left: 10px;
+    padding-left: 20px;
     background-color: rgba(0, 0, 0, 0.2);
     margin-bottom: 7px;
     cursor: pointer;
+  }
+
+  .view .bottom li .isExpired {
+    z-index: 9;
+    font-size: 8px;
+    color: #fff;
+    position: absolute;
+    padding: 2px;
+    top: -4px;
+    left: -2px;
+    -webkit-transform: rotate(-20deg);
+    -moz-transform: rotate(-20deg);
+    -o-transform: rotate(-20deg);
+    -ms-transform: rotate(-20deg);
+    transform: rotate(-20deg);
   }
 
   .view .bottom li.active {
