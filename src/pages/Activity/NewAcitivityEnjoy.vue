@@ -21,13 +21,18 @@
 
               <div class="menuContent" ref="menu">
                 <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(index)">
+                  <div class="downCircle" v-if="index===0?false:true"><i
+                    class="circle iconfont icon-jiantouarrow505"></i></div>
+                  <div class="topCircle" v-if="index===0?false:true"><i
+                    class="circle iconfont icon-jiantouarrow499"></i></div>
                   <div class="headerContent">{{item.value}}</div>
                 </div>
               </div>
             </div>
           </div>
         </el-col>
-        <el-col :span="14" :offset="1">
+        <!--页头-->
+        <el-col :span="14" :offset="1" v-if="isHeader">
           <div class="rightForm">
             <div class="headerTitle">
               <a class="fontWeight">页头</a>
@@ -43,11 +48,11 @@
             </div>
             <hr class="lineWeight">
             <el-form ref="formData" :rules="rules" :model="form" label-width="100px" class="formData">
-              <el-form-item  v-if=0>
+              <el-form-item v-if=0>
                 <el-input v-if=0 v-model="form.id"></el-input>
                 <el-input v-if=0 v-model="form.updateBy"></el-input>
-                <el-input v-if=0  v-model="form.rank"></el-input>
-                <el-input  v-if=0 v-model="form.iconUrl"></el-input>
+                <el-input v-if=0 v-model="form.rank"></el-input>
+                <el-input v-if=0 v-model="form.iconUrl"></el-input>
               </el-form-item>
 
               <el-form-item label="是否登录：">
@@ -65,7 +70,7 @@
                 <el-input v-model="form.rank" placeholder="请输入显示的名称（建议5个字以内）"></el-input>
               </el-form-item>
 
-              <el-form-item label="页头标题："class="minWidth">
+              <el-form-item label="页头标题：" class="minWidth">
                 <el-input v-model="form.iconUrl" placeholder="请输入也同样文字（最多16个字符）"></el-input>
               </el-form-item>
               <el-form-item label="有效日期：" prop="beginTime">
@@ -86,97 +91,146 @@
 
           </div>
         </el-col>
-
-
-        <el-col v-if=false :span="14" :offset="1">
+        <!--轮播区-->
+        <el-col v-if='isCarousel' :span="14" :offset="1">
           <div class="rightForm">
-            <h2>页头</h2>
-            <hr>
-            <el-row :gutter="0">
-              <el-col :span="4" :offset="1">
-                <el-upload
-                  class="avatar-uploader"
-                  action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
-                  :data="Token"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload">
-                </el-upload>
-                <span style="font-size: 12px;color: red">上传图标icon<br/>宽高比10*10</span>
-              </el-col>
+            <div class="headerTitle">
+              <a class="fontWeight">轮播区</a>
+              <span class="savePageHeader">保存</span>
+              <el-switch
+                :width=100
+                v-model="isOpen"
+                on-text="启用"
+                off-text="停用"
+                on-color="#DB5050"
+                off-color="#4F4D4D">
+              </el-switch>
+            </div>
+            <hr class="lineWeight">
+            <el-form ref="formData" :rules="rules" :model="form" label-width="100px" class="formData">
+              <el-form-item v-if=0>
+                <el-input v-if=0 v-model="form.id"></el-input>
+                <el-input v-if=0 v-model="form.updateBy"></el-input>
+              </el-form-item>
 
-              <el-col :span="18" :offset="1">
-                <el-form ref="form" :rules="rules" :model="form"></el-form>
-                <el-form ref="formData" :rules="rules" :model="form" label-width="100px">
+              <el-form-item label="是否显示：">
+                <el-switch
+                  :width=60
+                  v-model="isOpen"
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="是否登录：">
+                <el-switch
+                  :width=60
+                  v-model="isOpen"
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
 
-                  <el-form-item label="id：" v-if=0>
-                    <el-input v-model="form.id"></el-input>
-                  </el-form-item>
+              <el-form-item label="模块宽高：">
+                <el-input v-model="form.rank" placeholder="宽" class="miWidth"></el-input>
+                x
+                <el-input v-model="form.rank" placeholder="高" class="miWidth"></el-input>
+              </el-form-item>
 
-                  <el-form-item label="操作人员：" v-if=0>
-                    <el-input v-model="form.updateBy"></el-input>
-                  </el-form-item>
+              <el-form-item label="切换时间（秒）：" >
+                <el-input class="secWidth" v-model="form.iconUrl" placeholder="只能输入数字"></el-input>
+              </el-form-item>
+              <a class="fontWeight">内容上传</a>
+              <hr class="lineWeight">
+              <div class="carousel">
+                <el-row :gutter="0">
+                  <el-col :span="4">
+                    <el-upload
+                      class="avatar-uploader"
+                      action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                      :data="Token"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="form.iconUrl" :src="iconUrl" class="avatar">
+                      <i v-else class="el-icon-plus
+                avatar-uploader-icon"></i>
+                    </el-upload>
+                    <span style="font-size: 12px;color: red">上传图标icon<br/>宽高比10*10</span>
+                  </el-col>
 
-                  <el-form-item label="权重：" v-if=0>
-                    <el-input v-model="form.rank"></el-input>
-                  </el-form-item>
+                  <el-col :span="19" :offset="1">
+                    <el-form ref="form" :rules="rules" :model="form"></el-form>
+                    <el-form ref="formData" :rules="rules" :model="form" label-width="100px">
 
-                  <el-form-item label="图片url：" v-if=0>
-                    <el-input v-model="form.iconUrl"></el-input>
-                  </el-form-item>
+                      <el-form-item v-if=0>
+                        <el-input v-model="form.id"></el-input>
+                        <el-input v-model="form.updateBy"></el-input>
+                      </el-form-item>
 
-                  <el-form-item label="菜单名称：" prop="menuName">
-                    <el-input v-model="form.menuName" style="width:215px"></el-input>
-                  </el-form-item>
+                      <el-form-item  label="类型：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item  label="链接：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item  label="跳转类型：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item  label="模板选择：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item  label="链接：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="展示日期：" prop="beginTime">
+                        <el-date-picker
+                          v-model="form.beginTime"
+                          type="datetime">
+                        </el-date-picker>
+                        -
+                        <el-date-picker
+                          v-model="form.endDate"
+                          type="datetime">
+                        </el-date-picker>
+                      </el-form-item>
 
-                  <el-form-item label="跳转类型：">
-                    {{form.actionTypeName === 'app原生跳转' ? 'app原生跳转' : 'h5跳转'}}
-
-                    <el-form-item prop="actionUrl" v-if="form.actionTypeName === 'app原生跳转'? false : true">
-                      <el-input v-model="form.actionUrl"
-                                style="margin-top: 10px"
-                                placeholder="请输入跳转地址">
-                      </el-input>
-                    </el-form-item>
-                  </el-form-item>
-
-                  <el-form-item label="是否登录：" v-if="form.actionTypeName === 'app原生跳转'? false : true">
-                    <el-radio-group v-model="form.needLogin">
-                      <el-radio :label="0">不登录</el-radio>
-                      <el-radio :label="1">登录</el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-
-                  <el-form-item label="生效时间：" prop="beginTime">
-                    <el-date-picker
-                      v-model="form.beginTime"
-                      type="datetime"
-                      placeholder="选择生效时间">
-                    </el-date-picker>
-                  </el-form-item>
-
-                  <el-form-item label="失效时间：" prop="endDate">
-                    <el-date-picker
-                      v-model="form.endDate"
-                      type="datetime"
-                      placeholder="选择失效时间">
-                    </el-date-picker>
-                  </el-form-item>
-
-                  <el-form-item>
-                    <el-button round
-                               style="background-color:#DB5050;color:#fff"
-                    >立即创建
-                    </el-button>
-                    <el-button
-                    >重置
-                    </el-button>
-                    <el-button round style="background-color:#4F4D4D;color:#fff">取消</el-button>
-                  </el-form-item>
-
-                </el-form>
-              </el-col>
-            </el-row>
+                      <el-form-item  label="平台：">
+                        <el-select v-model="value" placeholder="请选择">
+                          <el-option
+                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+                    </el-form>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-form>
+           <div class="addForm"><i class="circle iconfont icon-add"></i></div>
 
           </div>
         </el-col>
@@ -213,11 +267,15 @@
       return {
         cityVisible: false,
         isOpen: true,
+        isHeader: false,
+        isCarousel: false,
         filterText: '',
         filterId: '',
         Token: {},
         form: {},
         select: [{'id': '1', 'label': '全国', 'children': [{'id': '2', 'label': '北京'}, {'id': '3', 'label': '上海'}]}],
+        options:[],
+        value:'',
         checkedCity: [],
         menuList: [{value: '页头 ① 点击编辑', class: 'pageHeader'}, {
           value: '轮播区 ② 点击编辑',
@@ -263,6 +321,14 @@
           menuDivs[i].classList.remove('active')
         }
         menuDivs[index].classList.add('active')
+        if (index === 0) {
+          this.isHeader = true
+          this.isCarousel = false
+        }
+        if (index === 1) {
+          this.isHeader = false
+          this.isCarousel = true
+        }
       },
       filterNode (value, data) {
         if (!value) return true
@@ -307,209 +373,6 @@
   //  }
 </script>
 <style scoped>
-  /*左边*/
-  @import '../../assets/icon_font/iconfont.css';
-  @import '../../assets/css/treecss.css';
+  @import '../../assets/css/activeEnjoy.css';
 
-  .width {
-    width: 100px;
-  }
-
-  .pageWidth {
-    padding: 0px 40px 20px;
-  }
-
-  .showWidth {
-    margin-top: 100px;
-  }
-
-  .lineWeight {
-    color:#ccc;
-  }
-.minWidth{
-  width:467px;
-}
-  .view {
-    cursor: pointer;
-    overflow: auto;
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 35px;
-    width: 375px;
-    height: 669px;
-    background-color: #fff;
-    -webkit-border-radius: 45px;
-    -moz-border-radius: 45px;
-    border-radius: 45px;
-    -webkit-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
-    -moz-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
-    box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
-  }
-
-  .view .sidebar {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background-color: #fff;
-  }
-
-  .pageTop {
-    width: 100%;
-  }
-
-  .pageTop img {
-    width: 100%;
-  }
-
-  .headerContent {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-  }
-
-  .pageHeader, .pageCarousel, .pageActivity, .pageFoot {
-    position: relative;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.4);
-    margin-bottom: 5px;
-    color: #fff;
-  }
-
-  .pageHeader {
-    height: 10%;
-  }
-
-  .active {
-    background-color: #DB5050;
-  }
-
-  .pageCarousel {
-    height: 25%;
-  }
-
-  .pageActivity {
-    height: 20%;
-  }
-
-  .pageFoot {
-    height: 40%;
-  }
-
-  .menuContent {
-    height: 100%;
-  }
-
-  .showPage {
-    float: left;
-    font-size: 1.5em;
-    font-weight: 700;
-  }
-
-  .introBtn {
-    padding: 15px;
-    box-sizing: border-box;
-    float: right;
-    width: 415px;
-    height: 80px;
-    line-height: 80px;
-    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
-    text-align: center;
-  }
-
-  .publish {
-    margin-left: 15px;
-  }
-
-  .introduce, .publish {
-    cursor: pointer;
-    float: left;
-    width: 180px;
-    height: 50px;
-    line-height: 50px;
-    text-align: center;
-    color: #fff;
-    font-size: 14px;
-    border-radius: 30px;
-    background-color: #DB5050;
-  }
-
-  .showHeader {
-    height: 40px;
-  }
-
-  /*页头侧边*/
-  .rightForm {
-    padding: 30px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
-  }
-  .fontWeight {
-    font-weight: 700;
-    font-size: 1.5rem;
-  }
-
-  .formData {
-    margin-top: 20px;
-  }
-
-  .headerTitle{
-    height: 35px;
-    line-height:35px;
-  }
-
-  .savePageHeader {
-    margin-left: 10px;
-    cursor: pointer;
-    float: right;
-    width: 100px;
-    height: 22px;
-    line-height: 22px;
-    text-align: center;
-    color: #fff;
-    font-size: 14px;
-    border-radius: 30px;
-    background-color: #DB5050;
-  }
-
-  /*头像上传*/
-  .avatar-uploader .el-upload {
-    border: 1px dashed #d9d9d9;
-    border-radius: 6px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .avatar-uploader .el-upload:hover {
-    border-color: #409EFF;
-  }
-
-  .avatar-uploader-icon {
-    margin-top: 20px;
-    font-size: 28px;
-    color: #8c939d;
-    width: 88px;
-    height: 88px;
-    line-height: 88px;
-    text-align: center;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
-    -moz-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
-    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  .avatar {
-    width: 88px;
-    height: 88px;
-    display: block;
-  }
 </style>

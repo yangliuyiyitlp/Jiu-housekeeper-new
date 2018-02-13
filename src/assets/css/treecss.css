@@ -10,15 +10,3 @@
 .ruleForm > .el-form-item > .el-form-item__content {
   margin-left: 120px !important;
 }
-/*新版赳赳乐享页面启用停用按钮*/
-.headerTitle .el-switch{
-  float:right;
-}
-.headerTitle .el-switch__core, .el-switch__label{
-  float: right;
-  width: 100px;
-  height: 24px;
-  line-height: 24px;
-  text-align: center;
-}
-

@@ -1,0 +1,243 @@
+/*新版赳赳乐享页面*/
+.headerTitle .el-switch{
+  float:right;
+}
+.headerTitle .el-switch__core, .el-switch__label{
+  float: right;
+  width: 100px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+}
+
+.width {
+  width: 100px;
+}
+
+.pageWidth {
+  padding: 0px 40px 20px;
+}
+
+.showWidth {
+  margin-top: 100px;
+}
+
+.lineWeight {
+  color: #ccc;
+}
+.midWidth{
+  width:193px;
+}
+.minWidth {
+  width: 497px;
+}
+.miWidth{
+  width:50px;
+}
+.view {
+  cursor: pointer;
+  overflow: auto;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 35px;
+  width: 375px;
+  height: 669px;
+  background-color: #fff;
+  -webkit-border-radius: 45px;
+  -moz-border-radius: 45px;
+  border-radius: 45px;
+  -webkit-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
+  -moz-box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
+  box-shadow: 0 0 20px 10px rgba(0, 0, 0, 0.02), 0 0 32px 0 rgba(0, 0, 0, 0.07) inset;
+}
+
+.view .sidebar {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #fff;
+}
+
+.pageTop {
+  width: 100%;
+}
+
+.pageTop img {
+  width: 100%;
+}
+
+.headerContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
+.pageHeader, .pageCarousel, .pageActivity, .pageFoot {
+  position: relative;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+.pageHeader {
+  height: 7%;
+}
+
+.active {
+  background-color: #DB5050;
+}
+
+.pageCarousel {
+  height: 25%;
+}
+
+.pageActivity {
+  height: 20%;
+}
+
+.pageFoot {
+  height: 40%;
+}
+
+.menuContent {
+  height: 100%;
+}
+
+.showPage {
+  float: left;
+  font-size: 1.5em;
+  font-weight: 700;
+}
+
+.introBtn {
+  padding: 15px;
+  box-sizing: border-box;
+  float: right;
+  width: 415px;
+  height: 80px;
+  line-height: 80px;
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.publish {
+  margin-left: 15px;
+}
+
+.introduce, .publish {
+  cursor: pointer;
+  float: left;
+  width: 180px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 30px;
+  background-color: #DB5050;
+}
+
+.showHeader {
+  height: 40px;
+}
+.topCircle,.downCircle{
+  margin-top:5px;
+  float: right;
+  text-align: center;
+  width:18px;
+  height:18px;
+  border-radius: 50%;
+  background:rgba(79,77,77,1);
+}
+.downCircle{
+  margin:5px 5px 0 5px;}
+.circle{
+  font-size: 10px;
+}
+
+/*页头侧边*/
+.rightForm {
+  padding: 30px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+}
+
+.fontWeight {
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.formData {
+  margin-top: 20px;
+}
+
+.headerTitle {
+  height: 35px;
+  line-height: 35px;
+}
+
+.savePageHeader {
+  margin-left: 10px;
+  cursor: pointer;
+  float: right;
+  width: 100px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 30px;
+  background-color: #DB5050;
+}
+/*轮播区*/
+.carousel .el-select,.secWidth{
+  width:190px;
+}
+.addForm{
+  width:100%;
+  height:45px;
+  background:rgba(79,77,77,1);
+  border-radius: 100px ;
+}
+/*头像上传*/
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  margin-top: 20px;
+  font-size: 28px;
+  color: #8c939d;
+  width: 88px;
+  height: 88px;
+  line-height: 88px;
+  text-align: center;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
+  -moz-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.15);
+}
+
+.avatar {
+  width: 88px;
+  height: 88px;
+  display: block;
+}
