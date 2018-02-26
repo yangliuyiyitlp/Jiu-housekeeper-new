@@ -4,9 +4,9 @@
       <span class="introduce">预览</span>
       <span class="publish">发布</span>
     </div>
-    <el-form ref="menuForm" :model="form" class="city">
+    <el-form ref="menuForm" :model="menuForm" class="city">
       <h2>地址选择</h2>
-      <a>{{form.cityName}}</a>&nbsp;<i class="el-icon-search" @click="searchCity"></i>
+      <a>{{menuForm.cityName}}</a>&nbsp;<i class="el-icon-search" @click="searchCity"></i>
     </el-form>
     <div class="showWidth">
       <div class="showHeader">
@@ -21,9 +21,9 @@
 
               <div class="menuContent" ref="menu">
                 <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(index)">
-                  <div class="downCircle" v-if="index===0?false:true"><i
+                  <div @click='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
                     class="circle iconfont icon-jiantouarrow505"></i></div>
-                  <div class="topCircle" v-if="index===0?false:true"><i
+                  <div @click='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
                     class="circle iconfont icon-jiantouarrow499"></i></div>
                   <div class="headerContent">{{item.value}}</div>
                 </div>
@@ -36,10 +36,11 @@
           <div class="rightForm">
             <div class="headerTitle">
               <a class="fontWeight">页头</a>
-              <span class="savePageHeader">保存</span>
+              <span class="savePageHeader" @click="savePageHeader">保存</span>
               <el-switch
                 :width=100
-                v-model="isOpen"
+                @change = isUseChange
+                v-model='form.isUse'
                 on-text="启用"
                 off-text="停用"
                 on-color="#DB5050"
@@ -48,17 +49,11 @@
             </div>
             <hr class="lineWeight">
             <el-form ref="formData" :rules="rules" :model="form" label-width="100px" class="formData">
-              <el-form-item v-if=0>
-                <el-input v-if=0 v-model="form.id"></el-input>
-                <el-input v-if=0 v-model="form.updateBy"></el-input>
-                <el-input v-if=0 v-model="form.rank"></el-input>
-                <el-input v-if=0 v-model="form.iconUrl"></el-input>
-              </el-form-item>
-
+              <el-input v-if=0 v-model="form.id"></el-input>
               <el-form-item label="是否登录：">
                 <el-switch
                   :width=60
-                  v-model="isOpen"
+                  v-model='form.needLogin'
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -67,15 +62,15 @@
               </el-form-item>
 
               <el-form-item label="默认标题：" class="minWidth">
-                <el-input v-model="form.rank" placeholder="请输入显示的名称（建议5个字以内）"></el-input>
+                <el-input v-model="form.oldTitle" placeholder="请输入显示的名称（建议5个字以内）"></el-input>
               </el-form-item>
 
               <el-form-item label="页头标题：" class="minWidth">
-                <el-input v-model="form.iconUrl" placeholder="请输入也同样文字（最多16个字符）"></el-input>
+                <el-input v-model="form.newTitle" placeholder="请输入也同样文字（最多16个字符）"></el-input>
               </el-form-item>
               <el-form-item label="有效日期：" prop="beginTime">
                 <el-date-picker
-                  v-model="form.beginTime"
+                  v-model="form.beginDate"
                   type="datetime"
                   placeholder="选择生效时间">
                 </el-date-picker>
@@ -116,7 +111,7 @@
               <el-form-item label="是否显示：">
                 <el-switch
                   :width=60
-                  v-model="isOpen"
+                  v-model="form.isShow"
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -126,7 +121,7 @@
               <el-form-item label="是否登录：">
                 <el-switch
                   :width=60
-                  v-model="isOpen"
+                  v-model="form.needLogin"
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -140,7 +135,7 @@
                 <el-input v-model="form.rank" placeholder="高" class="miWidth"></el-input>
               </el-form-item>
 
-              <el-form-item label="切换时间（秒）：" >
+              <el-form-item label="切换时间（秒）：">
                 <el-input class="secWidth" v-model="form.iconUrl" placeholder="只能输入数字"></el-input>
               </el-form-item>
               <a class="fontWeight">内容上传</a>
@@ -159,47 +154,51 @@
                       <i v-else class="el-icon-plus
                 avatar-uploader-icon"></i>
                     </el-upload>
-                    <span style="font-size: 12px;color: red">上传图标icon<br/>宽高比10*10</span>
+                    <span style="font-size: 12px;color: red">上传图标图片<br/>宽高比670*300</span>
                   </el-col>
 
                   <el-col :span="19" :offset="1">
-                    <el-form ref="form" :rules="rules" :model="form"></el-form>
                     <el-form ref="formData" :rules="rules" :model="form" label-width="100px">
-
+                      <div class="carouselIcon">
+                        <div class="carouseDel"><i class="circle iconfont icon-icon--"></i></div>
+                        <div class="carouseDown"><i class="circle iconfont icon-jiantouarrow505"></i></div>
+                        <div class="carouseTop"><i class="circle iconfont icon-jiantouarrow499"></i></div>
+                        <div class="carouseMaxTop"><i class="circle iconfont icon-zhiding"></i></div>
+                      </div>
                       <el-form-item v-if=0>
                         <el-input v-model="form.id"></el-input>
                         <el-input v-model="form.updateBy"></el-input>
                       </el-form-item>
 
-                      <el-form-item  label="类型：">
+                      <el-form-item label="类型：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item  label="链接：">
+                      <el-form-item label="链接：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item  label="跳转类型：">
+                      <el-form-item label="跳转类型：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item  label="模板选择：">
+                      <el-form-item label="模板选择：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item  label="链接：">
+                      <el-form-item label="链接：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
@@ -218,19 +217,20 @@
                         </el-date-picker>
                       </el-form-item>
 
-                      <el-form-item  label="平台：">
+                      <el-form-item label="平台：">
                         <el-select v-model="value" placeholder="请选择">
                           <el-option
                             v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
+
                     </el-form>
                   </el-col>
                 </el-row>
               </div>
             </el-form>
-           <div class="addForm"><i class="circle iconfont icon-add"></i></div>
+            <div class="addForm"><i class="iconAdd iconfont icon-add"></i></div>
 
           </div>
         </el-col>
@@ -262,6 +262,10 @@
 
 </template>
 <script>
+  import baseUrl from '../../utils/baseUrl'
+  import a from '../../assets/js/getsessionId.js'
+  import Cookie from 'js-cookie'
+
   export default {
     data () {
       return {
@@ -270,88 +274,210 @@
         isHeader: false,
         isCarousel: false,
         filterText: '',
-        filterId: '',
+        cityId: '',
+        ranks: '',
         Token: {},
+        menuForm:{},
         form: {},
-        select: [{'id': '1', 'label': '全国', 'children': [{'id': '2', 'label': '北京'}, {'id': '3', 'label': '上海'}]}],
-        options:[],
-        value:'',
+        select: [{'id': '-1', 'name': '全国', 'children': []}],
+        options: [],
+        value: '',
         checkedCity: [],
-        menuList: [{value: '页头 ① 点击编辑', class: 'pageHeader'}, {
-          value: '轮播区 ② 点击编辑',
-          class: 'pageCarousel'
-        }, {value: '图标区 ③ 点击编辑', class: 'pageFoot'}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity'}],
+        menuList: [{value: '页头 ① 点击编辑', class: 'pageHeader'}, {value: '轮播区 ② 点击编辑', class: 'pageCarousel'},
+          {value: '图标区 ③ 点击编辑', class: 'pageFoot'}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity'}],
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'name'
         },
-        rules: {}
+        rules: {},
+        adminId: '',
+        path: '',
+        permissionList: []
       }
     },
     watch: {
       filterText (val) {
         this.$refs.tree.filter(val)
-      },
-      menuList: function () {
-        this.$nextTick(() => {
-          let menuDivs = this.$refs.menu.children
-          for (let i = 0; i < this.menuDivs.length; i++) {
-            if (this.menuDivs[i].isShow === 0) {
-              menuDivs[i].style.backgroundColor = 'rgba(0, 0, 0, 0.6)'
-            } else {
-              menuDivs[i].style.backgroundColor = 'rgba(0, 0, 0, 0.1)'
-            }
-          }
-        })
       }
+//      isUse (val, old) {
+//        if (val === true) {
+//          this.$message.warning('保存后点击发布才会生效')
+//        }
+//      }
+//      menuList: function () {
+//        this.$nextTick(() => {
+//          let menuDivs = this.$refs.menu.children
+//          for (let i = 0; i < this.menuDivs.length; i++) {
+//            if (this.menuDivs[i].isShow === 0) {
+//              menuDivs[i].style.backgroundColor = 'rgba(0, 0, 0, 0.6)'
+//            } else {
+//              menuDivs[i].style.backgroundColor = 'rgba(0, 0, 0, 0.1)'
+//            }
+//          }
+//        })
+//      }
     },
-    mounted () {
-      this.$nextTick(() => {
-        this.choiceMenu()
-      })
+    created () {
+      // 请求按钮权限
+      this.adminId = this.$route.query.adminId
+      this.path = this.$route.path
+      a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
+      this.getCityRelation()
     },
+//    computed: {
+//      isUse () {
+//        return this.form.isUse
+//      }
+//    },
     methods: {
-      // 当前行高亮
-      choiceMenu (index) {
-        if (isNaN(index)) {
+      isUseChange(val){
+        if (val === true) {
+          this.$message.warning('保存后点击发布才会生效')
+        }
+      },
+      // 全局获取城市对应关系
+      getCityRelation () {
+        this.$ajax.get(`${baseUrl.ActivityArea}/electric/userUtilsInterface/interface/getBikeAreaList`)
+          .then(res => {
+            if (res.data.code === 0) {
+              let bikeAreaList = res.data.bikeAreaList
+              for (let i = 0; i < bikeAreaList.length; i++) {
+                this.select[0].children.push(bikeAreaList[i])
+              }
+            } else {
+              this.$message('城市列表获取失败')
+            }
+          })
+          .catch(err => {
+            this.$message.error('城市列表获取异常')
+          })
+      },
+      //全局货物模板排序
+      getRank () {
+        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: Number(this.cityId)}})
+          .then((res) => {
+            if (res.data.code === 1) {
+              this.ranks = res.data.ranks
+            } else {
+              this.$message('获取模板排序失败')
+            }
+          })
+          .catch(() => {
+            this.$message('获取模板排序异常')
+          })
+      },
+      downCircle (index) {
+        if (!this.cityId) {
+          this.$message('请先选择地址')
+          return false
+        }
+        if (index === this.menuList.length - 1) {
+          // 最后一条
+          this.$message('已经是最后一条')
           return
         }
-        let menuDivs = this.$refs.menu.children
-        for (let i = 0; i < menuDivs.length; i++) {
-          menuDivs[i].classList.remove('active')
-        }
-        menuDivs[index].classList.add('active')
-        if (index === 0) {
-          this.isHeader = true
-          this.isCarousel = false
-        }
-        if (index === 1) {
-          this.isHeader = false
-          this.isCarousel = true
+        let thisMenu = this.menuList[index]
+        this.menuList.splice(index, 1) // 选中的删除
+        this.menuList.splice(index + 1, 0, thisMenu) //选中的移到index+1
+      },
+      topCircle () {},
+      // 全局左边当前行高亮,模块事件
+      choiceMenu (index) {
+        if (this.cityId) {
+          if (isNaN(index)) {
+            return false
+          }
+          let menuDivs = this.$refs.menu.children
+          for (let i = 0; i < menuDivs.length; i++) {
+            menuDivs[i].classList.remove('active')
+          }
+          menuDivs[index].classList.add('active')
+          // 获取页头
+          if (index === 0) {
+            this.isHeader = true
+            this.isCarousel = false
+            this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/form`, {params: {cityId: Number(this.cityId)}})
+              .then((res) => {
+                  if (res.data.code === 1) {
+                    this.form = res.data.data
+                    if (this.form.isUse === 1) {
+                      this.form.isUse = true
+                    } else {
+                      this.form.isUse = false
+                    }
+                    if (this.form.needLogin === 1) {
+                      this.form.needLogin = true
+                    } else {
+                      this.form.needLogin = false
+                    }
+                  } else {
+                    this.$message('页头信息获取失败')
+                  }
+                }
+              )
+              .catch(err => {
+                this.$message.error('页头信息获取异常')
+              })
+          }
+          if (index === 1) {
+            this.isHeader = false
+            this.isCarousel = true
+          }
+        } else {
+          this.$message('请先选择地址')
+          return false
         }
       },
+      // 城市树模型开始
       filterNode (value, data) {
         if (!value) return true
-        return data.label.indexOf(value) !== -1
+        return data.name.indexOf(value) !== -1
       },
       handleNode (data) {
-        this.filterText = data.label // 弹框树模型点击输入值
-        this.filterId = data.id
+        this.filterText = data.name // 弹框树模型点击输入值
+        this.cityId = data.id
       },
       doModify () {
-        this.form.cityName = this.filterText
-        this.form.Id = this.filterId
+        this.menuForm.cityName = this.filterText
+        this.menuForm.Id = this.cityId
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.form.cityName = ''
-        this.form.Id = ''
+        this.menuForm.cityName = ''
+        this.menuForm.Id = ''
       },
       searchCity () {
         this.cityVisible = true
-        this.defaultProps.label = 'label'
         this.filterText = ''
+      },
+      // 城市树模型结束
+      //页头保存
+      savePageHeader () {
+        if (this.form.isUse === true) {
+          this.form.isUse = 1
+        } else {
+          this.form.isUse = 0
+        }
+        if (this.form.needLogin === true) {
+          this.form.needLogin = 1
+        } else {
+          this.form.needLogin = 0
+        }
+        this.form.cityId = Number(this.cityId)
+        this.form.updataBy = Cookie.get('adminId')
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/save`, this.form)
+          .then((res) => {
+              if (res.data.code === 1) {
+                this.$message.success(res.data.msg)
+              } else {
+                this.$message(res.data.msg)
+              }
+            }
+          )
+          .catch(err => {
+            this.$message.error(err.data.msg)
+          })
       },
       handleAvatarSuccess () {},
       beforeAvatarUpload () {},
