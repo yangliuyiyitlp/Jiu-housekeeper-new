@@ -20,10 +20,10 @@
               <div class="pageTop"><img src="../../assets/images/activity/phoheader.png"></div>
 
               <div class="menuContent" ref="menu">
-                <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(index)">
-                  <div @click='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
+                <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)" :id=item.id>
+                  <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
                     class="circle iconfont icon-jiantouarrow505"></i></div>
-                  <div @click='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
+                  <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
                     class="circle iconfont icon-jiantouarrow499"></i></div>
                   <div class="headerContent">{{item.value}}</div>
                 </div>
@@ -39,8 +39,8 @@
               <span class="savePageHeader" @click="savePageHeader">保存</span>
               <el-switch
                 :width=100
-                @change = isUseChange
-                v-model='form.isUse'
+                @change=isUseChange
+                v-model='asIsUse'
                 on-text="启用"
                 off-text="停用"
                 on-color="#DB5050"
@@ -53,7 +53,7 @@
               <el-form-item label="是否登录：">
                 <el-switch
                   :width=60
-                  v-model='form.needLogin'
+                  v-model='asNeedLogin'
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -72,12 +72,14 @@
                 <el-date-picker
                   v-model="form.beginDate"
                   type="datetime"
+                  @change="beginDateChange"
                   placeholder="选择生效时间">
                 </el-date-picker>
                 -
                 <el-date-picker
                   v-model="form.endDate"
                   type="datetime"
+                  @change="endDateChange"
                   placeholder="选择失效时间">
                 </el-date-picker>
               </el-form-item>
@@ -234,6 +236,11 @@
 
           </div>
         </el-col>
+        <!--图标区-->
+        <el-col :span="14" :offset="1" v-if="isIcon">图标区</el-col>
+        <!--瀑布流-->
+        <el-col :span="14" :offset="1" v-if="isFalls">瀑布流</el-col>
+
       </el-row>
     </div>
 
@@ -273,18 +280,23 @@
         isOpen: true,
         isHeader: false,
         isCarousel: false,
+        isIcon: false,
+        isFalls: false,
+        asIsUse: false,
+        asNeedLogin: false,
         filterText: '',
-        cityId: '',
+        cityId: -1,
+        rankArr: [],
         ranks: '',
         Token: {},
-        menuForm:{},
+        menuForm: {'cityName': '全国'},
         form: {},
         select: [{'id': '-1', 'name': '全国', 'children': []}],
         options: [],
         value: '',
         checkedCity: [],
-        menuList: [{value: '页头 ① 点击编辑', class: 'pageHeader'}, {value: '轮播区 ② 点击编辑', class: 'pageCarousel'},
-          {value: '图标区 ③ 点击编辑', class: 'pageFoot'}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity'}],
+        menuList: [],
+        menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1},{value: '图标区 ③ 点击编辑', class: 'pageFoot', id: 2}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity', id: 3}],
         defaultProps: {
           children: 'children',
           label: 'name'
@@ -317,12 +329,15 @@
 //        })
 //      }
     },
+    mounted () {
+    },
     created () {
       // 请求按钮权限
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.getCityRelation()
+      this.getRanks()
     },
 //    computed: {
 //      isUse () {
@@ -330,7 +345,7 @@
 //      }
 //    },
     methods: {
-      isUseChange(val){
+      isUseChange (val) {
         if (val === true) {
           this.$message.warning('保存后点击发布才会生效')
         }
@@ -352,124 +367,198 @@
             this.$message.error('城市列表获取异常')
           })
       },
-      //全局货物模板排序
-      getRank () {
-        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: Number(this.cityId)}})
-          .then((res) => {
+      //全局模板排序获取
+      getRanks () {
+        this.menuList = [{value: '页头 ① 点击编辑', class: 'pageHeader', id: 0}]
+        if (!this.cityId) { //判断条件 获取排序
+          this.$message('请先选择地址')
+          return false
+        }
+        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: this.cityId}})
+          .then(res => {
             if (res.data.code === 1) {
-              this.ranks = res.data.ranks
+              this.ranks = res.data.data.ranks
+              this.rankArr = this.ranks.split(',')
+              for (let i = 0; i < this.rankArr.length; i++) {
+                for (let j = 0; j < this.menuCount.length; j++) {
+                  if (Number(this.rankArr[i]) === this.menuCount[j].id) {
+                    this.menuList.push(this.menuCount[j])
+                  }
+                }
+              }
+              console.log(3333, this.menuList)
             } else {
-              this.$message('获取模板排序失败')
+              this.$message('获取排序失败')
             }
           })
-          .catch(() => {
-            this.$message('获取模板排序异常')
+          .catch((err) => {
+            this.$message.error('获取排序异常' + err)
+          })
+      },
+      //全局模板排序提交
+      setRanks () {
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/saveRank`, {cityId: this.cityId, ranks: this.ranks})
+          .then(res => {
+            if (res.data.code === 1) {
+              // 获取排序
+              this.getRanks()
+            } else {
+              this.$message('提交排序失败')
+            }
+          })
+          .catch((err) => {
+            this.$message.error('提交排序异常')
           })
       },
       downCircle (index) {
-        if (!this.cityId) {
+        this.rankArr = []
+        if (!this.cityId) { //判断条件
           this.$message('请先选择地址')
           return false
         }
         if (index === this.menuList.length - 1) {
-          // 最后一条
-          this.$message('已经是最后一条')
+          this.$message('已经是最后一条啦')
           return
         }
-        let thisMenu = this.menuList[index]
-        this.menuList.splice(index, 1) // 选中的删除
-        this.menuList.splice(index + 1, 0, thisMenu) //选中的移到index+1
+        //提交排序
+        let newMenuList = this.menuList
+        let thisMenu = newMenuList[index]
+        newMenuList.splice(index, 1) // 选中的删除
+        newMenuList.splice(index + 1, 0, thisMenu) //选中的移到index+1
+        for (let i = 1; i < newMenuList.length; i++) {
+          this.rankArr.push(newMenuList[i].id)
+        }
+        this.ranks = this.rankArr.join(',')
+        this.setRanks()
       },
-      topCircle () {},
+      topCircle (index) {
+        this.rankArr = []
+        if (!this.cityId) { //判断条件
+          this.$message('请先选择地址')
+          return false
+        }
+        if (index === 1) {
+          this.$message('已经是第一条啦')
+          return
+        }
+        //提交排序
+        let newMenuList = this.menuList
+        let thisMenu = newMenuList[index]
+        newMenuList.splice(index, 1) // 选中的删除
+        newMenuList.splice(index - 1, 0, thisMenu) //选中的移到index+1
+        for (let i = 1; i < newMenuList.length; i++) {
+          this.rankArr.push(newMenuList[i].id)
+        }
+        this.ranks = this.rankArr.join(',')
+        this.setRanks()
+      },
       // 全局左边当前行高亮,模块事件
-      choiceMenu (index) {
+      choiceMenu (id) {
         if (this.cityId) {
-          if (isNaN(index)) {
+          if (isNaN(id)) {
             return false
           }
           let menuDivs = this.$refs.menu.children
-          for (let i = 0; i < menuDivs.length; i++) {
-            menuDivs[i].classList.remove('active')
-          }
-          menuDivs[index].classList.add('active')
-          // 获取页头
-          if (index === 0) {
+          getMenu(menuDivs,id)
+          if (id === 0) { // 获取页头
             this.isHeader = true
             this.isCarousel = false
-            this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/form`, {params: {cityId: Number(this.cityId)}})
-              .then((res) => {
-                  if (res.data.code === 1) {
-                    this.form = res.data.data
-                    if (this.form.isUse === 1) {
-                      this.form.isUse = true
-                    } else {
-                      this.form.isUse = false
-                    }
-                    if (this.form.needLogin === 1) {
-                      this.form.needLogin = true
-                    } else {
-                      this.form.needLogin = false
-                    }
-                  } else {
-                    this.$message('页头信息获取失败')
-                  }
-                }
-              )
-              .catch(err => {
-                this.$message.error('页头信息获取异常')
-              })
-          }
-          if (index === 1) {
+            this.isIcon = false
+            this.isFalls = false
+            this.getHeader()
+          } else if (id === 1) {
             this.isHeader = false
             this.isCarousel = true
+            this.isIcon = false
+            this.isFalls = false
+          } else if (id === 2) {
+            this.isHeader = false
+            this.isCarousel = false
+            this.isIcon = true
+            this.isFalls = false
+          } else if (id === 3) {
+            this.isHeader = false
+            this.isCarousel = false
+            this.isIcon = false
+            this.isFalls = true
           }
         } else {
           this.$message('请先选择地址')
           return false
         }
       },
-      // 城市树模型开始
+      // 全局城市树模型开始
       filterNode (value, data) {
         if (!value) return true
         return data.name.indexOf(value) !== -1
       },
       handleNode (data) {
         this.filterText = data.name // 弹框树模型点击输入值
-        this.cityId = data.id
+        this.cityId = Number(data.id)
       },
       doModify () {
         this.menuForm.cityName = this.filterText
-        this.menuForm.Id = this.cityId
         this.cityVisible = false
+        this.getRanks()
       },
       modifyCancel () {
         this.cityVisible = false
         this.menuForm.cityName = ''
-        this.menuForm.Id = ''
+        this.cityId = null
       },
       searchCity () {
         this.cityVisible = true
         this.filterText = ''
       },
-      // 城市树模型结束
-      //页头保存
+      //页头
+      getHeader () {
+        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/form`, {params: {cityId: this.cityId}})
+          .then((res) => {
+              if (res.data.code === 1) {
+                this.form = res.data.data
+                if (this.form.isUse === 1) {
+                  this.asIsUse = true
+                } else {
+                  this.asIsUse = false
+                }
+                if (this.form.needLogin === 1) {
+                  this.asNeedLogin = true
+                } else {
+                  this.asNeedLogin = false
+                }
+              } else {
+                this.$message('页头信息获取失败')
+              }
+            }
+          )
+          .catch(err => {
+            this.$message.error('页头信息获取异常')
+          })
+      },
+      beginDateChange (val) {
+        this.form.beginDate = val
+      },
+      endDateChange (val) {
+        this.form.endDate = val
+      },
       savePageHeader () {
-        if (this.form.isUse === true) {
+        if (this.asIsUse === true) {
           this.form.isUse = 1
         } else {
           this.form.isUse = 0
         }
-        if (this.form.needLogin === true) {
+        if (this.asNeedLogin === true) {
           this.form.needLogin = 1
         } else {
           this.form.needLogin = 0
         }
-        this.form.cityId = Number(this.cityId)
+        this.form.cityId = this.cityId
         this.form.updataBy = Cookie.get('adminId')
         this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/save`, this.form)
           .then((res) => {
               if (res.data.code === 1) {
                 this.$message.success(res.data.msg)
+                this.getHeader()
               } else {
                 this.$message(res.data.msg)
               }
@@ -483,7 +572,18 @@
       beforeAvatarUpload () {},
     }
   }
-
+  // 全局当前高亮
+  function getMenu(menuDivs, id) {
+    let i = 0;
+    while(i<menuDivs.length) {
+      if(Number(menuDivs[i].id) === id) {
+        menuDivs[i].classList.add('active')
+      } else {
+        menuDivs[i].classList.remove('active')
+      }
+      i++;
+    }
+  }
   //  function searchRole (result, checkedRoles) {
   //    for (let i = 0; i < result.length; i++) {
   //      let item = result[i]
