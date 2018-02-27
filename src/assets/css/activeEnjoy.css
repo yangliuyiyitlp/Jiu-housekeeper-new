@@ -9,11 +9,12 @@
   line-height: 24px;
   text-align: center;
 }
-
 .width {
   width: 100px;
 }
-
+.secWidth{
+  width: 115px;
+}
 .pageWidth {
   padding: 0px 40px 20px;
 }
@@ -200,7 +201,7 @@
   background-color: #DB5050;
 }
 /*轮播区*/
-.carousel .el-select,.secWidth{
+.carousel .el-select{
   width:190px;
 }
 .addForm{
@@ -232,15 +233,23 @@
   color:#fff;
   margin-right:5px;
 }
-/*头像上传*/
-.avatar-uploader .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
+.iconFont{
+  font-size: 12px;
 }
-
+.savePageCarouse{
+  margin-left: 10px;
+  cursor: pointer;
+  float: right;
+  width: 100px;
+  height: 22px;
+  line-height: 22px;
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 30px;
+  background-color: #DB5050;
+}
+/*头像上传*/
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
@@ -249,9 +258,9 @@
   margin-top: 20px;
   font-size: 28px;
   color: #8c939d;
-  width: 88px;
-  height: 88px;
-  line-height: 88px;
+  width: 100px;
+  height: 100px;
+  line-height: 100px;
   text-align: center;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;

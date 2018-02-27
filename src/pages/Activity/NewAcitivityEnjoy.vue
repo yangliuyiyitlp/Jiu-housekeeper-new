@@ -40,7 +40,7 @@
               <el-switch
                 :width=100
                 @change=isUseChange
-                v-model='asIsUse'
+                v-model='headerIsUse'
                 on-text="启用"
                 off-text="停用"
                 on-color="#DB5050"
@@ -50,10 +50,10 @@
             <hr class="lineWeight">
             <el-form ref="formData" :rules="rules" :model="form" label-width="100px" class="formData">
               <el-input v-if=0 v-model="form.id"></el-input>
-              <el-form-item label="是否登录：">
+              <el-form-item label="是否登录：" prop="headerNeedLogin">
                 <el-switch
                   :width=60
-                  v-model='asNeedLogin'
+                  v-model='headerNeedLogin'
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -61,14 +61,14 @@
                 </el-switch>
               </el-form-item>
 
-              <el-form-item label="默认标题：" class="minWidth">
+              <el-form-item label="默认标题：" class="minWidth" prop="oldTitle">
                 <el-input v-model="form.oldTitle" placeholder="请输入显示的名称（建议5个字以内）"></el-input>
               </el-form-item>
 
-              <el-form-item label="页头标题：" class="minWidth">
+              <el-form-item label="页头标题：" class="minWidth"prop="newTitle">
                 <el-input v-model="form.newTitle" placeholder="请输入也同样文字（最多16个字符）"></el-input>
               </el-form-item>
-              <el-form-item label="有效日期：" prop="beginTime">
+              <el-form-item label="有效日期：" prop="beginDate">
                 <el-date-picker
                   v-model="form.beginDate"
                   type="datetime"
@@ -93,10 +93,11 @@
           <div class="rightForm">
             <div class="headerTitle">
               <a class="fontWeight">轮播区</a>
-              <span class="savePageHeader">保存</span>
+              <span class="savePageCarouse">保存</span>
               <el-switch
                 :width=100
-                v-model="isOpen"
+                v-model="carouselIsUse"
+                @change=isUseChange
                 on-text="启用"
                 off-text="停用"
                 on-color="#DB5050"
@@ -104,16 +105,14 @@
               </el-switch>
             </div>
             <hr class="lineWeight">
-            <el-form ref="formData" :rules="rules" :model="form" label-width="100px" class="formData">
-              <el-form-item v-if=0>
-                <el-input v-if=0 v-model="form.id"></el-input>
-                <el-input v-if=0 v-model="form.updateBy"></el-input>
-              </el-form-item>
+            <el-form ref="formCarousel" :rules="rules" :model="formCarousel" label-width="110px" class="formData">
+                <el-input v-if=0 v-model="formCarousel.id"></el-input>
+                <el-input v-if=0 v-model="formCarousel.updateBy"></el-input>
 
               <el-form-item label="是否显示：">
                 <el-switch
                   :width=60
-                  v-model="form.isShow"
+                  v-model="formCarousel.carouselIsShow"
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -123,7 +122,7 @@
               <el-form-item label="是否登录：">
                 <el-switch
                   :width=60
-                  v-model="form.needLogin"
+                  v-model="formCarousel.carouselNeedLogin"
                   on-text="登录"
                   off-text="关闭"
                   on-color="#DB5050"
@@ -132,17 +131,18 @@
               </el-form-item>
 
               <el-form-item label="模块宽高：">
-                <el-input v-model="form.rank" placeholder="宽" class="miWidth"></el-input>
+                <el-input v-model="formCarousel.width" placeholder="宽" class="miWidth"></el-input>
                 x
-                <el-input v-model="form.rank" placeholder="高" class="miWidth"></el-input>
+                <el-input v-model="formCarousel.height" placeholder="高" class="miWidth"></el-input>
               </el-form-item>
 
-              <el-form-item label="切换时间（秒）：">
-                <el-input class="secWidth" v-model="form.iconUrl" placeholder="只能输入数字"></el-input>
+              <el-form-item label="切换时间(秒)：">
+                <el-input class="secWidth" v-model="formCarousel.changeTime" placeholder="只能输入数字"></el-input>
               </el-form-item>
               <a class="fontWeight">内容上传</a>
-              <hr class="lineWeight">
-              <div class="carousel">
+
+              <div class="carousel" v-for="(item,index) in carouselDetails" :key="item.id"   :id=item.rank>
+                <hr class="lineWeight">
                 <el-row :gutter="0">
                   <el-col :span="4">
                     <el-upload
@@ -152,77 +152,67 @@
                       :show-file-list="false"
                       :on-success="handleAvatarSuccess"
                       :before-upload="beforeAvatarUpload">
-                      <img v-if="form.iconUrl" :src="iconUrl" class="avatar">
+                      <img v-if="item.iconUrl" :src="item.iconUrl" class="avatar">
                       <i v-else class="el-icon-plus
-                avatar-uploader-icon"></i>
+                      avatar-uploader-icon"></i>
+                      <span class="iconFont">上传图片<br/>宽高比670*300</span>
                     </el-upload>
-                    <span style="font-size: 12px;color: red">上传图标图片<br/>宽高比670*300</span>
                   </el-col>
 
                   <el-col :span="19" :offset="1">
-                    <el-form ref="formData" :rules="rules" :model="form" label-width="100px">
+                    <el-form ref="" :rules="rules"  label-width="100px">
                       <div class="carouselIcon">
-                        <div class="carouseDel"><i class="circle iconfont icon-icon--"></i></div>
-                        <div class="carouseDown"><i class="circle iconfont icon-jiantouarrow505"></i></div>
-                        <div class="carouseTop"><i class="circle iconfont icon-jiantouarrow499"></i></div>
-                        <div class="carouseMaxTop"><i class="circle iconfont icon-zhiding"></i></div>
+                        <div class="carouseDel" @click="carouseDel"><i class="circle iconfont icon-icon--"></i></div>
+                        <div class="carouseDown" @click="carouseDown"><i class="circle iconfont icon-jiantouarrow505"></i></div>
+                        <div class="carouseTop" @click="carouseTop"><i class="circle iconfont icon-jiantouarrow499"></i></div>
+                        <div class="carouseMaxTop" @click="carouseMaxTop"><i class="circle iconfont icon-zhiding"></i></div>
                       </div>
-                      <el-form-item v-if=0>
-                        <el-input v-model="form.id"></el-input>
-                        <el-input v-model="form.updateBy"></el-input>
-                      </el-form-item>
+                        <el-input v-if=0 v-model="item.id"></el-input>
 
                       <el-form-item label="类型：">
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="item.type" placeholder="请选择类型">
                           <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-                          </el-option>
-                        </el-select>
-                      </el-form-item>
-                      <el-form-item label="链接：">
-                        <el-select v-model="value" placeholder="请选择">
-                          <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="跳转类型：">
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="item.actionType" placeholder="请选择跳转类型">
                           <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="模板选择：">
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="item.downloadModle" placeholder="请选择模板">
                           <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="链接：">
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="item.actionUrl" placeholder="请选择链接">
                           <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
                       <el-form-item label="展示日期：" prop="beginTime">
                         <el-date-picker
-                          v-model="form.beginTime"
+                          v-model="item.beginDate"
                           type="datetime">
                         </el-date-picker>
                         -
                         <el-date-picker
-                          v-model="form.endDate"
+                          v-model="item.endDate"
                           type="datetime">
                         </el-date-picker>
                       </el-form-item>
 
                       <el-form-item label="平台：">
-                        <el-select v-model="value" placeholder="请选择">
+                        <el-select v-model="item.os" placeholder="请选择平台">
                           <el-option
-                            v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -232,7 +222,7 @@
                 </el-row>
               </div>
             </el-form>
-            <div class="addForm"><i class="iconAdd iconfont icon-add"></i></div>
+            <div class="addForm" @click="addForm"><i class="iconAdd iconfont icon-add"></i></div>
 
           </div>
         </el-col>
@@ -282,8 +272,11 @@
         isCarousel: false,
         isIcon: false,
         isFalls: false,
-        asIsUse: false,
-        asNeedLogin: false,
+        headerIsUse: false,
+        headerNeedLogin: false,
+        carouselIsUse:false,
+        carouselIsShow:false,
+        carouselNeedLogin:false,
         filterText: '',
         cityId: -1,
         rankArr: [],
@@ -291,17 +284,24 @@
         Token: {},
         menuForm: {'cityName': '全国'},
         form: {},
+        formCarousel:{},
         select: [{'id': '-1', 'name': '全国', 'children': []}],
-        options: [],
+        options: [{'label':'rrr','value':'eed'}],
         value: '',
         checkedCity: [],
         menuList: [],
         menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1},{value: '图标区 ③ 点击编辑', class: 'pageFoot', id: 2}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity', id: 3}],
+        carouselDetails:[],
+        rules: {
+          oldTitle: [{required: true, message: '请输入默认标题', trigger: 'blur'}, {max: 5, message: '长度不大于 5个字', trigger: 'blur'}],
+          newTitle: [{required: true, message: '请输入页头标题', trigger: 'blur'}],
+          beginDate: [{required: true, message: '请输入日期', trigger: 'blur'}],
+          headerNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}]
+        },
         defaultProps: {
           children: 'children',
           label: 'name'
         },
-        rules: {},
         adminId: '',
         path: '',
         permissionList: []
@@ -330,6 +330,7 @@
 //      }
     },
     mounted () {
+//      this.menuList =this.menuCount // 接口关了先直接赋值
     },
     created () {
       // 请求按钮权限
@@ -337,7 +338,7 @@
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.getCityRelation()
-      this.getRanks()
+      this.getRanks() // 接口关了先直接赋值
     },
 //    computed: {
 //      isUse () {
@@ -376,7 +377,7 @@
         }
         this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: this.cityId}})
           .then(res => {
-            if (res.data.code === 1) {
+            if (res.data.code === 0) {
               this.ranks = res.data.data.ranks
               this.rankArr = this.ranks.split(',')
               for (let i = 0; i < this.rankArr.length; i++) {
@@ -386,7 +387,6 @@
                   }
                 }
               }
-              console.log(3333, this.menuList)
             } else {
               this.$message('获取排序失败')
             }
@@ -399,7 +399,7 @@
       setRanks () {
         this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/saveRank`, {cityId: this.cityId, ranks: this.ranks})
           .then(res => {
-            if (res.data.code === 1) {
+            if (res.data.code === 0) {
               // 获取排序
               this.getRanks()
             } else {
@@ -471,6 +471,7 @@
             this.isCarousel = true
             this.isIcon = false
             this.isFalls = false
+            this.getCarousel()
           } else if (id === 2) {
             this.isHeader = false
             this.isCarousel = false
@@ -514,17 +515,17 @@
       getHeader () {
         this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/form`, {params: {cityId: this.cityId}})
           .then((res) => {
-              if (res.data.code === 1) {
+              if (res.data.code === 0) {
                 this.form = res.data.data
                 if (this.form.isUse === 1) {
-                  this.asIsUse = true
+                  this.headerIsUse = true
                 } else {
-                  this.asIsUse = false
+                  this.headerIsUse = false
                 }
                 if (this.form.needLogin === 1) {
-                  this.asNeedLogin = true
+                  this.headerNeedLogin = true
                 } else {
-                  this.asNeedLogin = false
+                  this.headerNeedLogin = false
                 }
               } else {
                 this.$message('页头信息获取失败')
@@ -542,12 +543,16 @@
         this.form.endDate = val
       },
       savePageHeader () {
-        if (this.asIsUse === true) {
+        if(this.form.beginDate>this.form.endDate){
+          this.$message('有效日期开始时间必须早于结束时间')
+          return
+        }
+        if (this.headerIsUse === true) {
           this.form.isUse = 1
         } else {
           this.form.isUse = 0
         }
-        if (this.asNeedLogin === true) {
+        if (this.headerNeedLogin === true) {
           this.form.needLogin = 1
         } else {
           this.form.needLogin = 0
@@ -570,6 +575,47 @@
       },
       handleAvatarSuccess () {},
       beforeAvatarUpload () {},
+      //轮播区
+      getCarousel(){
+        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/form`, {params: {cityId: this.cityId}})
+          .then((res) => {
+              if (res.data.code === 0) {
+                this.formCarousel = res.data.data
+                if (this.formCarousel.isUse === 1) {
+                  this.carouselIsUse = true
+                } else {
+                  this.carouselIsUse = false
+                }
+                if (this.formCarousel.needLogin === 1) {
+                  this.carouselNeedLogin = true
+                } else {
+                  this.carouselNeedLogin = false
+                }
+                if (this.formCarousel.isShow === 1) {
+                  this.carouselIsShow = true
+                } else {
+                  this.carouselIsShow = false
+                }
+                if (this.formCarousel.ratio.indexOf('X') !== -1) {
+                  this.formCarousel.width = this.formCarousel.ratio.split('X')[0]
+                  this.formCarousel.height = this.formCarousel.ratio.split('X')[1]
+                }
+                this.carouselDetails = this.formCarousel.carouselDetails
+              } else {
+                this.$message('轮播区获取失败')
+              }
+            }
+          )
+          .catch(err => {
+            this.$message.error('轮播区获取异常')
+          })
+      },
+      savePageCarouse(){},
+      addForm(){},
+      carouseDel(){},
+      carouseDown(){},
+      carouseTop(){},
+      carouseMaxTop(){}
     }
   }
   // 全局当前高亮
