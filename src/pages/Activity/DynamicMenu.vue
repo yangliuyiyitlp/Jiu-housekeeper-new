@@ -117,7 +117,7 @@
                 </el-form-item>
 
                 <el-form-item label="菜单名称：" prop="menuName">
-                  <el-input v-model="form.menuName" style="width:215px"></el-input>
+                  <el-input v-model="form.menuName"></el-input>
                 </el-form-item>
 
                 <el-form-item label="跳转类型：">
@@ -131,12 +131,62 @@
                   </el-form-item>
                 </el-form-item>
 
-                <el-form-item label="是否登录：" v-if="form.actionTypeName === 'app原生跳转'? false : true">
-                  <el-radio-group v-model="form.needLogin">
-                    <el-radio :label="0">不登录</el-radio>
-                    <el-radio :label="1">登录</el-radio>
-                  </el-radio-group>
-                </el-form-item>
+                <div v-if="form.actionTypeName === 'app原生跳转'? false : true">
+
+                  <el-form-item label="分享平台：">
+                    <el-select v-model="form.sharePlatformList"
+                               placeholder="请选择分享平台"
+                               multiple>
+                      <el-option label="微信好友" value="1"></el-option>
+                      <el-option label="朋友圈" value="2"></el-option>
+                      <el-option label="QQ" value="3"></el-option>
+                      <el-option label="QQ空间" value="4"></el-option>
+                      <el-option label="微博" value="5"></el-option>
+                    </el-select>
+                  </el-form-item>
+
+                  <div v-if="form.sharePlatformList.length === 0 ? false : true">
+
+                    <el-form-item label="分享标题：">
+                      <el-input v-model="form.shareTitle"
+                                placeholder="请输入分享标题">
+                      </el-input>
+                    </el-form-item>
+
+                    <el-form-item label="分享内容：">
+                      <el-input v-model="form.shareContent"
+                                placeholder="请输入分享内容">
+                      </el-input>
+                    </el-form-item>
+
+
+                    <el-form-item label="分享图标：">
+
+                      <el-upload
+                        class="avatar-uploader"
+                        action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                        :data="TokenShare"
+                        :show-file-list="false"
+                        :on-success="handleSharePicSuccess"
+                        :before-upload="beforeSharePicUpload">
+                        <img v-if="sharePic" :src="sharePic" class="avatar">
+                        <i v-else class="el-icon-plus
+                avatar-uploader-icon"></i>
+                      </el-upload>
+
+                      <el-input v-model="form.sharePic" v-if="0">
+
+                      </el-input>
+                    </el-form-item>
+
+                    <el-form-item label="分享链接：">
+                      <el-input v-model="form.shareUrlOrigin">
+                      </el-input>
+                    </el-form-item>
+                  </div>
+
+                </div>
+
 
                 <el-form-item label="生效时间：" prop="beginTime">
                   <el-date-picker
@@ -228,13 +278,17 @@
           os: 0
         }, // 查询列表字符串
         form: {
-          needLogin: 0,
+          needLogin: 1,
           actionType: 0,
           rank: '99',
-          iconUrl: ''
+          iconUrl: '',
+          sharePic: '',
+          sharePlatformList: []
         }, // 单个菜单详情
         iconUrl: '', // 图片上传的url
+        sharePic: '', // 分享图标
         Token: {}, // oss秘钥
+        TokenShare: {}, // oss秘钥 分享图标
         isShowForm: false, // 是否展现详情
         adminId: '',
         path: '',
@@ -280,7 +334,7 @@
             if (res.data.code === 0) {
               // console.log(res.data.data)
               let menuList = res.data.data
-              // console.log(menuList)
+              console.log(menuList)
               for (let i = 0; i < menuList.length; i++) {
                 // 未开始
                 if (+new Date(menuList[i].beginTime) > +new Date()) {
@@ -343,10 +397,39 @@
         } else {
           // h5跳转类型
           this.form.actionType = 1
+          // 分享相关 只有h5才有
+          this.form.sharePlatform = this.form.sharePlatformList.join(',')
+          if (this.form.sharePlatform) {
+            console.log('勾选分享平台')
+            this.form.shareUrl = this.form.shareUrlOrigin
+            // 勾选分享平台 其他的分享相关必须填
+            if (!this.form.shareTitle) {
+              this.$message.error('请选择分享标题!')
+              return
+            }
+            if (!this.form.shareContent) {
+              this.$message.error('请选择分享内容!')
+              return
+            }
+            if (!this.form.sharePic) {
+              this.$message.error('请上传分享图标!')
+              return
+            }
+            if (!this.form.shareUrl) {
+              this.$message.error('请选择分享链接!')
+              return
+            }
+          } else {
+            console.log('未勾选分享平台')
+            // 未勾选分享平台 其他的分享相关不需填
+            this.form.shareUrl = this.form.actionUrl
+          }
         }
         // 操作人员放入表单中
         this.form.updateBy = this.getUserId()
-        // console.log(this.form)
+        // 必须登录
+        this.form.needLogin = 1
+        console.log(this.form)
         this.$refs.formData.validate((valid) => {
           if (valid) {
             // console.log('submit!')
@@ -373,7 +456,7 @@
           return
         }
         let lis = this.$refs.menuUl.childNodes
-        // console.log(lis)
+        console.log(lis)
         for (let i = 0; i < lis.length; i++) {
           // console.log(lis[i])
           lis[i].classList.remove('active')
@@ -385,10 +468,16 @@
         // console.log(id)
         this.$ajax.get(`${baseUrl.DynamicMenu}/getMessage`, {params: {id: id}})
           .then(res => {
-            // console.log(res)
+            // console.log(res.data.data)
             if (res.data.code === 0) {
               let form = res.data.data
               form.actionType = res.data.data.actionType
+              if (form.sharePlatform) {
+                form.sharePlatformList = res.data.data.sharePlatform.split(',')
+                form.shareUrlOrigin = res.data.data.shareUrl
+              } else {
+                form.sharePlatformList = []
+              }
               if (form.actionType === 0) {
                 form.actionTypeName = 'app原生跳转'
               } else {
@@ -397,6 +486,7 @@
               console.log(form)
               this.form = form
               this.iconUrl = this.form.iconUrl
+              this.sharePic = this.form.sharePic
               this.isShowForm = true
             }
           })
@@ -438,7 +528,7 @@
         })
         this.cancelCreate()
       },
-      //  todo 双击当前行 隐藏菜单
+      // 双击当前行 隐藏菜单
       dblClickMenu (data) {
         console.log(data.id)
         // console.log('双击')
@@ -637,21 +727,25 @@
       // 点击新建按钮 出现右边详情空表单
       newMenu () {
         this.form = {
-          needLogin: 0,
+          needLogin: 1,
           actionType: 0,
-          rank: '99'
+          rank: '99',
+          sharePlatformList: []
         }
         this.iconUrl = ''
+        this.sharePic = ''
         this.isShowForm = true
       },
       // 点击取消按钮 隐藏右边详情 清空表单
       cancelCreate () {
         this.form = {
-          needLogin: 0,
+          needLogin: 1,
           actionType: 0,
-          rank: '99'
+          rank: '99',
+          sharePlatformList: []
         }
         this.iconUrl = ''
+        this.sharePic = ''
         this.isShowForm = false
       },
       // 重置
@@ -712,6 +806,34 @@
       handleAvatarSuccess () {
         // oss上图片的路径 在表单提交之前拼接
         this.iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+      },
+      // 获取oss秘钥 分享图标
+      beforeSharePicUpload (file) {
+        const isLt2M = file.size / 1024 < 200
+        if (!isLt2M) {
+          this.$message.error('上传头像图片大小不能超过 200KB!')
+          return
+        }
+        return new Promise((resolve) => {
+          this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'DynamicMenu'}})
+            .then((res) => {
+                this.TokenShare = res.data
+                this.TokenShare.key = this.TokenShare.dir + '/' + (+new Date()) + file.name
+                this.TokenShare.OSSAccessKeyId = this.TokenShare.accessid
+                // oss上图片的路径 在表单体提交之前拼接
+                this.form.sharePic = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.TokenShare.key
+                resolve()
+              }
+            )
+            .catch(err => {
+              console.log(err)
+            })
+        })
+      },
+      // 上传图片成功后 获取分享图片地址
+      handleSharePicSuccess () {
+        // oss上图片的路径 在表单提交之前拼接
+        this.sharePic = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.TokenShare.key
       },
       hasPermission (data) {
         if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
