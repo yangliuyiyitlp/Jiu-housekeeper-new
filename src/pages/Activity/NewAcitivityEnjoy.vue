@@ -20,7 +20,8 @@
               <div class="pageTop"><img src="../../assets/images/activity/phoheader.png"></div>
 
               <div class="menuContent" ref="menu">
-                <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)" :id=item.id>
+                <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)"
+                     :id=item.id>
                   <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
                     class="circle iconfont icon-jiantouarrow505"></i></div>
                   <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
@@ -65,7 +66,7 @@
                 <el-input v-model="form.oldTitle" placeholder="请输入显示的名称（建议5个字以内）"></el-input>
               </el-form-item>
 
-              <el-form-item label="页头标题：" class="minWidth"prop="newTitle">
+              <el-form-item label="页头标题：" class="minWidth" prop="newTitle">
                 <el-input v-model="form.newTitle" placeholder="请输入也同样文字（最多16个字符）"></el-input>
               </el-form-item>
               <el-form-item label="有效日期：" prop="beginDate">
@@ -93,7 +94,7 @@
           <div class="rightForm">
             <div class="headerTitle">
               <a class="fontWeight">轮播区</a>
-              <span class="savePageCarouse">保存</span>
+              <span class="savePageCarouse" @click="savePageCarouse">保存</span>
               <el-switch
                 :width=100
                 v-model="carouselIsUse"
@@ -106,8 +107,8 @@
             </div>
             <hr class="lineWeight">
             <el-form ref="formCarousel" :rules="rules" :model="formCarousel" label-width="110px" class="formData">
-                <el-input v-if=0 v-model="formCarousel.id"></el-input>
-                <el-input v-if=0 v-model="formCarousel.updateBy"></el-input>
+              <el-input v-if=0 v-model="formCarousel.id"></el-input>
+              <el-input v-if=0 v-model="formCarousel.updateBy"></el-input>
 
               <el-form-item label="是否显示：">
                 <el-switch
@@ -141,9 +142,12 @@
               </el-form-item>
               <a class="fontWeight">内容上传</a>
 
-              <div class="carousel" v-for="(item,index) in carouselDetails" :key="item.id"   :id=item.rank>
+
+              <div class="carousel" v-for="(item,index) in carouselDetails" :key="index">
+
                 <hr class="lineWeight">
                 <el-row :gutter="0">
+
                   <el-col :span="4">
                     <el-upload
                       class="avatar-uploader"
@@ -158,16 +162,11 @@
                       <span class="iconFont">上传图片<br/>宽高比670*300</span>
                     </el-upload>
                   </el-col>
+                  <el-col :span="15" :offset="1">
 
-                  <el-col :span="19" :offset="1">
-                    <el-form ref="" :rules="rules"  label-width="100px">
-                      <div class="carouselIcon">
-                        <div class="carouseDel" @click="carouseDel"><i class="circle iconfont icon-icon--"></i></div>
-                        <div class="carouseDown" @click="carouseDown"><i class="circle iconfont icon-jiantouarrow505"></i></div>
-                        <div class="carouseTop" @click="carouseTop"><i class="circle iconfont icon-jiantouarrow499"></i></div>
-                        <div class="carouseMaxTop" @click="carouseMaxTop"><i class="circle iconfont icon-zhiding"></i></div>
-                      </div>
-                        <el-input v-if=0 v-model="item.id"></el-input>
+                    <el-form :ref=index :rules="rules" label-width="100px">
+
+                      <el-input v-if=0 v-model="item.id"></el-input>
 
                       <el-form-item label="类型：">
                         <el-select v-model="item.type" placeholder="请选择类型">
@@ -218,6 +217,15 @@
                       </el-form-item>
 
                     </el-form>
+                  </el-col>
+                  <el-col :span="4">
+                    <div class="carouseFormAll">
+                      <div @click="carouseDel(item.id)"><i class="circle iconfont icon-icon--"></i></div>
+                      <div @click="carouseDown(item.id,index)"><i class="circle iconfont icon-jiantouarrow505"></i></div>
+                      <div @click="carouseTop(item.id,index)"><i class="circle iconfont icon-jiantouarrow499"></i>
+                      </div>
+                      <div @click="carouseMaxTop(item.id)"><i class="circle iconfont icon-zhiding"></i></div>
+                    </div>
                   </el-col>
                 </el-row>
               </div>
@@ -274,9 +282,9 @@
         isFalls: false,
         headerIsUse: false,
         headerNeedLogin: false,
-        carouselIsUse:false,
-        carouselIsShow:false,
-        carouselNeedLogin:false,
+        carouselIsUse: false,
+        carouselIsShow: false,
+        carouselNeedLogin: false,
         filterText: '',
         cityId: -1,
         rankArr: [],
@@ -284,16 +292,24 @@
         Token: {},
         menuForm: {'cityName': '全国'},
         form: {},
-        formCarousel:{},
+        formCarousel: {},
         select: [{'id': '-1', 'name': '全国', 'children': []}],
-        options: [{'label':'rrr','value':'eed'}],
+        options: [{'label': 'rrr', 'value': 'eed'}],
         value: '',
         checkedCity: [],
         menuList: [],
-        menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1},{value: '图标区 ③ 点击编辑', class: 'pageFoot', id: 2}, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity', id: 3}],
-        carouselDetails:[],
+        menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1}, {
+          value: '图标区 ③ 点击编辑',
+          class: 'pageFoot',
+          id: 2
+        }, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity', id: 3}],
+        carouselDetails: [],
         rules: {
-          oldTitle: [{required: true, message: '请输入默认标题', trigger: 'blur'}, {max: 5, message: '长度不大于 5个字', trigger: 'blur'}],
+          oldTitle: [{required: true, message: '请输入默认标题', trigger: 'blur'}, {
+            max: 5,
+            message: '长度不大于 5个字',
+            trigger: 'blur'
+          }],
           newTitle: [{required: true, message: '请输入页头标题', trigger: 'blur'}],
           beginDate: [{required: true, message: '请输入日期', trigger: 'blur'}],
           headerNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}]
@@ -330,7 +346,7 @@
 //      }
     },
     mounted () {
-//      this.menuList =this.menuCount // 接口关了先直接赋值
+//      this.menuList = this.menuCount // 接口关了先直接赋值
     },
     created () {
       // 请求按钮权限
@@ -378,7 +394,11 @@
         this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: this.cityId}})
           .then(res => {
             if (res.data.code === 0) {
-              this.ranks = res.data.data.ranks
+              if (res.data.data !== null && res.data.data !== '') {
+                this.ranks = res.data.data.ranks
+              } else {
+                this.ranks = '1,2,3'
+              }
               this.rankArr = this.ranks.split(',')
               for (let i = 0; i < this.rankArr.length; i++) {
                 for (let j = 0; j < this.menuCount.length; j++) {
@@ -392,12 +412,16 @@
             }
           })
           .catch((err) => {
-            this.$message.error('获取排序异常' + err)
+            this.$message.error('获取排序异常')
           })
       },
       //全局模板排序提交
       setRanks () {
-        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/saveRank`, {cityId: this.cityId, ranks: this.ranks})
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/saveRank`, {
+          cityId: this.cityId,
+          ranks: this.ranks,
+          updateBy: this.adminId
+        })
           .then(res => {
             if (res.data.code === 0) {
               // 获取排序
@@ -459,7 +483,7 @@
             return false
           }
           let menuDivs = this.$refs.menu.children
-          getMenu(menuDivs,id)
+          getMenu(menuDivs, id)
           if (id === 0) { // 获取页头
             this.isHeader = true
             this.isCarousel = false
@@ -505,7 +529,7 @@
       modifyCancel () {
         this.cityVisible = false
         this.menuForm.cityName = ''
-        this.cityId = null
+        this.cityId = ''
       },
       searchCity () {
         this.cityVisible = true
@@ -543,7 +567,7 @@
         this.form.endDate = val
       },
       savePageHeader () {
-        if(this.form.beginDate>this.form.endDate){
+        if (this.form.beginDate > this.form.endDate) {
           this.$message('有效日期开始时间必须早于结束时间')
           return
         }
@@ -561,7 +585,7 @@
         this.form.updataBy = Cookie.get('adminId')
         this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/save`, this.form)
           .then((res) => {
-              if (res.data.code === 1) {
+              if (res.data.code === 0) {
                 this.$message.success(res.data.msg)
                 this.getHeader()
               } else {
@@ -576,7 +600,9 @@
       handleAvatarSuccess () {},
       beforeAvatarUpload () {},
       //轮播区
-      getCarousel(){
+      getCarousel () {
+//        192.168.0.167/sys/dictutils/interface/getDictList
+
         this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/form`, {params: {cityId: this.cityId}})
           .then((res) => {
               if (res.data.code === 0) {
@@ -610,26 +636,80 @@
             this.$message.error('轮播区获取异常')
           })
       },
-      savePageCarouse(){},
-      addForm(){},
-      carouseDel(){},
-      carouseDown(){},
-      carouseTop(){},
-      carouseMaxTop(){}
+      savePageCarouse () {
+        console.log(111, this.formCarousel)
+        //公用宽高转换
+        this.formCarousel.ratio = this.formCarousel.width + 'X' + this.formCarousel.height
+        // 公用下拉框转换
+
+        //展示日期转换  排序
+        let result = this.formCarousel.carouselDetails
+        for (let i = 0; i < result.length; i++) {
+          result[i].beginDate = new Date(result[i].beginDate).getTime()
+          result[i].endDate = new Date(result[i].endDate).getTime()
+          result[i].rank = i
+        }
+
+        // 单个下拉框转换
+      },
+      addForm () {},
+      carouseDel (id) {
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/delete`, {id: id})
+          .then((res) => {
+            this.$message.success(res.data.msg)
+            this.getCarousel()
+          })
+          .catch(() => {
+            this.$message.error('轮播图保存失败')
+          })
+      },
+      carouseDown (id,index) {
+        let result = this.formCarousel.carouselDetails
+        if (index === result.length-1) {
+          this.$message('已经是最后一条啦!')
+          return
+        }
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(i + 1, 0, thisResult)
+          }
+        }
+      },
+      carouseTop (id,index) {
+        if (index === 0) {
+          this.$message('已经是第一条啦!')
+          return
+        }
+        let result = this.formCarousel.carouselDetails
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(i - 1, 0, thisResult)
+          }
+        }
+      },
+      carouseMaxTop () {
+
+      }
     }
   }
+
   // 全局当前高亮
-  function getMenu(menuDivs, id) {
-    let i = 0;
-    while(i<menuDivs.length) {
-      if(Number(menuDivs[i].id) === id) {
+  function getMenu (menuDivs, id) {
+    let i = 0
+    while (i < menuDivs.length) {
+      if (Number(menuDivs[i].id) === id) {
         menuDivs[i].classList.add('active')
       } else {
         menuDivs[i].classList.remove('active')
       }
-      i++;
+      i++
     }
   }
+
   //  function searchRole (result, checkedRoles) {
   //    for (let i = 0; i < result.length; i++) {
   //      let item = result[i]

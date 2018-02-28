@@ -219,10 +219,10 @@
   margin-left:-10px;
   top:20%;
 }
-.carouselIcon{
-  float:right;
+.carouseFormAll{
+  float: right;
 }
-.carouseMaxTop,.carouseDown,.carouseTop,.carouseDel{
+.carouseFormAll>div{
   margin-top:5px;
   float: right;
   text-align: center;
@@ -232,6 +232,7 @@
   background:rgba(79,77,77,1);
   color:#fff;
   margin-right:5px;
+  cursor: pointer;
 }
 .iconFont{
   font-size: 12px;
