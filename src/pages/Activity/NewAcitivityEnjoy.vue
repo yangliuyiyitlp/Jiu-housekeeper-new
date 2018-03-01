@@ -143,24 +143,26 @@
               <a class="fontWeight">内容上传</a>
 
 
-              <div class="carousel" v-for="(item,index) in carouselDetails" :key="index">
+              <div class="carousel" v-for="(item,index) in formCarousel.carouselDetails" :key="index">
 
                 <hr class="lineWeight">
                 <el-row :gutter="0">
 
                   <el-col :span="4">
+                    <a class="iconFont">轮播图{{index + 1}}</a>
                     <el-upload
                       class="avatar-uploader"
                       action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
                       :data="Token"
                       :show-file-list="false"
-                      :on-success="handleAvatarSuccess"
+                      :on-success="handleAvatarSuccess(item.id)"
                       :before-upload="beforeAvatarUpload">
                       <img v-if="item.iconUrl" :src="item.iconUrl" class="avatar">
                       <i v-else class="el-icon-plus
                       avatar-uploader-icon"></i>
                       <span class="iconFont">上传图片<br/>宽高比670*300</span>
                     </el-upload>
+                    <el-input v-model="item.iconUrl" v-if="0"></el-input>
                   </el-col>
                   <el-col :span="15" :offset="1">
 
@@ -169,30 +171,31 @@
                       <el-input v-if=0 v-model="item.id"></el-input>
 
                       <el-form-item label="类型：">
-                        <el-select v-model="item.type" placeholder="请选择类型">
+                        <el-select v-model="item.type" placeholder="请选择类型" @change="enjoyTypeChange">
                           <el-option
-                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+                            v-for="(option,index) in enjoyType" :key="index" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="跳转类型：">
-                        <el-select v-model="item.actionType" placeholder="请选择跳转类型">
+                      <el-form-item label="跳转类型：" v-show="isActionType">
+                        <el-select v-model="item.actionType" placeholder="请选择跳转类型" @change="actionTypeChange">
                           <el-option
-                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+                            v-for="(option,index) in jumpType" :key="index" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="模板选择：">
+                      <el-form-item label="模板选择：" v-show="isDownloadModle">
                         <el-select v-model="item.downloadModle" placeholder="请选择模板">
                           <el-option
-                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+                            v-for="(option,index) in enjoyDownUrl" :key="index" :label="option.label"
+                            :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="链接：">
+                      <el-form-item label="链接：" v-show="isActionUrl">
                         <el-select v-model="item.actionUrl" placeholder="请选择链接">
                           <el-option
-                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+                            v-for="(option,index) in enjoyUrl" :key="index" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -211,7 +214,7 @@
                       <el-form-item label="平台：">
                         <el-select v-model="item.os" placeholder="请选择平台">
                           <el-option
-                            v-for="option in options" :key="option.value" :label="option.label" :value="option.value">
+                            v-for="(option,index) in showType" :key="index" :label="option.label" :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -221,10 +224,10 @@
                   <el-col :span="4">
                     <div class="carouseFormAll">
                       <div @click="carouseDel(item.id)"><i class="circle iconfont icon-icon--"></i></div>
-                      <div @click="carouseDown(item.id,index)"><i class="circle iconfont icon-jiantouarrow505"></i></div>
-                      <div @click="carouseTop(item.id,index)"><i class="circle iconfont icon-jiantouarrow499"></i>
+                      <div @click="carouseDown(item.id,index)"><i class="circle iconfont icon-jiantouarrow505"></i>
                       </div>
-                      <div @click="carouseMaxTop(item.id)"><i class="circle iconfont icon-zhiding"></i></div>
+                      <div @click="carouseTop(item.id,index)"><i class="circle iconfont icon-jiantouarrow499"></i></div>
+                      <div @click="carouseMaxTop(item.id,index)"><i class="circle iconfont icon-zhiding"></i></div>
                     </div>
                   </el-col>
                 </el-row>
@@ -236,8 +239,8 @@
         </el-col>
         <!--图标区-->
         <el-col :span="14" :offset="1" v-if="isIcon">图标区</el-col>
-        <!--瀑布流-->
-        <el-col :span="14" :offset="1" v-if="isFalls">瀑布流</el-col>
+        <!--列表区-->
+        <el-col :span="14" :offset="1" v-if="isFalls">列表区</el-col>
 
       </el-row>
     </div>
@@ -270,6 +273,7 @@
   import baseUrl from '../../utils/baseUrl'
   import a from '../../assets/js/getsessionId.js'
   import Cookie from 'js-cookie'
+  import { convertDate2String } from '../../assets/js/convert'
 
   export default {
     data () {
@@ -302,8 +306,15 @@
           value: '图标区 ③ 点击编辑',
           class: 'pageFoot',
           id: 2
-        }, {value: '瀑布流 ④ 点击编辑', class: 'pageActivity', id: 3}],
-        carouselDetails: [],
+        }, {value: '列表区 ④ 点击编辑', class: 'pageActivity', id: 3}],
+        enjoyType: [],
+        jumpType: [],
+        enjoyDownUrl: [],
+        showType: [],
+        enjoyUrl: [],
+        isActionType: true,
+        isDownloadModle: true,
+        isActionUrl: true,
         rules: {
           oldTitle: [{required: true, message: '请输入默认标题', trigger: 'blur'}, {
             max: 5,
@@ -495,7 +506,7 @@
             this.isCarousel = true
             this.isIcon = false
             this.isFalls = false
-            this.getCarousel()
+            this.getEnjoyType()
           } else if (id === 2) {
             this.isHeader = false
             this.isCarousel = false
@@ -597,12 +608,73 @@
             this.$message.error(err.data.msg)
           })
       },
-      handleAvatarSuccess () {},
-      beforeAvatarUpload () {},
       //轮播区
+      handleAvatarSuccess (id) {
+        let result = this.formCarousel.carouselDetails
+        console.log(5555,result)
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            result[i].iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
+          }
+        }
+      },
+      beforeAvatarUpload (file) {
+        return new Promise((resolve) => {
+          this.$ajax.get(`${baseUrl.mainUrl}/electric/ossutil/interface/policy`, {params: {user_dir: 'newActivityEnjoy'}})
+            .then((res) => {
+              this.Token = res.data
+              this.Token.OSSAccessKeyId = res.data.accessid
+              this.Token.key = this.Token.dir + '/' + (+new Date()) + file.name
+              resolve()
+            })
+            .catch(() => {
+              this.$message({
+                message: '图片秘钥获取失败',
+                type: 'error'
+              })
+            })
+        })
+      },
+      getEnjoyType () {
+        this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'enjoy_type'}})
+          .then((res) => {
+            for (let i = 0; i < res.data.length; i++) {
+              let enjoyTypeObj = {}
+              enjoyTypeObj.value = res.data[i].value
+              enjoyTypeObj.label = res.data[i].label
+              this.enjoyType.push(enjoyTypeObj)
+            }
+            this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'jump_type'}})
+              .then((res) => {
+                for (let j = 0; j < res.data.length; j++) {
+                  let jumpTypeObj = {}
+                  jumpTypeObj.value = res.data[j].value
+                  jumpTypeObj.label = res.data[j].label
+                  this.jumpType.push(jumpTypeObj)
+                }
+                this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'show_type'}})
+                  .then((res) => {
+                    for (let k = 0; k < res.data.length; k++) {
+                      let showTypeObj = {}
+                      showTypeObj.value = res.data[k].value
+                      showTypeObj.label = res.data[k].label
+                      this.showType.push(showTypeObj)
+                    }
+                    this.getCarousel()
+                  })
+                  .catch((err) => {
+                    this.$message.error('获取下拉列表失败' + err)
+                  })
+              })
+              .catch((err) => {
+                this.$message.error('获取下拉列表失败' + err)
+              })
+          })
+          .catch((err) => {
+            this.$message.error('获取下拉列表失败' + err)
+          })
+      },
       getCarousel () {
-//        192.168.0.167/sys/dictutils/interface/getDictList
-
         this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/form`, {params: {cityId: this.cityId}})
           .then((res) => {
               if (res.data.code === 0) {
@@ -626,7 +698,7 @@
                   this.formCarousel.width = this.formCarousel.ratio.split('X')[0]
                   this.formCarousel.height = this.formCarousel.ratio.split('X')[1]
                 }
-                this.carouselDetails = this.formCarousel.carouselDetails
+//                this.carouselDetails = this.formCarousel.carouselDetails
               } else {
                 this.$message('轮播区获取失败')
               }
@@ -636,23 +708,94 @@
             this.$message.error('轮播区获取异常')
           })
       },
+      enjoyTypeChange (val) {
+        if (val === '0') {
+          this.isActionType = true
+          this.isActionUrl = false
+        } else if (val === '1') {
+          this.isActionType = true
+          this.isActionUrl = false
+        } else if (val === '2') {
+          this.isActionType = false
+          this.isActionUrl = true
+        } else if (val === '3') {
+          this.isActionType = true
+          this.isActionUrl = false
+        }
+        this.isDownloadModle = false
+      },
+      actionTypeChange (val) {
+        if (val === '0') {
+          this.isDownloadModle = false
+          this.isActionUrl = false
+        } else if (val === '1') {
+          this.isDownloadModle = false
+          this.isActionUrl = false
+        } else if (val === '2') {
+          this.isDownloadModle = true
+          this.isActionUrl = false
+        } else if (val === '3') {
+          this.isActionUrl = true
+          this.isDownloadModle = false
+        }
+      },
       savePageCarouse () {
         console.log(111, this.formCarousel)
         //公用宽高转换
         this.formCarousel.ratio = this.formCarousel.width + 'X' + this.formCarousel.height
-        // 公用下拉框转换
-
+        //启用 显示 登录转换
+        if (this.carouselIsUse === true) {
+          this.formCarousel.isUse = 1
+        } else {
+          this.formCarousel.isUse = 0
+        }
+        if (this.carouselNeedLogin === true) {
+          this.formCarousel.needLogin = 1
+        } else {
+          this.formCarousel.needLogin = 0
+        }
+        if (this.carouselIsShow === true) {
+          this.formCarousel.isShow = 1
+        } else {
+          this.formCarousel.isShow = 0
+        }
         //展示日期转换  排序
         let result = this.formCarousel.carouselDetails
         for (let i = 0; i < result.length; i++) {
-          result[i].beginDate = new Date(result[i].beginDate).getTime()
-          result[i].endDate = new Date(result[i].endDate).getTime()
+          result[i].beginDate = convertDate2String(new Date(result[i].beginDate).getTime())
+          result[i].endDate = convertDate2String(new Date(result[i].endDate).getTime())
           result[i].rank = i
         }
-
-        // 单个下拉框转换
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/save`, this.formCarousel)
+          .then((res) => {
+            if (res.data.code === 0) {
+              this.$message.success('保存成功')
+              this.getCarousel()
+            } else {
+              this.$message('保存失败')
+            }
+          })
+          .catch((err) => {
+            this.$message.error('保存异常')
+          })
       },
-      addForm () {},
+      addForm () {
+        let lastRank = this.carouselDetails.length
+        let addCarouseData = {
+          'id': 0,
+          'type': 1,
+          'actionType': 1,
+          'actionUrl': '',
+          'downloadModel': 1,
+          'beginDate': '',
+          'endDate': '',
+          'os': 1,
+          'iconUrl': '',
+          'rank': lastRank
+        }
+//        this.carouselDetails.push(addCarouseData)
+        this.carouselDetails.splice(lastRank, 0, addCarouseData)
+      },
       carouseDel (id) {
         this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/delete`, {id: id})
           .then((res) => {
@@ -663,9 +806,9 @@
             this.$message.error('轮播图保存失败')
           })
       },
-      carouseDown (id,index) {
+      carouseDown (id, index) {
         let result = this.formCarousel.carouselDetails
-        if (index === result.length-1) {
+        if (index === result.length - 1) {
           this.$message('已经是最后一条啦!')
           return
         }
@@ -677,7 +820,7 @@
           }
         }
       },
-      carouseTop (id,index) {
+      carouseTop (id, index) {
         if (index === 0) {
           this.$message('已经是第一条啦!')
           return
@@ -691,8 +834,19 @@
           }
         }
       },
-      carouseMaxTop () {
-
+      carouseMaxTop (id, index) {
+        if (index === 0) {
+          this.$message('已经是第一条啦!')
+          return
+        }
+        let result = this.formCarousel.carouselDetails
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(0, 0, thisResult)
+          }
+        }
       }
     }
   }

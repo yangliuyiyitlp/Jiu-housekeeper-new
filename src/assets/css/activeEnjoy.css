@@ -201,6 +201,10 @@
   background-color: #DB5050;
 }
 /*轮播区*/
+.formData{
+  height:500px;
+  overflow: auto;
+}
 .carousel .el-select{
   width:190px;
 }
@@ -210,6 +214,7 @@
   height:45px;
   background:rgba(79,77,77,1);
   border-radius: 100px ;
+  cursor:pointer;
 }
 .iconAdd{
   color:#fff;
@@ -256,7 +261,7 @@
 }
 
 .avatar-uploader-icon {
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   font-size: 28px;
   color: #8c939d;
   width: 100px;
