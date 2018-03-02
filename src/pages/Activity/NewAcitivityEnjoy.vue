@@ -20,14 +20,48 @@
               <div class="pageTop"><img src="../../assets/images/activity/phoheader.png"></div>
 
               <div class="menuContent" ref="menu">
+
                 <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)"
                      :id=item.id>
-                  <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
-                    class="circle iconfont icon-jiantouarrow505"></i></div>
-                  <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
-                    class="circle iconfont icon-jiantouarrow499"></i></div>
-                  <div class="headerContent">{{item.value}}</div>
+                  <div>
+                    <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
+                      class="circle iconfont icon-jiantouarrow505"></i></div>
+                    <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
+                      class="circle iconfont icon-jiantouarrow499"></i></div>
+                    <div class="headerContent">
+                      <div>{{item.value}}</div>
+                    </div>
+                  </div>
+                  <!--列表区详情-->
+                  <div  class="isFall" v-if="isFall&&item.id===3?true:false" ref="isFall">
+                    <div v-for="(item,index) in fallList" :key="item.id" :class="item.class">
+                      <el-input v-if="0" v-model="item.id"></el-input>
+                      <el-row :gutter="0">
+                        <el-col :span="7">
+                          <div @click.stop='topFall(index)' class="fallCircle"><i
+                            class="circle iconfont icon-jiantouarrow499"></i></div>
+                          <div @click.stop='downFall(index)' class="fallCircle"><i
+                            class="circle iconfont icon-jiantouarrow505"></i></div>
+                          <div @click.stop='delFall(index)' class="fallCircle"><i
+                            class="circle iconfont icon-icon--"></i></div>
+                          <div v-model="item.name"></div>
+                        </el-col>
+                        <el-col :span="13">
+                          <div><span class="fallFont">按钮颜色：</span><input class="fallColor" placeholder="请选择"
+                                                                         v-model="item.color"></div>
+                          <div><span class="fallFont">按钮名字：</span><input class="fallColor" placeholder="请输入"
+                                                                         v-model="item.buttonName"></div>
+                        </el-col>
+                        <el-col :span="3">
+                          <el-color-picker v-model="item.color"></el-color-picker>
+                        </el-col>
+                      </el-row>
+                    </div>
+                  </div>
                 </div>
+
+
+
               </div>
             </div>
           </div>
@@ -173,7 +207,8 @@
                       <el-form-item label="类型：">
                         <el-select v-model="item.type" placeholder="请选择类型" @change="enjoyTypeChange">
                           <el-option
-                            v-for="(option,index) in enjoyType" :key="index" :label="option.label" :value="option.value">
+                            v-for="(option,index) in enjoyType" :key="index" :label="option.label"
+                            :value="option.value">
                           </el-option>
                         </el-select>
                       </el-form-item>
@@ -240,7 +275,58 @@
         <!--图标区-->
         <el-col :span="14" :offset="1" v-if="isIcon">图标区</el-col>
         <!--列表区-->
-        <el-col :span="14" :offset="1" v-if="isFalls">列表区</el-col>
+        <el-col :span="14" :offset="1" v-if="isFalls">
+          <div class="rightForm">
+            <div class="headerTitle">
+              <a class="fontWeight">赳赳特选</a>
+              <span class="savePageHeader" @click="savePageFall">保存</span>
+              <el-switch
+                :width=100
+                @change=isUseChange
+                v-model='fallIsUse'
+                on-text="启用"
+                off-text="停用"
+                on-color="#DB5050"
+                off-color="#4F4D4D">
+              </el-switch>
+            </div>
+            <hr class="lineWeight">
+            <el-form ref="formData" :rules="rules" :model="formFalls" label-width="100px" class="formData">
+              <el-input v-if=0 v-model="formFalls.id"></el-input>
+              <el-form-item label="是否显示：" prop="headerNeedLogin">
+                <el-switch
+                  :width=60
+                  v-model='fallIsShow'
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="是否登录：" prop="headerNeedLogin">
+                <el-switch
+                  :width=60
+                  v-model='fallIsLogin'
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="模块宽高：">
+                <el-input v-model="formFalls.width" placeholder="宽" class="miWidth"></el-input>
+                x
+                <el-input v-model="formFalls.height" placeholder="高" class="miWidth"></el-input>
+              </el-form-item>
+              <el-form-item label="模块名称：" class="minWidth" prop="oldTitle">
+                <el-input v-model="formFalls.waterfallName" placeholder="赳赳特选（可修改，建议5个字以内）"></el-input>
+              </el-form-item>
+
+
+            </el-form>
+
+          </div>
+        </el-col>
 
       </el-row>
     </div>
@@ -284,11 +370,15 @@
         isCarousel: false,
         isIcon: false,
         isFalls: false,
+        isFall: false,
         headerIsUse: false,
         headerNeedLogin: false,
         carouselIsUse: false,
         carouselIsShow: false,
         carouselNeedLogin: false,
+        fallIsUse: false,
+        fallIsShow: false,
+        fallIsLogin: false,
         filterText: '',
         cityId: -1,
         rankArr: [],
@@ -301,6 +391,7 @@
         options: [{'label': 'rrr', 'value': 'eed'}],
         value: '',
         checkedCity: [],
+        fallList: [{'class': 'fallFirst'}, {}, {}, {}],
         menuList: [],
         menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1}, {
           value: '图标区 ③ 点击编辑',
@@ -315,6 +406,7 @@
         isActionType: true,
         isDownloadModle: true,
         isActionUrl: true,
+        formFalls: {},
         rules: {
           oldTitle: [{required: true, message: '请输入默认标题', trigger: 'blur'}, {
             max: 5,
@@ -495,28 +587,35 @@
           }
           let menuDivs = this.$refs.menu.children
           getMenu(menuDivs, id)
+          this.menuCount[2].class = 'pageActivity'
           if (id === 0) { // 获取页头
             this.isHeader = true
             this.isCarousel = false
             this.isIcon = false
             this.isFalls = false
+            this.isFall = false
             this.getHeader()
           } else if (id === 1) {
             this.isHeader = false
             this.isCarousel = true
             this.isIcon = false
             this.isFalls = false
+            this.isFall = false
             this.getEnjoyType()
           } else if (id === 2) {
             this.isHeader = false
             this.isCarousel = false
             this.isIcon = true
             this.isFalls = false
+            this.isFall = false
           } else if (id === 3) {
+            this.menuCount[2].class = 'pageActivityClick'
             this.isHeader = false
             this.isCarousel = false
             this.isIcon = false
             this.isFalls = true
+            this.isFall = true
+            this.getPageFall()
           }
         } else {
           this.$message('请先选择地址')
@@ -611,7 +710,7 @@
       //轮播区
       handleAvatarSuccess (id) {
         let result = this.formCarousel.carouselDetails
-        console.log(5555,result)
+        console.log(5555, result)
         for (let i = 0; i < result.length; i++) {
           if (result[i].id === id) {
             result[i].iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
@@ -638,6 +737,7 @@
       getEnjoyType () {
         this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'enjoy_type'}})
           .then((res) => {
+            this.enjoyType = []
             for (let i = 0; i < res.data.length; i++) {
               let enjoyTypeObj = {}
               enjoyTypeObj.value = res.data[i].value
@@ -646,6 +746,7 @@
             }
             this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'jump_type'}})
               .then((res) => {
+                this.jumpType = []
                 for (let j = 0; j < res.data.length; j++) {
                   let jumpTypeObj = {}
                   jumpTypeObj.value = res.data[j].value
@@ -654,6 +755,7 @@
                 }
                 this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'show_type'}})
                   .then((res) => {
+                    this.showType = []
                     for (let k = 0; k < res.data.length; k++) {
                       let showTypeObj = {}
                       showTypeObj.value = res.data[k].value
@@ -847,6 +949,75 @@
             result.splice(0, 0, thisResult)
           }
         }
+      },
+      //图标区
+      topFall(){},
+      downFall(){},
+      delFall(){},
+      savePageFall () {
+        if (this.fallIsUse === true) {
+          this.formFalls.isStopped = 1
+        } else {
+          this.formFalls.isStopped = 0
+        }
+        if (this.fallIsLogin === true) {
+          this.formFalls.isLogin = 1
+        } else {
+          this.formFalls.isLogin = 0
+        }
+        if (this.fallIsShow === true) {
+          this.formFalls.isShow = 1
+        } else {
+          this.formFalls.isShow = 0
+        }
+        this.formFalls.cityId = this.cityId
+        this.formFalls.updataBy = this.adminId
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/title/save`, this.form)
+          .then((res) => {
+              if (res.data.code === 0) {
+                this.$message.success(res.data.msg)
+                this.getHeader()
+              } else {
+                this.$message('保存失败')
+              }
+            }
+          )
+          .catch(err => {
+            this.$message.error('保存异常')
+          })
+      },
+      getPageFall () {
+        this.$ajax.post(`${baseUrl.newEnjoyUrl2}/jjEnjoy/waterfall/form`, this.form)
+          .then((res) => {
+              if (res.data.code === 200) {
+                this.formFalls = res.data.data.waterfall
+                if (this.formFalls.isStopped === 1) {
+                  this.fallIsUse = true
+                } else {
+                  this.fallIsUse = false
+                }
+                if (this.formFalls.isShow === 1) {
+                  this.fallIsShow = true
+                } else {
+                  this.fallIsShow = false
+                }
+                if (this.formFalls.isLogin === 1) {
+                  this.fallIsLogin = true
+                } else {
+                  this.fallIsLogin = false
+                }
+                if (this.formFalls.ratio.indexOf('X') !== -1) {
+                  this.formFalls.width = this.formFalls.ratio.split('X')[0]
+                  this.formFalls.height = this.formFalls.ratio.split('X')[1]
+                }
+              } else {
+                this.$message('获取列表区信息失败')
+              }
+            }
+          )
+          .catch(err => {
+            this.$message.error('获取列表区信息异常')
+          })
       }
     }
   }

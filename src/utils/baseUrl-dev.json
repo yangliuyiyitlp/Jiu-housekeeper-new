@@ -14,6 +14,7 @@
   "MessageInform": "http://192.168.0.151:8080/message/prompt",
   "DynamicMenu": "http://192.168.0.31:8080/appMenu",
   "TagLib": "http://192.168.0.151:8080/label/library",
-  "newEnjoyUrl": "http://192.168.0.31:8080"
+  "newEnjoyUrl": "http://192.168.0.31:8080",
+  "newEnjoyUrl2": "http://192.168.0.205:8086"
 }
 
