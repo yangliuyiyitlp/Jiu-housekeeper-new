@@ -204,6 +204,7 @@
                     <el-form :ref=index :rules="rules" label-width="100px">
 
                       <el-input v-if=0 v-model="item.id"></el-input>
+                      <el-input v-if=0 v-model="item.mainId"></el-input>
 
                       <el-form-item label="类型：">
                         <el-select v-model="item.type" placeholder="请选择类型" @change="enjoyTypeChange">
@@ -274,7 +275,133 @@
           </div>
         </el-col>
         <!--图标区-->
-        <el-col :span="14" :offset="1" v-if="isIcon">图标区</el-col>
+        <el-col v-if='isIcon' :span="14" :offset="1">
+          <div class="rightForm">
+            <div class="headerTitle">
+              <a class="fontWeight">图标区</a>
+              <span class="savePageCarouse" @click="saveIcon">保存</span>
+              <el-switch
+                :width=100
+                v-model="iconIsUse"
+                @change=isUseChange
+                on-text="启用"
+                off-text="停用"
+                on-color="#DB5050"
+                off-color="#4F4D4D">
+              </el-switch>
+            </div>
+            <hr class="lineWeight">
+            <el-form ref="formIcon" :rules="rules" :model="formIcon" label-width="110px" class="formData">
+              <el-input v-if=0 v-model="formIcon.id"></el-input>
+              <el-input v-if=0 v-model="formIcon.updateBy"></el-input>
+
+              <el-form-item label="是否显示：">
+                <el-switch
+                  :width=60
+                  v-model="formIcon.carouselIsShow"
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
+              <el-form-item label="是否登录：">
+                <el-switch
+                  :width=60
+                  v-model="formIcon.carouselNeedLogin"
+                  on-text="登录"
+                  off-text="关闭"
+                  on-color="#DB5050"
+                  off-color="#4F4D4D">
+                </el-switch>
+              </el-form-item>
+
+              <el-form-item label="模块宽高：">
+                <el-input v-model="formIcon.width" placeholder="宽" class="miWidth"></el-input>
+                x
+                <el-input v-model="formIcon.height" placeholder="高" class="miWidth"></el-input>
+              </el-form-item>
+              <a class="fontWeight">图标配置</a>
+
+
+              <div class="carousel" v-for="(item,index) in formIcon.carouselDetails" :key="index">
+
+                <hr class="lineWeight">
+                <el-row :gutter="0">
+
+                  <el-col :span="4">
+                    <a class="iconFont">图标配置{{index + 1}}</a>
+                    <el-upload
+                      class="avatar-uploader"
+                      action='http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com'
+                      :data="Token"
+                      :show-file-list="false"
+                      :on-success="handleAvatarSuccess(item.id)"
+                      :before-upload="beforeAvatarUpload">
+                      <img v-if="item.iconUrl" :src="item.iconUrl" class="avatar">
+                      <i v-else class="el-icon-plus
+                      avatar-uploader-icon"></i>
+                      <span class="iconFont">上传图片<br/>宽高比188*188</span>
+                    </el-upload>
+                    <el-input v-model="item.iconUrl" v-if="0"></el-input>
+                  </el-col>
+                  <el-col :span="15" :offset="1">
+
+                    <el-form :ref=index :rules="rules" label-width="100px">
+
+                      <el-input v-if=0 v-model="item.id"></el-input>
+
+                      <el-form-item label="图标名称：">
+                        <el-input v-model="item.iconUrl"></el-input>
+                      </el-form-item>
+
+                      <el-form-item label="指向列表：" v-show="isActionType">
+                        <el-select v-model="item.actionType" placeholder="请选择" @change="actionTypeChange">
+                          <el-option
+                            v-for="(option,index) in jumpType" :key="index" :label="option.label" :value="option.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item> <span>配置指向列表</span>
+
+                      <el-form-item label="链接：">
+                        <el-input v-model="item.iconUrl"></el-input>
+                      </el-form-item>
+
+                      <el-form-item label="平台：">
+                        <el-select v-model="item.os" placeholder="请选择平台">
+                          <el-option
+                            v-for="(option,index) in showType" :key="index" :label="option.label" :value="option.value">
+                          </el-option>
+                        </el-select>
+                      </el-form-item>
+
+                      <el-form-item label="生效日期：" prop="beginTime">
+                        <el-date-picker
+                          v-model="item.beginDate"
+                          type="datetime">
+                        </el-date-picker>
+                      </el-form-item>
+
+
+
+                    </el-form>
+                  </el-col>
+                  <el-col :span="4">
+                    <div class="carouseFormAll">
+                      <div @click="iconDel(item.id)"><i class="circle iconfont icon-icon--"></i></div>
+                      <div @click="iconDown(item.id,index)"><i class="circle iconfont icon-jiantouarrow505"></i>
+                      </div>
+                      <div @click="iconTop(item.id,index)"><i class="circle iconfont icon-jiantouarrow499"></i></div>
+                      <div @click="iconMaxTop(item.id,index)"><i class="circle iconfont icon-zhiding"></i></div>
+                    </div>
+                  </el-col>
+                </el-row>
+              </div>
+            </el-form>
+            <div class="addForm" @click="addIcon"><i class="iconAdd iconfont icon-add"></i></div>
+
+          </div>
+        </el-col>
         <!--列表区-->
         <el-col :span="14" :offset="1" v-if="isFalls">
           <div class="rightForm">
@@ -395,6 +522,9 @@
         checkedCity: [],
         fallList: [{'class': 'fallFirst'}, {}, {}, {}],
         menuList: [],
+        formIcon:{},
+        iconIsUse:false,
+        iconDetails:{},
         menuCount: [{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1}, {
           value: '图标区 ③ 点击编辑',
           class: 'pageFoot',
@@ -886,14 +1016,15 @@
       addForm () {
         let lastRank = this.carouselDetails.length
         let addCarouseData = {
-          'id': 0,
-          'type': 1,
-          'actionType': 1,
+          'id': '',
+           'mainId':'',
+          'type': 0,
+          'actionType': 0,
           'actionUrl': '',
-          'downloadModel': 1,
+          'downloadModel': 0,
           'beginDate': '',
           'endDate': '',
-          'os': 1,
+          'os': 0,
           'iconUrl': '',
           'rank': lastRank
         }
@@ -952,7 +1083,7 @@
           }
         }
       },
-      //图标区
+      //列表区
       topFall(index){
         this.rankArrFall = []
         if (!this.cityId) { //判断条件
@@ -1087,8 +1218,79 @@
           .catch(err => {
             this.$message.error('获取列表区信息异常')
           })
-      }
+      },
       // 图标区
+      getIcon(){},
+      saveIcon(){},
+      addIcon(){
+        let lastRank = this.iconDetails.length
+        let addIconData = {
+          'id': '',
+          'mainId':'',
+          'type': 0,
+          'actionType': 0,
+          'actionUrl': '',
+          'downloadModel': 0,
+          'beginDate': '',
+          'endDate': '',
+          'os': 0,
+          'iconUrl': '',
+          'rank': lastRank
+        }
+        this.iconDetails.splice(lastRank, 0, addIconData)
+      },
+      iconDel (id) {
+        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/delete`, {id: id})
+          .then((res) => {
+            this.$message.success(res.data.msg)
+            this.getIcon()
+          })
+          .catch(() => {
+            this.$message.error('轮播图保存失败')
+          })
+      },
+      iconDown (id, index) {
+        let result = this.formIcon.carouselDetails
+        if (index === result.length - 1) {
+          this.$message('已经是最后一条啦!')
+          return
+        }
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(i + 1, 0, thisResult)
+          }
+        }
+      },
+      iconTop (id, index) {
+        if (index === 0) {
+          this.$message('已经是第一条啦!')
+          return
+        }
+        let result = this.formCarousel.carouselDetails
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(i - 1, 0, thisResult)
+          }
+        }
+      },
+      iconMaxTop (id, index) {
+        if (index === 0) {
+          this.$message('已经是第一条啦!')
+          return
+        }
+        let result = this.formCarousel.carouselDetails
+        for (let i = 0; i < result.length; i++) {
+          if (result[i].id === id) {
+            let thisResult = result[i]
+            result.splice(i, 1)
+            result.splice(0, 0, thisResult)
+          }
+        }
+      }
     }
   }
 
