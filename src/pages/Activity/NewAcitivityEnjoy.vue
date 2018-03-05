@@ -35,6 +35,7 @@
                   <!--列表区详情-->
                   <div  class="isFall" v-if="isFall&&item.id===3?true:false" ref="isFall">
                     <div v-for="(item,index) in fallList" :key="item.id" :class="item.class">
+                    <!--<div v-for="(item,index) in formFalls.waterfallDetails" :key="item.id" :class="item.class">-->
                       <el-input v-if="0" v-model="item.id"></el-input>
                       <el-row :gutter="0">
                         <el-col :span="7">
@@ -42,7 +43,7 @@
                             class="circle iconfont icon-jiantouarrow499"></i></div>
                           <div @click.stop='downFall(index)' class="fallCircle"><i
                             class="circle iconfont icon-jiantouarrow505"></i></div>
-                          <div @click.stop='delFall(index)' class="fallCircle"><i
+                          <div @click.stop='delFall(item.id)' class="fallCircle"><i
                             class="circle iconfont icon-icon--"></i></div>
                           <div v-model="item.name"></div>
                         </el-col>
@@ -383,6 +384,7 @@
         cityId: -1,
         rankArr: [],
         ranks: '',
+        rankArrFall: [],
         Token: {},
         menuForm: {'cityName': '全国'},
         form: {},
@@ -951,9 +953,76 @@
         }
       },
       //图标区
-      topFall(){},
-      downFall(){},
-      delFall(){},
+      topFall(index){
+        this.rankArrFall = []
+        if (!this.cityId) { //判断条件
+          this.$message('请先选择地址')
+          return false
+        }
+        if (index === this.formFalls.waterfallDetails.length - 1) {
+          this.$message('已经是第一条啦')
+          return
+        }
+        //提交排序
+        let formFallsList = this.formFalls.waterfallDetails
+        let thisFalls = formFallsList[index]
+        formFallsList.splice(index, 1) // 选中的删除
+        formFallsList.splice(index - 1, 0, thisFalls) //选中的移到index+1
+        for (let i = 1; i < formFallsList.length; i++) {
+          this.rankArrFall.push(formFallsList[i].id)
+        }
+        this.ranks = this.rankArrFall.join(',')
+        this.setRanksFall()
+      },
+      downFall(index){
+        this.rankArrFall = []
+        if (!this.cityId) { //判断条件
+          this.$message('请先选择地址')
+          return false
+        }
+        if (index === this.formFalls.waterfallDetails.length - 1) {
+          this.$message('已经是最后一条啦')
+          return
+        }
+        //提交排序
+        let formFallsList = this.formFalls.waterfallDetails
+        let thisFalls = formFallsList[index]
+        formFallsList.splice(index, 1) // 选中的删除
+        formFallsList.splice(index + 1, 0, thisFalls) //选中的移到index+1
+        for (let i = 1; i < formFallsList.length; i++) {
+          this.rankArrFall.push(formFallsList[i].id)
+        }
+        this.ranks = this.rankArrFall.join(',')
+        this.setRanksFall()
+      },
+      delFall(id){
+        this.$ajax.post(`${baseUrl.newEnjoyUrl2}/jjEnjoy/waterFall/deleteWaterFall`, {id: id})
+          .then((res) => {
+            this.$message.success(res.data.msg)
+            this.getPageFall()
+          })
+          .catch(() => {
+            this.$message.error('列表删除失败')
+          })
+      },
+      setRanksFall(){
+        this.$ajax.post(`${baseUrl.newEnjoyUrl2}/jjEnjoy/waterfall/rankWaterfall`, {
+          cityId: this.cityId,
+          ranks: this.ranks,
+          updateBy: this.adminId
+        })
+          .then(res => {
+            if (res.data.code === 0) {
+              // 获取排序
+              this.getPageFall()
+            } else {
+              this.$message('提交排序失败')
+            }
+          })
+          .catch((err) => {
+            this.$message.error('提交排序异常')
+          })
+      },
       savePageFall () {
         if (this.fallIsUse === true) {
           this.formFalls.isStopped = 1
@@ -1019,6 +1088,7 @@
             this.$message.error('获取列表区信息异常')
           })
       }
+      // 图标区
     }
   }
 
