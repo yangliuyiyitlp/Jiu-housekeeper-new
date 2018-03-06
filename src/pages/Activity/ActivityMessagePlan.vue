@@ -243,6 +243,7 @@
               <el-radio-group v-model="form.pushTarget">
                 <el-radio label=0>全部用户</el-radio>
                 <el-radio label=1>部分用户</el-radio>
+                <el-radio label=2>特定用户</el-radio>
               </el-radio-group>
 
               <div v-show="+form.pushTarget===1 ? true:false">
@@ -277,6 +278,13 @@
                 </el-form-item>
 
               </div>
+
+              <el-form-item label="用户手机:" prop="targetPhones" v-show="+form.pushTarget===2 ? true:false">
+                <!--<el-input v-model="form.appPushContent" type="textarea" class='textarea' style="width:430px;height:110px"></el-input>-->
+                <el-input v-model="form.targetPhones" type="textarea" class='textarea'
+                          placeholder="可输入一个或多个手机号,多个手机号之间以逗号隔开,例如:'18800001234,18800001234'">
+                </el-input>
+              </el-form-item>
 
             </el-form-item>
 
@@ -626,11 +634,6 @@
 
               // 发送保存请求
               this.$ajax.post(`${baseUrl.ActivityMsgPlan}/tpushplan/tPushPlan/save`, this.form)
-              // this.$ajax.post(`${baseUrl.ActivityMsgPlan}/tpushplan/tPushPlan/save`, formData, {
-              //   headers: {
-              //     'Content-Type': 'multipart/form-data'
-              //   }
-              // })
                 .then(res => {
                   console.log(res)
                 })
@@ -656,6 +659,14 @@
         if (+this.form.pushTarget === 0) {
           this.form.osList = ['0', '1']
           this.form.cityIds = ['-1']
+          this.form.targetPhones = ''
+        } else if (+this.form.pushTarget === 2) {
+          // 特定用户
+          this.form.osList = ['0', '1']
+          this.form.cityIds = ['-1']
+        } else if (+this.form.pushTarget === 1) {
+          // 部分用户
+          this.form.targetPhones = ''
         }
         // 添加 推送城市转换为字符串
         this.form.areaIds = this.form.cityIds.join(',')
@@ -673,10 +684,18 @@
         }
         // 全国用户和部分用户互斥
         // 全国用户是地区默认为全国
-        console.log('全国用户和部分用户互斥')
+        // console.log('全国用户和部分用户互斥')
         if (+this.form.pushTarget === 0) {
           this.form.osList = ['0', '1']
-          this.form.area.id = '-1'
+          this.form.cityIds = ['-1']
+          this.form.targetPhones = ''
+        } else if (+this.form.pushTarget === 2) {
+          // 特定用户
+          this.form.osList = ['0', '1']
+          this.form.cityIds = ['-1']
+        } else if (+this.form.pushTarget === 1) {
+          // 部分用户
+          this.form.targetPhones = ''
         }
       },
       // 返回列表页
