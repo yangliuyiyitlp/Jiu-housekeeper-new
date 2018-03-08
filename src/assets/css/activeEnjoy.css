@@ -2,6 +2,9 @@
 .headerTitle .el-switch{
   float:right;
 }
+.el-icon-search{
+  cursor: pointer;
+}
 .headerTitle .el-switch__core, .el-switch__label{
   float: right;
   width: 100px;
