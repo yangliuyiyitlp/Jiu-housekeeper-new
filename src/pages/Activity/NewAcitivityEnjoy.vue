@@ -140,11 +140,11 @@
               </el-switch>
             </div>
             <hr class="lineWeight">
-            <el-form ref="formCarousel" :rules="rules" :model="formCarousel" label-width="110px" class="formData">
+            <el-form ref="formCarousel" :rules="rules" :model="formCarousel" label-width="120px" class="formData">
               <el-input v-if=0 v-model="formCarousel.id"></el-input>
               <el-input v-if=0 v-model="formCarousel.updateBy"></el-input>
 
-              <el-form-item label="是否显示：">
+              <el-form-item label="是否显示：" prop="carouselIsShow">
                 <el-switch
                   :width=60
                   v-model="carouselIsShow"
@@ -154,7 +154,7 @@
                   off-color="#4F4D4D">
                 </el-switch>
               </el-form-item>
-              <el-form-item label="是否登录：">
+              <el-form-item label="是否登录：" prop="carouselNeedLogin">
                 <el-switch
                   :width=60
                   v-model="carouselNeedLogin"
@@ -171,7 +171,7 @@
                 <el-input v-model="formCarousel.height" placeholder="高" class="miWidth"></el-input>
               </el-form-item>
 
-              <el-form-item label="切换时间(秒)：">
+              <el-form-item label="切换时间(秒)："prop="changeTime">
                 <el-input class="secWidth" v-model="formCarousel.changeTime" placeholder="只能输入数字"></el-input>
               </el-form-item>
               <a class="fontWeight">内容上传</a>
@@ -206,7 +206,7 @@
                       <el-input v-if=0 v-model="item.id"></el-input>
                       <el-input v-if=0 v-model="item.mainId"></el-input>
 
-                      <el-form-item label="类型：">
+                      <el-form-item label="类型："prop="type">
                         <el-select v-model="item.type" placeholder="请选择类型" @change="enjoyTypeChange">
                           <el-option
                             v-for="(option,index) in enjoyType" :key="index" :label="option.label"
@@ -214,7 +214,7 @@
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="跳转类型：" v-show="(item.type === 0|| item.type === 1?true:false)">
+                      <el-form-item label="跳转类型：" v-show="(item.type === 0|| item.type === 1?true:false)" prop="actionType">
                         <el-select v-model="item.actionType" placeholder="请选择跳转类型">
                           <el-option
                             v-for="(option,index) in (item.type===0?actionType:actionType2)" :key="index"
@@ -222,7 +222,6 @@
                           </el-option>
                         </el-select>
                       </el-form-item>
-
                       <!--<el-form-item label="模板选择：" v-show="isDownloadModle">-->
                       <!--<el-select v-model="item.downloadModle" placeholder="请选择模板">-->
                       <!--<el-option-->
@@ -238,7 +237,7 @@
                           </el-option>
                         </el-select>
                       </el-form-item>
-                      <el-form-item label="展示日期：" prop="beginTime">
+                      <el-form-item label="展示日期：" prop="beginDate">
                         <el-date-picker
                           v-model="item.beginDate"
                           type="datetime">
@@ -549,7 +548,12 @@
             {max: 5, message: '长度不大于 5个字', trigger: 'blur'}],
           newTitle: [{required: true, message: '请输入页头标题', trigger: 'blur'}],
           beginDate: [{required: true, message: '请输入日期', trigger: 'blur'}],
-          headerNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}]
+          headerNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}],
+          carouselIsShow: [{required: true, message: '请选择', trigger: 'blur'}],
+          carouselNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}],
+          changeTime: [{required: true, message: '请填写切换时间', trigger: 'blur'}],
+          type: [{required: true, message: '请选择', trigger: 'blur'}],
+          actionType: [{required: true, message: '请选择', trigger: 'blur'}]
         },
         defaultProps: {
           children: 'children',
@@ -866,15 +870,15 @@
 //            result[i].iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
 //          }
           if (i === this.iconId) {
-            console.log(i,'一样',result[i].id)
+            console.log(i, '一样', result[i].id)
             result[i].iconUrl = 'http://jjdcjavaweb.oss-cn-shanghai.aliyuncs.com/' + this.Token.key
           }
           console.log(result[i].iconUrl)
         }
       },
-      getIconId (id) {
-        console.log(id)
-        this.iconId = id
+      getIconId (index) {
+        console.log(index)
+        this.iconId = index
       },
       beforeAvatarUpload (file) {
         return new Promise((resolve) => {
@@ -1081,8 +1085,7 @@
             this.$message.error('链接获取失败')
           })
       },
-      enjoyTypeChange (val) {
-        this.nextSibling.value = ''
+      enjoyTypeChange (val) { //todo
         if (val === 0) {
           this.getActionList(`${baseUrl.newEnjoyUrl}/icon/getWelfareList`, 0)
         } else if (val === 1) {
@@ -1091,6 +1094,7 @@
           this.getEnjoyUrl()
         } else if (val === 3) {
         }
+
       },
       savePageCarouse () {
         console.log(111, this.formCarousel)
