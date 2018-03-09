@@ -13,7 +13,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "vue-quill-editor": "^2.2.2",
     "axios": "^0.16.2",
     "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.6.1",
@@ -28,9 +27,11 @@
     "string": "^3.3.3",
     "vee-validate": "^2.0.0-rc.17",
     "vue": "^2.5.3",
+    "vue-area-linkage": "^1.2.6",
     "vue-baidu-map": "^0.18.0",
     "vue-i18n": "^7.0.4",
     "vue-moment": "^2.0.2",
+    "vue-quill-editor": "^2.2.2",
     "vue-router": "^2.7.0",
     "vuedraggable": "^2.14.1",
     "vuex": "^2.4.0",

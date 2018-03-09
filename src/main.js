@@ -14,6 +14,8 @@ import Axios from 'axios'
 import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
 import Cookie from 'js-cookie'
+import VueAreaLinkage from 'vue-area-linkage'
+Vue.use(VueAreaLinkage)
 // import Echarts from 'vue-echarts3'
 
 // Vue.component('echarts', Echarts)

@@ -67,6 +67,14 @@ const asyncRouter = [
       permission: []
     },
     component: r => require.ensure([], () => r(require('../pages/AdvertMenage/AdvertData.vue')), 'AdvertData')
+  }, // 城市运营
+  {
+    path: '/city/government',
+    name: 'city.government',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/City/CityGovernment.vue')), 'CityGovernment')
   },
   // 活动相关
   {
