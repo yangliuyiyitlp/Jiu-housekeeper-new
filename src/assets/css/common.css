@@ -32,4 +32,9 @@ body{
 .el-upload-list{
   width:320px!important;
 }
-
+.addPlanRoute .el-input__inner {
+  border-radius: 0 !important;
+  text-align: center!important;
+  height:34px;
+  border:1px solid #ccc;
+}

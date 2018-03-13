@@ -1,13 +1,8 @@
 <template>
   <div>
-    <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
       <el-tab-pane label="数据配置表" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
-          <!--<el-form-item label="地区：">-->
-          <!--<template>-->
-          <!--<area-select  :level="2"  :placeholders='citySelect' size='small' type="text" v-model="selected"></area-select>-->
-          <!--</template>-->
-          <!--</el-form-item>-->
           <el-form-item label="地区：">
             <el-input
               :disabled=true
@@ -16,6 +11,7 @@
               v-model="formInline.cityName">
             </el-input>
           </el-form-item>
+          <el-input v-model="formInline.cityNo" v-if="0"></el-input>
           <el-form-item label="时间段查询：">
             <el-date-picker
               v-model="formInline.startDate"
@@ -29,7 +25,7 @@
               type="datetime">
             </el-date-picker>
           </el-form-item>
-          <el-form-item >
+          <el-form-item>
             <el-radio class="radio" v-model="formInline.status" label=2>已过期</el-radio>
             <el-radio class="radio" v-model="formInline.status" label=1>生效中</el-radio>
             <el-radio class="radio" v-model="formInline.status" label=0>待生效</el-radio>
@@ -38,14 +34,14 @@
             <el-button type="primary" @click="query">查询</el-button>
           </el-form-item>
           <el-form-item v-if="hasPermission('city/government/export')">
-            <el-button type="primary" @click="exportForm">导出</el-button>
+            <el-button type="primary" @click="exportFormDate">导出</el-button>
           </el-form-item>
           <el-form-item v-if="hasPermission('city/government/add')">
             <el-button type="primary" @click="addForm">新增</el-button>
           </el-form-item>
         </el-form>
         <!--隐藏表单用于文件导出-->
-        <form style="display: none" action="" method="get" ref="FileForm">
+        <form v-show="0" action="" method="get" ref="FileForm">
           <input name="startDate" v-model="exportParam.startDate"/>
           <input name="endDate" v-model="exportParam.endDate"/>
           <input name="cityNo" v-model="exportParam.cityNo"/>
@@ -55,7 +51,7 @@
         </form>
         <el-table
           :data="tableData"
-          max-height="800"
+          max-height="700"
           border
           style="width: 100%">
           <el-table-column
@@ -64,6 +60,7 @@
             label="ID">
           </el-table-column>
           <el-table-column
+            fixed
             type="index"
             align="center"
             width="100"
@@ -206,84 +203,34 @@
         </el-pagination>
       </el-tab-pane>
       <el-tab-pane label="数据配置" name="second" class="secondForm">
-        <!--<el-form  class="demo-form-inline" ref="form" :model="addPlanRoute">-->
-        <!--<el-form-item label="地区：">-->
-        <!--<a>{{cityName}}</a>&nbsp;<i class="el-icon-search" @click="searchArea"></i>-->
-        <!--</el-form-item>-->
-
-        <!--<el-table-->
-        <!--:data="addPlanRoute"-->
-        <!--max-height="800"-->
-        <!--border-->
-        <!--style="width: 100%">-->
-        <!--<el-table-column-->
-        <!--prop="id"-->
-        <!--v-if="0"-->
-        <!--label="ID">-->
-        <!--</el-table-column>-->
-        <!--<el-table-column property="order2" label="项目描述" align="center">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-input v-model="scope.row.no" disabled ></el-input>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column property="order2" label="填报信息" align="center">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-input v-model="scope.row.info" ></el-input>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-table-column property="order2" label="备注" align="center">-->
-        <!--<template slot-scope="scope">-->
-        <!--<el-input v-model="scope.row.remarks" ></el-input>-->
-        <!--</template>-->
-        <!--</el-table-column>-->
-        <!--<el-input v-model="addPlanRoute.id" ></el-input>-->
-        <!--</el-table>-->
-        <!--</el-form>-->
-        <label>地区：</label>{{cityName}}&nbsp;<i class="el-icon-search"@click="searchArea"></i><br><br>
         <el-form ref="addPlanRoute" class="addPlanRoute" :model="addPlanRoute">
-          <!--<el-form-item label="地区：" prop="cityName">-->
-            <!--<el-input v-model="cityName"></el-input>-->
-          <!--</el-form-item>-->
-          <!--<el-form-item label="地区：">-->
-            <!--<el-input-->
-              <!--:disabled=true-->
-              <!--:on-icon-click="searchCity"-->
-              <!--icon="search"-->
-              <!--v-model="formInline.cityName">-->
-            <!--</el-input>-->
-          <!--</el-form-item>-->
+          <label>地区：</label>{{addPlanRoute.cityName}}&nbsp;<i class="el-icon-search" @click="searchArea"></i><br><br>
+          <input v-if="0" v-model="addPlanRoute.cityNo">
           <input v-if="0" v-model="addPlanRoute.id">
           <label class="lab">项目描述</label><label class="labLeft">填报信息</label><label class="labLeft">备注</label><br>
-          <label class="lab">注册用户数量</label><input v-model="addPlanRoute.registeredUserAmount"><input
-          v-model="addPlanRoute.registeredUserAmountR"><br>
-          <label class="lab">活跃用户数</label><input v-model="addPlanRoute.activeUserAmount"><input
-          v-model="addPlanRoute.activeUserAmountR"><br>
-          <label class="lab">实际运营车辆数</label><input v-model="addPlanRoute.actualBicycleAmount"><input
-          v-model="addPlanRoute.actualBicycleAmountR"><br>
-          <label class="lab">被清收暂扣车辆数</label><input v-model="addPlanRoute.detainedBicycleAmount"><input
-          v-model="addPlanRoute.detainedBicycleAmountR"><br>
-          <label class="lab">车辆平均周转率</label><input v-model="addPlanRoute.averageTurnoverRate"><input
-          v-model="addPlanRoute.averageTurnoverRateR"><br>
-          <label class="lab">外环外平均周转率</label><input v-model="addPlanRoute.outsideAverageTurnoverRate"><input
-          v-model="addPlanRoute.outsideAverageTurnoverRateR"><br>
-          <label class="lab">外环内平均周转率</label><input v-model="addPlanRoute.insideAverageTurnoverRate"><input
-          v-model="addPlanRoute.insideAverageTurnoverRateR"><br>
-          <label class="lab">实际运营车辆日均使用人次</label><input v-model="addPlanRoute.actualDailyUse"><input
-          v-model="addPlanRoute.actualDailyUseR"><br>
-          <label class="lab">损坏维修车辆比例</label><input v-model="addPlanRoute.breakBikePercentage"><input
-          v-model="addPlanRoute.breakBikePercentageR"><br>
-          <label class="lab">报废回收车辆比例</label><input v-model="addPlanRoute.scrapBikePercentage"><input
-          v-model="addPlanRoute.scrapBikePercentageR"><br>
-          <label class="lab">自主清理车辆比例</label><input v-model="addPlanRoute.autonomouslyCleanPercentage"><input
-          v-model="addPlanRoute.autonomouslyCleanPercentageR"><br>
-          <label class="lab">维修保养场点数量</label><input v-model="addPlanRoute.repairPointAmount"><input
-          v-model="addPlanRoute.repairPointAmountR"><br>
-          <label class="lab">中转储备场点数量</label><input v-model="addPlanRoute.transitPointAmount"><input
-          v-model="addPlanRoute.transitPointAmountR"><br>
-          <label class="lab">车辆区域核定数量</label><input v-model="addPlanRoute.approvedBikeAmount"><input
-          v-model="addPlanRoute.approvedBikeAmountR"><br>
-          <label class="lab labBottom">生效日期</label><input class='labBottom' v-model="addPlanRoute.effectiveDate"><input
-          class='labBottom' v-model="addPlanRoute.effectiveDateR"><br>
+          <label class="lab">注册用户数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.registeredUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.registeredUserAmountR"><br>
+          <label class="lab">活跃用户数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.activeUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.activeUserAmountR"><br>
+          <label class="lab">实际运营车辆数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.actualBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.actualBicycleAmountR"><br>
+          <label class="lab">被清收暂扣车辆数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.detainedBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.detainedBicycleAmountR"><br>
+          <label class="lab">车辆平均周转率</label><input  onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.averageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.averageTurnoverRateR"><br>
+          <label class="lab">外环外平均周转率</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.outsideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.outsideAverageTurnoverRateR"><br>
+          <label class="lab">外环内平均周转率</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.insideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.insideAverageTurnoverRateR"><br>
+          <label class="lab">实际运营车辆日均使用人次</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.actualDailyUse" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.actualDailyUseR"><br>
+          <label class="lab">损坏维修车辆比例</label><input  onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.breakBikePercentage" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.breakBikePercentageR"><br>
+          <label class="lab">报废回收车辆比例</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.scrapBikePercentage" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.scrapBikePercentageR"><br>
+          <label class="lab">自主清理车辆比例</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.autonomouslyCleanPercentage" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.autonomouslyCleanPercentageR"><br>
+          <label class="lab">维修保养场点数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.repairPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.repairPointAmountR"><br>
+          <label class="lab">中转储备场点数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.transitPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.transitPointAmountR"><br>
+          <label class="lab">车辆区域核定数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.approvedBikeAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.approvedBikeAmountR"><br>
+          <!--<label class="lab labBottom">生效日期</label><input class='labBottom' v-model="addPlanRoute.effectiveDate"><input-->
+          <!--class='labBottom' v-model="addPlanRoute.effectiveDateR"><br> -->
+          <label class="lab labBottom">生效日期</label>
+          <el-date-picker
+            v-model="addPlanRoute.effectiveDate"
+            @change="effectiveDateChange"
+            type="datetime">
+          </el-date-picker>
+          <input class='labBottom' v-model="addPlanRoute.effectiveDateR"><br>
           <el-button type="primary" @click="submitForm" class="submit">{{title}}</el-button>
         </el-form>
       </el-tab-pane>
@@ -295,7 +242,6 @@
         :data="select"
         default-expand-all
         node-key="id"
-        :default-checked-keys="checkedCity"
         ref="tree"
         class="treeWidth"
         accordion
@@ -308,23 +254,39 @@
         <el-button type="primary" @click="doModify">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog title="城市" size="tiny" :visible.sync="areaVisible" center>
+      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+      <el-tree
+        :data="select"
+        default-expand-all
+        node-key="id"
+        ref="tree"
+        class="treeWidth"
+        accordion
+        :filter-node-method="filterNode"
+        @node-click="handleNode"
+        :props="defaultProps">
+      </el-tree>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="areaCancel">取 消</el-button>
+        <el-button type="primary" @click="areaModify">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
   import a from '../../assets/js/getsessionId.js'
   import baseUrl from '../../utils/baseUrl'
-
   export default {
     data () {
       return {
         title: '新增',
-        activeName2: 'first',
-        exportFormVisible: false,
+        activeName: 'first',
         cityVisible: false,
+        areaVisible: false,
         filterText: '',
         cityName: '',
-        checkedCity: [],
         select: [{'id': '-1', 'name': '全国', 'children': []}],
         cityNo: '',
         tableData: [],
@@ -342,7 +304,7 @@
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         adminId: '',
         path: '',
-        permissionList: ['city/government/view', 'city/government/export', 'city/government/add', 'city/government/update']
+        permissionList: []
       }
     },
     created () {
@@ -350,7 +312,6 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
-//      this.query()
     },
     watch: {
       filterText (val) {
@@ -376,6 +337,9 @@
 //        this.formInline.endDate = new Date(val).getTime()
         this.formInline.endDate = val
       },
+      effectiveDateChange (val) {
+        this.addPlanRoute.effectiveDate = val
+      },
       hasPermission (data) {
         if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
           return true
@@ -383,23 +347,22 @@
         return false
       },
       handleClick () {
-        this.formInline = {}
-        if (this.activeName2 = 'second') {
+        console.log(this.activeName)
+        if (this.activeName === 'second') {
           this.cityName = ''
           this.cityNo = ''
-          this.addPlanRoute={}
+          this.addPlanRoute = {}
           this.title = '新增'
         }
       },
       query () {
         this.exportParam.startDate = this.formInline.startDate
         this.exportParam.endDate = this.formInline.endDate
-        this.formInline.cityNo = this.cityNo
         this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/list`, {params: this.formInline})
           .then((res) => {
             if (res.data.code === 0) {
               this.tableData = res.data.data.result
-              this.pagination.count =  res.data.data.total
+              this.pagination.count = res.data.data.total
             } else {
               this.$message('获取列表失败')
             }
@@ -409,20 +372,18 @@
           })
       },
       modifyRecord (id) {
-        this.activeName2 = 'second'
+        this.activeName = 'second'
         this.title = '提交修改'
         this.getMore(id)
       },
       getMore (id) {
-        this.$ajax.get(`${baseUrl.cityDocking}/remind/one`, {params: {id: id}})
+        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/get`, {params: {id: id}})
           .then(res => {
             if (res.data.code === 0) {
               this.cityName = res.data.data.cityName
               this.cityNo = res.data.data.cityNo
-              let result = res.data.data
-              for (let i = 0; i < result.length; i++) {
+              this.addPlanRoute = res.data.data
 
-              }
             } else {
               this.$message('查询详情失败')
             }
@@ -431,30 +392,33 @@
         })
       },
       addForm () {
-        this.activeName2 = 'second'
+        this.activeName = 'second'
         this.title = '新增'
         this.addPlanRoute = {}
         this.cityName = ''
+        this.cityNo = null
       },
       submitForm () {
-        console.log(9696,this.addPlanRoute)
-        this.addPlanRoute.cityNo = this.cityNo
-        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/save`, this.addPlanRoute)
-          .then(res => {
-            if (res.data.code === 0) {
-              this.$message.success('提交成功')
-              this.activeName2='first'
-              this.query()
-            } else {
-              this.$message('提交失败')
-            }
-          }).catch(() => {
-          this.$message.error('提交异常')
-        })
-//        this.$refs['addPlanRoute'].setAttribute('action', `${baseUrl.cityDocking}/cityDocking/pseudo/save`)
-//        this.$refs['addPlanRoute'].submit()
+        console.log(9696, this.addPlanRoute)
+        if(this.addPlanRoute.cityName){
+          this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/save`, {params: this.addPlanRoute})
+            .then(res => {
+              if (res.data.code === 0) {
+                this.$message.success('提交成功')
+                this.activeName = 'first'
+                this.query()
+              } else {
+                this.$message('提交失败')
+              }
+            }).catch(() => {
+            this.$message.error('提交异常')
+          })
+        }else{
+          this.$message.warning('请选择地区')
+        }
+
       },
-      exportForm () {
+      exportFormDate () {
         this.$confirm('确定导出么?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
@@ -490,6 +454,7 @@
             this.$message.error('城市列表获取异常')
           })
       },
+      //树模型
       filterNode (value, data) {
         if (!value) return true
         return data.name.indexOf(value) !== -1
@@ -499,43 +464,49 @@
         this.cityNo = Number(data.id)
       },
       doModify () {
-        this.cityName = this.filterText
         this.formInline.cityName = this.filterText
+        this.formInline.cityNo = this.cityNo
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
-        this.formInline.cityName = ''
-        this.cityName = ''
-        this.cityNo = ''
       },
       searchCity () {
         this.cityVisible = true
         this.filterText = ''
       },
+      areaModify () {
+        this.addPlanRoute.cityName = this.filterText
+        this.addPlanRoute.cityNo = this.cityNo
+        this.areaVisible = false
+      },
+      areaCancel () {
+        alert(this.addPlanRoute.cityNo)
+        this.areaVisible = false
+      },
       searchArea () {
-        this.cityVisible = true
+        this.areaVisible = true
         this.filterText = ''
       }
     }
   }
 </script>
 <style scoped>
+  @import'../../assets/css/common.css';
+
   html, body {
     height: 100%;
-  }
-
-  .demo-form-inline {
-    padding-left: 10px;
   }
 
   .submit {
     margin-top: 20px;
     float: right;
   }
-.area{
-  width:150px;
-}
+
+  .area {
+    width: 150px;
+  }
+
   .secondForm {
     width: 760px;
     left: 50%;
@@ -572,5 +543,15 @@
 
   .labBottom {
     border-bottom: 1px solid #ccc !important;
+    border-left: 1px solid #ccc !important;
   }
+
+  .addPlanRoute .el-date-editor.el-input {
+    width: 252px;
+    margin-left: -5px;
+    margin-right: -6px;
+
+  }
+
+
 </style>
