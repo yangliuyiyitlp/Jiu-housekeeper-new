@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="数据配置表" name="first">
+      <el-tab-pane label="数据配置表" name="first" >
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="地区：">
             <el-input
@@ -186,6 +186,8 @@
             v-if="hasPermission('city/government/update')"
             header-align="center"
             align="center"
+            width="100"
+            fixed="right"
             label="操作">
             <template slot-scope="scope">
               <el-button @click="modifyRecord(scope.row.id)" type="text" size="small">修改</el-button>
@@ -293,13 +295,13 @@
         setForm: {},
         formInline: {
           pageNo: 1,
-          pageSize: 30
+          pageSize: 10
         },
         defaultProps: {
           children: 'children',
           label: 'name'
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
+        pagination: {pageSizes: [10, 20, 60, 100], pageSize: 10, count: 0, pageNo: 1},
         adminId: '',
         path: '',
         permissionList: []
@@ -346,6 +348,7 @@
         return false
       },
       handleClick () {
+        this.formInline={}
         console.log(this.activeName)
         if (this.activeName === 'second') {
           this.cityName = ''
@@ -357,7 +360,21 @@
       query () {
         this.exportParam.startDate = this.formInline.startDate
         this.exportParam.endDate = this.formInline.endDate
-        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/list`, {params: this.formInline})
+        this.exportParam.status = this.formInline.status
+        this.exportParam.cityNo = this.formInline.cityNo
+//        if(this.formInline.startDate){
+//          this.exportParam.startDate = this.formInline.startDate
+//        }
+//        if(this.formInline.endDate){
+//          this.exportParam.endDate = this.formInline.endDate
+//        }
+//        if(this.formInline.status){
+//          this.exportParam.status = this.formInline.status
+//        }
+//        if(this.formInline.cityNo){
+//          this.exportParam.cityNo = this.formInline.cityNo
+//        }
+        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/list`, {params: this.formInline})
           .then((res) => {
             if (res.data.code === 0) {
               this.tableData = res.data.data.result
@@ -376,7 +393,7 @@
         this.getMore(id)
       },
       getMore (id) {
-        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/get`, {params: {id: id}})
+        this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/get`, {params: {id: id}})
           .then(res => {
             if (res.data.code === 0) {
               this.cityName = res.data.data.cityName
@@ -400,7 +417,7 @@
       submitForm () {
         console.log(9696, this.addPlanRoute)
         if(this.addPlanRoute.cityName){
-          this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/pseudo/save`, {params: this.addPlanRoute})
+          this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/save`, {params: this.addPlanRoute})
             .then(res => {
               if (res.data.code === 0) {
                 this.$message.success('提交成功')
@@ -426,7 +443,7 @@
           console.log(this.exportParam)
           this.exportParam.pageNo = ''
           this.exportParam.pageSize = ''
-          this.$refs['FileForm'].setAttribute('action', `${baseUrl.cityFencingUrl}/exportAll `)
+          this.$refs['FileForm'].setAttribute('action', `${baseUrl.cityDocking}/cityDocking/export`)
           this.$refs['FileForm'].submit()
         }).catch(() => {
           this.$message({

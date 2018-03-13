@@ -76,6 +76,30 @@ const asyncRouter = [
     },
     component: r => require.ensure([], () => r(require('../pages/City/CityGovernment.vue')), 'CityGovernment')
   },
+  {
+    path: '/city/zig/bee/manage',
+    name: 'city.zig.bee.manage',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/City/ZigBee/ZigBeeManage.vue')), 'ZigBeeManage')
+  },
+  {
+    path: '/city/zig/bee/data',
+    name: 'city.zig.bee.data',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/City/ZigBee/ZigBeeData.vue')), 'ZigBeeData')
+  },
+  {
+    path: '/city/zig/bee/report',
+    name: 'city.zig.bee.report',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/City/ZigBee/ZigBeeReport.vue')), 'ZigBeeReport')
+  },
   // 活动相关
   {
     path: '/activity/message/inform',
