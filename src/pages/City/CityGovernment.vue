@@ -240,7 +240,6 @@
       关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
       <el-tree
         :data="select"
-        default-expand-all
         node-key="id"
         ref="tree"
         class="treeWidth"
@@ -258,7 +257,6 @@
       关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
       <el-tree
         :data="select"
-        default-expand-all
         node-key="id"
         ref="tree"
         class="treeWidth"
@@ -312,6 +310,7 @@
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
+      this.getCityRelation()
     },
     watch: {
       filterText (val) {
@@ -439,13 +438,11 @@
       // 全局城市树模型开始
       // 全局获取城市对应关系
       getCityRelation () {
-        this.$ajax.get(`${baseUrl.ActivityArea}/electric/userUtilsInterface/interface/getBikeAreaList`)
+        this.$ajax.get(`${baseUrl.ActivityArea}/electric/userUtilsInterface/interface/getAllAreaList`)
           .then(res => {
             if (res.data.code === 0) {
-              let bikeAreaList = res.data.bikeAreaList
-              for (let i = 0; i < bikeAreaList.length; i++) {
-                this.select[0].children.push(bikeAreaList[i])
-              }
+              console.log(res.data.areaList)
+              this.select = res.data.areaList
             } else {
               this.$message('城市列表获取失败')
             }
