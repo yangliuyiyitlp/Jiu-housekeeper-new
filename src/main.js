@@ -14,10 +14,10 @@ import Axios from 'axios'
 import baseUrl from './utils/baseUrl'
 import Vuex from 'vuex'
 import Cookie from 'js-cookie'
-import VueAreaLinkage from 'vue-area-linkage'
-Vue.use(VueAreaLinkage)
-// import Echarts from 'vue-echarts3'
+// import VueAreaLinkage from 'vue-area-linkage' // 三级地址
+// Vue.use(VueAreaLinkage)
 
+// import Echarts from 'vue-echarts3'  // echart 插件
 // Vue.component('echarts', Echarts)
 Vue.use(Vuex)
 Vue.prototype.$ajax = Axios

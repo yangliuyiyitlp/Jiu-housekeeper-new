@@ -12,5 +12,6 @@
   "advertContent": "http://139.196.194.172:8086/AdvertisementComPro",
   "MessageInform":"http://139.196.194.172:8086/AdvertisementComPro/message/prompt",
   "DynamicMenu":"http://139.196.194.172:8085/jjenjoymenu/appMenu",
-  "TagLib":"http://192.168.0.151:8080/label/library"
+  "TagLib":"http://192.168.0.151:8080/label/library",
+  "cityDocking":"http://139.196.194.172:8084/jjcity"
 }
