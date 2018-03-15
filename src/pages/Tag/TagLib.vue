@@ -28,6 +28,7 @@
                 <ul class="labelDisable">
                   <li><span></span>启用中</li>
                   <li><span></span>停用中</li>
+                  <li><span></span>草稿</li>
                 </ul>
               </div>
             </div>
@@ -39,8 +40,10 @@
           <el-dialog :title="tagVisibleTitle" size="tiny" :visible.sync="tagVisible" class="tagVisible">
             <!--<el-dialog :title="tagVisibleTitle" :visible.sync="tagVisible" class="tagVisible">-->
             <div @click="viewTag" v-if="+form.parentIds===0 ? false : true">查看详情</div>
+            <div @click="lowerTag">添加子节点
+            </div>
             <div @click="lowerTag"
-                 v-if="hasPermission('/tag/taglib/itEdit') || hasPermission('/tag/taglib/marketEdit')">添加子标签
+                 v-if="+form.parentIds===0 ? false : true">添加下方节点
             </div>
             <div
               v-if="(form.labelEnableDisable===1 ? true : false) && +form.parentIds!==0 && hasPermission('/tag/taglib/marketEdit')"
@@ -65,14 +68,14 @@
 
             <!--定义标签-->
             <el-tab-pane label="定义标签" name="first">
-              <el-form ref="defineForm" :model="defineForm" label-width="100px">
+              <el-form ref="defineForm" :model="defineForm" label-width="100px" :rules="rules">
 
                 <el-form-item label="设置执行周期:">
                   <el-select v-model="defineForm.labelPerformCycle"
                              placeholder="设置执行周期"
                              style="width: 135px">
                     <el-option label="一次执行" value="1"></el-option>
-                    <el-option label="周期执行" value="2"></el-option>
+                    <el-option label="重复执行" value="2"></el-option>
                   </el-select>
 
                   <el-time-picker
@@ -91,21 +94,36 @@
                     <el-option label="每月" value="3"></el-option>
                   </el-select>
 
-                     <el-form-item style="display: inline-block" label-width="10px"
-                                   v-show="defineForm.executionConditionPeriod === '2'? true: false">
-                      <el-input v-model="defineForm.loopWeek" placeholder="输入周几"
-                                style="width: 110px"></el-input>
-                    </el-form-item>
+                    <!--<el-form-item style="display: inline-block" label-width="10px"-->
+                    <!--v-show="defineForm.executionConditionPeriod === '2'? true: false">-->
+                    <!--<el-input v-model="defineForm.loopWeek" placeholder="输入周几"-->
+                    <!--style="width: 110px"></el-input>-->
+                    <!--</el-form-item>-->
 
-                    <el-form-item style="display: inline-block" label-width="10px"
-                                  v-show="defineForm.executionConditionPeriod === '3'? true: false">
-                      <el-input v-model="defineForm.loopDay" placeholder="输入每月几号"
-                                style="width: 110px"></el-input>
-                    </el-form-item>
+                     <!--<el-form-item style="display: inline-block" label-width="10px"-->
+                                   <!--v-show="defineForm.executionConditionPeriod === '3'? true: false">-->
+                      <!--<el-input v-model="defineForm.loopDay" placeholder="输入每月几号"-->
+                                <!--style="width: 110px"></el-input>-->
+                    <!--</el-form-item>-->
 
+                     <el-select v-model="defineForm.loopWeek" style="width: 100px" placeholder="请选择" v-show="defineForm.executionConditionPeriod === '2'? true: false">
+                      <el-option
+                        v-for="item in weeks"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                     </el-option>
+                     </el-select>
 
+                       <el-select v-model="defineForm.executionConditionPeriod" style="width: 100px" placeholder="请选择" v-show="defineForm.executionConditionPeriod === '3'? true: false">
+                      <el-option
+                        v-for="item in months"
+                        :key="item"
+                        :label="item"
+                        :value="item">
+                     </el-option>
+                     </el-select>
                   </span>
-
                 </el-form-item>
 
                 <el-form-item label="id:" v-if="0">
@@ -119,11 +137,11 @@
                 <el-form-item label="parentIds:" v-if="0">
                   <el-input v-model="defineForm.parentIds"></el-input>
                 </el-form-item>
-
+               <!--编写状态 圆圈颜色-->
                 <el-form-item label="labelEnableDisable:" v-if="0">
                   <el-input v-model="defineForm.labelEnableDisable"></el-input>
                 </el-form-item>
-
+                <!--提交状态 字体颜色-->
                 <el-form-item label="labelStatus:" v-if="0">
                   <el-input v-model="defineForm.labelStatus"></el-input>
                 </el-form-item>
@@ -132,12 +150,12 @@
                   {{defineForm.parentName}}
                 </el-form-item>
 
-                <el-form-item label="标签名称:">
+                <el-form-item label="标签名称:" prop="name">
                   <el-input v-model="defineForm.name" @change="marketChange"
                             style="width: 500px"></el-input>
                 </el-form-item>
 
-                <el-form-item label="规则说明:">
+                <el-form-item label="规则说明:" prop="labelDescription">
                   <el-input v-model="defineForm.labelDescription" type="textarea" @change="marketChange"
                             style="width: 500px" autosize></el-input>
                 </el-form-item>
@@ -296,6 +314,9 @@
         tagVisibleTitle: '',
         form: {}, // 点击标签树组件时 标签信息
         tagForm: {}, // 单个标签所有详情
+        weeks: [{value: 0, label: '周一'}, {value: 1, label: '周二'}, {value: 2, label: '周三'}, {
+          value: 3, label: '周四'}, {value: 4, label: '周五'}, {value: 5, label: '周六'}, {value: 6, label: '周日'}],
+        months: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31],
         defineForm: {
           labelPerformCycle: '1'
         }, // 定义表单
@@ -338,6 +359,10 @@
             address: '上海市普陀区金沙江路 1516 弄'
           }
         ],
+        rules: {
+          name: {required: true, message: '请输入标签名称', trigger: 'blur'},
+          labelDescription: {required: true, message: '请输入规则说明', trigger: 'blur'}
+        },
         adminId: '',
         path: '',
         permissionList: []
@@ -786,21 +811,29 @@
   }
 
   .labelDisable span {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
     display: inline-block;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
-    border: 1px solid #DB5050;
+    /*border: 1px solid #DB5050;*/
     margin-right: 3px;
   }
 
-  .labelDisable li:nth-child(1) span{
+  .labelDisable li:nth-child(1) span {
     background-color: #DB5050;
   }
 
-  .description{
+  .labelDisable li:nth-child(2) span {
+    background-color: #6BB300;
+  }
+
+  .labelDisable li:nth-child(3) span {
+    background-color: #FFAE00;
+  }
+
+  .description {
     position: absolute;
     top: 20px;
     left: 10px;

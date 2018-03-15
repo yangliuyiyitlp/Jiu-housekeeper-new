@@ -17,14 +17,15 @@
         <span v-else-if="index===0" class="ms-tree-space"></span>
         <span :class="{cycle:true,
         cycleAction:(+scope.row.labelEnableDisable === 0?true:false),
-        cycleDraft:(+scope.row.labelEnableDisable === 2?true:false)}"></span>
+        cycleDraft:(+scope.row.labelEnableDisable === 1?true:false),
+        draft:(+scope.row.labelEnableDisable === 2?true:false)}"></span>
         <span :class="{labelStatus0:(+scope.row.labelStatus === 0?true:false),
         labelStatus1:(+scope.row.labelStatus === 1?true:false),
         labelStatus2:(+scope.row.labelStatus === 2?true:false),
-        labelStatus3:(+scope.row.labelStatus === 3?true:false)}">
+        labelStatus3:(+scope.row.labelStatus === 3?true:false)}" @click="handleEdit(scope.row)">
           {{scope.row[column.dataIndex]}}</span>
         <!--<i class="el-icon-edit" @click="handleEdit(scope.row)" style="float: right"></i>-->
-        <i class="el-icon-edit" @click="handleEdit(scope.row)" style="position: absolute;bottom:10px;right: 15px;"></i>
+        <!--<i class="el-icon-edit" @click="handleEdit(scope.row)" style="position: absolute;bottom:10px;right: 15px;"></i>-->
       </template>
     </el-table-column>
 
@@ -221,14 +222,14 @@
 
   .cycle {
     display: inline-block;
-    width: 5px;
-    height: 5px;
+    width: 8px;
+    height: 8px;
     -webkit-border-radius: 50%;
     -moz-border-radius: 50%;
     border-radius: 50%;
     background-color: #fff;
     margin-right: 5px;
-    border: 1px solid #DB5050;
+    /*border: 1px solid #DB5050;*/
   }
 
   .cycleAction {
@@ -236,8 +237,10 @@
   }
 
   .cycleDraft {
-    background-color: #fff;
-    border: 1px solid #fff;
+    background-color: #6BB300;
+  }
+  .draft {
+    background-color: #FFAE00;
   }
 
   .labelStatus0 {
