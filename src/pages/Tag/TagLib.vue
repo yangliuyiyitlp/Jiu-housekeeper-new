@@ -217,23 +217,38 @@
 
             <!--预览结果-->
             <el-tab-pane label="预览结果" name="third">
+              <h3>选择预览内容</h3>
+              <template>
+                <el-radio class="radio" v-model="radio" label="1">执行人</el-radio>
+                <el-radio class="radio" v-model="radio" label="2">执行时间</el-radio>
+              </template>
+                <button class="thirdQuery" @click="thirdQuery">查询</button>
+              <br><br>
               <el-table
                 :data="resultData"
                 border
                 style="width: 100%">
                 <el-table-column
                   prop="date"
-                  label="日期"
+                  label="用户"
                   width="180">
                 </el-table-column>
                 <el-table-column
                   prop="name"
-                  label="姓名"
+                  label="用户id"
                   width="180">
                 </el-table-column>
                 <el-table-column
                   prop="address"
-                  label="地址">
+                  label="手机号">
+                </el-table-column>
+                <el-table-column
+                  prop="address"
+                  label="执行人">
+                </el-table-column>
+                <el-table-column
+                  prop="address"
+                  label="执行时间">
                 </el-table-column>
               </el-table>
             </el-tab-pane>
@@ -300,6 +315,7 @@
             dataIndex: 'name'
           }
         ],
+        radio:'1',
         // 增删改查请求地址
         requestUrl: '',
         userId: '',
@@ -530,6 +546,8 @@
           this.tagVisible = false // 隐藏模态框
         })
       },
+      //预览查询
+      thirdQuery(){},
       // 保存
       saveTag () {
         // 时间点
@@ -754,7 +772,15 @@
   .tagVisible div:hover {
     background-color: #ccc;
   }
-
+.thirdQuery{
+  margin-left:20px;
+  color:#fff;
+  width:100px;
+  height:30px;
+  border:1px solid #20a0ff;
+  background-color: #20a0ff;
+  border-radius: 20px;
+}
   .labelStatus, .labelDisable {
     list-style: none;
     height: 30px;

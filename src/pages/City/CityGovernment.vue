@@ -337,7 +337,6 @@
       }
     },
     created () {
-
       // 请求按钮权限
       this.adminId = this.$route.query.adminId
       this.path = this.$route.path

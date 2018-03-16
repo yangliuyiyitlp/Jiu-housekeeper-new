@@ -142,6 +142,14 @@ const asyncRouter = [
     component: r => require.ensure([], () => r(require('../pages/Mypanner/VersionManage.vue')), 'VersionManage')
   }, // 版本管理
   {
+    path: '/bike/control',
+    name: 'bike.control',
+    meta: {
+      permission: []
+    },
+    component: r => require.ensure([], () => r(require('../pages/Mypanner/BikeControl.vue')), 'BikeControl')
+  }, // 骑行控制
+  {
     path: '/tag/taglib',
     name: 'tag.taglib',
     meta: {
