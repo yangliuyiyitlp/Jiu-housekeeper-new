@@ -12,6 +12,7 @@
             </el-input>
           </el-form-item>
           <el-button type="primary" @click="query">查询</el-button>
+          <el-button type="primary" @click="addForm">新增</el-button>
         </el-form>
         <el-table
           :data="tableData"
@@ -100,11 +101,9 @@
       <el-tab-pane label="骑行控制配置" name="second">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <el-input v-model="ruleForm.id" v-if="0"></el-input>
-          <el-input v-model="ruleForm.updateBy.id" v-if="0"></el-input>
-          <el-input v-model="ruleForm.updateDate" v-if="0"></el-input>
 
 
-          <el-form-item label="操作系统：">
+          <el-form-item label="操作系统：" prop="os">
             <el-select v-model="ruleForm.os" placeholder="请选择">
               <el-option
                 v-for="item in osSystemType"
@@ -114,7 +113,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="配置类型：">
+          <el-form-item label="配置类型：" prop="configFlag">
             <el-select v-model="ruleForm.configFlag" placeholder="请选择">
               <el-option
                 v-for="item in configType"
@@ -124,7 +123,7 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="生效城市：">
+          <el-form-item label="生效城市：" prop="cityName">
             <el-input
               class="city"
               :disabled=true
@@ -133,7 +132,7 @@
               v-model="ruleForm.cityName">
             </el-input>
           </el-form-item>
-          <el-form-item label="生效状态：">
+          <el-form-item label="生效状态：" prop="executingFlag">
             <el-select v-model="ruleForm.executingFlag" placeholder="请选择">
               <el-option
                 v-for="item in systemType"
@@ -143,21 +142,30 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="生效日期：" prop="version">
-            <el-date-picker
-              v-model="ruleForm.beginDate"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
-            -
-            <el-date-picker
-              v-model="ruleForm.endDate"
-              type="datetime"
-              placeholder="选择日期时间">
-            </el-date-picker>
+          <el-form-item label="生效日期：" required>
+            <el-col :span="3">
+              <el-form-item prop="beginDate">
+                <el-date-picker
+                  v-model="ruleForm.beginDate"
+                  @change="beginDateChange"
+                  type="datetime"
+                  placeholder="选择开始日期时间">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="3">
+              <el-form-item prop="endDate">
+                <el-date-picker
+                  v-model="ruleForm.endDate"
+                  @change="endDateChange"
+                  type="datetime"
+                  placeholder="选择结束日期时间">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
           </el-form-item>
-          <el-form-item label="限制时间：" prop="version">
-            <el-input v-model="ruleForm.limitHour" class="limitWidth"></el-input>
+          <el-form-item label="限制时间：" prop='limitHour'>
+            <el-input v-model.number="ruleForm.limitHour" class="limitWidth"></el-input>
           </el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')" class="submit">{{title}}</el-button>
         </el-form>
@@ -202,6 +210,7 @@
 
 <script>
   import a from '../../assets/js/getsessionId.js'
+  import {convertDate2String,getNowFormatDate} from '../../assets/js/convert.js'
   import baseUrl from '../../utils/baseUrl'
   import Cookie from 'js-cookie'
 
@@ -227,12 +236,16 @@
         osSystemType: [],
         osObj: {},
         tableData: [],
-        title: '提交修改',
-        pdIdObj: {'0': '赳赳单车', '1': '赳猎人', '2': '小程序'},
+        title: '',
         ruleForm: {},
         rules: {
-          version: [{required: true, message: '请输入更新版本号', trigger: 'blur'}],
-          releaseNotes: [{required: true, message: '请输入更新通知内容', trigger: 'blur'}]
+          os: [{required: true, message: '请选择操作系统', trigger: 'blur'}],
+          configFlag: [{required: true, message: '请选择配置类型', trigger: 'blur'}],
+          beginDate: [{required: true, message: '请选择日期'}],
+          endDate: [{required: true, message: '请选择日期'}],
+          cityName: [{required: true, message: '请选择生效城市', trigger: 'blur'}],
+          executingFlag: [{required: true, message: '请选择生效状态', trigger: 'blur'}],
+          limitHour: [{required: true, message: '请输入限制时间'}, {type: 'number', message: '限制时间必须为数字值'}]
         },
         pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
         defaultProps: {
@@ -254,12 +267,26 @@
       this.getSystem()
       this.getOsType()
     },
+    computed: {
+      limitHour () {
+        return this.ruleForm.limitHour
+      },
+    },
     watch: {
       filterText (val) {
         this.$refs.tree.filter(val)
+      },
+      limitHour (val) {
+        this.ruleForm.limitHour = watchOptions(val)
       }
     },
     methods: {
+      beginDateChange (val) {
+        this.ruleForm.beginDate = val
+      },
+      endDateChange (val) {
+        this.ruleForm.endDate = val
+      },
       handleSizeChange (val) {
         this.formInline.pageSize = val
         this.pagination.pageSize = val
@@ -277,6 +304,11 @@
         return false
       },
       handleClick () {
+        if (this.activeName2 === 'second') {
+          this.ruleForm = {}
+          this.title = '新增'
+          this.$refs.ruleForm.resetFields()
+        }
         if (this.activeName2 === 'first') {
           this.query()
         }
@@ -338,7 +370,7 @@
               let osSystemObj = {}
               osSystemObj.value = res.data[k].value
               osSystemObj.label = res.data[k].label
-              this.configType.push(osSystemObj)
+              this.osSystemType.push(osSystemObj)
             }
           })
           .catch((err) => {
@@ -351,7 +383,7 @@
       },
       handleNode (data) {
         this.filterText = data.name // 弹框树模型点击输入值
-        this.cityNo = Number(data.id)
+        this.cityNo = data.id
       },
       doModify () {
         this.cityName = this.filterText
@@ -366,8 +398,8 @@
         this.filterText = ''
       },
       areaModify () {
-        this.ruleForm.area.name = this.filterText
-        this.ruleForm.area.id = this.cityNo
+        this.ruleForm.cityName = this.filterText
+        this.ruleForm.cityNo = this.cityNo
         this.areaVisible = false
       },
       areaCancel () {
@@ -408,128 +440,65 @@
           })
       },
       modifyRecord (row) {
-        this.update = true
         this.activeName2 = 'second'
+        this.title = '提交修改'
         this.getMore(row)
       },
-      getVersion (val) {
-        this.versionObj = {}
-        for (let i = 0; i < val.length; i++) {
-          this.versionObj[val[i].version] = val[i].version
-        }
-        return this.versionObj
-      },
       getMore (row) {
-        for (let osKey in this.osObj) {
-          if (this.osObj[osKey] === row.os) {
-            this.os = osKey
-          }
-        }
-        for (let pdIdKey in this.pdIdObj) {
-          if (this.pdIdObj[pdIdKey] === row.pdId) {
-            this.pdId = pdIdKey
-          }
-        }
-        this.$ajax.get(`${baseUrl.advertContent}/version/show`, {params: {pdId: this.pdId, os: this.os, timeout: 3000}})
+        this.$ajax.get(`${baseUrl.newEnjoyUrl}/layer/limitoperateflag/tLimitOperateConfig/get/${row.id}`)
           .then(res => {
-            if (res.data.code === 200) {
-              let resultData = res.data.data
-              this.ruleForm = resultData
-              this.ruleForm.os = this.osObj[resultData.os]
-              this.ruleForm.pdId = this.pdIdObj[resultData.pdId]
-              // 获取版本
-              this.$ajax.get(`${baseUrl.advertContent}/version/list`, {
-                params: {
-                  'pdId': this.pdId,
-                  'os': this.os,
-                  timeout: 3000
-                }
-              })
-                .then((res) => {
-                  let result = res.data.data
-                  if (res.data.code === 200) {
-                    if (this.os === '0') {
-                      this.versionSelect = this.getVersion(result.ios_versions)
-                    } else if (this.os === '1') {
-                      this.versionSelect = this.getVersion(result.android_versions)
-                    }
-                    console.log(this.versionSelect)
-                  } else {
-                    this.$message({
-                      type: 'info',
-                      message: res.data.msg
-                    })
-                  }
-                })
-                .catch((err) => {
-                  console.log(err)
-                  this.$message({
-                    type: 'info',
-                    message: '版本列表获取异常'
-                  })
-                })
+            if (res.data.code === 0) {
+              this.ruleForm = res.data.data
+              this.ruleForm.cityName = this.ruleForm.area.name
+              this.ruleForm.cityNo = this.ruleForm.area.id
             } else {
-              this.$message({
-                type: 'error',
-                message: res.data.msg
-              })
+              this.$message('查询失败')
             }
           }).catch(() => {
-          this.$message({
-            type: 'error',
-            message: '查询异常'
-          })
+          this.$message.error('查询异常')
         })
       },
+      addForm () {
+        this.activeName2 = 'second'
+        this.ruleForm = {}
+        this.title = '新增'
+        this.$refs.ruleForm.resetFields()
+      },
       submitForm (ruleForm) {
-        if (this.ruleForm.version === this.ruleForm.minVersion) {
-          this.$message({
-            type: 'info',
-            message: '\'更新的版本号\' 和 \'强制更新的最低版本号\' 不能一样'
-          })
-          return false
+        if (this.ruleForm.beginDate > this.ruleForm.endDate) {
+          this.$message.warning('开始时间不能晚于结束时间')
+          return
         }
-
+        if (this.ruleForm.limitHour < -1) {
+          this.$message.warning('限制时间不能小于-1')
+          return
+        }
         // 请求
         this.$refs[ruleForm].validate((valid) => {
-          this.ruleForm.updateBy = Cookie.get('adminId')
-          for (let osKey in this.osObj) {
-            if (this.osObj[osKey] === this.ruleForm.os) {
-              this.ruleForm.os = osKey
-            }
-          }
-          for (let pdIdKey in this.pdIdObj) {
-            if (this.pdIdObj[pdIdKey] === this.ruleForm.pdId) {
-              this.ruleForm.pdId = pdIdKey
-            }
-          }
-          let url = `${baseUrl.advertContent}/version/operate`
           if (valid) {
-            this.$ajax.post(url, this.ruleForm)
-              .then(response => {
-                if (response.data.code === 200) {
+            this.ruleForm.updateDate = getNowFormatDate()
+            this.ruleForm.limitHour = String(this.ruleForm.limitHour)
+            let updateBy ={id:this.adminId}
+            this.ruleForm.updateBy = updateBy
+            let area ={id:this.ruleForm.cityNo}
+            this.ruleForm.area = area
+            this.$ajax.post(`${baseUrl.newEnjoyUrl}/layer/limitoperateflag/tLimitOperateConfig/save`, this.ruleForm)
+              .then(res => {
+                if (res.data.code === 0) {
                   // 更新成功
-                  this.$message({
-                    type: 'success',
-                    message: response.data.msg
-                  })
+                  this.$message.success(res.data.msg)
                   this.ruleForm = {}
-                  this.back()
+                  this.activeName2 = 'first'
+                  this.cityName = ''
+                  this.formInline.id = ''
                   // 刷新页面
                   this.query()
-                  this.update = false
                 } else {
-                  this.$message({
-                    type: 'error',
-                    message: '提交失败'
-                  })
+                  this.$message(res.data.msg)
                 }
               })
               .catch(() => {
-                this.$message({
-                  type: 'error',
-                  message: '提交异常'
-                })
+                this.$message.error('提交异常')
               })
           } else {
             return
@@ -539,6 +508,12 @@
     }
   }
 
+  function watchOptions (val, old) {
+    if (val) {
+      let newVal = parseInt(val) < -1 ? -1 : parseInt(val)
+      return newVal
+    }
+  }
 </script>
 <style scoped>
   html, body {
