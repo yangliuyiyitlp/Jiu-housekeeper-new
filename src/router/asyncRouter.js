@@ -9,22 +9,6 @@ const asyncRouter = [
     name: 'Login',
     component: r => require.ensure([], () => r(require('@/pages/Login/Login.vue')), 'Login')
   },
-  {
-    path: '/facility/tabs',
-    name: 'tabs',
-    meta: {
-      permission: []
-    },
-    component: r => require.ensure([], () => r(require('../pages/Facility/TabsMod.vue')), 'FacilityTabs')
-  },
-  {
-    path: '/facility/register',
-    name: 'register',
-    meta: {
-      permission: []
-    },
-    component: r => require.ensure([], () => r(require('../pages/Facility/RegisterMod.vue')), 'RegisterMod')
-  },
   // setting相关
   {
     path: '/setting/lockNodes',
