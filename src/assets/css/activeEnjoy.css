@@ -77,6 +77,7 @@
 .isFall{
   background:rgba(0,0,0,0.4);
   position: absolute;
+  
   top:100%;
   width:100%;
 }
@@ -350,3 +351,19 @@
   width:20px;
   height:20px;
 }
+.icon-img {
+	margin-bottom:30px ;
+	margin-left: 30px;
+}
+.icon-img .icon-title {
+	font-size: 14px;
+	margin: 10px;
+	
+}
+.button-name {
+	text-align: left;
+	font-size: 12px;
+	margin-top: 25px;
+	padding-left: 5px;
+}
+
