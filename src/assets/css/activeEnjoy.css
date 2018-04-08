@@ -75,10 +75,10 @@
   overflow: auto;
 }
 .isFall{
-  background:rgba(0,0,0,0.4);
-  position: absolute;
+  background:#999;
+  /*position: absolute;
   
-  top:100%;
+  top:100%;*/
   width:100%;
 }
 .pageTop img {
@@ -93,7 +93,7 @@
 }
 
 .pageHeader, .pageCarousel, .pageActivity, .pageFoot,.pageActivityClick {
-  position: relative;
+ /* position: relative;*/
   width: 100%;
   background-color: rgba(0, 0, 0, 0.4);
   margin-bottom: 5px;
@@ -115,10 +115,12 @@
 .pageActivity {
   height: 20%;
 }
-.pageActivityClick {
-  height: 10%;
-  background-color: #DB5050;
-  margin-bottom:309px;
+.pageActivityClick .my-wrap{
+	height: 75px;
+	background-color: #DB5050;
+  /*height: 10%;*/
+ /* background-color: #DB5050;*/
+ /* margin-bottom:309px;*/
 }
 .pageFoot {
   height: 40%;
@@ -160,6 +162,11 @@
 
 .showHeader {
   height: 40px;
+}
+.my-wrap {
+	height: 100%;
+	position: relative;
+	
 }
 .topCircle,.downCircle,.delCircle{
   margin-top:5px;

@@ -1,5 +1,6 @@
 <template>
   <div class="pageWidth">
+  	<Welfare v-if="isShowPage" :closePage = "closePage"></Welfare>
     <div class="introBtn">
       <span class="introduce">预览</span>
       <span class="publish">发布</span>
@@ -23,7 +24,7 @@
 
                 <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)"
                      :id=item.id>
-                  <div>
+                  <div class="my-wrap">
                     <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
                       class="circle iconfont icon-jiantouarrow505"></i></div>
                     <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
@@ -66,7 +67,6 @@
                        
                     </div>
                    
-                    
                   </div>
                 </div>
 
@@ -368,7 +368,7 @@
                       <el-option label="赳福利" value="赳福利"></el-option>
                       <el-option label="自定义" value="自定义"></el-option>
 									  </el-select>
-								  	<el-button type="danger">配置指向列表</el-button>
+								  	<el-button type="danger" @click="isShowPage = true">配置指向列表</el-button>
 								  </el-form-item>
 								  <el-form-item label="链接" prop="pass">
 								    <el-input v-model="item.iconUrl" placeholder="请输入链接" ></el-input>
@@ -568,17 +568,19 @@
     </el-dialog>
   </div>
 
-
+  
 </template>
 <script>
   import baseUrl from '../../utils/baseUrl'
   import a from '../../assets/js/getsessionId.js'
   import Cookie from 'js-cookie'
   import { convertDate2String } from '../../assets/js/convert'
-
+  import Welfare from './components/Welfare'
   export default {
     data () {
       return {
+      	isShowPage:false,
+      	aimListId:'',
       	value2:'',
       	iconTime:'',
         cityVisible: false,
@@ -653,6 +655,9 @@
         permissionList: [],
         iconDataList:{}
       }
+    },
+    components:{
+    	Welfare
     },
     watch: {
       filterText (val) {
@@ -1432,8 +1437,7 @@
         	
           if (res.data.code === 0) {
             this.formFalls = res.data.data
-            this.formFalls.waterfallDetails = this.formFalls.waterfallDetails.concat(this.formFalls.waterfallDetails)
-
+            this.formFalls.waterfallDetails = this.formFalls.waterfallDetails
             console.log(this.formFalls)
             if (this.formFalls.isStopped === 1) {
               this.fallIsUse = true
@@ -1465,6 +1469,9 @@
         })
       },
       // 图标区
+      closePage(){
+				this.isShowPage = false;
+			},
       getIcon () {
       	this.$ajax.get(`${baseUrl.newEnjoyUrl3}/jjEnjoy/icon/form`,{
       		params:{
@@ -1595,5 +1602,5 @@
 </script>
 <style scoped>
   @import '../../assets/css/activeEnjoy.css';
-  
+ 
 </style>
