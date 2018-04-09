@@ -9,6 +9,11 @@ const asyncRouter = [
     name: 'Login',
     component: r => require.ensure([], () => r(require('@/pages/Login/Login.vue')), 'Login')
   },
+  {
+    path: '/map',
+    name: 'map',
+    component: r => require.ensure([], () => r(require('@/pages/map.vue')), 'map')
+  },
   // setting相关
   {
     path: '/setting/lockNodes',

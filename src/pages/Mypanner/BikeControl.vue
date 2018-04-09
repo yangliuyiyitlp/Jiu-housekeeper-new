@@ -11,8 +11,8 @@
               v-model="cityName">
             </el-input>
           </el-form-item>
-          <el-button type="primary" @click="query">查询</el-button>
-          <el-button type="primary" @click="addForm">新增</el-button>
+          <el-button type="primary" @click="query" v-if="hasPermission('bike/control/view')">查询</el-button>
+          <el-button type="primary" @click="addForm" v-if="hasPermission('bike/control/add')">新增</el-button>
         </el-form>
         <el-table
           :data="tableData"
@@ -76,6 +76,7 @@
             label="操作时间">
           </el-table-column>
           <el-table-column
+            v-if="hasPermission('bike/control/update')"
             header-align="center"
             align="center"
             width="100"
@@ -98,7 +99,7 @@
         </el-pagination>
       </el-tab-pane>
 
-      <el-tab-pane label="骑行控制配置" name="second">
+      <el-tab-pane label="骑行控制配置" name="second" v-if="hasPermission('bike/control/update') || hasPermission('bike/control/add')">
         <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="ruleForm">
           <el-input v-model="ruleForm.id" v-if="0"></el-input>
 
@@ -410,7 +411,7 @@
         this.filterText = ''
       },
       query () {
-        this.$ajax.get(`${baseUrl.newEnjoyUrl}/layer/limitoperateflag/tLimitOperateConfig/list`, {params: {'area.id': this.formInline.id}})
+        this.$ajax.get(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/list`, {params: {'area.id': this.formInline.id}})
           .then((res) => {
             if (res.data.code === 0) {
               let result = res.data.data.result
@@ -445,7 +446,7 @@
         this.getMore(row)
       },
       getMore (row) {
-        this.$ajax.get(`${baseUrl.newEnjoyUrl}/layer/limitoperateflag/tLimitOperateConfig/get/${row.id}`)
+        this.$ajax.get(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/get/${row.id}`)
           .then(res => {
             if (res.data.code === 0) {
               this.ruleForm = res.data.data
@@ -482,7 +483,7 @@
             this.ruleForm.updateBy = updateBy
             let area ={id:this.ruleForm.cityNo}
             this.ruleForm.area = area
-            this.$ajax.post(`${baseUrl.newEnjoyUrl}/layer/limitoperateflag/tLimitOperateConfig/save`, this.ruleForm)
+            this.$ajax.post(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/save`, this.ruleForm)
               .then(res => {
                 if (res.data.code === 0) {
                   // 更新成功
