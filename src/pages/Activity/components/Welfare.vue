@@ -124,8 +124,8 @@
 						<div class="list-img">
 							<h6> 列表图6</h6>
 							<el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false"  >
-								<!--<img v-if="imageUrl" :src="imageUrl" class="avatar">
-								<i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+								<img v-if="imageUrl" :src="imageUrl" class="avatar">
+								<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 							</el-upload>
 							<span>上传图片视屏</span><br />
 							<span>高宽比630*300</span>
@@ -143,21 +143,21 @@
 					<div class="item Flex">
 						<span><i>*</i>是否显示：</span>
 						<div>
-							<el-switch on-color="#13ce66" off-color="#ff4949">
+							<el-switch on-text="启用" off-text="停用" on-color="#DB5050" off-color="#4F4D4D" >
 							</el-switch>
 						</div>
 					</div>
 					<div class="item Flex">
 						<span><i>*</i>赳赳特选：</span>
 						<div>
-							<el-switch on-color="#13ce66" off-color="#ff4949">
+							<el-switch on-text="启用" off-text="停用" on-color="#DB5050" off-color="#4F4D4D">
 							</el-switch>
 						</div>
 					</div>
 					<div class="item Flex">
 						<span><i></i>是否登陆：</span>
 						<div>
-							<el-switch on-color="#13ce66" off-color="#ff4949">
+							<el-switch on-text="启用" off-text="停用" on-color="#DB5050" off-color="#4F4D4D">
 							</el-switch>
 						</div>
 					</div>
