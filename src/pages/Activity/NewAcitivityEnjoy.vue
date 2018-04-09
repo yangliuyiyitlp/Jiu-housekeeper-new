@@ -1,5 +1,6 @@
 <template>
   <div class="pageWidth">
+  	<Welfare v-if="isShowPage" :closePage = "closePage"></Welfare>
     <div class="introBtn">
       <span class="introduce">预览</span>
       <span class="publish">发布</span>
@@ -23,7 +24,7 @@
 
                 <div v-for="(item,index) in menuList" :key="item.id" :class="item.class" @click="choiceMenu(item.id)"
                      :id=item.id>
-                  <div>
+                  <div class="my-wrap">
                     <div @click.stop='downCircle(index)' class="downCircle" v-if="index===0?false:true"><i
                       class="circle iconfont icon-jiantouarrow505"></i></div>
                     <div @click.stop='topCircle(index)' class="topCircle" v-if="index===0?false:true"><i
@@ -34,18 +35,23 @@
                   </div>
                   <!--列表区详情-->
                   <div class="isFall" v-if="isFall&&item.id===3?true:false" ref="isFall">
-                    <div v-for="(item,index) in fallList" :key="item.id" :class="item.class">
+                    <div v-for="(item,index) in formFalls.waterfallDetails" :key="item.id" :class="item.class">
                       <!--<div v-for="(item,index) in formFalls.waterfallDetails" :key="item.id" :class="item.class">-->
                       <el-input v-if="0" v-model="item.id"></el-input>
                       <el-row :gutter="0">
                         <el-col :span="7">
-                          <div @click.stop='topFall(index)' class="fallCircle"><i
-                            class="circle iconfont icon-jiantouarrow499"></i></div>
-                          <div @click.stop='downFall(index)' class="fallCircle"><i
-                            class="circle iconfont icon-jiantouarrow505"></i></div>
-                          <div @click.stop='delFall(item.id)' class="fallCircle"><i
-                            class="circle iconfont icon-icon--"></i></div>
-                          <div v-model="item.name"></div>
+                        	<div class="btb-wrap">
+                        		<div @click.stop='topFall(index)' class="fallCircle"><i
+	                            class="circle iconfont icon-jiantouarrow499"></i></div>
+	                          <div @click.stop='downFall(index)' class="fallCircle"><i
+	                            class="circle iconfont icon-jiantouarrow505"></i></div>
+	                          <div @click.stop='delFall(item.id)' class="fallCircle"><i
+	                            class="circle iconfont icon-icon--"></i></div>
+	                          <div v-model="item.name"></div>
+                        	</div>
+                          <div class="button-name">
+                          	<span>{{item.name}}</span>
+                          </div>
                         </el-col>
                         <el-col :span="13">
                           <div><span class="fallFont">按钮颜色：</span><input class="fallColor" placeholder="请选择"
@@ -56,8 +62,11 @@
                         <el-col :span="3">
                           <el-color-picker v-model="item.color"></el-color-picker>
                         </el-col>
+                       
                       </el-row>
+                       
                     </div>
+                   
                   </div>
                 </div>
 
@@ -277,14 +286,16 @@
         </el-col>
         <!--图标区-->
         <el-col v-if='isIcon' :span="14" :offset="1">
-          <div class="rightForm">
+          <div class="rightForm" >
           <div class="headerTitle">
           <a class="fontWeight">图标区</a>
           <span class="savePageCarouse" @click="saveIcon">保存</span>
           <el-switch
           :width=100
-          v-model="iconIsUse"
+          v-model="iconDataList.isUse"
           @change=isUseChange
+          on-value="1"
+          off-value="0"
           on-text="启用"
           off-text="停用"
           on-color="#DB5050"
@@ -299,9 +310,11 @@
           <el-form-item label="是否显示：">
           <el-switch
           :width=60
-          v-model="formIcon.carouselIsShow"
-          on-text="登录"
+          v-model="iconDataList.isShow"
+          on-text="开启"
           off-text="关闭"
+          on-value="1"
+          off-value="0"
           on-color="#DB5050"
           off-color="#4F4D4D">
           </el-switch>
@@ -309,11 +322,14 @@
           <el-form-item label="是否登录：">
           <el-switch
           :width=60
-          v-model="formIcon.carouselNeedLogin"
-          on-text="登录"
+          v-model="iconDataList.isLogin"
+          on-text="开启"
           off-text="关闭"
           on-color="#DB5050"
-          off-color="#4F4D4D">
+          off-color="#4F4D4D"
+          on-value="1"
+          off-value="0"
+        >
           </el-switch>
           </el-form-item>
 
@@ -323,11 +339,76 @@
           <el-input v-model="formIcon.height" placeholder="高" class="miWidth"></el-input>
           </el-form-item>
           <a class="fontWeight">图标配置</a>
-
-
-          <div class="carousel" v-for="(item,index) in formIcon.carouselDetails" :key="index">
-
           <hr class="lineWeight">
+          
+          <div class="carousel-wrap" v-for="(item,index) in iconDataList.enjoyIconDetails" :key="index">
+          	<el-row :gutter="0">
+          		<el-col  :span="14">
+          			<div class="icon-img">
+		          	  <p class="icon-title">图标配图 {{index+1}}</p>
+									<el-upload
+									  class="avatar-uploader"
+									  action="https://jsonplaceholder.typicode.com/posts/"
+									  :show-file-list="false"
+									 >
+									  <!--<img v-if="imageUrl" :src="imageUrl" class="avatar">
+									  
+									  <i v-else class="el-icon-plus avatar-uploader-icon"></i>-->
+									  <br/><br/>
+									  <span class="iconFont">图片宽高188*188</span>
+									</el-upload>
+								</div>
+		            <el-form :label-position="'right'" :rules="rules"  label-width="100px">
+								  <el-form-item label="图标名称" >
+								    <el-input v-model="item.iconName" placeholder="请输入图标名称"></el-input>
+								  </el-form-item>
+								  <el-form-item label="指向列表" prop="actionType">
+								    <el-select v-model="item.aimListName" placeholder="请选择" >
+									    <el-option label="享优惠" value="享优惠"></el-option>
+                      <el-option label="赳福利" value="赳福利"></el-option>
+                      <el-option label="自定义" value="自定义"></el-option>
+									  </el-select>
+								  	<el-button type="danger" @click="isShowPage = true">配置指向列表</el-button>
+								  </el-form-item>
+								  <el-form-item label="链接" prop="pass">
+								    <el-input v-model="item.iconUrl" placeholder="请输入链接" ></el-input>
+								  </el-form-item>
+								  <el-form-item label="平台" >
+								    <el-select v-model="item.platform" placeholder="请选择">
+									    <el-option label="Android" value="享优惠"></el-option>
+                      <el-option label="iOS" value="赳福利"></el-option>
+                      <el-option label="全部" value="全部"></el-option>
+									  </el-select>
+								  </el-form-item>
+								   <el-form-item label="生效日期" prop="beginDate">
+								   	<template slot-scope="scope">
+									    <el-date-picker
+									      type="datetime"
+									      value-format="yyyy-MM-dd HH:mm:ss"
+									      v-model="item.startTime"
+									      @change="changeTimeFn(scope.row)"
+									      placeholder="选择日期时间">
+									    </el-date-picker>
+								    </template>
+								  </el-form-item>
+								</el-form>
+							</el-col>
+							<el-col :span="6">
+								<div class="carouseFormAll">
+                  <div @click="iconDel(iconDataList.enjoyIconDetails,index)"><i class="circle iconfont icon-icon--"></i></div>
+                  <div @click="iconDown(iconDataList.enjoyIconDetails,index)"><i class="circle iconfont icon-jiantouarrow505"></i>
+                  </div>
+                  <div @click="iconTop(iconDataList.enjoyIconDetails,index)"><i class="circle iconfont icon-jiantouarrow499"></i></div>
+                  <div @click="iconMaxTop(iconDataList.enjoyIconDetails,index)"><i class="circle iconfont icon-zhiding"></i></div>
+                </div>
+							</el-col>
+						</el-row>
+						<hr />
+          </div>
+          
+         <div class="carousel" v-for="(item,index) in formIcon.carouselDetails" :key="index">
+
+         
           <el-row :gutter="0">
 
           <el-col :span="4">
@@ -344,6 +425,10 @@
           <!--avatar-uploader-icon"></i>-->
           <!--<span class="iconFont">上传图片<br/>宽高比188*188</span>-->
           <!--</el-upload>-->
+         
+					<el-dialog v-model="dialogVisible" size="tiny">
+					  <img width="100%" :src="dialogImageUrl" alt="">
+					</el-dialog>
           <el-input v-model="item.iconUrl" v-if="0"></el-input>
           </el-col>
           <el-col :span="15" :offset="1">
@@ -449,7 +534,7 @@
                 <el-input v-model="formFalls.height" placeholder="高" class="miWidth"></el-input>
               </el-form-item>
               <el-form-item label="模块名称：" class="minWidth">
-                <el-input v-model="formFalls.waterfallName" placeholder="赳赳特选（可修改，建议5个字以内）"></el-input>
+                <el-input v-model="formFalls.name" placeholder="赳赳特选（可修改，建议5个字以内）"></el-input>
               </el-form-item>
 
 
@@ -483,17 +568,21 @@
     </el-dialog>
   </div>
 
-
+  
 </template>
 <script>
   import baseUrl from '../../utils/baseUrl'
   import a from '../../assets/js/getsessionId.js'
   import Cookie from 'js-cookie'
   import { convertDate2String } from '../../assets/js/convert'
-
+  import Welfare from './components/Welfare'
   export default {
     data () {
       return {
+      	isShowPage:false,
+      	aimListId:'',
+      	value2:'',
+      	iconTime:'',
         cityVisible: false,
         isOpen: true,
         isHeader: false,
@@ -511,7 +600,7 @@
         fallIsShow: false,
         fallIsLogin: false,
         filterText: '',
-        cityId: -1,
+        cityId: 13,
         rankArr: [],
         ranks: '',
         rankArrFall: [],
@@ -553,7 +642,9 @@
           carouselNeedLogin: [{required: true, message: '请选择', trigger: 'blur'}],
           changeTime: [{required: true, message: '请填写切换时间', trigger: 'blur'}],
           type: [{required: true, message: '请选择', trigger: 'blur'}],
-          actionType: [{required: true, message: '请选择', trigger: 'blur'}]
+          actionType: [{required: true, message: '请选择', trigger: 'blur'}],
+          iconNameMsg: [{required: true, message: '请输入图标名称', trigger: 'blur'}],
+          
         },
         defaultProps: {
           children: 'children',
@@ -561,8 +652,12 @@
         },
         adminId: '',
         path: '',
-        permissionList: []
+        permissionList: [],
+        iconDataList:{}
       }
+    },
+    components:{
+    	Welfare
     },
     watch: {
       filterText (val) {
@@ -587,6 +682,7 @@
 //      }
     },
     mounted () {
+    	//this.getIcon()
 //      this.menuList = this.menuCount // 接口关了先直接赋值
     },
     created () {
@@ -603,6 +699,9 @@
 //      }
 //    },
     methods: {
+    	changeTimeFn(val){
+    		console.log(val)
+    	},
       isUseChange (val) {
         if (val === true) {
           this.$message.warning('保存后点击发布才会生效')
@@ -628,45 +727,40 @@
       //全局模板排序获取
       getRanks () {
         //直接赋值
-        this.menuList = [{value: '页头 ① 点击编辑', class: 'pageHeader', id: 0},{value: '轮播区 ② 点击编辑', class: 'pageCarousel', id: 1}, {
-          value: '图标区 ③ 点击编辑',
-          class: 'pageFoot',
-          id: 2
-        }, {value: '列表区 ④ 点击编辑', class: 'pageActivity', id: 3}]
 
-//        this.menuList = [{value: '页头 ① 点击编辑', class: 'pageHeader', id: 0}]
-//        if (!this.cityId) { //判断条件 获取排序
-//          this.$message('请先选择地址')
-//          return false
-//        }
-//        this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: this.cityId}})
-//          .then(res => {
-//            if (res.data.code === 0) {
-//              if (res.data.data && res.data.data !== undefined) {
-//                this.ranks = res.data.data.ranks
-//              } else {
-//                this.ranks = '1,2,3'
-//              }
-//              this.rankArr = this.ranks.split(',')
-//              for (let i = 0; i < this.rankArr.length; i++) {
-//                for (let j = 0; j < this.menuCount.length; j++) {
-//                  if (Number(this.rankArr[i]) === this.menuCount[j].id) {
-//                    this.menuList.push(this.menuCount[j])
-//                  }
-//                }
-//              }
-//              this.form = {}
-//              this.formCarousel = {}
-//              this.formFalls = {}
-//              this.formIcon = {}
-//              this.choiceMenu(null)
-//            } else {
-//              this.$message('获取排序失败')
-//            }
-//          })
-//          .catch((err) => {
-//            this.$message.error('获取排序异常')
-//          })
+          this.menuList = [{value: '页头 ① 点击编辑', class: 'pageHeader', id: 0}]
+          if (!this.cityId) { //判断条件 获取排序
+            this.$message('请先选择地址')
+            return false
+          }
+          this.$ajax.get(`${baseUrl.newEnjoyUrl}/jjEnjoy/getRank`, {params: {cityId: this.cityId}})
+            .then(res => {
+              if (res.data.code === 0) {
+                if (res.data.data && res.data.data !== undefined) {
+                  this.ranks = res.data.data.ranks
+                } else {
+                  this.ranks = '1,2,3'
+                }
+                this.rankArr = this.ranks.split(',')
+                for (let i = 0; i < this.rankArr.length; i++) {
+                  for (let j = 0; j < this.menuCount.length; j++) {
+                    if (Number(this.rankArr[i]) === this.menuCount[j].id) {
+                      this.menuList.push(this.menuCount[j])
+                    }
+                  }
+                }
+                this.form = {}
+                this.formCarousel = {}
+                this.formFalls = {}
+                this.formIcon = {}
+                this.choiceMenu(null)
+              } else {
+                this.$message('获取排序失败')
+              }
+            })
+            .catch((err) => {
+              this.$message.error('获取排序异常')
+            })
       },
       //全局模板排序提交
       setRanks () {
@@ -758,6 +852,7 @@
             this.isIcon = true
             this.isFalls = false
             this.isFall = false
+            this.getIcon()
           } else if (id === 3) {
             this.menuCount[2].class = 'pageActivityClick'
             this.isHeader = false
@@ -1228,6 +1323,7 @@
           }
         }
       },
+      
       //列表区
       topFall (index) {
         this.rankArrFall = []
@@ -1332,108 +1428,146 @@
           })
       },
       getPageFall () {
-        this.$ajax.post(`${baseUrl.newEnjoyUrl2}/jjEnjoy/waterfall/form`, this.form)
-          .then((res) => {
-              if (res.data.code === 200) {
-                this.formFalls = res.data.data.waterfall
-                if (this.formFalls.isStopped === 1) {
-                  this.fallIsUse = true
-                } else {
-                  this.fallIsUse = false
-                }
-                if (this.formFalls.isShow === 1) {
-                  this.fallIsShow = true
-                } else {
-                  this.fallIsShow = false
-                }
-                if (this.formFalls.isLogin === 1) {
-                  this.fallIsLogin = true
-                } else {
-                  this.fallIsLogin = false
-                }
-                if (this.formFalls.ratio.indexOf('X') !== -1) {
-                  this.formFalls.width = this.formFalls.ratio.split('X')[0]
-                  this.formFalls.height = this.formFalls.ratio.split('X')[1]
-                }
-              } else {
-                this.$message('获取列表区信息失败')
-              }
+      	console.log("kaishi")
+        this.$ajax.get(`${baseUrl.newEnjoyUrl3}/jjEnjoy/waterfall/form`, {
+        	params:{
+        		cityId:this.cityId
+        	}
+        }).then((res) => {
+        	
+          if (res.data.code === 0) {
+            this.formFalls = res.data.data
+            this.formFalls.waterfallDetails = this.formFalls.waterfallDetails
+            console.log(this.formFalls)
+            if (this.formFalls.isStopped === 1) {
+              this.fallIsUse = true
+            } else {
+              this.fallIsUse = false
             }
-          )
-          .catch(err => {
-            this.$message.error('获取列表区信息异常')
-          })
+            
+            if (this.formFalls.isShow === 1) {
+              this.fallIsShow = true
+            } else {
+              this.fallIsShow = false
+            }
+            
+            if (this.formFalls.isLogin === 1) {
+              this.fallIsLogin = true
+            } else {
+              this.fallIsLogin = false
+            }
+            
+            if (this.formFalls.ratio.indexOf('X') !== -1) {
+              this.formFalls.width = this.formFalls.ratio.split('X')[0]
+              this.formFalls.height = this.formFalls.ratio.split('X')[1]
+            }
+          } else {
+            this.$message('获取列表区信息失败')
+          }
+        }).catch(err => {
+          this.$message.error('获取列表区信息异常')
+        })
       },
       // 图标区
-      getIcon () {},
-      saveIcon () {},
+      closePage(){
+				this.isShowPage = false;
+			},
+      getIcon () {
+      	this.$ajax.get(`${baseUrl.newEnjoyUrl3}/jjEnjoy/icon/form`,{
+      		params:{
+      			cityId:this.cityId
+      		}
+      	}).then((res)=>{
+      		if (res.status == 200){
+      			
+      			this.iconDataList = res.data.data
+      		
+      			console.log(this.iconDataList)
+      		}
+      	}).catch(err=>{
+      		console.log(err)
+      	})
+      },
+      saveIcon () {
+      	console.log(this.iconDataList,"*************")
+      	this.$ajax.post(`${baseUrl.newEnjoyUrl3}/jjEnjoy/icon/saveIconDetails`,{
+      		iconDetails:JSON.stringify(this.iconDataList)
+      	}).then((res)=>{
+      		console.log(res)
+      	}).catch(err=>{
+      		
+      	})
+      },
+      //添加图标项
       addIcon () {
-        let lastRank = this.iconDetails.length
         let addIconData = {
-          'id': '',
-          'mainId': '',
-          'type': 0,
-          'actionType': 0,
-          'actionUrl': '',
-          'downloadModel': 0,
-          'beginDate': '',
-          'endDate': '',
-          'os': 0,
-          'iconUrl': '',
-          'rank': lastRank
+          "iconUrl": "",
+          "iconName": '',
+          "aimListName":'',
+          "aimListName":'',
+          "startTime":''
         }
-        this.iconDetails.splice(lastRank, 0, addIconData)
+        this.iconDataList.enjoyIconDetails.push(addIconData)
       },
-      iconDel (id) {
-        this.$ajax.post(`${baseUrl.newEnjoyUrl}/jjEnjoy/carousel/delete`, {id: id})
+      //删除图标项
+      iconDel (data,index) {
+      	if (data[index].id){
+      		this.$ajax.get(`${baseUrl.newEnjoyUrl3}/jjEnjoy/icon/deleteIcon`, {
+      			params:{
+      				id: data[index].id,
+      				updateBy:this.adminId
+      			}
+      		})
           .then((res) => {
-            this.$message.success(res.data.msg)
-            this.getIcon()
+          	if (res.code == 200){
+          		data.splice(index,1)
+              this.$message.success(res.data.msg)
+          	} else {
+          		this.$message.error(res.data.msg)
+          	}
           })
-          .catch(() => {
-            this.$message.error('轮播图保存失败')
+          .catch((err) => {
+            this.$message.error(err)
           })
+          
+      	} else {
+      		data.splice(index,1)
+      	}
+        
       },
-      iconDown (id, index) {
-        let result = this.formIcon.carouselDetails
-        if (index === result.length - 1) {
-          this.$message('已经是最后一条啦!')
+      //向下调整
+      iconDown (data,index) {
+        let len = data.length
+        if (index === len-1 ) {
+        	this.$message('已经是最后一条啦!')
           return
-        }
-        for (let i = 0; i < result.length; i++) {
-          if (result[i].id === id) {
-            let thisResult = result[i]
-            result.splice(i, 1)
-            result.splice(i + 1, 0, thisResult)
-          }
+        } else {
+        	const item = data[index]
+        	data.splice(index,1)
+        	data.splice(index+1,0,item)
         }
       },
-      iconTop (id, index) {
+      //向上调整
+      iconTop (data,index) {
+        let len = data.length
+        if (index === 0 ) {
+        	this.$message('已经是第一条啦!')
+          return
+        } else {
+        	const item = data[index]
+        	data.splice(index,1)
+        	data.splice(index-1,0,item)
+        }
+      },
+      //置顶
+      iconMaxTop (data,index) {
         if (index === 0) {
           this.$message('已经是第一条啦!')
           return
-        }
-        let result = this.formCarousel.carouselDetails
-        for (let i = 0; i < result.length; i++) {
-          if (result[i].id === id) {
-            let thisResult = result[i]
-            result.splice(i, 1)
-            result.splice(i - 1, 0, thisResult)
-          }
-        }
-      },
-      iconMaxTop (id, index) {
-        if (index === 0) {
-          this.$message('已经是第一条啦!')
-          return
-        }
-        let result = this.formCarousel.carouselDetails
-        for (let i = 0; i < result.length; i++) {
-          if (result[i].id === id) {
-            let thisResult = result[i]
-            result.splice(i, 1)
-            result.splice(0, 0, thisResult)
-          }
+        } else {
+        	const item = data[index]
+        	data.splice(index,1)
+        	data.unshift(item)
         }
       }
     }
@@ -1468,5 +1602,5 @@
 </script>
 <style scoped>
   @import '../../assets/css/activeEnjoy.css';
-
+ 
 </style>
