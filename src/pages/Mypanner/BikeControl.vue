@@ -168,12 +168,13 @@
           <el-form-item label="限制时间：" prop='limitHour'>
             <el-input v-model.number="ruleForm.limitHour" class="limitWidth"></el-input>
           </el-form-item>
-          <el-button type="primary" @click="submitForm('ruleForm')" class="submit">{{title}}</el-button>
+          <el-button type="primary" @click.stop="submitForm('ruleForm')" class="submit">{{title}}</el-button>
         </el-form>
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="城市" size="tiny" :visible.sync="cityVisible" center>
-      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+      <!--关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">-->
+      <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
         node-key="id"
@@ -190,7 +191,8 @@
       </div>
     </el-dialog>
     <el-dialog title="城市" size="tiny" :visible.sync="areaVisible" center>
-      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+      <!--关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">-->
+      <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
         node-key="id"
@@ -212,7 +214,7 @@
 <script>
   import a from '../../assets/js/getsessionId.js'
   import {convertDate2String,getNowFormatDate} from '../../assets/js/convert.js'
-  import baseUrl from '../../utils/baseUrl'
+  import baseUrl from '../../utils/baseUrl.js'
   import Cookie from 'js-cookie'
 
   export default {
@@ -274,9 +276,9 @@
       },
     },
     watch: {
-      filterText (val) {
-        this.$refs.tree.filter(val)
-      },
+//      filterText (val) {
+//        this.$refs.tree.filter(val)
+//      },
       limitHour (val) {
         this.ruleForm.limitHour = watchOptions(val)
       }
@@ -396,7 +398,7 @@
       },
       searchCity () {
         this.cityVisible = true
-        this.filterText = ''
+        this.filterText = this.cityName
       },
       areaModify () {
         this.ruleForm.cityName = this.filterText
@@ -408,7 +410,7 @@
       },
       searchArea () {
         this.areaVisible = true
-        this.filterText = ''
+        this.filterText =  this.ruleForm.cityName
       },
       query () {
         this.$ajax.get(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/list`, {params: {'area.id': this.formInline.id}})
@@ -519,6 +521,10 @@
 <style scoped>
   html, body {
     height: 100%;
+  }
+  .titleCity{
+    text-decoration: none;
+    color: #000;
   }
 
   .city {

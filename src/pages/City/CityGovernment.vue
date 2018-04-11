@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-      <el-tab-pane label="数据配置表" name="first" >
+      <el-tab-pane label="数据配置表" name="first">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="地区：">
             <el-input
@@ -12,10 +12,15 @@
             </el-input>
           </el-form-item>
           <el-input v-model="formInline.cityNo" v-if="0"></el-input>
-          <el-form-item>
-            <el-radio class="radio" v-model="formInline.status" label=2>已过期</el-radio>
-            <el-radio class="radio" v-model="formInline.status" label=1>生效中</el-radio>
-            <el-radio class="radio" v-model="formInline.status" label=0>待生效</el-radio>
+          <el-form-item label="状态：">
+            <el-select v-model="formInline.status" placeholder="请选择" clearable>
+              <el-option
+                v-for="item in statusArr"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value">
+              </el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="时间段查询：">
             <el-date-picker
@@ -206,54 +211,39 @@
         </el-pagination>
       </el-tab-pane>
       <el-tab-pane label="数据配置" name="second" class="secondForm">
-        <el-form ref="addPlanRoute" class="addPlanRoute" :model="addPlanRoute">
-          <label>地区：</label>{{addPlanRoute.cityName}}&nbsp;<i class="el-icon-search" @click="searchArea"></i><br><br>
+        <form ref="addPlanRoute" class="addPlanRoute" >
+          <label id="lab">地区：</label>{{addPlanRoute.cityName}}&nbsp;<i class="el-icon-search" @click="searchArea"></i><br><br>
           <input v-if="0" v-model="addPlanRoute.cityNo">
           <input v-if="0" v-model="addPlanRoute.id">
-          <label class="lab">项目描述</label><label class="labLeft">填报信息</label><label class="labLeft">备注</label><br>
-          <label class="lab">注册用户数量</label><input  v-model="addPlanRoute.registeredUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.registeredUserAmountR"><br>
-          <label class="lab">活跃用户数</label><input  v-model="addPlanRoute.activeUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.activeUserAmountR"><br>
-          <label class="lab">实际运营车辆数</label><input  v-model="addPlanRoute.actualBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.actualBicycleAmountR"><br>
-          <label class="lab">被清收暂扣车辆数</label><input  v-model="addPlanRoute.detainedBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.detainedBicycleAmountR"><br>
-          <label class="lab">车辆平均周转率</label><input   v-model="addPlanRoute.averageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.averageTurnoverRateR"><br>
-          <label class="lab">外环外平均周转率</label><input  v-model="addPlanRoute.outsideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.outsideAverageTurnoverRateR"><br>
-          <label class="lab">外环内平均周转率</label><input  v-model="addPlanRoute.insideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.insideAverageTurnoverRateR"><br>
-          <label class="lab">实际运营车辆日均使用人次</label><input  v-model="addPlanRoute.actualDailyUse" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.actualDailyUseR"><br>
-          <label class="lab">损坏维修车辆比例</label><input  v-model="addPlanRoute.breakBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.breakBikePercentageR"><br>
-          <label class="lab">报废回收车辆比例</label><input v-model="addPlanRoute.scrapBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.scrapBikePercentageR"><br>
-          <label class="lab">自主清理车辆比例</label><input v-model="addPlanRoute.autonomouslyCleanPercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.autonomouslyCleanPercentageR"><br>
-          <label class="lab">维修保养场点数量</label><input  v-model="addPlanRoute.repairPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.repairPointAmountR"><br>
-          <label class="lab">中转储备场点数量</label><input  v-model="addPlanRoute.transitPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.transitPointAmountR"><br>
-          <label class="lab">车辆区域核定数量</label><input  v-model="addPlanRoute.approvedBikeAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.approvedBikeAmountR"><br>
-
-          <!--<label class="lab">注册用户数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.registeredUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.registeredUserAmountR"><br>-->
-          <!--<label class="lab">活跃用户数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.activeUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.activeUserAmountR"><br>-->
-          <!--<label class="lab">实际运营车辆数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.actualBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.actualBicycleAmountR"><br>-->
-          <!--<label class="lab">被清收暂扣车辆数</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.detainedBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.detainedBicycleAmountR"><br>-->
-          <!--<label class="lab">车辆平均周转率</label><input  onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.averageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.averageTurnoverRateR"><br>-->
-          <!--<label class="lab">外环外平均周转率</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.outsideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.outsideAverageTurnoverRateR"><br>-->
-          <!--<label class="lab">外环内平均周转率</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.insideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.insideAverageTurnoverRateR"><br>-->
-          <!--<label class="lab">实际运营车辆日均使用人次</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.actualDailyUse" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.actualDailyUseR"><br>-->
-          <!--<label class="lab">损坏维修车辆比例</label><input  onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.breakBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.breakBikePercentageR"><br>-->
-          <!--<label class="lab">报废回收车辆比例</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.scrapBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.scrapBikePercentageR"><br>-->
-          <!--<label class="lab">自主清理车辆比例</label><input onkeyup="value=value.replace(/[^\-?\d.]/g,'')" v-model="addPlanRoute.autonomouslyCleanPercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.autonomouslyCleanPercentageR"><br>-->
-          <!--<label class="lab">维修保养场点数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.repairPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.repairPointAmountR"><br>-->
-          <!--<label class="lab">中转储备场点数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.transitPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.transitPointAmountR"><br>-->
-          <!--<label class="lab">车辆区域核定数量</label><input onkeyup="value=value.replace(/[^\d]/g,'')" v-model="addPlanRoute.approvedBikeAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.approvedBikeAmountR"><br>-->
-          <label class="lab labBottom">生效日期</label>
+          <label >项目描述</label><label class="labLeft">填报信息</label><label class="labLeft">备注</label><br>
+          <label >注册用户数量</label><input v-model="addPlanRoute.registeredUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.registeredUserAmountR"><br>
+          <label >活跃用户数</label><input v-model="addPlanRoute.activeUserAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.activeUserAmountR"><br>
+          <label >实际运营车辆数</label><input v-model="addPlanRoute.actualBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.actualBicycleAmountR"><br>
+          <label >被清收暂扣车辆数</label><input v-model="addPlanRoute.detainedBicycleAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.detainedBicycleAmountR"><br>
+          <label >车辆平均周转率</label><input v-model="addPlanRoute.averageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.averageTurnoverRateR"><br>
+          <label >外环外平均周转率</label><input v-model="addPlanRoute.outsideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.outsideAverageTurnoverRateR"><br>
+          <label >外环内平均周转率</label><input v-model="addPlanRoute.insideAverageTurnoverRate" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.insideAverageTurnoverRateR"><br>
+          <label >实际运营车辆日均使用人次</label><input v-model="addPlanRoute.actualDailyUse" placeholder="只能输入整数或小数"><input v-model="addPlanRoute.actualDailyUseR"><br>
+          <label >损坏维修车辆比例</label><input v-model="addPlanRoute.breakBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.breakBikePercentageR"><br>
+          <label >报废回收车辆比例</label><input v-model="addPlanRoute.scrapBikePercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.scrapBikePercentageR"><br>
+          <label >自主清理车辆比例</label><input v-model="addPlanRoute.autonomouslyCleanPercentage" placeholder="只能输入整数或小数(0-100)"><input v-model="addPlanRoute.autonomouslyCleanPercentageR"><br>
+          <label >维修保养场点数量</label><input v-model="addPlanRoute.repairPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.repairPointAmountR"><br>
+          <label >中转储备场点数量</label><input v-model="addPlanRoute.transitPointAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.transitPointAmountR"><br>
+          <label >车辆区域核定数量</label><input v-model="addPlanRoute.approvedBikeAmount" placeholder="只能输入整数"><input v-model="addPlanRoute.approvedBikeAmountR"><br>
+          <label class="labBottom">生效日期</label>
           <el-date-picker
             v-model="addPlanRoute.effectiveDate"
             @change="effectiveDateChange"
             type="datetime">
           </el-date-picker>
           <input class='labBottom' v-model="addPlanRoute.effectiveDateR"><br>
-          <el-button type="primary" @click="submitForm" class="submit">{{title}}</el-button>
-        </el-form>
+          <el-button type="primary" @click.stop="submitForm" class="submit">{{title}}</el-button>
+        </form>
       </el-tab-pane>
     </el-tabs>
     <!--模态框-->
-    <el-dialog title="城市" size="tiny" :visible.sync="cityVisible" center>
-      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+    <el-dialog size="tiny" :visible.sync="cityVisible" center>
+      <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
         node-key="id"
@@ -269,8 +259,8 @@
         <el-button type="primary" @click="doModify">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="城市" size="tiny" :visible.sync="areaVisible" center>
-      关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">
+    <el-dialog  size="tiny" :visible.sync="areaVisible" center>
+      <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
         node-key="id"
@@ -292,6 +282,8 @@
 <script>
   import a from '../../assets/js/getsessionId.js'
   import baseUrl from '../../utils/baseUrl'
+  import { convertDate2String } from '../../assets/js/convert'
+
   export default {
     data () {
       return {
@@ -299,26 +291,14 @@
         activeName: 'first',
         cityVisible: false,
         areaVisible: false,
+        statusArr:[{value:0,label:'待生效'},{value:1,label:'生效中'},{value:2,label:'已过期'}],
         filterText: '',
         cityName: '',
         select: [],
         cityNo: '',
         tableData: [],
         addPlanRoute: {
-          registeredUserAmount:'',
-          activeUserAmount:'',
-          detainedBicycleAmount:'',
-          actualBicycleAmount:'',
-          averageTurnoverRate:'',
-          outsideAverageTurnoverRate:'',
-          insideAverageTurnoverRate:'',
-          actualDailyUse:'',
-          breakBikePercentage:'',
-          scrapBikePercentage:'',
-          autonomouslyCleanPercentage:'',
-          repairPointAmount:'',
-          transitPointAmount:'',
-          approvedBikeAmount:''
+          registeredUserAmount:''
         },
         exportParam: {},
         setForm: {},
@@ -388,9 +368,9 @@
       }
     },
     watch: {
-      filterText (val) {
-        this.$refs.tree.filter(val)
-      },
+//      filterText (val) {
+//        this.$refs.tree.filter(val)
+//      },
 //      addPlanRoute:{
 //        handler (val) {
 //          this.addPlanRoute.registeredUserAmount = watchOptions(val)
@@ -398,47 +378,47 @@
 //        deep: true
 //      }
       registeredUserAmount (val, old) {
-        this.addPlanRoute.registeredUserAmount = watchOptions (val)
+        this.addPlanRoute.registeredUserAmount = watchOptions(val)
       },
       activeUserAmount (val, old) {
-        this.addPlanRoute.activeUserAmount = watchOptions (val)
+        this.addPlanRoute.activeUserAmount = watchOptions(val)
       },
       actualBicycleAmount (val, old) {
-        this.addPlanRoute.actualBicycleAmount = watchOptions (val)
+        this.addPlanRoute.actualBicycleAmount = watchOptions(val)
       },
       detainedBicycleAmount (val, old) {
-        this.addPlanRoute.detainedBicycleAmount = watchOptions (val)
+        this.addPlanRoute.detainedBicycleAmount = watchOptions(val)
       },
       averageTurnoverRate (val, old) {
 //        this.addPlanRoute.averageTurnoverRate = watchFloat(val)
-        this.addPlanRoute.averageTurnoverRate = watchFloat (val)
+        this.addPlanRoute.averageTurnoverRate = watchFloat(val)
       },
       outsideAverageTurnoverRate (val, old) {
-        this.addPlanRoute.outsideAverageTurnoverRate = watchFloat (val)
+        this.addPlanRoute.outsideAverageTurnoverRate = watchFloat(val)
       },
       insideAverageTurnoverRate (val, old) {
-        this.addPlanRoute.insideAverageTurnoverRate = watchFloat (val)
+        this.addPlanRoute.insideAverageTurnoverRate = watchFloat(val)
       },
       actualDailyUse (val, old) {
-        this.addPlanRoute.actualDailyUse = watchFloat (val)
+        this.addPlanRoute.actualDailyUse = watchFloat(val)
       },
       breakBikePercentage (val, old) {
-        this.addPlanRoute.breakBikePercentage = watchFloat (val)
+        this.addPlanRoute.breakBikePercentage = watchFloat(val)
       },
       scrapBikePercentage (val, old) {
-        this.addPlanRoute.scrapBikePercentage = watchFloat (val)
+        this.addPlanRoute.scrapBikePercentage = watchFloat(val)
       },
       autonomouslyCleanPercentage (val, old) {
-        this.addPlanRoute.autonomouslyCleanPercentage = watchFloat (val)
+        this.addPlanRoute.autonomouslyCleanPercentage = watchFloat(val)
       },
       repairPointAmount (val, old) {
-        this.addPlanRoute.repairPointAmount = watchOptions (val)
+        this.addPlanRoute.repairPointAmount = watchOptions(val)
       },
       transitPointAmount (val, old) {
-        this.addPlanRoute.transitPointAmount = watchOptions (val)
+        this.addPlanRoute.transitPointAmount = watchOptions(val)
       },
       approvedBikeAmount (val, old) {
-        this.addPlanRoute.approvedBikeAmount = watchOptions (val)
+        this.addPlanRoute.approvedBikeAmount = watchOptions(val)
       }
     },
     methods: {
@@ -470,25 +450,26 @@
         return false
       },
       handleClick () {
-        this.formInline={}
-        console.log(this.activeName)
+        this.formInline = {}
         if (this.activeName === 'second') {
           this.cityName = ''
           this.cityNo = ''
-          this.addPlanRoute = { registeredUserAmount:'',
-            activeUserAmount:'',
-            detainedBicycleAmount:'',
-            actualBicycleAmount:'',
-            averageTurnoverRate:'',
-            outsideAverageTurnoverRate:'',
-            insideAverageTurnoverRate:'',
-            actualDailyUse:'',
-            breakBikePercentage:'',
-            scrapBikePercentage:'',
-            autonomouslyCleanPercentage:'',
-            repairPointAmount:'',
-            transitPointAmount:'',
-            approvedBikeAmount:''}
+          this.addPlanRoute = {
+            registeredUserAmount: '',
+            activeUserAmount: '',
+            detainedBicycleAmount: '',
+            actualBicycleAmount: '',
+            averageTurnoverRate: '',
+            outsideAverageTurnoverRate: '',
+            insideAverageTurnoverRate: '',
+            actualDailyUse: '',
+            breakBikePercentage: '',
+            scrapBikePercentage: '',
+            autonomouslyCleanPercentage: '',
+            repairPointAmount: '',
+            transitPointAmount: '',
+            approvedBikeAmount: ''
+          }
           this.title = '新增'
         }
       },
@@ -500,7 +481,7 @@
         this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/list`, {params: this.formInline})
           .then((res) => {
             if (res.data.code === 0) {
-              if(res.data.data.result.length<=0){
+              if (res.data.data.result.length <= 0) {
                 this.$message.warning('未找到符合条件的数据')
               }
               this.tableData = res.data.data.result
@@ -525,9 +506,9 @@
               this.cityName = res.data.data.cityName
               this.cityNo = res.data.data.cityNo
               this.addPlanRoute = res.data.data
-               for(let k in this.addPlanRoute){
-                 this.addPlanRoute[k]=String(this.addPlanRoute[k])
-               }
+              for (let k in this.addPlanRoute) {
+                this.addPlanRoute[k] = String(this.addPlanRoute[k])
+              }
             } else {
               this.$message('查询详情失败')
             }
@@ -538,51 +519,67 @@
       addForm () {
         this.activeName = 'second'
         this.title = '新增'
-        this.addPlanRoute = { registeredUserAmount:'',
-          activeUserAmount:'',
-          detainedBicycleAmount:'',
-          actualBicycleAmount:'',
-          averageTurnoverRate:'',
-          outsideAverageTurnoverRate:'',
-          insideAverageTurnoverRate:'',
-          actualDailyUse:'',
-          breakBikePercentage:'',
-          scrapBikePercentage:'',
-          autonomouslyCleanPercentage:'',
-          repairPointAmount:'',
-          transitPointAmount:'',
-          approvedBikeAmount:''}
+        this.addPlanRoute = {
+          registeredUserAmount: '',
+          activeUserAmount: '',
+          detainedBicycleAmount: '',
+          actualBicycleAmount: '',
+          averageTurnoverRate: '',
+          outsideAverageTurnoverRate: '',
+          insideAverageTurnoverRate: '',
+          actualDailyUse: '',
+          breakBikePercentage: '',
+          scrapBikePercentage: '',
+          autonomouslyCleanPercentage: '',
+          repairPointAmount: '',
+          transitPointAmount: '',
+          approvedBikeAmount: ''
+        }
         this.cityName = ''
         this.cityNo = null
       },
       submitForm () {
-        console.log(9696, this.addPlanRoute)
-        if(!this.addPlanRoute.cityName){
+        if (!this.addPlanRoute.cityName) {
           this.$message.warning('请选择地区')
           return
         }
-        if(!this.addPlanRoute.effectiveDate){
+        if (!this.addPlanRoute.effectiveDate) {
           this.$message.warning('请选择生效日期')
           return
         }
-        if(this.addPlanRoute.breakBikePercentage > 100 || this.addPlanRoute.breakBikePercentage <0){
+
+        if(!this.addPlanRoute.id){
+          let nowDate = convertDate2String(new Date().getTime())
+          if(this.addPlanRoute.effectiveDate && this.addPlanRoute.effectiveDate<nowDate){
+            this.$message.warning('生效日期需晚于当前时间')
+            return
+          }
+        }
+        if (this.addPlanRoute.breakBikePercentage > 100 || this.addPlanRoute.breakBikePercentage < 0) {
           this.$message.warning('"损坏维修车辆比例" 为 0-100')
           return
         }
-        if(this.addPlanRoute.scrapBikePercentage > 100 || this.addPlanRoute.scrapBikePercentage <0){
+        if (this.addPlanRoute.scrapBikePercentage > 100 || this.addPlanRoute.scrapBikePercentage < 0) {
           this.$message.warning('"报废回修车辆比例" 为 0-100')
           return
         }
-        if(this.addPlanRoute.autonomouslyCleanPercentage > 100 || this.addPlanRoute.autonomouslyCleanPercentage <0){
+        if (this.addPlanRoute.autonomouslyCleanPercentage > 100 || this.addPlanRoute.autonomouslyCleanPercentage < 0) {
           this.$message.warning('"自主清理车辆比例" 为 0-100')
           return
         }
+
+        for(let key in this.addPlanRoute){
+          if(this.addPlanRoute[key]===undefined){
+            this.addPlanRoute[key] =''
+          }
+        }
+
         this.$ajax.get(`${baseUrl.cityDocking}/cityDocking/save`, {params: this.addPlanRoute})
           .then(res => {
             if (res.data.code === 0) {
               this.$message.success('提交成功')
               this.activeName = 'first'
-              this.formInline ={}
+              this.formInline = {}
               this.query()
             } else {
               this.$message('提交失败')
@@ -597,7 +594,6 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          console.log(this.exportParam)
           this.exportParam.pageNo = ''
           this.exportParam.pageSize = ''
           this.$refs['FileForm'].setAttribute('action', `${baseUrl.cityDocking}/cityDocking/export`)
@@ -627,7 +623,9 @@
       },
       //树模型
       filterNode (value, data) {
-        if (!value) return true
+        if (!value){
+          return true
+        }
         return data.name.indexOf(value) !== -1
       },
       handleNode (data) {
@@ -644,7 +642,7 @@
       },
       searchCity () {
         this.cityVisible = true
-        this.filterText = ''
+        this.filterText = this.formInline.cityName
       },
       areaModify () {
         this.addPlanRoute.cityName = this.filterText
@@ -652,12 +650,11 @@
         this.areaVisible = false
       },
       areaCancel () {
-        alert(this.addPlanRoute.cityNo)
         this.areaVisible = false
       },
       searchArea () {
         this.areaVisible = true
-        this.filterText = ''
+        this.filterText = this.addPlanRoute.cityName
       }
     }
   }
@@ -665,29 +662,30 @@
   function watchOptions (val) {
     if (val) {
 //      return parseInt(val)
-      return val.replace(/[^\d]/g,'')
+      return val.replace(/[^\d]/g, '')
     }
   }
-//  function watchValue (val) {
-//    if (val){
-//      if (parseFloat(val) <= 0) {
-//        val = 0
-//      } else if (parseFloat(val) >= 100) {
-//        val = 100
-//      }
-//      console.log(parseFloat(val))
-//      return parseFloat(val)
-//    }
-//  }
+
+  //  function watchValue (val) {
+  //    if (val){
+  //      if (parseFloat(val) <= 0) {
+  //        val = 0
+  //      } else if (parseFloat(val) >= 100) {
+  //        val = 100
+  //      }
+  //      console.log(parseFloat(val))
+  //      return parseFloat(val)
+  //    }
+  //  }
   function watchFloat (val) {
     if (val) {
 //      return parseFloat(val)
-      return val.replace(/[^\-?\d.]/g,'')
+      return val.replace(/[^\-?\d.]/g, '')
     }
   }
 </script>
 <style scoped>
-  @import'../../assets/css/common.css';
+  @import '../../assets/css/common.css';
 
   html, body {
     height: 100%;
@@ -710,7 +708,7 @@
     position: relative;
   }
 
-  .lab, .labLeft {
+  .addPlanRoute label, .labLeft {
     vertical-align: top;
     display: inline-block;
     width: 250px;
@@ -720,10 +718,23 @@
     border: 1px solid #ccc;
     border-bottom: 0;
   }
-
+#lab{
+  vertical-align: baseline;
+  display: inline;
+  width: 0px;
+  height: 0px;
+  line-height: 0px;
+  text-align: center;
+  border: 0px;
+  border-bottom: 0;
+}
   .labLeft {
     border-left: 0;
   }
+.titleCity{
+  text-decoration: none;
+  color: #000;
+}
 
   .addPlanRoute input {
     vertical-align: top;
