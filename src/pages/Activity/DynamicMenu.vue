@@ -123,7 +123,7 @@
                 <el-form-item label="跳转类型：">
                   {{form.actionTypeName === 'app原生跳转'? 'app原生跳转':'h5跳转'}}
 
-                  <el-form-item prop="actionUrl" v-if="form.actionTypeName === 'app原生跳转'? false : true">
+                  <el-form-item label="地址" prop="actionUrl" id='actionUrl' v-if="form.actionTypeName === 'app原生跳转'? false : true" >
                     <el-input v-model="form.actionUrl"
                               style="margin-top: 10px"
                               placeholder="请输入跳转地址">
@@ -871,6 +871,7 @@
 </script>
 
 <style scoped>
+  @import '../../assets/css/dynamic.css';
   .view {
     border: 1px solid rgba(0, 0, 0, 0.06);
     -webkit-box-sizing: border-box;

@@ -43,12 +43,12 @@
             label="生效城市">
           </el-table-column>
 
-          <el-table-column
-            header-align="center"
-            align="center"
-            prop="executingFlag"
-            label="生效状态">
-          </el-table-column>
+          <!--<el-table-column-->
+            <!--header-align="center"-->
+            <!--align="center"-->
+            <!--prop="executingFlag"-->
+            <!--label="生效状态">-->
+          <!--</el-table-column>-->
 
           <el-table-column
             :show-overflow-tooltip=true
@@ -91,7 +91,7 @@
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.pageNum"
+          :current-page="pagination.pageNo"
           :page-sizes="pagination.pageSizes"
           :page-size="pagination.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
@@ -133,16 +133,6 @@
               v-model="ruleForm.cityName">
             </el-input>
           </el-form-item>
-          <el-form-item label="生效状态：" prop="executingFlag">
-            <el-select v-model="ruleForm.executingFlag" placeholder="请选择">
-              <el-option
-                v-for="item in systemType"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-              </el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="生效日期：" required>
             <el-col :span="3">
               <el-form-item prop="beginDate">
@@ -166,14 +156,15 @@
             </el-col>
           </el-form-item>
           <el-form-item label="限制时间：" prop='limitHour'>
-            <el-input v-model.number="ruleForm.limitHour" class="limitWidth"></el-input>
+            <el-input v-model="ruleForm.limitHour" class="limitWidth"></el-input>
           </el-form-item>
+
+
           <el-button type="primary" @click.stop="submitForm('ruleForm')" class="submit">{{title}}</el-button>
         </el-form>
       </el-tab-pane>
     </el-tabs>
     <el-dialog title="城市" size="tiny" :visible.sync="cityVisible" center>
-      <!--关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">-->
       <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
@@ -191,7 +182,6 @@
       </div>
     </el-dialog>
     <el-dialog title="城市" size="tiny" :visible.sync="areaVisible" center>
-      <!--关键字：<input ref='keySearch' type='text' class='keySearch' v-model="filterText">-->
       <label>城市：</label><a href="#!" class="titleCity">{{filterText}}</a>
       <el-tree
         :data="select"
@@ -227,7 +217,7 @@
         cityName: '',
         cityNo: '',
         formInline: {
-          pageNum: 1,
+          pageNo: 1,
           pageSize: 30,
           id: ''
         },
@@ -247,10 +237,9 @@
           beginDate: [{required: true, message: '请选择日期'}],
           endDate: [{required: true, message: '请选择日期'}],
           cityName: [{required: true, message: '请选择生效城市', trigger: 'blur'}],
-          executingFlag: [{required: true, message: '请选择生效状态', trigger: 'blur'}],
-          limitHour: [{required: true, message: '请输入限制时间'}, {type: 'number', message: '限制时间必须为数字值'}]
+          limitHour: [{required: true, message: '请输入限制时间'}]
         },
-        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNum: 1},
+        pagination: {pageSizes: [30, 40, 60, 100], pageSize: 30, count: 0, pageNo: 1},
         defaultProps: {
           children: 'children',
           label: 'name'
@@ -267,21 +256,7 @@
       a.sessionId(this.adminId, this.path, this.$router, this.$ajax, this.permissionList)
       this.selectCity()
       this.getConfigType()
-      this.getSystem()
       this.getOsType()
-    },
-    computed: {
-      limitHour () {
-        return this.ruleForm.limitHour
-      },
-    },
-    watch: {
-//      filterText (val) {
-//        this.$refs.tree.filter(val)
-//      },
-      limitHour (val) {
-        this.ruleForm.limitHour = watchOptions(val)
-      }
     },
     methods: {
       beginDateChange (val) {
@@ -296,8 +271,8 @@
         this.query()
       },
       handleCurrentChange (val) {
-        this.formInline.pageNum = val
-        this.pagination.pageNum = val
+        this.formInline.pageNo = val
+        this.pagination.pageNo = val
         this.query()
       },
       hasPermission (data) {
@@ -322,28 +297,13 @@
         this.$ajax.get(`${baseUrl.mainUrl}/electric/userUtilsInterface/interface/getBikeAreaList`)
           .then((res) => {
             if (res.data.code === 0) {
-              this.select[0].children = res.data.bikeAreaList
+              if(res.data.bikeAreaList){
+                this.select[0].children = res.data.bikeAreaList
+              }
             }
           })
           .catch((err) => {
             this.$message('城市获取失败')
-          })
-      },
-      //生效状态
-      getSystem () {
-        this.$ajax.get(`${baseUrl.mainUrl}/sys/dictutils/interface/getDictList`, {params: {type: 'black_list_is_executing'}})
-          .then((res) => {
-            this.systemType = []
-            for (let k = 0; k < res.data.length; k++) {
-              this.systemObj[res.data[k].value] = res.data[k].label
-              let systemTypeObj = {}
-              systemTypeObj.value = res.data[k].value
-              systemTypeObj.label = res.data[k].label
-              this.systemType.push(systemTypeObj)
-            }
-          })
-          .catch((err) => {
-            this.$message('生效状态获取失败')
           })
       },
       //配置类型
@@ -389,20 +349,30 @@
         this.cityNo = data.id
       },
       doModify () {
+        if(!this.filterText){
+          this.formInline.id = ''
+        }else{
+          this.formInline.id = this.cityNo
+        }
         this.cityName = this.filterText
-        this.formInline.id = this.cityNo
         this.cityVisible = false
       },
       modifyCancel () {
         this.cityVisible = false
+        this.formInline.id=''
+        this.cityName=''
       },
       searchCity () {
         this.cityVisible = true
         this.filterText = this.cityName
       },
       areaModify () {
+        if(!this.filterText){
+          this.ruleForm.cityNo = ''
+        }else{
+          this.ruleForm.cityNo = this.cityNo
+        }
         this.ruleForm.cityName = this.filterText
-        this.ruleForm.cityNo = this.cityNo
         this.areaVisible = false
       },
       areaCancel () {
@@ -413,7 +383,8 @@
         this.filterText =  this.ruleForm.cityName
       },
       query () {
-        this.$ajax.get(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/list`, {params: {'area.id': this.formInline.id}})
+        this.formInline['area.id']=this.formInline.id
+        this.$ajax.get(`${baseUrl.bikeControl}/layer/limitoperateflag/tLimitOperateConfig/list`, {params:this.formInline})
           .then((res) => {
             if (res.data.code === 0) {
               let result = res.data.data.result
@@ -476,6 +447,10 @@
           this.$message.warning('限制时间不能小于-1')
           return
         }
+        if(!/^(0|[1-9][0-9]*|-[1-9][0-9]*)$/.test(this.ruleForm.limitHour)){
+          this.$message.warning('限制时间只能输入整数')
+          return
+        }
         // 请求
         this.$refs[ruleForm].validate((valid) => {
           if (valid) {
@@ -508,13 +483,6 @@
           }
         })
       }
-    }
-  }
-
-  function watchOptions (val, old) {
-    if (val) {
-      let newVal = parseInt(val) < -1 ? -1 : parseInt(val)
-      return newVal
     }
   }
 </script>
