@@ -2,33 +2,37 @@ import Cookie from 'js-cookie'
 import baseUrl from '../../utils/baseUrl'
 
 // export default {
-//   sessionId (username, password, path, router, ajax) {
-//     if (!Cookie.get('username') || !Cookie.get('sessionId')) {
-//       console.log(999)
-//       if (username && password) {
-//         let data = {'username': username, 'password': password}
-//         console.log(`${baseUrl.loginUrl}/api/login`)
-//         console.log(data)
-//         ajax.post(`${baseUrl.loginUrl}/api/login`, JSON.stringify(data))
-//           .then(res => {
-//             console.log(res)
-//             if (res.data.status === 200 && res.data.sessionId !== '' && res.data.sessionId !== undefined) {
-//               Cookie.remove('sessionId')
-//               Cookie.set('username', username)
-//               Cookie.set('sessionId', res.data.sessionId)
-//               router.push({path: path})
-//             } else {
-//               alert('页面跳转失败')
-//             }
-//           })
-//           .catch(() => {
-//             alert('页面跳转异常')
-//           })
-//       } else {
-//         router.push('/404')
+//   sessionId (adminId, path, router, ajax, permissionList) {
+//     if (adminId && path) {
+//       let url = window.location.origin + '/' + window.location.hash
+//       if (url.indexOf('?') !== -1) {
+//         url = url.split('?')[0]
 //       }
-//     } else if (Cookie.get('username') && Cookie.get('sessionId')) {
-//       router.push({path: path})
+//       Cookie.remove('adminId')
+//       Cookie.set('adminId', adminId)
+//       Cookie.set('path', path)
+//       let data = {'path': url}
+//       console.log(22, url)
+//       ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data, timeout: 3000})
+//         .then(res => {
+//           if (res.data.code === 200) {
+//             console.log(33, res.data.data)
+//             for (let i = 0; i < res.data.data.length; i++) {
+//               if (res.data.data[i].permission !== '' && res.data.data[i].permission !== undefined) {
+//                 permissionList.push(res.data.data[i].permission)
+//                 console.log(permissionList)
+//               }
+//             }
+//             router.push({path: path})
+//           } else {
+//             alert('页面跳转失败')
+//           }
+//         })
+//         .catch(() => {
+//           alert('页面跳转异常')
+//         })
+//     } else {
+//       router.push('/404')
 //     }
 //   }
 // }
@@ -42,11 +46,11 @@ export default {
       Cookie.remove('adminId')
       Cookie.set('adminId', adminId)
       Cookie.set('path', path)
-      let data = {'path': url}
+      let data = {'href': url}
       console.log(22, url)
-      ajax.get(`${baseUrl.loginUrl}/sys/test`, {params: data, timeout: 3000})
+      ajax.post(`${baseUrl.loginUrl}`, data)
         .then(res => {
-          if (res.data.code === 200) {
+          if (res.data.code === 0) {
             console.log(33, res.data.data)
             for (let i = 0; i < res.data.data.length; i++) {
               if (res.data.data[i].permission !== '' && res.data.data[i].permission !== undefined) {

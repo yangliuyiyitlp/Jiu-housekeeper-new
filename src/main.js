@@ -37,7 +37,7 @@ Axios.interceptors.request.use(
   config => {
     if (Cookie.get('adminId')) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
       // config.headers.Authorization = {'sessionId': `${Cookie.get('sessionId')}`}
-      config.headers.userId = `${Cookie.get('adminId')}`
+      config.headers.UserId = `${Cookie.get('adminId')}`
       // console.log(config.headers.Authorization)
     }
     return config
