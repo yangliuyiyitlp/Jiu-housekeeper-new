@@ -1,0 +1,145 @@
+[
+	{
+		"id": "50",
+		"name": "权限",
+		"pId": "0",
+		"path": "/xxxx",
+		"icon": "fa-user-plus"
+	},
+	{
+		"id": "13",
+		"name": "角色管理",
+		"pId": "50",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f443e5e014f444a55530029",
+		"name": "银行管理", 
+		"pId": "4028973d4f443e5e014f4449c66b0027",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f409f98014f40bcd64c0023",
+		"name": "组织架构",
+		"pId": "0",
+		"path": "",
+		"icon": "fa-group",
+		"code": "fa-user-plus"
+	},
+	{
+		"id": "4028973d4f443e5e014f444af9e4002b",
+		"name": "操作记录",
+		"pId": "4028973d4f443e5e014f4449c66b0027",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "12",
+		"name": "菜单模块",
+		"pId": "50",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f443e5e014f4442868a000b",
+		"name": "分配角色",
+		"pId": "50",
+		"path": "",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f443e5e014f4440aad10004",
+		"name": "用户组管理",
+		"pId": "4028973d4f409f98014f40bcd64c0023",
+		"path": "/xxxx",
+		"icon": "asdas"
+	},
+	{
+		"id": "4028973d4f443e5e014f44432099000d",
+		"name": "部门分配角色",
+		"pId": "4028973d4f443e5e014f4442868a000b",
+		"path": "/xxxx",
+		"icon": "wewe"
+	},
+	{
+		"id": "4028973d4f443e5e014f444bb9dc002f",
+		"name": "修改密码",
+		"pId": "4028973d4f443e5e014f4449c66b0027",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f49bf70014f49cca5b4000c",
+		"name": "数据字典",
+		"pId": "4028973d4f443e5e014f4449c66b0027",
+		"path": "/dataDictionary",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f49bf70014f49cca5b4000d",
+		"name": "系统参数",
+		"pId": "4028973d4f443e5e014f4449c66b0027",
+		"path": "/sysparameter",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f443e5e014f4443cd89000f",
+		"name": "用户分配角色",
+		"pId": "4028973d4f443e5e014f4442868a000b",
+		"path": "/xxxx",
+		"icon": ""
+	},
+	{
+		"id": "4028973d4f443e5e014f4449c66b0027",
+		"name": "系统设置",
+		"pId": "0",
+		"path": "",
+		"icon": "fa-cog"
+	},
+	{
+		"name": "test",
+		"id": "000001",
+		"path": "",
+		"pId": "0",
+		"icon":"fa-angellist"
+	},
+	{
+		"id": "xxyy00",
+		"name": "hello",
+		"path": "/hello",
+		"pId": "000001"
+	},
+	{
+		"id": "xxyy0222",
+		"name": "列表测试",
+		"path": "/application",
+		"pId": "000001"
+	},
+	{
+		"name": "数据统计",
+		"id": "000002",
+		"path": "",
+		"pId": "0",
+		"icon":"fa-bar-chart"
+	},
+	{
+		"id": "zzzz01",
+		"name": "浏览分析",
+		"path": "/browse",
+		"pId": "000002"
+	},
+	{
+		"id": "zzzz02",
+		"name": "功能分析",
+		"path": "/functional",
+		"pId": "000002"
+	},
+	{
+		"id": "zzzz03",
+		"name": "优化分析",
+		"path": "/optimize",
+		"pId": "000002"
+	}
+]

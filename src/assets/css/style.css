@@ -1,0 +1,119 @@
+@charset "utf-8";
+.icons {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+}
+.cust-icon {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background: url(../images/icon/cust.png) no-repeat 0 0;
+	background-size: 100%;
+	background-size: 100%;
+    vertical-align: middle;
+    margin-top: -5px;
+    margin-right: 5px;
+}
+.order-icon {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background: url(../images/icon/order.png) no-repeat 0 0;
+	background-size: 100%;
+	background-size: 100%;
+    vertical-align: middle;
+    margin-top: -5px;
+    margin-right: 5px;
+}
+.loan-icon {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background: url(../images/icon/loan.png) no-repeat 0 0;
+	background-size: 100%;
+	background-size: 100%;
+    vertical-align: middle;
+    margin-top: 0px;
+    margin-right: 5px;
+}
+.more-icon {
+	display: inline-block;
+	width: 22px;
+	height: 22px;
+	background: url(../images/icon/more.png) no-repeat 0 0;
+	background-size: 100%;
+	background-size: 100%;
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 5px;
+}
+.systerm-icon {
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	background: url(../images/icon/systerm.png) no-repeat 0 0;
+	background-size: 100%;
+	background-size: 100%;
+    vertical-align: middle;
+    margin-top: -3px;
+    margin-right: 5px;
+}
+.borBot1px {
+	    border-bottom: 1px solid #cccc;
+}
+.pad20 {
+	padding: 20px;    	
+}
+.alignCen {
+	text-align: center;
+}
+.titsheet{
+	background: #f7f7f7;
+	padding-left:10px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 14px;
+}
+.ft {
+	float: left;
+}
+.rt {
+	float: right;
+}
+.el-button--primary {
+    color: #fff;
+    background-color: #31AFFF;
+    border-color: #31AFFF;
+}
+
+.searchbox{
+	padding: 20px 0 0;
+	border-bottom: #ccc solid 1px;
+}
+.mrtop20{
+	margin-top: 20px;
+}
+.highLight{
+	color: #31AFFF 
+}
+.highLight_cursor{
+	cursor: pointer;
+	color: #31AFFF 
+}
+.edit .ke-container {
+
+    width: 100% !important;
+}
+.table-wraps .el-table td, .el-table th {
+	padding: 6px 0;
+}
+.text-rt {
+	text-align: right;
+}
+.btn-color {
+	color: #409eff;
+}
+.padTop20 {
+	padding-top: 30px;
+}
