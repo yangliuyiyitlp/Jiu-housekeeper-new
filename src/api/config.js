@@ -7,12 +7,12 @@ var ipconfi = {
 }
 
 var cfg = {
-    dev: 'http://192.168.21.178:8080/microcredit', //huang--代理
+    // dev: 'http://192.168.21.178:8080/microcredit', //huang--代理
 //  dev: 'http://192.168.21.145:8080/microcredit',//陶辉
 //  dev: 'http://172.16.10.179:8081/microcredit', //test
 //  dev: 'http://192.168.21.39:8080/microcredit', //张琪
 //     dev: 'http://192.168.23.79:8080/microcredit', //费新伟
-//     dev: 'http://116.236.220.213:18881/microcredit',    //sit
+    dev: 'http://116.236.220.213:18881/microcredit',    //sit
 
 //
 //http://172.16.10.179:8081

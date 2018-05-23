@@ -6,7 +6,7 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item>
             <el-input
-              class="title"
+              class="titleTip"
               placeholder="请录入版本号、更新内容查询"
               clearable
               v-model.trim="formInline.queryParam" :maxlength="50">
@@ -92,7 +92,7 @@
         </pagination>
       </div>
     </div>
-    <el-dialog :title="addModify_title" :center =true :visible.sync="banner_DialogVisible" width="50%"   @close="addDiaClose" :close-on-click-modal ='false'>
+    <el-dialog :title="androidTitle" :center =true :visible.sync="banner_DialogVisible" width="50%"   @close="addDiaClose" :close-on-click-modal ='false'>
       <el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline" :rules="addForm_rules">
         <el-form-item label="安装包：" prop="url"  >
           <el-upload
@@ -101,6 +101,7 @@
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-success="handleAvatarSuccess"
+            :on-error="handleError"
             :before-upload="beforeAvatarUpload"
             :limit="1"
             :on-exceed="handleExceed"
@@ -110,7 +111,7 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="版本号：" prop="version"  >
-          <el-input  class='title' v-model="addForm.version" ></el-input>&nbsp;&nbsp;<a href="javascript:void(0)" class="androidTip">版本号不可重复</a>
+          <el-input  class='titleTip' v-model="addForm.version" ></el-input>&nbsp;&nbsp;<a href="javascript:void(0)" class="androidTip">版本号不可重复</a>
         </el-form-item>
         <el-form-item label="是否强制更新：" prop="status"  >
           <el-radio-group v-model="addForm.status">
@@ -152,18 +153,20 @@
       }
       return {
         title: '安卓版本管理',
-        addModify_title:'',
+        androidTitle:'',
         formInline:{queryParam:''},
         currentPage:1,
         pageSize: 10,
         total: 1,
         pageNo: 1,
-        tableData:[{'title':1}],
+        tableData:[],
         addForm:{
+          id:'',
           version:'',
           status:'',
           content:'',
-          url:''
+          url:'',
+          urlName:''
         },
         banner_DialogVisible:false,
         buttonLoading:false,
@@ -186,7 +189,8 @@
         },
         fileList:[],
         fileUpLoad:api.fileUpLoad,
-        ControlId:''
+        ControlId:"",
+        urlName:""
       }
     },
     mounted(){
@@ -201,8 +205,9 @@
       add(){
         this.buttonLoading = false;
         this.banner_DialogVisible =true
-        this.addModify_title='新增'
+        this.androidTitle='新增'
         this.ControlId=''
+        this.fileList =[]
       },
       queryAndroidVersion(){
         const pararms = {
@@ -227,10 +232,15 @@
         })
       },//查询列表
       modifyData(row){
+        console.log(96,row);
+        console.log(11,this.addForm.urlName);
+        row.urlName= this.addForm.urlName
         this.buttonLoading = false;
         this.banner_DialogVisible =true
-        this.addModify_title='修改'
+        this.androidTitle='修改'
         this.ControlId=row.id
+        this.fileList.push({name:this.urlName,url:row.url})
+        console.log(97,this.fileList);
         this.addForm = Object.assign(this.addForm,row)
         console.log(this.addForm)
       },
@@ -256,7 +266,9 @@
               id:this.ControlId,
               version:this.addForm.version,
               status:this.addForm.status,
-              content:this.addForm.content
+              content:this.addForm.content,
+              url:this.addForm.url,
+              urlName:this.addForm.urlName
             }).then(res=>{
               this.buttonLoading = false;
               console.log(res)
@@ -264,6 +276,7 @@
                 this.queryAndroidVersion()
                 this.$message.success(res.data.msg);
                 this.banner_DialogVisible = false;
+                this.fileList =[]
               }else{
                 this.$message.error(res.data.msg)
               }
@@ -275,22 +288,28 @@
       },
       cancel_addModify(){
         this.banner_DialogVisible =false
+        this.fileList =[]
         this.$refs['addForm'].resetFields();
       },
       addDiaClose(){
         Object.assign(this.addForm,{
+          id:'',
           version:'',
           status:'',
           content:'',
-          url:''
+          url:'',
+          urlName:''
         })
         this.$nextTick(()=>{
           this.$refs.addForm.clearValidate();
         })
       },
       handleRemove(file, fileList) { //文件列表移除文件时的钩子
+        console.log(33);
+        console.log(44,this.fileList);
         console.log(file, fileList);
         this.addForm.url = ""
+        this.addForm.urlName = ""
       },
       handlePreview(file) { //点击文件列表中已上传的文件时的钩子
 
@@ -307,17 +326,29 @@
         }
 
       },
-      handleAvatarSuccess(a){ //上传成功后
-        console.log(99,a);
-        this.addForm.url = a.data.url
+      handleError(err){
+        console.log(89,err);
+        this.$message.error('文件上传失败!')
+      },
+      handleAvatarSuccess(response, file){ //上传成功后
+        console.log(99,file);
+        this.addForm.url = file.url
+        this.addForm.urlName = file.name
+        this.urlName = file.name
+        this.$message.success('文件上传成功!')
         this.$refs.addForm.validateField('url');
       },
       beforeAvatarUpload(file){ //文件上传之前
         const isApk = file.name.split('.')[1]
+        const isLtName = file.name.split('.')[0]
         const isLt1M = file.size / 1024 < 100
         if(isApk === "apk"){
           if (!isLt1M) {
             this.$message('文件大小100M以内!')
+            return false
+          }
+          if (isLtName.length>50) {
+            this.$message('文件名长度最多为50!')
             return false
           }
         }else{
@@ -345,7 +376,7 @@
   }
 </script>
 <style  lang="less" scoped>
-.title{
+.titleTip{
   width:350px;
 }
   .android .el-dialog__title{
