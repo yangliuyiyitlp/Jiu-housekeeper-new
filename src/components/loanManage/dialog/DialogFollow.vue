@@ -1,17 +1,15 @@
 <template>
   <div class="order-list-wrap ">
-		<el-dialog
+		<el-dialog 
 			:close-on-click-modal ='false'
 			width='60%'
-			title=""
+			title="" 
 			:visible.sync="dialogFollow.dialogFollowVisible"
 		>
 			  <div class="title">跟进记录</div>
-			  <p class="mrtop20">
-          <el-button type="primary" @click='followWrap'>新增跟进</el-button>
-        </p>
+			  <p class="mrtop20"><el-button type="primary" @click='followWrap'>新增跟进</el-button></p>
 			  <div class="wrap-list table-wraps">
-			  	<el-table
+			  	<el-table 
 			  		height='300px'
 					  	border
 					  	:data="arrData">
@@ -21,7 +19,7 @@
 					      	align='center'
 					      	width="50">
 				    	</el-table-column>
-					    <el-table-column prop="followNode" label="跟进环节" align='center'>
+					    <el-table-column prop="followNode" label="跟进环节" align='center'>	
 					    	<template slot-scope="scope">
 						        <span v-if='scope.row.followNode == 1'>贷前</span>
 						        <span v-if='scope.row.followNode == 2'>检测</span>
@@ -29,58 +27,104 @@
 						        <span v-if='scope.row.followNode == 4'>ERP贷后</span>
 					      </template>
 					    </el-table-column>
-					    <el-table-column prop="followType" label="跟进形式" align='center'>
+					    <el-table-column prop="followType" label="跟进形式" align='center'>	
 					    	<template slot-scope="scope">
 						        <span v-if='scope.row.followType == 1'>电话</span>
 						        <span v-if='scope.row.followType == 2'>外访</span>
-						        <span v-if='scope.row.followType == 3'>活动</span>
+						        <span v-if='scope.row.followType == 3'>活动</span>						        
 					      </template>
 					    </el-table-column>
-					    <el-table-column prop="createTime" label="跟进时间" align='center'>
+					    <el-table-column prop="createTime" label="跟进时间" align='center'>			    	
 					    </el-table-column>
-					    <el-table-column prop="followContent" label="跟进内容" align='center'>
+					    <el-table-column prop="followContent" label="跟进内容" align='center'>		
 					    	<template slot-scope="scope">
 						        <span class="btn-color" @click="showDifferDialog(scope.row,scope.row.followNode)">查看</span>
 					      </template>
 					    </el-table-column>
-					    <el-table-column prop="followTime" label="操作日期" align='center'>
+					    <el-table-column prop="followTime" label="操作日期" align='center'>		    	
 					    </el-table-column>
-					    <el-table-column prop="realName" label="操作人" align='center'>
-					    </el-table-column>
+					    <el-table-column prop="realName" label="操作人" align='center'>				    	
+					    </el-table-column>		    
 					</el-table>
 					<div class="pagWrap">
-					  <pagination
+					  <pagination 				
 							:currentPage = 'currentPage'
 							:total = 'total'
 							@handleSizeChange = 'handleSizeChange'
 							@handleCurrentChange = 'handleCurrentChange'
-			 				>
+			 				> 				
 	 					</pagination>
 	 				</div>
 			  </div>
 		</el-dialog>
 		<div class="follow-wrap">
-			<!--①新增跟进’贷前‘弹框--START-->
-			<el-dialog title="新增跟进" width='360px' center :visible.sync="dialogFormVisible">
+			<!--新增跟进’贷前‘弹框--START-->
+			<el-dialog title="新增跟进"  center :visible.sync="dialogFormVisible">
 			  <el-form :model="form" ref="form" :rules="form_rules">
-			    <el-form-item label="跟进日期" :label-width="formLabelWidth" prop="date">
-			       <el-date-picker
-					      v-model="form.date"
-					      :picker-options="follow_pickerOptions"
-					      type="date"
-      					value-format="yyyy-MM-dd"
-					      placeholder="选择日期">
-					    </el-date-picker>
-			    </el-form-item>
-			    <el-form-item label="跟进形式" :label-width="formLabelWidth" prop="format">
+			    
+			    <!--<el-form-item label="跟进形式" :label-width="formLabelWidth" prop="format">
 			      <el-select v-model="form.format" placeholder="请选择">
 			        <el-option label="电话" value="1"></el-option>
 			        <el-option label="拜访" value="2"></el-option>
 			        <el-option label="活动" value="3"></el-option>
 			      </el-select>
+			    </el-form-item>-->
+			    <el-form-item class='r_s' label="跟进形式" :label-width="formLabelWidth" prop="format">
+			      <el-table
+			      	
+					    :data="tableData"
+					    border
+					    style="width: 100%">
+					    <el-table-column
+					    	align='center'
+					      prop="date"
+					      label="关系"
+					      >
+					    </el-table-column>
+					    <el-table-column
+					    	align='center'
+					      prop="name"
+					      label="姓名">
+					    </el-table-column>
+					    <el-table-column
+					    	align='center'
+					      prop="name"
+					      label="号码">
+					    </el-table-column>
+					    <el-table-column
+					    	align='center'
+					      prop="name"
+					      label="是否知晓此贷款">
+					    </el-table-column>
+					    <el-table-column
+					    	align='center'
+					      prop="name"
+					      label="催收反馈">
+					      	<template slot-scope="scope">
+					      		<div :class="scope">{{scope.row}}</div>
+					      		<el-select v-model="scope.row.a" placeholder="请选择" @change='changeVal("请选择")'>
+									    <el-option
+									      v-for="item in options"
+									      :key="item.value"
+									      :label="item.label"
+									      :value="item.value">
+									    </el-option>
+									  </el-select>
+					      	</template>
+					    </el-table-column>
+					  </el-table>
 			    </el-form-item>
 			    <el-form-item label="跟进内容" :label-width="formLabelWidth" prop="content">
 			       <el-input type="textarea" v-model="form.content"></el-input>
+			    </el-form-item>
+			    <el-form-item label="跟进日期" :label-width="formLabelWidth" prop="date">
+			       <el-date-picker
+					      v-model="form.date"
+					      :picker-options="follow_pickerOptions"
+					      type="date"					      
+      					value-format="yyyy-MM-dd"
+					      placeholder="选择日期">
+					    </el-date-picker>
 			    </el-form-item>
 			  </el-form>
 
@@ -90,24 +134,22 @@
 			      <el-button type="primary" @click="confirm_follow(form)" :loading='saveFollow'>确 定</el-button>
 			    </div>
 			  </div>
-			</el-dialog>
+			</el-dialog>			
 			<!--新增跟进弹框--END-->
-
-      <!--增跟进’放款监测--END-->
 			<!--贷前弹框--START-->
 			<el-dialog title="查看跟进" width='360px' center :visible.sync="dialogLoan">
-			  <p>{{beforeLoan_followCont}}</p>
-        <div class ='miniList' v-if="dialogFollow.dialogButton" @click="dialogLoan = false"><el-button type="info" class="cancel" >取消</el-button><el-button type="primary" class="modify">确定</el-button></div>
+			  <p>{{beforeLoan_followCont}}</p>			 
+			  
 			</el-dialog>
 			<!--贷前弹框--END-->
 			<!--//检测弹框--START-->
 			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogObserve">
 			  <p class="observe">
 			  	监测时间：{{observeObj.followTime}}
-			  	<!--monitorType (integer, optional): 监测方式 ：1.常规监测 2.上门回访-->
+			  	<!--monitorType (integer, optional): 监测方式 ：1.常规监测 2.上门回访--> 
 			  	<span class="rt">监测方式：{{observeObj.monitorType == 1? '常规监测' : '上门回访'}}</span>
-			  </p>
-			  <div class="padTop20 borBot1px dialogLoanEnd" style='margin-top: -25px;'>
+			  </p>			
+			  <div class="padTop20 borBot1px" style='margin-top: -25px;'>			  	
 			  	<el-row>
 			  		<el-row>
 			  			<el-col :span="5" >是否失联：</el-col>
@@ -159,12 +201,12 @@
 						</el-row>
 					</el-row>
 				</div>
-			  <div class="padTop20 dialogLoanEnd">
+			  <div class="padTop20">
 			  	<el-row  style='margin-top: -25px;'>
 						<div>
 							<el-row>
 								<el-col :span="5" >结论：</el-col>
-									<!--1.正常 2.移交电催 3.移交外访 4.移交总部-->
+									<!--1.正常 2.移交电催 3.移交外访 4.移交总部--> 
 								<el-col :span="19" >
 									<span v-if='observeObj.monitorResult == 1'>正常</span>
 									<span v-if='observeObj.monitorResult == 2'>移交电催</span>
@@ -181,55 +223,55 @@
 				</div>
 			</el-dialog>
 			<!--检测弹框--END-->
-
+			
 			<!--贷后弹框--START-->
-			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogLoanEnd">
-			  <div class="dialogLoanEnd" style='margin-top: -25px;'>
+			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogLoanEnd">		
+			  <div class="" style='margin-top: -25px;'>			  	
 			  	<el-row>
-			  		<div>
+			  		<el-row>
 			  			<el-col :span="3" >催收对象：</el-col>
 			  			<el-col :span="21" >本人</el-col>
-			  		</div>
-						<div>
+			  		</el-row>
+						<el-row>
 							<el-col :span="3" >姓名：</el-col>
 							<el-col :span="21" >是内容</el-col>
-						</div>
-						<div>
+						</el-row>
+						<el-row>
 							<el-col :span="3" >电话/地址：</el-col>
 							<el-col :span="21" >1324564879</el-col>
-						</div>
-						<div>
+						</el-row>
+						<el-row>
 							<el-col :span="3" >催收反馈：</el-col>
 							<el-col :span="21" >
 								<span v-if='observeObj.feedbackType == 310000'>有效联络</span>
-								<span v-if='observeObj.feedbackType == 310001'>无效联络</span>
+								<span v-if='observeObj.feedbackType == 310001'>无效联络</span>								
 							</el-col>
-						</div>
-						<div>
+						</el-row>
+						<el-row>
 							<el-col :span="3" >跟进情况：</el-col>
 							<el-col :span="21" >{{observeObj.followContent}}</el-col>
-						</div>
-						<div>
+						</el-row>
+						<el-row>
 							<el-col :span="3" >预约跟进：</el-col>
 							<el-col :span="21" >{{observeObj.reminderTime}}</el-col>
-						</div>
-						<div>
+						</el-row>
+						<el-row>
 							<el-col :span="3" >预约提醒：</el-col>
 							<el-col :span="21" >{{observeObj.reminderContent}}</el-col>
-						</div>
+						</el-row>
 					</el-row>
 				</div>
 			</el-dialog>
 			<!--贷后弹框--END-->
 			<!--erp贷后弹框--START-->
-			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogErp">
-			  <div class="padTop20" style='margin-top: -25px;'>
+			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogErp">		
+			  <div class="padTop20" style='margin-top: -25px;'>			  	
 			  		<el-row>
 			  			<el-col :span="3" >跟进时间：</el-col>
 			  			<!--disappearStatus (integer, optional): 是否失联0.否 1.是 ,-->
 			  			<el-col :span="9" >{{observeObj.followTime}}</el-col>
 			  			<el-col :span="3" >跟进类型：</el-col>
-			  			<!--1.电话 2.外访 3.活动-->
+			  			<!--1.电话 2.外访 3.活动-->			  			
 			  			<el-col :span="9" >
 			  				{{observeObj.followType==1?'电话':observeObj.followType==2?'外访':'活动'}}
 			  			</el-col>
@@ -281,7 +323,6 @@ import Pagination from '@/components/common/Pagination'
 	  		default: function () {
 	        return {
 	        	dialogFollowVisible: false,
-            dialogButton:false
 	        }
 	      }
 	  	},
@@ -311,26 +352,55 @@ import Pagination from '@/components/common/Pagination'
 	        saveFollow: false,
 	        form: {
 	          format: '',
-	          date: '',
+	          date: '',         
 	          content: ''
 	        },
 	        form_rules:{
 	        	date:[
 	        		{required:true, message: '请选择跟进日期', trigger: 'blur,change' }
 	        	],
-					format:[
-		        		{required:true, message: '请选择跟进形式', trigger: 'change' }
-		        	],
+						format:[
+	        		{required:true, message: '请选择跟进形式', trigger: 'change' }
+	        	],
 		        content:[
 		        	{required:true, message: '请填写跟进内容', trigger: 'blur' }
 		        ]
 	        },
 	        arrData: [],
-	        beforeLoan_followCont:''
+	        beforeLoan_followCont:'',
+	        tableData: [{
+	          date: '2016-05-02',
+	          name: '王小虎',
+	          address: '上海市普陀区金沙江路 1518 弄'
+	        }, {
+	          date: '2016-05-04',
+	          name: '王小虎',
+	          address: '上海市普陀区金沙江路 1517 弄'
+	        }, {
+	          date: '2016-05-01',
+	          name: '王小虎',
+	          address: '上海市普陀区金沙江路 1519 弄'
+	        }, {
+	          date: '2016-05-03',
+	          name: '王小虎',
+	          address: '上海市普陀区金沙江路 1516 弄'
+	        }],
+	         options: [{
+		          value: '选项1',
+		          label: '黄金糕'
+		        }, {
+		          value: '选项2',
+		          label: '双皮奶'
+		        }],
+		        value0: '',
+		        value1: ''
 	    }
 	  },
-
+	  
 	  methods: {
+	  	changeVal(val,z){
+	  		console.log(val,z,123456789)
+	  	},
 	  	followWrap() {
 	  		this.dialogFormVisible = true
 	  		this.$nextTick(()=>{
@@ -338,24 +408,24 @@ import Pagination from '@/components/common/Pagination'
 	  		})
 	  		this.form = {
           format: '',
-          date: '',
+          date: '',         
           content: ''
         }
 	  	},
 	  	showDifferDialog(row,followNode) {//followNode跟进环节:1.贷前 2.监测 3.贷后 4.ERP贷后
 	  			console.log(row,followNode)
-	  			this.observeObj = row
-					if(followNode == 1) {
+	  			this.observeObj = row	  			
+					if(followNode == 1) {						
 						this.dialogLoan = true //贷前，
 						this.beforeLoan_followCont = row.followContent
-					} else if (followNode == '2') {//检测				////
-						this.dialogObserve = true
-					} else if (followNode == '3'){//贷后
+					} else if (followNode == '2') {//检测				////	  				
+						this.dialogObserve = true 
+					} else if (followNode == '3'){//贷后						
 						this.dialogLoanEnd = true //贷后
-					} else if (followNode == '4'){//4.ERP贷后
-						this.dialogErp = true
+					} else if (followNode == '4'){//4.ERP贷后						
+						this.dialogErp = true 	
 					}
-					//this.dialogErp = true
+					//this.dialogErp = true 					
 	  	},
 
 	  handleSizeChange(val) {
@@ -363,10 +433,10 @@ import Pagination from '@/components/common/Pagination'
 			this.queryFollowList()
 		},
 		handleCurrentChange(val) {
-			this.pageNo = val
+			this.pageNo = val	
 			this.currentPage = val
 			this.queryFollowList()
-		},
+		},	
 		queryFollowList(){
 			console.log('父组件调用子组件成功')
 			api.queryFollowList({
@@ -403,7 +473,7 @@ import Pagination from '@/components/common/Pagination'
 					return false
 				}
 			})
-
+			
 		}
 	  },
 	  mounted(){
@@ -423,29 +493,17 @@ import Pagination from '@/components/common/Pagination'
 	  }
 }
 </script>
-<style scoped lang="less">
+<style  lang="less">
+	.r_s {
+		.el-table th {
+				padding: 0px 0;
+				line-height: 35px;
+			} 
+			.el-table td{
+				padding: 3px 0;
+			}
+	}
 	.order-list-wrap {
-    .dialogLoanEnd .el-row div{
-      height:30px;
-    }
-    .miniList{
-      bottom:0px;
-      height:40px;
-      .cancel{
-        position: absolute;
-        width:50%;
-        left:0;
-        bottom:0;
-        border-radius: 0;
-      }
-      .modify{
-        position: absolute;
-        width:50%;
-        right:0;
-        bottom:0;
-        border-radius: 0;
-      }
-    }
 		.pagWrap {
 			margin-top: 10px;
 			text-align: right;
@@ -456,7 +514,7 @@ import Pagination from '@/components/common/Pagination'
 			border-bottom: 1px solid #ccc;
     	padding-bottom: 10px;
 		}
-		.follow-wrap {
+		.follow-wrap {			
 			.el-date-editor.el-input, .el-date-editor.el-input__inner {
 			  width: 100%;
 			}

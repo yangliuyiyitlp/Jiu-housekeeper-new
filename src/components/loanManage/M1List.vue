@@ -1,6 +1,7 @@
 <template>
  <div class="allCustList">
  	<TitCommon :title='title'></TitCommon>
+ 	m1
  </div>
 </template>
 

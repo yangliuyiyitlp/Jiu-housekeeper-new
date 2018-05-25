@@ -64,19 +64,16 @@
             prop="date"
             label="操作">
             <template slot-scope="scope">
+              <!--v-if="scope.row.newData == 1"-->
               <el-button
-                v-if="scope.$index == 0"
+                v-if="scope.row.newData == 1"
+                class="modify"
                 @click.native.prevent="modifyData(scope.row)"
                 type="text"
                 size="small">
                 修改
               </el-button>
-              <el-button
-                @click.native.prevent="downLoad(scope)"
-                type="text"
-                size="small">
-                下载
-              </el-button>
+              <a :href="scope.row.url"  class="downLoadUrl">下载</a>
             </template>
           </el-table-column>
         </el-table>
@@ -104,8 +101,8 @@
             :on-error="handleError"
             :before-upload="beforeAvatarUpload"
             :limit="1"
-            :on-exceed="handleExceed"
-            :file-list="fileList">
+            :file-list="fileList"
+            :on-exceed="handleExceed">
             <el-button size="small androidUpLoad" type="primary">上传</el-button>
             <div slot="tip">仅支持上传.apk格式的文件，文件大小100M以内；</div>
           </el-upload>
@@ -138,7 +135,6 @@
 <script>
   import api from '@/api/index.js'
   import TitCommon from '@/components/common/TitCommon'
-  import TableList from '@/components/custManage/TableList'
   import Pagination from '@/components/common/Pagination'
   export default {
     name: 'AndroidVersionControl',
@@ -165,8 +161,7 @@
           version:'',
           status:'',
           content:'',
-          url:'',
-          urlName:''
+          url:''
         },
         banner_DialogVisible:false,
         buttonLoading:false,
@@ -189,10 +184,18 @@
         },
         fileList:[],
         fileUpLoad:api.fileUpLoad,
-        ControlId:"",
-        urlName:""
+        ControlId:""
       }
     },
+    created() {
+		 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
+		 		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl?JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl:10
+		 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl)
+		 	} else {
+		 		let obj = {}
+		 		localStorage.setItem('myPageSize',JSON.stringify(obj))
+		 	}
+		},
     mounted(){
       this.queryAndroidVersion()
     },
@@ -225,38 +228,39 @@
           } else {
             this.$notify({
               title: '提示',
-              message: res.data.msg,
+              message: "获取列表失败",
               duration: 1500
             });
           }
         })
       },//查询列表
       modifyData(row){
+        this.fileList =[]
         console.log(96,row);
         console.log(11,this.addForm.urlName);
-        row.urlName= this.addForm.urlName
+        // row.urlName= this.addForm.urlName
         this.buttonLoading = false;
         this.banner_DialogVisible =true
         this.androidTitle='修改'
         this.ControlId=row.id
-        this.fileList.push({name:this.urlName,url:row.url})
-        console.log(97,this.fileList);
+        // this.fileList.push({name:row.urlName,url:row.url})
+        // console.log(97,this.fileList);
         this.addForm = Object.assign(this.addForm,row)
         console.log(this.addForm)
       },
-      downLoad(scope){
-        const id=scope.row.id
-        api.androidVersionLoad({id:id}).then(res=>{
-          if(res.data.code == 1){
-          } else {
-            this.$notify({
-              title: '提示',
-              message: res.data.msg,
-              duration: 1500
-            });
-          }
-        })
-      },
+      // downLoad(scope){
+      //   const id=scope.row.id
+      //   api.androidVersionLoad({id:id}).then(res=>{
+      //     if(res.data.code == 1){
+      //     } else {
+      //       this.$notify({
+      //         title: '提示',
+      //         message: res.data.msg,
+      //         duration: 1500
+      //       });
+      //     }
+      //   })
+      // },
       confirm_add(addForm){
         this.$refs[addForm].validate((valid) => {
           if (valid) {
@@ -267,8 +271,7 @@
               version:this.addForm.version,
               status:this.addForm.status,
               content:this.addForm.content,
-              url:this.addForm.url,
-              urlName:this.addForm.urlName
+              url:this.addForm.url
             }).then(res=>{
               this.buttonLoading = false;
               console.log(res)
@@ -292,24 +295,21 @@
         this.$refs['addForm'].resetFields();
       },
       addDiaClose(){
+        this.fileList =[]
         Object.assign(this.addForm,{
           id:'',
           version:'',
           status:'',
           content:'',
-          url:'',
-          urlName:''
+          url:''
         })
         this.$nextTick(()=>{
           this.$refs.addForm.clearValidate();
         })
       },
       handleRemove(file, fileList) { //文件列表移除文件时的钩子
-        console.log(33);
-        console.log(44,this.fileList);
-        console.log(file, fileList);
         this.addForm.url = ""
-        this.addForm.urlName = ""
+        // this.addForm.urlName = ""
       },
       handlePreview(file) { //点击文件列表中已上传的文件时的钩子
 
@@ -317,29 +317,30 @@
       handleExceed(files, fileList) { //文件超出个数限制时的钩子
         this.$message('当前限制选择 1个文件');
       },
-      beforeRemove(file, fileList) { //文件列表移除前文件时的钩子
-        const isYes = this.$confirm(`确定移除 ${ file.name }？`);
-        if(isYes){
-          this.addForm.url = ""
-        }else{
-          return false;
-        }
-
-      },
       handleError(err){
         console.log(89,err);
         this.$message.error('文件上传失败!')
       },
       handleAvatarSuccess(response, file){ //上传成功后
-        console.log(99,file);
-        this.addForm.url = file.url
-        this.addForm.urlName = file.name
-        this.urlName = file.name
-        this.$message.success('文件上传成功!')
-        this.$refs.addForm.validateField('url');
+        console.log(22,response);
+        console.log(33,file);
+        if(response.responseCode == 1 || response.responseCode == "1"){
+          console.log(99,file);
+          this.addForm.url = response.fileURL
+          // this.addForm.urlName = file.name
+          // this.urlName = file.name
+          this.$message.success('文件上传成功!')
+          this.$refs.addForm.validateField('url');
+        }else{
+          this.$message.error(response.message)
+        }
+
       },
       beforeAvatarUpload(file){ //文件上传之前
-        const isApk = file.name.split('.')[1]
+        console.log(55,file);
+        const textArr = file.name.split('.')
+        const isApk = textArr[textArr.length-1]
+        // const isApk=file.type
         const isLtName = file.name.split('.')[0]
         const isLt1M = file.size / 1024 < 100
         if(isApk === "apk"){
@@ -357,6 +358,10 @@
         }
       },
       handleSizeChange(val) {
+      	this.currentPage = 1
+				let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
+  			myPageSize.W_AndroidVersionControl = val
+	 			localStorage.setItem('myPageSize',JSON.stringify(myPageSize))
         this.pageSize = val
         this.queryAndroidVersion();
       },
@@ -369,7 +374,6 @@
 
     components: {
       TitCommon,
-      TableList,
       Pagination
     }
 
@@ -386,4 +390,9 @@
     color:#606266;
   }
   .androidUpLoad{width:100px;}
+  .modify span,.downLoadUrl{
+    color: #409EFF;
+    font-size:12px;
+    font-weight:400;
+  }
 </style>

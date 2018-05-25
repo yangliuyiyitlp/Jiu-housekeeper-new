@@ -1,4 +1,6 @@
 <template>
+<div>
+	<div class="top"><img src="../../assets/images/logo.png"></div>
 	<div class="detail">
 		<div class="sheet">
 			<p>
@@ -50,7 +52,7 @@
 			  <el-step title="提交成功" description="2018-03-02 18:00:00"></el-step>
 			</el-steps>
 		</div>
-		<el-tabs type="border-card" style="margin-top:35px" @tab-click="tabClick">
+		<el-tabs type="border-card" style="margin-top:35px" @tab-click="tabClick" v-model="activeName">
 		  <el-tab-pane label="审批记录"  name="1" v-if="status==3">
 		  		<el-table
 			      :data="examData"
@@ -95,6 +97,13 @@
 			        label="操作人">
 			      </el-table-column>
 			    </el-table>
+			    <pagination 				
+					:currentPage = 'currentPage'
+					:total = 'total'
+					@handleSizeChange = 'handleSizeChange'
+					@handleCurrentChange = 'handleCurrentChange'
+	 				> 				
+	 			</pagination>
 		  </el-tab-pane>
 		  <el-tab-pane label="还款计划"  name="2" v-if="status==3">
 		        <p class="des">
@@ -157,10 +166,10 @@
 			      </el-table-column>
 			    </el-table>
 			    <pagination 				
-					:currentPage = 'currentPage'
-					:total = 'total'
-					@handleSizeChange = 'handleSizeChange'
-					@handleCurrentChange = 'handleCurrentChange'
+					:currentPage = 'currentPage2'
+					:total = 'total2'
+					@handleSizeChange = 'handleSizeChange2'
+					@handleCurrentChange = 'handleCurrentChange2'
 	 				> 				
 	 			</pagination>
 		  </el-tab-pane>
@@ -197,10 +206,10 @@
 			      </el-table-column>
 			    </el-table>
 			    <pagination 				
-					:currentPage = 'currentPage2'
-					:total = 'total2'
-					@handleSizeChange = 'handleSizeChange2'
-					@handleCurrentChange = 'handleCurrentChange2'
+					:currentPage = 'currentPage3'
+					:total = 'total3'
+					@handleSizeChange = 'handleSizeChange3'
+					@handleCurrentChange = 'handleCurrentChange3'
 	 				> 				
 	 			</pagination>
 		  </el-tab-pane>
@@ -433,6 +442,7 @@
 		</el-dialog>
 	 	<!--客户分配组织架构弹框--END-->
 	</div>
+</div>
 </template>
 <script>
 import api from '@/api/index.js'	
@@ -443,6 +453,8 @@ export default {
   name: 'allList',
   data() {
   	return {
+  			crmCustInfoId_s:'',
+  			activeName:'4',
   			tableData_s: [],
   			total_s: 0,
   			pageSize_s:10,
@@ -472,7 +484,6 @@ export default {
 	  		planData:[],
 	  		recordData:[],
 	  		tableData:[],
-		    
 		    jobType:1,
 		    pageSize:10,
 		    pageNo:1,
@@ -481,7 +492,11 @@ export default {
 		    pageSize2:10,
 		    pageNo2:1,
 		    total2:0,
-		    currentPage2:1
+		    currentPage2:1,
+		    pageSize3:10,
+		    pageNo3:1,
+		    total3:0,
+		    currentPage3:1
   		}
   	},
   	components:{
@@ -521,6 +536,7 @@ export default {
   			}).then((res) =>{
 				if (res.data.code==1 && res.data.data != null) {
 					this.orderBaseInfo = res.data.data
+					this.crmCustInfoId_s = res.data.crmCustInfoId
 					console.log(res.data.data)
 				}
 			})
@@ -562,8 +578,12 @@ export default {
   				this.queryLinkManInfo()
   			}else if(tab.name=='6'){ // 账户信息
   				this.queryAccountInfo()
-  			}else{ //订单信息
+  			}else if(tab.name=='1'){ // 审批记录
   				this.queryAccountInfo()
+  			}else if(tab.name=='2'){ // 还款计划
+  				this.queryRepaymentPlan()
+  			}else if(tab.name=='3'){ //还款记录
+  				this.queryPaymentHistory() 
   			}
   		},
   		indexMethod(index){
@@ -580,16 +600,23 @@ export default {
   		handleSizeChange(val){
   			this.pageSize = val
   		},
-  		handleCurrentChange(){
+  		handleCurrentChange(val){
   			this.pageNo = val
   			this.currentPage = val
   		},
   		handleSizeChange2(val){
   			this.pageSize2 = val
   		},
-  		handleCurrentChange2(){
+  		handleCurrentChange2(val){
   			this.pageNo2 = val
   			this.currentPage2 = val
+  		},
+  		handleSizeChange3(val){
+  			this.pageSize3 = val
+  		},
+  		handleCurrentChange3(val){
+  			this.pageNo3 = val
+  			this.currentPage3 = val
   		},
   		search_tree() {
     		this.$refs.tree.searchNodes(this.ser_department)
@@ -612,10 +639,10 @@ export default {
     	cuntomerDistributionFn() {
     		this.orSaveDisCust = true
     		let arr = []
-//  		arr.push(this.$route.crmCustInfoId)
+ 			arr.push(this.crmCustInfoId_s)
 //  		let customerIdList = this.multipleSelectionIdList
     		let parsrms = {
-//  			customerIdList: crmCustInfoId,
+ 			customerIdList: arr,
     			employeeId: this.employeeId
     		}
     		console.log(parsrms)
@@ -793,6 +820,12 @@ export default {
 }
 </script>
 <style lang="less">
+	.top{
+		width: 100%;
+		height: 60px;
+		background: #31AFFF;
+		margin-bottom: 20px;
+	}
 	.detail{
 		width: 1300px;
 		margin:20px auto;

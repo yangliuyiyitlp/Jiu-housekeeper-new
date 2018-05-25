@@ -1,0 +1,29 @@
+{
+  "presets": [
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": ["> 0.5%", "last 2 versions", "not ie <= 8"]
+      }
+    }],
+    ["es2015", { "modules": false }],
+    "stage-2"
+  ],
+  "plugins": [
+		"syntax-dynamic-import",
+    "transform-runtime",
+    "transform-vue-jsx",
+    ["component", 
+      [{
+        "libraryName": "element-ui",
+        "styleLibraryName": "theme-chalk"
+      }]
+    ]
+  ],
+  "env": {
+    "test": {
+      "presets": ["env", "stage-2"],
+      "plugins": ["istanbul"]
+    }
+  }
+}

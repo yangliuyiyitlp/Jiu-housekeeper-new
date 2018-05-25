@@ -118,9 +118,9 @@ export default {
     queryLinkManInfo(data, params) { //查询联系人信息
         return _axios.post("/api/custInfoDetail/queryLinkManInfo",queryString.stringify(data), { params: params });
     },
-    queryLinkManInfo(data, params) { //查询联系人信息
-        return _axios.post("/api/custInfoDetail/queryLinkManInfo",queryString.stringify(data), { params: params });
-    },
+    // queryLinkManInfo(data, params) { //查询联系人信息
+    //     return _axios.post("/api/custInfoDetail/queryLinkManInfo",queryString.stringify(data), { params: params });
+    // },
     queryOrderList(data, params) { //查询联系人信息
         return _axios.post("/api/orderDetail/queryOrderList",queryString.stringify(data), { params: params });
     },
@@ -133,6 +133,13 @@ export default {
     queryRepaymentPlan(data, params) { //查询还款计划
         return _axios.post("/api/orderDetail/queryRepaymentPlan",queryString.stringify(data), { params: params });
     },
+    queryAbout(data, params) { //h5app关于
+        return _axios.get("/api/app/About/queryAbout",queryString.stringify(data), { params: params });
+    },
+    queryNodeListInfo(data, params) { //查询订单节点信息
+        return _axios.post("/api/orderDetail/queryNodeListInfo",queryString.stringify(data), { params: params });
+    },
+
     //**********************************************************************************************************
     //保存活动权限
     savaActivityRights(data, params) {
@@ -213,6 +220,10 @@ export default {
     queryCityByProvinceId(data, params) {
     	return _axios.post("/api/address/queryCityByProvinceId",queryString.stringify(data), { params: params });
     },
+//查询区
+queryCityByCityId(data, params) {
+  return _axios.post("/api/address/queryDistrictByCityId",queryString.stringify(data), { params: params });
+},
     //客户分配：根据组织ID获取业务员信息
     queryCustDistributionByDeptId(data, params) {
     	return _axios.post("/api/distribution/queryEmployeeByDeptId",queryString.stringify(data), { params: params });
@@ -241,6 +252,10 @@ export default {
     hangupReasonFn(data, params){
     	return _axios.post("/api/orderDetail/hangupReason",queryString.stringify(data), { params: params });
     },
+  //查询还款订单列表
+  queryMiniList(data, params){
+    return _axios.post("/api/allOrder/queryRepaymentOrders",queryString.stringify(data), { params: params });
+  },
 
     //查看拒单原因
 //  queryOrderList(data, params) {
@@ -255,6 +270,14 @@ export default {
   },
   updateAndroidVersion(data, params) {
     return _axios.post("/api/version/updateVersion",queryString.stringify(data), { params: params });
+  },
+//放款监测订单
+  saveMiniList(data, params) {
+    return _axios.post("/api/version/updateVersion",queryString.stringify(data), { params: params });
+  },
+  //查询逾期订单列表
+  queryOverdueOrders(data, params) {
+    return _axios.post("/api/allOrder/queryOverdueOrders",queryString.stringify(data), { params: params });
   }
 
 }
