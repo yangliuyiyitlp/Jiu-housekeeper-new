@@ -59,11 +59,11 @@ export default {
 		this.uploadJson = api.etitorUpload()
 //		debugger
 		console.log(this.uploadJson,12121212121)
-		this.htmlTop = "<!doctype html><html><head><meta charset='utf-8'>" 
-						+ "<meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0' />"
-						+ "<title></title></head><body>"
+		// this.htmlTop = "<!doctype html><html><head><meta charset='utf-8'>" 
+		// 				+ "<meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0' />"
+		// 				+ "<title></title></head><body>"
 
-		this.htmlBot = "</body></html>"
+		// this.htmlBot = "</body></html>"
 	},
 	mounted() {
 		this.initialHtml()
@@ -105,14 +105,21 @@ export default {
 	    afterChange () {
 	    },
 	    viewH5() {
-	    	this.src=this.htmlTop + this.editorText  + this.htmlBot
-	    	this.RevisedialogFormVisible = true
+	    	// this.src=this.htmlTop + this.editorText  + this.htmlBot
+	    	this.src=this.editorText
+	    	//this.RevisedialogFormVisible = true
+	    	var routeData = this.$router.resolve({
+	        	path: '/appAbout',
+	      	});
+	      	window.open(routeData.href);
+
 	    },
 	    saveHtml() {
-	    	const html_con = this.htmlTop + this.editorText  + this.htmlBot
+	    	// const html_con = this.htmlTop + this.editorText  + this.htmlBot
+	    	const html_con = this.editorText
 	    	const parm = {
 	    		id: this.id,
-	    		data: html_con
+	    		data: this.editorText
 	    	}
 	    	console.log(parm)
 	    	api.saveApp(parm).then(res => {

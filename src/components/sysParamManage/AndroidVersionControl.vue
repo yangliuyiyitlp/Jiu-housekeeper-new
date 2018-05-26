@@ -188,7 +188,8 @@
       }
     },
     created() {
-		 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
+//  	console.log(this.fileUpLoad,'90000000')
+		 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
 		 		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl?JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl:10
 		 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl)
 		 	} else {
@@ -322,6 +323,12 @@
         this.$message.error('文件上传失败!')
       },
       handleAvatarSuccess(response, file){ //上传成功后
+        console.log(99,response,file);
+        this.addForm.url = file.url
+        // this.addForm.urlName = file.name
+        // this.urlName = file.name
+        this.$message.success('文件上传成功!')
+        this.$refs.addForm.validateField('url');
         console.log(22,response);
         console.log(33,file);
         if(response.responseCode == 1 || response.responseCode == "1"){
@@ -334,7 +341,6 @@
         }else{
           this.$message.error(response.message)
         }
-
       },
       beforeAvatarUpload(file){ //文件上传之前
         console.log(55,file);

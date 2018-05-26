@@ -2,39 +2,39 @@
  <div class="allCustList">
  	<TitCommon :title='title'></TitCommon>
  	<div class="custListWrap">
- 		<search  
+ 		<search
  			ref='search'
  			:treeData = 'treeData'
- 			:data = 'zTreeData' 		
- 			@CustDistributionFn='CustDistributionFn' 
- 			@searchFn='searchFn' 
- 			:permission ='permission'> 			
+ 			:data = 'zTreeData'
+ 			@CustDistributionFn='CustDistributionFn'
+ 			@searchFn='searchFn'
+ 			:permission ='permission'>
  		</search>
  		<div class="table-wrap">
- 			<table-list 
+ 			<table-list
  				:loadingTable = 'loadingTable'
- 				:tableData='tableData' 
+ 				:tableData='tableData'
  				@showDialogTableVisible = 'showDialogTableVisible'
  				@showOrderDetail = 'showOrderDetail'
- 				> 				
- 			</table-list> 			
+ 				>
+ 			</table-list>
  		</div>
  		<div class="pad20 alignCen">
- 			<pagination 				
+ 			<pagination
 				:currentPage = 'currentPage'
 				:total = 'total'
 				:myPageSizes = 'pageSize'
 				@handleSizeChange = 'handleSizeChange'
 				@handleCurrentChange = 'handleCurrentChange'
- 				> 				
+ 				>
  			</pagination>
- 		</div> 		
+ 		</div>
  	</div>
  </div>
 </template>
 
 <script>
-import api from "@/api/index"	
+import api from "@/api/index"
 import TitCommon from '@/components/common/TitCommon'
 import Pagination from '@/components/common/Pagination'
 import TableList from '@/components/orderManage/TableList'
@@ -61,11 +61,11 @@ export default {
         treeData: [],
         loadingTable: false,
 //      multipleSelectionIdList: '',
-        
+
   	}
   },
  created() {
- 	
+
  },
  computed: {
  	permission () {
@@ -83,7 +83,7 @@ export default {
  	this.$refs.search.checkOrderNodeFn()
  },
  created() {
- 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+ 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList?JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList:10
  		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList)
  	} else {
@@ -126,7 +126,7 @@ export default {
 			this.loadingTable = false
 			if(res.data.success) {
 				this.total = res.data.total
-				this.tableData = res.data.data 
+				this.tableData = res.data.data
 			} else {
 				this.$notify({
 		           title: '提示',
@@ -138,14 +138,15 @@ export default {
 		})
   	},
   	showDialogTableVisible(row,orShow) {
-//		this.visibleObj.dialogTableVisible = orShow	  	
+//		this.visibleObj.dialogTableVisible = orShow
   		console.log(row,orShow)
   	},
-  	showOrderDetail(row,orShow) {  		
+  	showOrderDetail(row,orShow) {
 		var routeData = this.$router.resolve({
         	path: '/detail/orderDetail',
         	query: {
-        		crmApplayId: row.applyId
+        		crmApplayId: row.applyId,
+            orderStatus:row.custIc
         	}
       	});
       	window.open(routeData.href);
@@ -177,20 +178,20 @@ export default {
 		let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
   		myPageSize.W_AllOrdrList = val
 	 	localStorage.setItem('myPageSize',JSON.stringify(myPageSize))
-		this.pageSize = val  
+		this.pageSize = val
 		this.queryApplyOrderInfoFn()
 //		console.log(val,777777777777)
 	},
 	handleCurrentChange(val) {
-		this.pageNo = val	
+		this.pageNo = val
 		this.currentPage = val
-//		this.pageNo = val	
+//		this.pageNo = val
 		this.queryApplyOrderInfoFn()
 //		console.log(val,88888888)
 	},
 	getDepartmentZtreeFn() {
 		api.getDepartmentZtree({groupId:''}).then(res => {
-			if(res.data.status == 1) {		
+			if(res.data.status == 1) {
 				this.treeData = res.data.ztree
 				this.zTreeData = this.toTree(res.data.ztree)
 //				console.log(this.zTreeData,123)
@@ -211,7 +212,7 @@ export default {
 			var idList = [];
 			ary.forEach(function(item) {
 				idList.push(item.id)
-			});					
+			});
 			for(var i = 0, len = ary.length; i < len; i++) {
 				if(ary[i].pId == undefined || (ary[i].pId != undefined && _this.debFn(ary[i].pId, idList))) {
 					var obj = {
@@ -276,20 +277,20 @@ export default {
 //	DialogFollow,
 //	DialogFollow
   }
-  
+
  }
 </script>
 <style lang="less">
-	.allCustList {		
+	.allCustList {
 		.table-wrap {
 			padding-top: 20px;
 			.el-table th {
 				padding: 9px 0;
-			} 
+			}
 			.el-table td{
 				padding: 3px 0;
 			}
 		}
-		
+
 	}
 </style>

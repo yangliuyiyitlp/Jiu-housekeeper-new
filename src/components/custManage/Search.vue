@@ -104,7 +104,7 @@
 	</div>
 	<!--搜索条件中的组织架构弹框--END-->
 	<!--客户分配组织架构弹框--START-->
-	<el-dialog title="客户分配" width='800px' :visible.sync="CustDistributionDialog">
+	<el-dialog title="客户分配" width='800px' :visible.sync="CustDistributionDialog" :close-on-click-modal = 'false'>
 		<el-row  type="flex" style='margin-top: -25px;'>
 			<el-col :span="11" >
 				<h3 class="titsheet">组织架构</h3>

@@ -9,140 +9,13 @@
        :permission ='permission'>
      </search>
      <div class="table-wrap mrtop20">
-       <el-table
-         :data="tableData"
-         border
-         style="width: 100%">
-         <el-table-column align='center' type="index"  width="60" label="序号" ></el-table-column>
-         <el-table-column
-           prop="id"
-           v-if="0" >
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="compName"
-           label="门店"
-         >
-         </el-table-column>
-
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="deptName"
-           label="业务团队">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="empName"
-           label="归属人">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="custName"
-           label="借款人姓名">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="custMobile"
-           label="手机号">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="custIc"
-           label="身份证号">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="cptName"
-           label="产品系列">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="cpName"
-           label="产品名称">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="provName"
-           label="省份">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="cityName"
-           label="城市">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="contractMoney"
-           label="合同金额（元）">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="loanTime"
-           label="放款日期">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="expireTime"
-           label="到期日期">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="currentRepaymentTime"
-           label="本期还款日">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="loanDay"
-           label="放款天数">
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="date"
-           label="操作">
-           <template slot-scope="scope">
-             <!--v-if="scope.row.newData == 1"-->
-             <el-button
-               class="modify"
-               @click.native.prevent="forWard(scope.row)"
-               type="text"
-               size="small">
-               跟进
-             </el-button>
-           </template>
-         </el-table-column>
-         <el-table-column
-           align='center'
-           :show-overflow-tooltip="true"
-           prop="date"
-           label="订单详细">
-           <template slot-scope="scope">
-             <!--v-if="scope.row.newData == 1"-->
-             <el-button
-               class="modify"
-               @click.native.prevent="viewData(scope.row)"
-               type="text"
-               size="small">
-               查看
-             </el-button>
-           </template>
-         </el-table-column>
-       </el-table>
+       <table-list
+         :loadingTable = 'loadingTable'
+         :tableData='tableData'
+         @forWard = 'forWard'
+         @viewData = 'viewData'
+       >
+       </table-list>
      </div>
      <div class="pad20 alignCen">
        <pagination
@@ -167,9 +40,10 @@ import TitCommon from '@/components/common/TitCommon'
 import Pagination from '@/components/common/Pagination'
 import Search from '@/components/loanManage/Search'
 import DialogFollow from '@/components/loanManage/dialog/DialogFollowMini'
+import TableList from '@/components/loanManage/LoanTableList'
 import api from "@/api/index"
 export default {
-  name: 'allOverdue',
+  name: 'MinitorList',
   data() {
   	return {
   		title: '放款监测订单',
@@ -300,7 +174,8 @@ export default {
   	TitCommon,
     Search,
     Pagination,
-    DialogFollow
+    DialogFollow,
+    TableList
   }
 
  }

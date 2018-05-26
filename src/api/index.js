@@ -278,6 +278,12 @@ queryCityByCityId(data, params) {
   //查询逾期订单列表
   queryOverdueOrders(data, params) {
     return _axios.post("/api/allOrder/queryOverdueOrders",queryString.stringify(data), { params: params });
-  }
+  },
+  //新增贷后跟进时查询联系人
+  querylinkManForFollow(data, params) {
+    return _axios.post("/api/followUp/querylinkManForFollow",queryString.stringify(data), { params: params });
+  },
+  
+
 
 }

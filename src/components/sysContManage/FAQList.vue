@@ -23,6 +23,7 @@
 			    <el-form-item>
 	    			<el-button type="primary" @click="search()">查询</el-button>
 	    			<el-button type="primary" @click="add()">新增</el-button>
+	    			<el-button type="info" @click="viewH5()">预览H5</el-button>
 	  			</el-form-item>
 			</el-form>
 	  </el-col>
@@ -50,7 +51,7 @@
 					  title="答案"
 					  width="300"
 					  trigger="hover">
-					  <div v-html="scope.row.result"></div>
+					  <div v-html="scope.row.result" style="word-break:break-all;"></div>
 					  <span class="highLight_cursor" slot="reference">查看答案</span>
 					</el-popover>
 		       </template>
@@ -417,6 +418,12 @@ export default {
 		Url2.select(); // 选择对象
 		console.log(Url2);
 		document.execCommand("Copy");
+    },
+    viewH5(){
+    	var routeData = this.$router.resolve({
+        	path: '/questions',
+      	});
+      	window.open(routeData.href);
     }
   },
   components: {

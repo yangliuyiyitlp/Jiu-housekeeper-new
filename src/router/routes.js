@@ -40,6 +40,7 @@ import MinitorList from '@/components/loanManage/MinitorList'
 import CollectionList from '@/components/loanManage/CollectionList'
 import M1List from '@/components/loanManage/M1List'
 import AppH5Question from '@/components/app/H5Question'
+import H5About from '@/components/app/H5About'
 
 import CustDetail from '@/components/common/CustDetail'
 import OrderDetail from '@/components/common/OrderDetail'
@@ -297,6 +298,7 @@ export default [
 
         ]
     },
+
 //  {
 //      path: '/login',
 //      component: Login,
@@ -320,6 +322,15 @@ export default [
         component: AppH5Question,
         //component: LayoutA,
         name: " 常见问题",
+        meta: {
+            istoken: true
+        },
+    },
+    {
+        path: '/appAbout',
+        component: H5About,
+        //component: LayoutA,
+        name: "app关于", 
         meta: {
             istoken: true
         },

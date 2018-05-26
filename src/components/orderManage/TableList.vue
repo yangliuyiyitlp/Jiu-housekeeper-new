@@ -179,7 +179,7 @@
     	v-if='tablePermisson.endOrderTime'
     	:show-overflow-tooltip="true"
 		align='center'
-	      prop="endOrderTime"
+	      prop="finishTime"
 	      label="结清时间"
 	      width="120">
     </el-table-column>

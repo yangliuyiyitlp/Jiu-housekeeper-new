@@ -59,7 +59,7 @@
 		</el-dialog>
 		<div class="follow-wrap">
 			<!--新增跟进’贷前‘弹框--START-->
-			<el-dialog title="新增跟进"  center :visible.sync="dialogFormVisible">
+			<el-dialog title="新增跟进" width='1000px'  center :visible.sync="dialogFormVisible">
 			  <el-form :model="form" ref="form" :rules="form_rules">
 			    
 			    <!--<el-form-item label="跟进形式" :label-width="formLabelWidth" prop="format">
@@ -69,43 +69,64 @@
 			        <el-option label="活动" value="3"></el-option>
 			      </el-select>
 			    </el-form-item>-->
-			    <el-form-item class='r_s' label="跟进形式" :label-width="formLabelWidth" prop="format">
-			      <el-table
-			      	
+			    <el-form-item class='r_s' label="被叫号码" :label-width="formLabelWidth">
+			      <el-table			      	
 					    :data="tableData"
 					    border
 					    style="width: 100%">
 					    <el-table-column
+					    	width='140px'
 					    	align='center'
-					      prop="date"
+					      prop="relation"
 					      label="关系"
 					      >
 					    </el-table-column>
 					    <el-table-column
+					    	width='140px'
 					    	align='center'
 					      prop="name"
 					      label="姓名">
 					    </el-table-column>
 					    <el-table-column
+					    	width='140px'
 					    	align='center'
-					      prop="name"
+					      prop="phone"
 					      label="号码">
 					    </el-table-column>
 					    <el-table-column
-					    	align='center'
-					      prop="name"
+					    	width='140px'
+					    	align='center'					     
 					      label="是否知晓此贷款">
+					      <template slot-scope="scope">
+					      	<!--是否知晓此项借款:0是1否 ,-->
+					      	{{scope.row.linkmanIsKnow == 1?'否':'是'}}
+					      </template>
 					    </el-table-column>
 					    <el-table-column
 					    	align='center'
-					      prop="name"
 					      label="催收反馈">
-					      	<template slot-scope="scope">
-					      		<div :class="scope">{{scope.row}}</div>
-					      		<el-select v-model="scope.row.a" placeholder="请选择" @change='changeVal("请选择")'>
+					      	<template slot-scope="scope">					      		
+					      		<el-select 
+					      			v-model="obj['value' + scope.$index]" 
+					      			placeholder="请选择" 
+					      			@blur="blurFn(scope.$index)" 
+					      			@change='changeVal' 
+					      			style='display: inline-block;'>
 									    <el-option
-									      v-for="item in options"
-									      :key="item.value"
+									      v-for="(item,ind) in options"
+									      :key="ind"
+									      :label="item.label"
+									      :value="item.value">
+									    </el-option>
+									  </el-select>									  
+									  <el-select 
+									  	v-model="obj_s['value_s' + scope.$index]" 
+									  	placeholder="请选择" 
+									  	:disabled="selObj['value'+ scope.$index]" 
+									  	style='display: inline-block;'>
+									    <el-option
+									      v-for="(item,ind) in options"
+									      :key="ind"
 									      :label="item.label"
 									      :value="item.value">
 									    </el-option>
@@ -114,17 +135,23 @@
 					    </el-table-column>
 					  </el-table>
 			    </el-form-item>
-			    <el-form-item label="跟进内容" :label-width="formLabelWidth" prop="content">
-			       <el-input type="textarea" v-model="form.content"></el-input>
+			    <el-form-item label="跟进情况" :label-width="formLabelWidth" prop="content">
+			       <el-input type="textarea" v-model="form.content" :maxlength = '200'></el-input>
 			    </el-form-item>
-			    <el-form-item label="跟进日期" :label-width="formLabelWidth" prop="date">
+			    <el-form-item label="预约跟进" :label-width="formLabelWidth">
+			    	<el-checkbox v-model="checked" @change='chenkFollowTime'>跟进时间</el-checkbox>
 			       <el-date-picker
+			       	:disabled='disabledChenk'
+			       		style='width:200px'
 					      v-model="form.date"
 					      :picker-options="follow_pickerOptions"
-					      type="date"					      
+					      type="date"		
       					value-format="yyyy-MM-dd"
 					      placeholder="选择日期">
 					    </el-date-picker>
+			    </el-form-item>
+			    <el-form-item label="预约提醒" :label-width="formLabelWidth">
+			       <el-input type="textarea" v-model="form.warnIng" :maxlength = '200' :disabled='disabledChenk'></el-input>
 			    </el-form-item>
 			  </el-form>
 
@@ -323,6 +350,7 @@ import Pagination from '@/components/common/Pagination'
 	  		default: function () {
 	        return {
 	        	dialogFollowVisible: false,
+	        	crmApplayId:''
 	        }
 	      }
 	  	},
@@ -353,7 +381,8 @@ import Pagination from '@/components/common/Pagination'
 	        form: {
 	          format: '',
 	          date: '',         
-	          content: ''
+	          content: '',
+	          warnIng: ''
 	        },
 	        form_rules:{
 	        	date:[
@@ -368,41 +397,76 @@ import Pagination from '@/components/common/Pagination'
 	        },
 	        arrData: [],
 	        beforeLoan_followCont:'',
-	        tableData: [{
-	          date: '2016-05-02',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1518 弄'
-	        }, {
-	          date: '2016-05-04',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1517 弄'
-	        }, {
-	          date: '2016-05-01',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1519 弄'
-	        }, {
-	          date: '2016-05-03',
-	          name: '王小虎',
-	          address: '上海市普陀区金沙江路 1516 弄'
-	        }],
+	        tableData: [],
 	         options: [{
-		          value: '选项1',
-		          label: '黄金糕'
-		        }, {
-		          value: '选项2',
-		          label: '双皮奶'
+		          value: '0',
+		          label: '未联络'
+		        },{
+		          value: '1',
+		          label: '有效联络'
+		        },{
+		          value: '2',
+		          label: '无效联络'
 		        }],
 		        value0: '',
-		        value1: ''
+		        value1: '',
+		        obj: {
+		        	value0:'',
+		        	value1:'',
+		        	value2:'',
+		        	value3:'',
+		        	value4:'',
+		        },
+		        obj_s: {
+		        	value_s0:'',
+		        	value_s1:'',
+		        	value_s2:'',
+		        	value_s3:'',
+		        	value_s4:'',
+		        },
+		        selObj: {
+    		  		value0: true,
+					    value1: true,
+					    value2: true,
+					    value3: true,
+					    value4: true,
+		        },
+		        relationData: [],
+		        num:null,
+		        checked: false,
+		        disabledChenk: true
+		        
 	    }
 	  },
-	  
+	  created(){
+
+	  },
 	  methods: {
-	  	changeVal(val,z){
-	  		console.log(val,z,123456789)
+	  	chenkFollowTime(val) {
+	  		this.checked = val
+	  		this.disabledChenk = this.checked?false:true
+	  		if (!this.checked) {
+	  			this.form.date = ''
+	  			this.form.warnIng = ''	  			
+	  		}
+	  		console.log(this.checked,1231313213)
+	  	},
+	  	changeVal(val){
+					if(val == '1'){
+		  			this.selObj['value' + this.num] = false
+		  		} else {
+		  			this.selObj['value' + this.num] = true
+		  		}
+//					console.log(this.num,val,66666666)
+//					console.log(this.selObj,66666666)
+					console.log(this.obj)
+	  	},
+	  	blurFn(num) {
+	  		this.num = num
 	  	},
 	  	followWrap() {
 	  		this.dialogFormVisible = true
+	  		this.querylinkManForFollowFn()
 	  		this.$nextTick(()=>{
 	  			this.$refs['form'].resetFields()
 	  		})
@@ -411,6 +475,25 @@ import Pagination from '@/components/common/Pagination'
           date: '',         
           content: ''
         }
+	  	},
+	  	querylinkManForFollowFn(){//新增跟进联系人列表
+	  		let crmApplayId = this.dialogFollow.crmApplayId
+//					let crmApplayId = '2c908a2b5ad0eb3d015ad0ef89bd0000'
+	  		console.log(crmApplayId)
+	  		api.querylinkManForFollow({crmApplayId: crmApplayId}).then((res) => {
+	  			if(res.data.success){
+	  				this.tableData = res.data.data
+	  			} else {
+	  				this.$notify({
+		           title: '提示',
+		           message: res.data.msg,
+		           duration: 1500
+		        });
+	  			}
+//	  				this.arrData = res.data.data
+//	  				this.total = res.data.total
+	  				console.log(res.data.data)
+	  			})
 	  	},
 	  	showDifferDialog(row,followNode) {//followNode跟进环节:1.贷前 2.监测 3.贷后 4.ERP贷后
 	  			console.log(row,followNode)
@@ -428,64 +511,56 @@ import Pagination from '@/components/common/Pagination'
 					//this.dialogErp = true 					
 	  	},
 
-	  handleSizeChange(val) {
-			this.pageSize = val
-			this.queryFollowList()
-		},
-		handleCurrentChange(val) {
-			this.pageNo = val	
-			this.currentPage = val
-			this.queryFollowList()
-		},	
-		queryFollowList(){
-			console.log('父组件调用子组件成功')
-			api.queryFollowList({
-  				pageNo:this.pageNo,
-  				pageSize:this.pageSize,
-  				crmCustId:this.rowFollowId
-  			}).then((res) => {//followNode跟进环节:1.贷前 2.监测 3.贷后 4.ERP贷后
-  				this.arrData = res.data.data
-  				this.total = res.data.total
-  				console.log(this.arrData ,this.total )
-  			})
-		},
-		confirm_follow(form){
-			this.$refs['form'].validate((valid) => {
-				if(valid){
-					this.saveFollow = true
-					api.saveFollowInfo({
-						crmCustInfoId:this.rowFollowId,
-						followNode:'1',
-						followTime:this.form.date,
-						followType:this.form.format,
-						followContent:this.form.content
-					}).then((res) => {
-						this.saveFollow = false
-						this.dialogFormVisible = false
-						this.queryFollowList()
-		  			this.$notify({
-			           title: '提示',
-			           message: res.data.msg,
-			           duration: 1500
-			        });
-		  			})
-				}else{
-					return false
-				}
-			})
-			
-		}
-	  },
-	  mounted(){
-	  	console.log(this.$route,'mounted')
-	  },
-	  watch: {
-	  	rowFollowId(newVal) {
-	  		if(newVal){
-	  			//this.queryFollowList()
-	  		}
-	  		console.log(newVal,'-----')
-	  	}
+		  handleSizeChange(val) {
+				this.pageSize = val
+				this.queryFollowList()
+			},
+			handleCurrentChange(val) {
+				this.pageNo = val	
+				this.currentPage = val
+				this.queryFollowList()
+			},	
+			queryFollowList(){
+				console.log('父组件调用子组件成功')
+				api.queryFollowList({
+	  				pageNo:this.pageNo,
+	  				pageSize:this.pageSize,
+	  				crmCustId:this.rowFollowId
+	  			}).then((res) => {//followNode跟进环节:1.贷前 2.监测 3.贷后 4.ERP贷后
+	  				this.arrData = res.data.data
+	  				this.total = res.data.total
+//	  				console.log(this.arrData ,this.total )
+	  			})
+			},
+			confirm_follow(form){
+				this.$refs['form'].validate((valid) => {
+					if(valid){
+						this.saveFollow = true
+						api.saveFollowInfo({
+							crmCustInfoId:this.rowFollowId,
+							followNode:'3',//跟进环节:1.贷前 2.监测 3.贷后 4.ERP跟进 必填
+//							followTime:this.form.date,
+//							followType:this.form.format,
+							followContent:this.form.content,//跟进内容
+							reminderTime: this.form.date,//提醒时间,预约跟进 贷后
+							reminderContent: this.form.warnIng,//提醒内容 贷后
+						}).then((res) => {
+							this.saveFollow = false
+							this.dialogFormVisible = false
+							this.queryFollowList()
+								console.log('==============')
+			  			this.$notify({
+				           title: '提示',
+				           message: res.data.msg,
+				           duration: 1500
+				        });
+			  			})
+					}else{
+						return false
+					}
+				})
+				
+			}
 	  },
 	  components: {
 //	  	CommonTable
@@ -520,6 +595,11 @@ import Pagination from '@/components/common/Pagination'
 			}
 			.el-select {
 				width: 100%;
+			}
+			.el-form {
+				.el-select {
+					width: 110px;
+				}
 			}
 			.text-rt {
 				    margin-top: -40px;

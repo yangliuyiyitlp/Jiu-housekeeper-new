@@ -117,3 +117,6 @@
 .padTop20 {
 	padding-top: 30px;
 }
+.overDate .el-input{
+	width: 165px;
+}

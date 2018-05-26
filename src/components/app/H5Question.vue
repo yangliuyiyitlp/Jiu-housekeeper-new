@@ -1,8 +1,8 @@
 <template>
   <div class="ques-wrap">
   		<div class="search-wrap">
-			 	<el-input clearable placeholder="Search" v-model="input5" class="input-with-select">
-			    <el-button slot="append" icon="el-icon-search"></el-button>
+			 	<el-input clearable placeholder="Search" v-model="ques_key" class="input-with-select">
+			    <el-button slot="append" icon="el-icon-search" @click="searchList()"></el-button>
 			  </el-input>
 			</div>
       <div class="scroll">
@@ -28,14 +28,13 @@
 				    <div >
 				    	
 				     <ul id='activityTab'>
-							<li v-for="item in items">
+							<li v-for="(item,ind) in items" :key='ind'>
 								<h2 @click='targetTab($event)'>
-									{{item}}
+									{{item.data}}
 									<i class="icons"></i>
 								</h2>
-								<div class="actCon">
-								item
-						    </div>
+								<div class="actCon" v-html="item.result">
+						    	</div>
 							</li>
 						</ul>
 				    </div>
@@ -47,19 +46,20 @@
 </template>
 
 <script>
+import api from '@/api/index.js'
 export default {
   name: 'hello',
   data () {
     return {
       idArr: [2],
-      input5: '',
+      ques_key: '',
       itemIndex: 1,
-	    items: ['<span>11212</span>','<span>222</span>', '<span>3333</span>','<span>444</span>','<span>555</span>','<span>66</span>'],
+      items: [],
       options: {
         pullDownRefresh: {
           threshold: 90,
           stop: 40,
-          txt: 'Refresh success'
+          txt: '刷新成功'
         },
         pullUpLoad: {
           threshold: 0,          
@@ -68,10 +68,36 @@ export default {
             noMore: '~我是有底线的~'
           }
         }
-		  }
+	  },
+	  pageSize:10,
+	  pageNo:1
     }
   }, 
   methods: {
+  	searchList(){
+  		this.pageNo = 1;
+	    this.items = []
+  		this.queryQuestionList()
+
+  	},
+  	queryQuestionList(){
+  		var params={
+  			pageNo:this.pageNo,
+  			pageSize:this.pageSize,
+  			data:this.ques_key,
+  			status:1
+  		}
+  		api.queryQuestionList(params).then(res=>{
+ 			console.log(res.data.data,123121231321)
+ 			if(res.data.code == 1 && res.data.data.length !=0){
+ 				this.items = this.items.concat(res.data.data)
+ 				console.log(this.items,'this.items')
+ 				
+ 			} else {
+ 				this.$refs.scroll.forceUpdate()
+ 			}
+ 		})
+  	},
   	targetTab(eve) {
 //		console.log(eve.target.parentNode.siblings())
   	console.log(112)
@@ -97,60 +123,23 @@ export default {
     onPullingDown() {
 	      // Mock async load.
 	      setTimeout(() => {
-	        if (Math.random() > 0.5) {
-	          // If have new data, just update the data property.
-	          this.items.unshift('I am new data: ' + new Date())
-	        } else {
-	          // If no new data, you need use the method forceUpdate to tell us the load is done.
-	          this.$refs.scroll.forceUpdate()
-	        }
+	      	this.pageNo = 1;
+	      	this.items = []
+	      	this.queryQuestionList()
 	      }, 1000)
-    	},
-    	 onPullingUp() {
-	      // Mock async load.
-	      setTimeout(() => {
-	        if (Math.random() > 0.5) {
-	          // If have new data, just update the data property.
-	          let newPage = [
-	            'I am line ' + ++this.itemIndex,
-	            'I am line ' + ++this.itemIndex,
-	            'I am line ' + ++this.itemIndex,
-	            'I am line ' + ++this.itemIndex,
-	            'I am line ' + ++this.itemIndex
-	          ]
-	
-	          this.items = this.items.concat(newPage)
-	        } else {
-	          // If no new data, you need use the method forceUpdate to tell us the load is done.
-	          this.$refs.scroll.forceUpdate()
-	        }
-	      }, 1000)
-//	      this.tabFn() 
-	    },
-	    tabFn(){
-	    	$('#activityTab li > h2').on('click',function(){
-					$(this).parent().siblings().each(function(index,value){
-						$(this).find('.actCon').removeClass('actConShow')
-						$(this).find('.icons').removeClass('putdown')				
-					});
-					if($(this).siblings().hasClass('actConShow')) {
-						$(this).siblings().removeClass('actConShow')
-						$(this).find('.icons').removeClass('putdown')
-					} else {
-						$(this).siblings().addClass('actConShow')
-						$(this).find('.icons').addClass('putdown')
-					}
-				})
-	    }
+	},
+	onPullingUp() {
+      // Mock async load.
+      setTimeout(() => {
+      	this.pageNo = this.pageNo + 1
+      	this.queryQuestionList()
+      }, 1000)
+    },
   },
   mounted() {
-//	this.tabFn()
+	this.queryQuestionList()
   },
   watch: {
-  	items() {
-//		console.log(1231213123)
-//		this.tabFn()
-  	}
   }
 }
 </script>
