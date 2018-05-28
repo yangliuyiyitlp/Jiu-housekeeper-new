@@ -54,7 +54,7 @@
         </el-steps>
       </div>
       <el-tabs type="border-card" style="margin-top:35px" @tab-click="tabClick" v-model="activeName">
-        <el-tab-pane label="审批记录"  name="1" v-if="status==3">
+        <el-tab-pane label="审批记录"  name="1" v-if="status==2 || status==5">
           <el-table
             :data="examData"
             border
@@ -455,7 +455,7 @@
     data() {
       return {
         crmCustInfoId_s:'',
-        activeName:'4',
+        activeName:'',
         tableData_s: [],
         total_s: 0,
         pageSize_s:10,
@@ -480,7 +480,7 @@
         apply_state:false,
         eye:true,
         money:'2500',
-        status:3,
+        status:'',
         examData:[],
         planData:[],
         recordData:[],
@@ -553,16 +553,41 @@
           }
         })
       },
+      queryExamData(){ //审批记录
+        api.queryExamDataList({
+          pageSize:this.pageSize,
+          pageNo:this.pageNo,
+          crmApplayId:this.$route.query.crmApplayId
+        }).then((res) =>{
+          if(res.data.success) {
+            this.examData = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
+          }
+        })
+
+      },
       queryRepaymentPlan(){ //还款计划
         api.queryRepaymentPlan({
           pageSize:this.pageSize,
           pageNo:this.pageNo,
           crmApplayId:this.$route.query.crmApplayId
         }).then((res) =>{
-          if (res.data.code==1 && res.data.data != null) {
+          if(res.data.success) {
             this.RepaymentPlan = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
           }
         })
+
       },
       queryPaymentHistory(){ //还款记录
         api.queryPaymentHistory({
@@ -570,8 +595,14 @@
           pageNo:this.pageNo2,
           crmApplayId:this.$route.query.crmApplayId
         }).then((res) =>{
-          if (res.data.code==1 && res.data.data != null) {
+          if(res.data.success) {
             this.PaymentHistory = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
           }
         })
       },
@@ -579,10 +610,26 @@
         api.queryBaseOrderInfo({
           crmApplayId:this.$route.query.crmApplayId
         }).then((res) =>{
-          if (res.data.code==1 && res.data.data != null) {
-            this.orderBaseInfo = res.data.data
-            this.crmCustInfoId_s = res.data.crmCustInfoId
-            console.log(res.data.data)
+          if(res.data.success) {
+            if (res.data.code==1 && res.data.data != null) {
+              this.orderBaseInfo = res.data.data
+              this.status = res.data.data.status
+              if(this.status == 3){
+                this.activeName = "2"
+              }else if(this.status == 2 || this.status == 5){
+                this.activeName = "1"
+                this.queryExamData()
+              }else{
+                this.activeName = "4"
+              }
+              this.crmCustInfoId_s = res.data.crmCustInfoId
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
+          }
           }
         })
       },
@@ -591,9 +638,15 @@
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{
           console.log('jobType',res.data.data)
-          if (res.data.code==1 && res.data.data != null) {
+          if(res.data.success) {
             this.userBaseInfo = res.data.data
             this.jobType = res.data.data.jobType
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
           }
         })
       },
@@ -601,8 +654,14 @@
         api.queryLinkManInfo({
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{
-          if (res.data.code==1 && res.data.data != null) {
+          if(res.data.success) {
             this.linkInfo = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
           }
         })
       },
@@ -610,8 +669,14 @@
         api.queryAccountInfo({
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{
-          if (res.data.code==1) {
+          if(res.data.success) {
             this.accoutInfo = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
           }
         })
       },
@@ -624,7 +689,7 @@
         }else if(tab.name=='6'){ // 账户信息
           this.queryAccountInfo()
         }else if(tab.name=='1'){ // 审批记录
-          this.queryAccountInfo()
+          this.queryExamData()
         }else if(tab.name=='2'){ // 还款计划
           this.queryRepaymentPlan()
         }else if(tab.name=='3'){ //还款记录

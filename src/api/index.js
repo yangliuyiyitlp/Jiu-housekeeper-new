@@ -256,6 +256,9 @@ queryCityByCityId(data, params) {
   queryMiniList(data, params){
     return _axios.post("/api/allOrder/queryRepaymentOrders",queryString.stringify(data), { params: params });
   },
+  queryExamDataList(data, params){ //审核记录
+    return _axios.post("/api/orderDetail/QueryTrackRecodList",queryString.stringify(data), { params: params });
+  },
 
     //查看拒单原因
 //  queryOrderList(data, params) {
@@ -283,7 +286,7 @@ queryCityByCityId(data, params) {
   querylinkManForFollow(data, params) {
     return _axios.post("/api/followUp/querylinkManForFollow",queryString.stringify(data), { params: params });
   },
-  
+
 
 
 }
