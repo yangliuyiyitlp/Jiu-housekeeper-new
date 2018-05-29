@@ -26,16 +26,17 @@ Vue.use(Cube)
 
 Vue.config.productionTip = false
 
-//import VueKindEditor from 'vue-kindeditor'
-//import 'kindeditor/kindeditor-all-min.js'
-//import 'kindeditor/themes/default/default.css'
-//Vue.use(VueKindEditor)
-
-import VueKindEditor from './plugins/vue-kindeditor'
-import '../static/kindEditor/kindeditor-all-min.js'
-import '../static/kindEditor/themes/default/default.css'
+import VueKindEditor from 'vue-kindeditor'
+import 'kindeditor/kindeditor-all-min.js'
+import 'kindeditor/themes/default/default.css'
 
 Vue.use(VueKindEditor)
+
+//import VueKindEditor from './plugins/vue-kindeditor'
+//import '../static/kindeditor/kindeditor-all.js'
+//import '../static/kindeditor/themes/default/default.css'
+
+//Vue.use(VueKindEditor)
 
 Object.keys(filters).forEach(key => {  
     Vue.filter(key, filters[key])  

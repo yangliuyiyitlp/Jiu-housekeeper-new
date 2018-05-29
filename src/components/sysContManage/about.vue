@@ -1,16 +1,11 @@
 <template>
  <div class="app_about">
- <!--<textarea id="editor_id" name="content" style="width:700px;height:300px;" >
-&lt;strong&gt;HTML内容&lt;/strong&gt;
-</textarea>
-<button @click='btn'>16541html</button>-->
-
 	<div class="edit" style="width:500px;padding-top: 20px;">		
 	    <editor 
 			ref='edit'
 			id="editor_id" :minHeight="300" :content="editorText"
-	        pluginsPath="static/kindEditor/plugins/"
-	        :allowImageUpload='true'
+	        pluginsPath="/static/kindEditor/plugins/"
+	        :items= 'item'
 	        :loadStyleMode="false"
 	        :uploadJson = 'uploadJson'
 	        @on-content-change="onContentChange">
@@ -19,14 +14,6 @@
 			<el-button  type="info" @click='viewH5'>预览H5</el-button>
 		    <el-button type="primary" @click='saveHtml'>保存</el-button> 		    
 		</div>
-		<el-dialog 
-			:close-on-click-modal='false' 
-			title="预览" 
-			:show-close='true' 
-			:visible.sync="RevisedialogFormVisible" 
-			width='500px'> 
-			<div v-html='src'></div>
-		</el-dialog>	  			
 	</div>
 </div>
 </template>
@@ -45,6 +32,12 @@ export default {
   	},
 	data() {
 	  	return {
+	  		item: ['source', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste',
+          'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+          'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'clearhtml', 'selectall', '|', 'fullscreen', '/',
+          'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+          'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image',
+           'table', 'hr'],
 	  		editorText: '',
       		editorText2: '',
       		uploadJson: '',
@@ -59,11 +52,6 @@ export default {
 		this.uploadJson = api.etitorUpload()
 //		debugger
 		console.log(this.uploadJson,12121212121)
-		// this.htmlTop = "<!doctype html><html><head><meta charset='utf-8'>" 
-		// 				+ "<meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0' />"
-		// 				+ "<title></title></head><body>"
-
-		// this.htmlBot = "</body></html>"
 	},
 	mounted() {
 		this.initialHtml()
@@ -87,14 +75,10 @@ export default {
 			        });
 				}
 			})
-//			window.KindEditor.html('121212')
-//			console.log(window.KindEditor.html('121212'))
-			
-//			window.KindEditor.html()
 		},
 		onContentChange (val) {
 	      this.editorText = val
-	      var etitor = window.KindEditor()
+//	      var etitor = window.KindEditor()
 	      console.log(this.editorText)
 	       console.log(this.editorText)
 	       console.log(6666)

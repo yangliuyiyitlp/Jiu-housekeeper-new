@@ -323,7 +323,7 @@ export default [
         //component: LayoutA,
         name: " 常见问题",
         meta: {
-            istoken: true
+            istoken: false
         },
     },
     {

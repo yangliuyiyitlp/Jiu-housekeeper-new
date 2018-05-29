@@ -1,6 +1,7 @@
 <template>
     <div class="about" >
-      <div v-html="html" class="cont"></div>
+      <div v-html="html" class="cont"></div>      
+      
     </div>
 </template>
 
@@ -25,7 +26,7 @@ export default {
     }
   },
   mounted() {
-  this.queryAbout()
+this.queryAbout()
   },
   watch: {
   }

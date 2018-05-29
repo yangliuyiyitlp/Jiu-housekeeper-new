@@ -33,12 +33,13 @@
         prop="empName"
         label="归属人">
       </el-table-column>
-      <el-table-column
-        align='center'
-        :show-overflow-tooltip="true"
-        prop="custName"
-        label="借款人姓名">
-      </el-table-column>
+        <el-table-column
+          align='center'
+          :show-overflow-tooltip="true"
+          prop="custName"
+          label="借款人姓名">
+          <template  slot-scope="scope"><span :class="scope.row.monitoringStatus=='0'?'monitoringStatus':'monitoringNull'">{{scope.row.custName}}</span></template>
+        </el-table-column>
       <el-table-column
         align='center'
         :show-overflow-tooltip="true"
@@ -222,5 +223,10 @@
   }
 </script>
 <style scoped lang="less">
-
+.monitoringStatus{
+  color:red
+}
+.monitoringNull{
+    color:#000;
+  }
 </style>

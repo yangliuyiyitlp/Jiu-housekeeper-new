@@ -85,7 +85,7 @@
     	:show-overflow-tooltip="true"
 		align='center'
       prop="name"
-      label="状态">      
+      label="状态">
        <template slot-scope="scope">
         <span>{{scope.row.custStatusCode == '1' ? '未实名':'已实名'}}</span>
         <!--<el-button type="text" size="small">编辑</el-button>-->
@@ -138,7 +138,7 @@
 //import DialogFollow from '@/components/custManage/dialog/DialogFollow'
 export default {
   	name: 'tableList',
-  	props: {	  		
+  	props: {
   		tableData:{
   			type: Array,
   			default: function () {
@@ -167,7 +167,7 @@ export default {
 	  			dialogFollowVisible: false,
 	  		},
 	  		multipleSelection: []
-	  		
+
 	  	}
 	},
     methods: {
@@ -184,25 +184,25 @@ export default {
 //  		console.log(row.orderNumber,1311233212231)
 			this.$emit('showDialogTableVisible',row,true)
     	},
-    	showDialogFollow(row) {//跟进弹框	
+    	showDialogFollow(row) {//跟进弹框
     		this.$emit('showDialogFollow',row,true)
     	},
     	handleSelectionChange(val) {
 	        this.multipleSelection = val;
 	        this.$store.dispatch('SET_SELECT_TABLE', val)
-	        console.log(this.multipleSelection)
+	        console.log(66,this.multipleSelection)
 	    }
     },
     watch: {
-    	
+
     },
 	components: {
 //		DialogOrderList,
 //		DialogFollow
 	}
-  
+
  }
 </script>
 <style scoped lang="less">
-	
+
 </style>

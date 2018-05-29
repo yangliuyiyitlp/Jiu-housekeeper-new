@@ -38,9 +38,9 @@
           <p>授信范围：<span>{{orderBaseInfo.expectDuetime }}</span></p>
         </div>
       </div>
-      <div class="steps">
-        <el-steps :active="+(orderList.status)" align-center  finish-status="success">
-          <el-step v-for ="(val,index) in orderList.list" :title="val.nodeName" :description="val.updateTime" :key="index"></el-step>
+      <div class="steps" v-if="orderNodeList.length>=0?1:0">
+        <el-steps :active="+currentStep" align-center  finish-status="success">
+          <el-step v-for ="(val,index) in orderNodeList" :title="val.nodeName" :description="val.createTime" :key="index"></el-step>
           <!--<el-step title="身份证上传" description="2018-03-02 18:00:00"></el-step>-->
           <!--<el-step title="肖像认证" description="2018-03-02 18:00:00"></el-step>-->
           <!--<el-step title="手持身份证" description="2018-03-02 18:00:00"></el-step>-->
@@ -64,37 +64,38 @@
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="date"
+              prop="nodeName"
               label="环节">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="name"
+              prop="createTime"
               label="操作时间">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="time"
+              prop="inTime"
               label="进入环节时间">
             </el-table-column>
+            <!--todo 停留时间-->
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="demo"
               label="停留时长">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="rejectReason"
               label="结果">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="realName"
               label="操作人">
             </el-table-column>
           </el-table>
@@ -120,49 +121,49 @@
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="date"
+              prop="periods"
               label="期数">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="name"
+              prop="repaymentTime"
               label="应还时间">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="time"
+              prop="shouldMoney"
               label="应还总金额">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="shouldCapiital"
               label="还款本金">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="shouldAccral"
               label="还款利息">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="manageMoney"
               label="分期服务费">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="overdueMoney"
               label="逾期费用">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="city"
+              prop="status"
               label="状态">
             </el-table-column>
           </el-table>
@@ -190,20 +191,20 @@
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="date"
+              prop="paymentTime"
               label="还款时间">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="name"
+              prop="shouldMoney"
               label="还款金额(元)">
             </el-table-column>
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="time"
               label="还款方式">
+              <template  slot-scope="scope"><span>{{scope.row.operationPlatform||scope.row.paymentChannel||scope.row.paymentPlatform}}</span></template>
             </el-table-column>
           </el-table>
           <pagination
@@ -307,7 +308,7 @@
             :data="linkInfo"
             border
             style="width: 100%">
-            <el-table-column align='center' type="index"  width="160" label="" :index="indexMethod">
+            <el-table-column align='center' type="index"  width="160" label="序号" :index="indexMethod">
             </el-table-column>
             <el-table-column
               align='center'
@@ -498,7 +499,9 @@
         pageNo3:1,
         total3:0,
         currentPage3:1,
-        orderList:{}
+        orderNodeList:[],
+        orderList:[],
+        currentStep:"",
       }
     },
     components:{
@@ -510,45 +513,26 @@
       this.queryNodeListInfo()
     },
     methods:{
-      queryNodeListInfo(){ // TODO 查询订单节点信息
+      queryNodeListInfo(){ // 查询订单节点信息
         api.queryNodeListInfo({
           crmApplayId:this.$route.query.crmApplayId,
           orderStatus:this.$route.query.orderStatus
         }).then((res) =>{
           if (res.data.code==1 && res.data.data != null) {
-            // this.orderList = res.data.data
-            this.orderList =  {
-              "crmApplayId": "string",
-              "id": "string",
-              "inTime": "string",
-              "list": [
-                {
-                  "createTime": "2018-05-26T09:02:53.349Z",
-                  "id": "string",
-                  "nodeCode": "string",
-                  "nodeName": "身份证上传",
-                  "nodeSort": 0,
-                  "orderStatus": "string",
-                  "productId": "string",
-                  "status": 0,
-                  "updateTime": "2018-05-26T09:02:53.349Z"
-                },
-                {
-                  "createTime": "2018-05-26T09:02:53.349Z",
-                  "id": "string",
-                  "nodeCode": "string",
-                  "nodeName": "肖像认证",
-                  "nodeSort": 0,
-                  "orderStatus": "string",
-                  "productId": "string",
-                  "status": 0,
-                  "updateTime": "2018-05-26T09:02:53.349Z"
+            console.log(8989,res);
+            this.orderNodeList = res.data.data.orderNodeList
+            this.orderList = res.data.data.nodeList
+            let currentNode =this.orderList.find(function(item){
+              return item.status=="0"
+            })
+            if(this.orderList.length<=0){
+              this.currentStep=0
+            }else{
+              this.orderNodeList.forEach((item,index) =>{
+                if(item.nodeCode==currentNode.nodeCode){
+                  this.currentStep=index
                 }
-              ],
-              "nodeCode": "string",
-              "nodeName": "string",
-              "outTime": "string",
-              "status": "1"
+              })
             }
           }
         })
@@ -560,6 +544,7 @@
           crmApplayId:this.$route.query.crmApplayId
         }).then((res) =>{
           if(res.data.success) {
+            console.log(99,res);
             this.examData = res.data.data
           } else {
             this.$notify({
@@ -616,11 +601,13 @@
               this.status = res.data.data.status
               if(this.status == 3){
                 this.activeName = "2"
+                this.queryRepaymentPlan()//还款计划
               }else if(this.status == 2 || this.status == 5){
                 this.activeName = "1"
-                this.queryExamData()
+                this.queryExamData() //审批记录
               }else{
                 this.activeName = "4"
+                this.queryEssentialInfo()//基本信息
               }
               this.crmCustInfoId_s = res.data.crmCustInfoId
           } else {
@@ -633,7 +620,7 @@
           }
         })
       },
-      queryEssentialInfo(){
+      queryEssentialInfo(){ // 基本信息
         api.queryEssentialInfo({
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{
@@ -650,7 +637,7 @@
           }
         })
       },
-      queryLinkManInfo(){
+      queryLinkManInfo(){ //联系人信息
         api.queryLinkManInfo({
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{
@@ -665,7 +652,7 @@
           }
         })
       },
-      queryAccountInfo(){
+      queryAccountInfo(){ //账户信息
         api.queryAccountInfo({
           crmCustInfoId:this.$route.query.crmApplayId
         }).then((res) =>{

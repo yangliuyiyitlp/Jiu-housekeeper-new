@@ -109,8 +109,7 @@ export default {
         pageNo: this.pageNo,
         pageSize: this.pageSize,
         queryParam: this.serachPararms.content, //姓名|手机|身份证号查询参数
-        a: this.serachPararms.checked, //todo 全部
-        b: this.serachPararms.checkList, //todo 正常 监测异常
+        monitoringStatus: this.serachPararms.checkedCurrent, //全部 状态
         oneSelf: this.serachPararms.onlyCheck,//仅查看我的客户
         proTypeId: this.serachPararms.productList,//产品系列
         proId: this.serachPararms.productName,//产品名称

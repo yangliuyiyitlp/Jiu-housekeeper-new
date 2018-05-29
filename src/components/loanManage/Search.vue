@@ -165,7 +165,8 @@ export default {
 	  		showTree: false,
 	  		search: {
 	  			content: '',
-	  			checked: false,
+	  			checked: true,
+          checkedCurrent:'',
 	  			checkList: [],
 	  			checkListParams:null,//订单状态：1申请中,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件
 	  			onlyCheck: false,
@@ -286,20 +287,33 @@ export default {
 	    },
 
 	  	changeAllVal(val) {
-	  		if(val) {
+
+        console.log(8888,val);
+        if(val) {
 	  			this.search.checkList = this.checkListName
+          this.search.checkedCurrent=""
 	  		} else {
 	  			this.search.checkList =[]
+          this.search.checkedCurrent="1"
 	  		}
-	  		console.log(val,this.search.checkList,'====')
+	  	// 	console.log(val,this.search.checkList,'====')
 	  		this.search.checkListParams = this.returnCheckListParams(this.search.checkList)
 	  	},
 	  	changeVal(val){
-			if (val.length == this.checkListName.length) {
-				this.search.checked = true
-			} else {
-				this.search.checked = false
-			}
+        console.log(55,val);
+        this.search.checkedCurrent=''
+        if(val=='正常'){
+          this.search.checked = false
+          this.search.checkedCurrent = "1"}else if(val=='检测异常') {
+          this.search.checked = false
+          this.search.checkedCurrent = "0"}else if(val.length == this.checkListName.length) {
+          this.search.checked = true
+          this.search.checkedCurrent = ""}
+        // if (val.length == this.checkListName.length) {
+			// 	this.search.checked = true
+			// } else {
+			// 	this.search.checked = false
+			// }
 			this.search.checkListParams = this.returnCheckListParams(val)
 	   	},
 	   	returnCheckListParams(val){//订单状态：1正常,0检测异常

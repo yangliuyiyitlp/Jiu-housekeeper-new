@@ -109,6 +109,7 @@
     "vee-validate": "^2.0.0-rc.27",
     "vue": "^2.4.2",
     "vue-head": "^2.0.11",
+    "vue-kindeditor": "^0.2.0",
     "vue-loader": "^13.0.4",
     "vue-popper-component": "^0.1.0",
     "vue-popperjs": "^1.2.5",

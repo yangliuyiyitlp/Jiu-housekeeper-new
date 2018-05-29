@@ -64,9 +64,6 @@ export default {
 
   	}
   },
- created() {
-
- },
  computed: {
  	permission () {
  		return {
@@ -83,7 +80,7 @@ export default {
  	this.$refs.search.checkOrderNodeFn()
  },
  created() {
- 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
+ 	if (JSON.parse(localStorage.getItem('myPageSize'))){
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList?JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList:10
  		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AllOrdrList)
  	} else {
@@ -146,7 +143,7 @@ export default {
         	path: '/detail/orderDetail',
         	query: {
         		crmApplayId: row.applyId,
-            orderStatus:row.custIc
+            orderStatus:row.orderStatus
         	}
       	});
       	window.open(routeData.href);

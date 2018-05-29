@@ -134,7 +134,9 @@ export default {
         return _axios.post("/api/orderDetail/queryRepaymentPlan",queryString.stringify(data), { params: params });
     },
     queryAbout(data, params) { //h5app关于
-        return _axios.get("/api/app/About/queryAbout",queryString.stringify(data), { params: params });
+    	
+//      return _axios.get("/api/app/About/queryAbout",queryString.stringify(data), { params: params });
+		return _axios.get("/api/appAbout/queryAppAbout",queryString.stringify(data), { params: params });
     },
     queryNodeListInfo(data, params) { //查询订单节点信息
         return _axios.post("/api/orderDetail/queryNodeListInfo",queryString.stringify(data), { params: params });
@@ -286,7 +288,11 @@ queryCityByCityId(data, params) {
   querylinkManForFollow(data, params) {
     return _axios.post("/api/followUp/querylinkManForFollow",queryString.stringify(data), { params: params });
   },
-
+  //总控管理-全部订单
+  queryAllControlOrder(data, params) {
+    return _axios.post("/api/allOrder/queryAllOrder",queryString.stringify(data), { params: params });
+  },
+  
 
 
 }
