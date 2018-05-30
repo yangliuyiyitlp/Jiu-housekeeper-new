@@ -1,7 +1,7 @@
 <template>
     <div class="about" >
       <div v-html="html" class="cont"></div>      
-      
+      <!--1231233-->
     </div>
 </template>
 
@@ -16,6 +16,15 @@ export default {
     html:''
     }
   }, 
+//beforeRouteEnter (to, from, next) {	 
+//  next(vm => {
+//    document.title = to.name || to.meta.name
+////	     alert(12212)
+//      console.log(to, document.title)
+//    // 通过 `vm` 访问组件实例
+//  })
+//},
+  
   methods: {
     queryAbout(){
       api.queryAbout({

@@ -40,7 +40,7 @@
 			    <el-table-column
 			    	:show-overflow-tooltip="true"
 			    	align='center'
-			      	prop="status"
+			      	prop="statusName"
 			     	label="状态">
 			    </el-table-column>
 			    <el-table-column
@@ -68,6 +68,7 @@
  			<pagination 				
 				:currentPage = 'currentPage'
 				:total = 'total'
+				:myPageSizes = 'pageSize'
 				@handleSizeChange = 'handleSizeChange'
 				@handleCurrentChange = 'handleCurrentChange'
  				> 				
@@ -78,13 +79,13 @@
  			<el-dialog :title="bigClassTitle" class="dialog-wrap" :visible.sync="dialogFormVisible" width='400px' @close="addDiaClose">
 			    <el-form :model="form" ref="form" :rules="form_rules">
 				    <el-form-item label="大类名称" :label-width="formLabelWidth" required prop="name">
-				      <el-input v-model="form.name" auto-complete="off"></el-input>
+				      <el-input v-model.trim ="form.name" auto-complete="off" :maxlength='50'></el-input>
 				    </el-form-item>
 				    <el-form-item label="大值类" :label-width="formLabelWidth" required prop="price">
-				      <el-input v-model="form.price" auto-complete="off"></el-input>
+				      <el-input v-model.trim="form.price" auto-complete="off" :maxlength='20'></el-input>
 				    </el-form-item>
 				    <el-form-item label="编码" :label-width="formLabelWidth" required prop="code">
-				      <el-input v-model="form.code" auto-complete="off"></el-input>
+				      <el-input v-model.trim="form.code" auto-complete="off"></el-input>
 				    </el-form-item>
 			    </el-form>
 			    <!-- <el-dialog
@@ -146,7 +147,7 @@
 				    <el-table-column
 				    	:show-overflow-tooltip="true"
 				    	align='center'
-				      	prop="status"
+				      	prop="statusName"
 				     	label="状态">
 				    </el-table-column>
 				    <el-table-column
@@ -185,17 +186,27 @@
 				      </template>
 				    </el-table-column>
 				</el-table>
+				<div class="pad20 alignCen">
+		 			<pagination 				
+						:currentPage = 'currentPage_s'
+						:total = 'total_s'
+						:myPageSizes = 'pageSize_s'
+						@handleSizeChange = 'handleSizeChange_s'
+						@handleCurrentChange = 'handleCurrentChange_s'
+		 				> 				
+		 			</pagination>
+		 		</div>
 				<div>
 					<el-dialog :title="detailTitle" class="dialog-wrap" :visible.sync="detailDialogFormVisible" width='400px' @close="addDiaClose2">
 					    <el-form :model="detailForm" ref="detailForm" :rules="detailForm_rules">
 						    <el-form-item label="明细名称" :label-width="formLabelWidth" prop="name2">
-						      <el-input v-model="detailForm.name2" auto-complete="off"></el-input>
+						      <el-input  v-model.trim="detailForm.name2" :maxlength='50'></el-input>
 						    </el-form-item>
 						    <el-form-item label="明细值" :label-width="formLabelWidth" prop="price2">
-						      <el-input v-model="detailForm.price2" auto-complete="off"></el-input>
+						      <el-input v-model.trim="detailForm.price2" auto-complete="off" :maxlength='20'></el-input>
 						    </el-form-item>
 						    <el-form-item label="编号" :label-width="formLabelWidth" prop="detailCode">
-						      <el-input v-model="detailForm.detailCode" auto-complete="off"></el-input>
+						      <el-input v-model.trim="detailForm.detailCode" auto-complete="off"></el-input>
 						    </el-form-item>
 					    </el-form>
 					    
@@ -227,8 +238,9 @@ export default {
 	  		total: 0,
 	  		pageNo: 1,
 	        pageSize: 10,
-	        currentPage2:1,
-	  		total2: 0,
+	        pageSize_s: 10,
+	        currentPage_s:1,
+	  		total_s: 0,
 	  		pageNo2: 1,
 	        pageSize2: 10,
 	        dialogFormVisible: false,
@@ -261,7 +273,7 @@ export default {
 	        },
 	        detailForm_rules:{
 	        	name2:[
-	        		{required:true,message: '请输入小类名称', trigger: 'blur,change' }
+	        		{required:true,message: '请输入小类名称', trigger: 'blur,change' }	        	
 	        	],
 	        	price2:[
 	        		{required:true,message: '请输入小类值', trigger: 'blur,change' }
@@ -278,11 +290,33 @@ export default {
 	        orShowDetail: false,
 	        maxid:'',
 	        minid:'', //小类id
-	        dictionaryId:'' //新增小类时传的大类id
+	        dictionaryId:'', //新增小类时传的大类id
+	        glg_id: ''
     	}
     },
+    created() {
+	 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+	 		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_Dictionary?JSON.parse(localStorage.getItem('myPageSize')).W_Dictionary:10
+	 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_Dictionary)
+	 	} else {
+	 		let obj = {}
+	 		localStorage.setItem('myPageSize',JSON.stringify(obj))
+	 	}
+	 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+	 		this.pageSize2 = JSON.parse(localStorage.getItem('myPageSize')).W_DictionaryDet?JSON.parse(localStorage.getItem('myPageSize')).W_DictionaryDet:10
+	 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_DictionaryDet)
+	 	} else {
+	 		let obj = {}
+	 		localStorage.setItem('myPageSize',JSON.stringify(obj))
+	 	}
+	 },
     methods:{
-
+		checkSpace() {
+//			this.$nextTick(()=>{    	//^[0-9]*$			
+//				this.detailForm.name2 = this.detailForm.name2.trim()
+//				console.log(this.detailForm.name2.trim(),1212112)
+//			},20)
+		},
     	addbigClass(){
     		this.dialogFormVisible = true;
     		this.bigClassTitle ='新增大类'
@@ -324,9 +358,11 @@ export default {
     		if(arry){
     			for(let i in arry){
 	    			if(arry[i].status == 1){
-	    				arry[i].status = '可用'
+//	    				arry[i].status = '可用'
+	    				arry[i].statusName = '可用'
 	    			}else if(arry[i].status == 0){
-	    				arry[i].status = '停用'
+//	    				arry[i].status = '停用'
+	    				arry[i].statusName = '停用'
 	    			}
 	    		}
     		}
@@ -346,23 +382,20 @@ export default {
 			})
     	},
     	handleSizeChange(val) {
+    		this.currentPage = 1
+			let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
+	  		myPageSize.W_Dictionary = val
+		 	localStorage.setItem('myPageSize',JSON.stringify(myPageSize))
 			this.pageSize = val  
 			this.queryPageDictionary()
 		},
 		handleCurrentChange(val) {
+			
 			this.pageNo = val 	
 			this.currentPage = val
 			this.queryPageDictionary()
 		},
-		handleSizeChange2(val) {
-			this.pageSize2 = val
-			//this.queryBannerList();
-		},
-		handleCurrentChange2(val) {
-			this.pageNo2 = val	
-			this.currentPage2 = val
-			//this.queryBannerList();
-		},	
+		
     	updateDictionary() { //确认新增,修改大类
     		this.$refs['form'].validate((valid)=>{
     			if(valid){
@@ -402,15 +435,17 @@ export default {
 				if (res.data.code==1) {
 					this.$message.success(res.data.msg);
 					this.detailDialogFormVisible = false
+					console.log(666666111111)
 					api.queryPageDictionaryDetail({
 		    			pageNo:this.pageNo2,
 		    			pageSize:this.pageSize2,
 		    			dictionaryId:this.dictionaryId
 		    		}).then((res) =>{
-						if (res.data.code==1) {
+						if (res.data.code==1) {	
+							
 							this.detailData = res.data.data
 							this.detailData = this.statusReplace(this.detailData)
-							console.log(this.detailData)
+							console.log(666666)
 						}
 					})
 				}else {
@@ -437,23 +472,58 @@ export default {
     	},
     	addDetail(scope) { //根据大类id查询小类列表
     		this.orShowDetail = true
+    		this.glg_id = scope.row.id
     		api.queryPageDictionaryDetail({
     			pageNo:this.pageNo2,
     			pageSize:this.pageSize2,
     			dictionaryId:scope.row.id
     		}).then((res) =>{
 				if (res.data.code==1) {
+					this.total_s = res.data.total
 					this.detailData = res.data.data
 					this.detailData = this.statusReplace(this.detailData)
 					this.dictionaryId = scope.row.id
 					console.log(this.dictionaryId,'this.dictionaryId')
+					console.log(res.data,'this.dictionaryId')
 				}
 			})
+//  		this.queryPageDictionaryDetailFn(scope.row.id)
     		//this.detailData = scopeds
 //  		this.$refs['detail' +scopeds.$index ].style.display = 'block'
 //document.getElementById('detail' + scopeds.$index).style.display = 'block'
 //  		console.log(this.$ref['detail' +scopeds.$index ])
     	},
+    	queryPageDictionaryDetailFn(id){
+    		api.queryPageDictionaryDetail({
+    			pageNo:this.pageNo2,
+    			pageSize:this.pageSize2,
+    			dictionaryId:this.glg_id
+    		}).then((res) =>{
+				if (res.data.code==1) {
+    				this.total_s = res.data.total					
+					this.detailData = res.data.data
+					this.detailData = this.statusReplace(this.detailData)
+//					this.dictionaryId = scope.row.id
+					console.log(this.dictionaryId,'this.dictionaryId')
+					console.log(res.data,'this.dictionaryId')
+					console.log(this.dictionaryId == this.glg_id,'this.dictionaryId')
+				}
+			})
+    	},
+    	handleSizeChange_s(val) {
+			this.currentPage_s = 1
+			let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
+	  		myPageSize.W_DictionaryDet = val
+		 	localStorage.setItem('myPageSize',JSON.stringify(myPageSize))
+			this.pageSize2 = val
+			this.queryPageDictionaryDetailFn()
+		},
+		handleCurrentChange_s(val) {
+			
+			this.pageNo2 = val 	
+			this.currentPage_s= val
+			this.queryPageDictionaryDetailFn()
+		},	
     	showDetail() {//新增明细
     		this.detailTit = '保存'
 	        this.detailTitle = '新增的内容'

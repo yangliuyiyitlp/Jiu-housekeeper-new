@@ -80,7 +80,7 @@
 			      </el-select>
 			    </el-form-item>
 			    <el-form-item label="跟进内容" :label-width="formLabelWidth" prop="content">
-			       <el-input type="textarea" v-model="form.content"></el-input>
+			       <el-input type="textarea" v-model="form.content" :maxlength='200'></el-input>
 			    </el-form-item>
 			  </el-form>
 
@@ -259,7 +259,7 @@
 			  			<el-col :span="3" >备注：</el-col>
 			  			<!--disappearStatus (integer, optional): 是否失联0.否 1.是 ,-->
 			  			<el-col :span="21" >
-			  				{{122}}
+			  				{{beforeLoan_followCont}}
 			  				<p><a :href="observeObj.followFileUrl">下载附件</a></p>
 			  			</el-col>
 			  		</el-row>
@@ -354,8 +354,10 @@ import Pagination from '@/components/common/Pagination'
 						this.dialogLoanEnd = true //贷后
 					} else if (followNode == '4'){//4.ERP贷后
 						this.dialogErp = true
+						this.beforeLoan_followCont = row.followContent
 					}
-					//this.dialogErp = true
+//					this.dialogErp = true
+					console.log(row)
 	  	},
 
 	  handleSizeChange(val) {

@@ -508,16 +508,23 @@
       Pagination
     },
     mounted(){
+      // this.addViewTags()
       this.queryBaseOrderInfo()
       this.getDepartmentZtreeFn()
-      this.queryNodeListInfo()
+      // this.queryNodeListInfo()  后请求
     },
     methods:{
+      async addViewTags() {
+        this.queryBaseOrderInfo()
+        await   this.queryNodeListInfo()
+      },
       queryNodeListInfo(){ // 查询订单节点信息
         api.queryNodeListInfo({
           crmApplayId:this.$route.query.crmApplayId,
-          orderStatus:this.$route.query.orderStatus
+          orderStatus:this.status
+          // orderStatus:this.$route.query.orderStatus
         }).then((res) =>{
+          console.log(666666,this.status);
           if (res.data.code==1 && res.data.data != null) {
             console.log(8989,res);
             this.orderNodeList = res.data.data.orderNodeList
@@ -599,6 +606,8 @@
             if (res.data.code==1 && res.data.data != null) {
               this.orderBaseInfo = res.data.data
               this.status = res.data.data.status
+              this.queryNodeListInfo()
+              console.log(55555555,this.status);
               if(this.status == 3){
                 this.activeName = "2"
                 this.queryRepaymentPlan()//还款计划

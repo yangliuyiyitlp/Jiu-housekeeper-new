@@ -129,8 +129,9 @@
 		      if (!route) {
 		        return false
 		      }
-//		      console.log(route,66666666888888)
-		      await this.$store.dispatch('addVisitedViews', route).then(res => {	   
+//		      console.log(777777,66666666888888)
+		      await this.$store.dispatch('addVisitedViews', route).then(res => {
+//		      	console.log(888888,66666666888888)
 		      	this._initTabListWidth()
 		      })
 		    },

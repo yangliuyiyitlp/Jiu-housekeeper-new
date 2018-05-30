@@ -6,16 +6,6 @@
 			  </el-input>
 			</div>
       <div class="scroll">
-				<!--<cube-scroll
-				  ref="scroll"
-				  :data="items"
-				  :options="options"
-				  @pulling-down="onPullingDown"
-				  @pulling-up="onPullingUp"
-				  >
-				 
-				</cube-scroll>-->
-				
 				<cube-scroll
 				  ref="scroll"		
 				  :data="items"
@@ -25,8 +15,7 @@
 				  @pulling-up="onPullingUp"
 				  >
 				  <template slot-scope="props">
-				    <div >
-				    	
+				    <div >				    	
 				     <ul id='activityTab'>
 							<li v-for="(item,ind) in items" :key='ind'>
 								<h2 @click='targetTab($event)'>

@@ -46,7 +46,7 @@
 						    </el-select>
 						</el-form-item>-->
 						<el-form-item label="注册类型" label-width='105px' v-if='permission.showRegType' >
-						    <el-select v-model="search.regType" placeholder="请选择">
+						    <el-select v-model="search.regType" placeholder="请选择" clearable>
 						      <el-option label="自由注册" value="1"></el-option>
 						      <el-option label="业务员推广" value="2"></el-option>
 						      <el-option label="邀请好友" value="3"></el-option>

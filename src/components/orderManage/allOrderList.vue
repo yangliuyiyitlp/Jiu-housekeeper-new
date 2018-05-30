@@ -143,7 +143,7 @@ export default {
         	path: '/detail/orderDetail',
         	query: {
         		crmApplayId: row.applyId,
-            orderStatus:row.orderStatus
+            // orderStatus:row.orderStatus
         	}
       	});
       	window.open(routeData.href);

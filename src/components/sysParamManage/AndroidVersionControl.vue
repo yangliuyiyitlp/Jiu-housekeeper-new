@@ -89,7 +89,7 @@
         </pagination>
       </div>
     </div>
-    <el-dialog :title="androidTitle" :center =true :visible.sync="banner_DialogVisible" width="50%"   @close="addDiaClose" :close-on-click-modal ='false'>
+    <el-dialog :title="androidTitle" :center =true :visible.sync="banner_DialogVisible" width="650px"   @close="addDiaClose" :close-on-click-modal ='false'>
       <el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline" :rules="addForm_rules">
         <el-form-item label="安装包：" prop="url"  >
           <el-upload
@@ -167,13 +167,15 @@
         buttonLoading:false,
         addForm_rules:{
           version:[
-            {required:true, max:20,message: '请输入版本号', trigger: 'blur' }
+            { required: true, message: '请输入版本号', trigger: 'blur' },
+            { min: 1, max: 20, message: '版本号长度20以内', trigger: 'blur'}
           ],
           status:[
             {required:true, message: '请选择是否强制更新', trigger: 'blur' }
           ],
           content:[
-            {required:true, max:100,message: '请输入更新说明', trigger: 'blur' }
+            {required:true, message: '请输入更新说明', trigger: 'blur' },
+            { min: 1, max: 100, message: '更新说明长度100以内', trigger: 'blur'}
           ],
           url:[
             {required:true, message: '请上传文件', trigger: 'blur' }
@@ -189,7 +191,7 @@
     },
     created() {
 //  	console.log(this.fileUpLoad,'90000000')
-		 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+		 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
 		 		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl?JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl:10
 		 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AndroidVersionControl)
 		 	} else {
@@ -348,7 +350,7 @@
         const isApk = textArr[textArr.length-1]
         // const isApk=file.type
         const isLtName = file.name.split('.')[0]
-        const isLt1M = file.size / 1024 < 100
+        const isLt1M = (file.size/1024/1024) < 100
         if(isApk === "apk"){
           if (!isLt1M) {
             this.$message('文件大小100M以内!')

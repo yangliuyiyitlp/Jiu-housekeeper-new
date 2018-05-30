@@ -175,7 +175,11 @@ export default {
   	intoDetail(row) {
 		var routeData = this.$router.resolve({
         	path: '/detail/custDetail',
-        	query: {id:123}
+        	query: {
+        		crmCustInfoId:row.crmCustInfoId,
+        		bgCustomerId: row.bgCustomerId,
+        		bgCustInfoId: row.bgCustInfoId        		
+        	}
       	});
       	console.log(this.$router)
       	window.open(routeData.href);

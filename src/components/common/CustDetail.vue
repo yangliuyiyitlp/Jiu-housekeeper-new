@@ -1,3 +1,4 @@
+
 <template>
 <div>
 	<div class="top"><img src="../../assets/images/logo.png"></div>
@@ -5,13 +6,13 @@
 		<div class="sheet">
 			<p>
 			 	注册手机号：<span>{{userInfo.cust_mobile}}</span>
-			 	用户姓名：<span>{{userInfo.cust_name}}</span>
+			 	用户姓名：<span>{{userInfo.cust_name}}</span> 
 			 	身份证号：<span>{{userInfo.cust_ic}}</span>
-			 	申请城市：<span>{{userInfo.house_province}} {{userInfo.house_city}}</span>
-			 	注册时间：<span>{{userInfo.create_time}}</span>
+			 	申请城市：<span>{{userInfo.house_province}} {{userInfo.house_city}}</span> 			 	
+			 	注册时间：<span>{{userInfo.create_time}}</span>			 	
 			 	<el-popover
 				  placement="bottom"
-
+				 
 				  trigger="click"
 				  v-model="visiblePassWord"
 				  >
@@ -19,8 +20,8 @@
 				    <p><span @click="showModifyPsd(1)">重置密码</span></p>
 				    <p><span @click="showModifyPsd(2)">修改注册手机号码</span></p>
 				    <p>
-				    	<span @click="showModifyPsd(3,0)" v-if="lockCustType == 1">冻结客户</span>
-				    	<span @click="showModifyPsd(3,1)" v-if="lockCustType == 0">解冻客户</span>
+				    	<span @click="showModifyPsd(3,0)" v-if="lockCustType == 1">冻结客户</span>	
+				    	<span @click="showModifyPsd(3,1)" v-if="lockCustType == 0">解冻客户</span>	
 				    </p>
 				  </div>
 				  <!--<i class="" slot="reference"></i>-->
@@ -126,7 +127,7 @@
 			      :data="linkInfo"
 			      border
 			      style="width: 100%">
-			      <el-table-column align='center' type="index"  width="160" label="序号" :index="indexMethod">
+			      <el-table-column align='center' type="index"  width="160" label="" :index="indexMethod">
 			      </el-table-column>
 			      <el-table-column
 			      	align='center'
@@ -166,7 +167,7 @@
 		  		<tr>
 		  			<td width="100">账户余额</td>
 		  			<td>
-		  				<span v-if="!eye">2500</span>
+		  				<span v-if="!eye">{{accountMoney}}</span>
 		  				<span v-if="eye">*****</span>
 		  				元<i class="el-icon-view" @click="eyeToggle()" ></i>
 		  			</td>
@@ -243,19 +244,19 @@
 			      </el-table-column>
 			    </el-table>
 			    <div class="pad20 alignCen">
-		 			<pagination
+		 			<pagination 				
 						:currentPage = 'currentPage'
 						:total = 'total'
 						@handleSizeChange = 'handleSizeChange'
 						@handleCurrentChange = 'handleCurrentChange'
-		 				>
+		 				> 				
 		 			</pagination>
 		 		</div>
 		  </el-tab-pane>
 		</el-tabs>
 		<div>
-			<el-dialog title="重置密码" width='416px' center :visible.sync="resetPsd" top='20%'>
-			  	<div class="diaPsd" style=''>
+			<el-dialog title="重置密码" width='416px' center :visible.sync="resetPsd" top='20%'>		
+			  	<div class="diaPsd" style=''>			  	
 				  	<div>6位随机密码将发送至用户注册手机号，确认重置密码吗？</div>
 				  	<div>
 				  		注：此密码为用户登录贝尔在线的密码，确认修改后用户需要重新登录网站。
@@ -266,15 +267,15 @@
 			      <el-button type="primary" @click="confirmResetPsd" :loading='resetPsdBtnLoading'>确定</el-button>
 			    </div>
 			</el-dialog>
-			<el-dialog title="修改手机号" width='416px' center :visible.sync="resetMobile" top='20%'>
-			  	<div class=" ">
+			<el-dialog title="修改手机号" width='416px' center :visible.sync="resetMobile" top='20%'>		
+			  	<div class=" ">			  	
 				  	<el-form :model="ruleForm2" :rules="rules" ref="ruleForm2" label-width="110px">
 					  <el-form-item label="原手机号码：" >
 					    <p>{{userInfo.cust_mobile}}</p>
 					  </el-form-item>
 					  <el-form-item label="新手机号码：" prop="newMobile">
 					    <el-input type="text" v-model="ruleForm2.newMobile" auto-complete="off"></el-input>
-					  </el-form-item>
+					  </el-form-item>  
 					</el-form>
 				</div>
 				<div slot="footer" class="text-rt">
@@ -282,10 +283,10 @@
 			      <el-button type="primary" @click="submitForm('ruleForm2')" :loading='resetMobileBtnLoading'>确定</el-button>
 			    </div>
 			</el-dialog>
-			<el-dialog :title="title" width='416px' center :visible.sync="lockCust" top='20%'>
-			  	<div class="diaPsd" style=''>
-				  	<p v-if="lockCustType == 1">确认冻结该客户吗？冻结后用户将无法登录APP</p>
-				  	<p v-if="lockCustType == 0">确认解冻该客户吗？</p>
+			<el-dialog :title="title" width='416px' center :visible.sync="lockCust" top='20%'>		
+			  	<div class="diaPsd" style=''>			  	
+				  	<p v-if="lockCustType == 1">确认冻结该客户吗？冻结后用户将无法登录APP</p>	
+				  	<p v-if="lockCustType == 0">确认解冻该客户吗？</p>	
 				</div>
 				<div slot="footer" class="text-rt">
 			      <el-button @click="lockCust = false">取 消</el-button>
@@ -297,7 +298,7 @@
 </div>
 </template>
 <script>
-import api from '@/api/index.js'
+import api from '@/api/index.js'	
 import TitCommon from '@/components/common/TitCommon'
 import TableList from '@/components/custManage/TableList'
 import Pagination from '@/components/common/Pagination'
@@ -325,39 +326,7 @@ export default {
 	  		money:'2500',
 	  		process:3,
 	  		orderData:[],
-	  		tableData:[{
-		          date: '2016-05-03',
-		          name: '王小虎',
-		          province: '上海',
-		          city: '普陀区',
-		          address: '上海市普陀区金沙江路 1518 弄',
-		          zip: 200333,
-		          tag: '家'
-		        }, {
-		          date: '2016-05-02',
-		          name: '王小虎',
-		          province: '上海',
-		          city: '普陀区',
-		          address: '上海市普陀区金沙江路 1518 弄',
-		          zip: 200333,
-		          tag: '公司'
-		        }, {
-		          date: '2016-05-04',
-		          name: '王小虎',
-		          province: '上海',
-		          city: '普陀区',
-		          address: '上海市普陀区金沙江路 1518 弄',
-		          zip: 200333,
-		          tag: '家'
-		        }, {
-		          date: '2016-05-01',
-		          name: '王小虎',
-		          province: '上海',
-		          city: '普陀区',
-		          address: '上海市普陀区金沙江路 1518 弄',
-		          zip: 200333,
-		          tag: '公司'
-		        }],
+	  		tableData:[],
 		    resetPsd: false,
 		    resetPsdBtnLoading: false,
 		    resetMobile: false,
@@ -381,6 +350,7 @@ export default {
 	  		total: 0,
 	  		pageNo: 1,
 	        pageSize: 10,
+	        accountMoney: null
 	  	}
   	},
   	created() {
@@ -394,7 +364,15 @@ export default {
   		// console.log(this.userInfo.gjg)
   	},
   	methods:{
-
+		queryAccountBalanceFn(){//账户余额
+			api.queryAccountBalance({
+				crmCustInfoId:this.$route.query.crmCustInfoId
+			}).then(res => {
+				if(res.data.success){
+					this.accountMoney = res.data.data.data
+				} 
+			})
+		},
   		getCustDetailBase(){
   			api.getCustDetailBase({
   				crmCustInfoId:this.$route.query.crmCustInfoId
@@ -405,7 +383,7 @@ export default {
 				}
 			})
   		},
-  		queryEssentialInfo(){
+  		queryEssentialInfo(){ 
   			api.queryEssentialInfo({
   				crmCustInfo:this.$route.query.crmCustInfoId
   			}).then((res) =>{
@@ -441,8 +419,7 @@ export default {
   				crmCustInfo:this.$route.query.crmCustInfoId,
   			}).then((res) =>{
 				if (res.data.code==1) {
-          console.log(999,res);
-          this.orderData = res.data.data
+					this.orderData = res.data.data
 					this.total = res.data.total
 				}
 			})
@@ -450,12 +427,12 @@ export default {
   		handleSizeChange(val) {
 			this.currentPage = 1
 			this.pageNo = 1
-			this.pageSize = val
+			this.pageSize = val  
 			this.queryOrderList()
 	//		console.log(val,777777777777)
 		},
 		handleCurrentChange(val) {
-			this.pageNo = val
+			this.pageNo = val	
 			this.queryOrderList()
 	//		console.log(val,88888888)
 		},
@@ -476,24 +453,24 @@ export default {
   			if (type == 1) {
     			this.resetPsd = true
   			}
-  			if (type == 2) {
+  			if (type == 2) {  				
     			this.resetMobile = true
     			this.resetForm('ruleForm2')
   			}
-  			if (type == 3) {
+  			if (type == 3) {  				
     			this.lockCust = true
     			this.status = lockCustType
   			}
   			console.log(type,lockCustType,this.status)
-  		},
+  		},  		
   		confirmResetPsd() {//1：重置密码
-
+  			
 			this.$confirm('此操作将重置密码, 是否继续?', '提示', {
 	            confirmButtonText: '确定',
 	            cancelButtonText: '取消',
 	            type: 'warning'
 	        }).then(() => {
-	        	this.resetPsdBtnLoading = true
+	        	this.resetPsdBtnLoading = true	        	
 	        	api.updateDetailCustPwd({custId: this.$route.query.bgCustomerId}).then(res => {
 	        		this.resetPsdBtnLoading = false
 	        		this.resetPsd = false
@@ -507,7 +484,7 @@ export default {
 	          	this.$message({
 	            	type: 'info',
 	            	message: '已取消重置密码'
-	          	});
+	          	});          
 	        });
   		},
   		submitForm(formName) {//2：修改注册手机号，
@@ -518,18 +495,18 @@ export default {
 			          cancelButtonText: '取消',
 			          type: 'warning'
 			        }).then(() => {
-			        	this.updateDetailRegisterPwdFn()
+			        	this.updateDetailRegisterPwdFn()			          
 			        }).catch(() => {
 			          this.$message({
 			            type: 'info',
 			            message: '已取消重更换手机号码'
-			          });
+			          });          
 			        });
 	          	} else {
 //		            this.$message({
 //			            type: 'info',
 //			            message: '手机号码格式不对'
-//			         });
+//			         });  
 		            return false;
 	          	}
 	        });
@@ -556,10 +533,10 @@ export default {
 	            	type: 'success',
 	            	message: res.data.msg
 	          	});
-        	})
+        	})	        
       	},
-      	confirmLockCust() {//3：冻结客户
-  			let textTit = null
+      	confirmLockCust() {//3：冻结客户  			
+  			let textTit = null  			
   			textTit = this.status == 1 ? '解冻客户' : '冻结客户'
   			this.$confirm('此操作将 '+ textTit +', 是否继续?', '提示', {
 	            confirmButtonText: '确定',
@@ -571,8 +548,8 @@ export default {
 	          	this.$message({
 	            	type: 'info',
 	            	message: '已取消'+ textTit + '操作'
-	          	});
-	        });
+	          	});          
+	        });  			
   		},
   		saveCustStatusLock() {
   			this.lockCustBtnLoading = true
@@ -607,6 +584,7 @@ export default {
   				this.eye =true
   			}else{
   				this.eye=false
+  				this.queryAccountBalanceFn()
   			}
   		},
   		lookOrderDetail(row){ //查看订单详情
@@ -624,7 +602,7 @@ export default {
 	  	TitCommon,
 	  	Pagination
     }
-
+  
 }
 </script>
 <style lang="less" scoped>
@@ -642,13 +620,13 @@ export default {
 			border-radius: 10px;
 			padding:20px 15px;
 			font-size:12px;
-
+			
 			span{
 				margin-right: 50px;
 			}
 			p {
 				position: relative;
-
+				
 			}
 		}
 		.params{
@@ -663,7 +641,7 @@ export default {
 				margin:15px 0;
 				width: 200px;
 				span{
-
+		
 				}
 			}
 		}
@@ -697,7 +675,7 @@ export default {
 		.el-form-item {
 			margin-bottom: 0;
 		}
-
+		
 	}
 	.custPermissonPsd {
 		text-align: left;

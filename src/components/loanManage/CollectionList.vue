@@ -112,15 +112,13 @@
           pageNo: this.pageNo,
           pageSize: this.pageSize,
           queryParam: this.serachPararms.content, //姓名|手机|身份证号查询参数
-          a: this.serachPararms.checked, //todo 全部
-          b: this.serachPararms.checkList, //todo 正常 监测异常
           oneSelf: this.serachPararms.onlyCheck,//仅查看我的客户
           proTypeId: this.serachPararms.productList,//产品系列
           proId: this.serachPararms.productName,//产品名称
           department: this.serachPararms.partName,//公司|部门
           empQueryParam: this.serachPararms.people,//归属人
-          loanDayBegin: this.serachPararms.overDateStart,//放款天数开始
-          loanDayEnd: this.serachPararms.overDateEnd,//放款天数结束
+          repaymentDayBegin: this.serachPararms.overDateStart,//距还款开始
+          repaymentDayEnd: this.serachPararms.overDateEnd,//距还款结束
           provId: this.serachPararms.applyProvince,//省份
           cityId: this.serachPararms.applyCity,//城市
           loanTimeBegin: s_time,//放款时间开始

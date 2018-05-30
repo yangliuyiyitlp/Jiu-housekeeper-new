@@ -165,7 +165,7 @@ export default {
 	  		showTree: false,
 	  		search: {
 	  			content: '',
-	  			checked: true,
+	  			checked: false,
           checkedCurrent:'',
 	  			checkList: [],
 	  			checkListParams:null,//订单状态：1申请中,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件

@@ -30,6 +30,7 @@ export default {
 //			}
 //		}
   	},
+  	
 	data() {
 	  	return {
 	  		item: ['source', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste',
