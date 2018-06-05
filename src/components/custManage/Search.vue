@@ -3,14 +3,14 @@
  	<div class="search borBot1px">
 		<el-form :inline="true" :model="search" class="demo-form-inline">
 		  <el-form-item>
-		  	<div style="width:300px">			  		
-		  		<el-input v-model="search.content" placeholder='请输入姓名、手机号或身份证号码精确查询' clearable></el-input>
-		  	</div> 				
-		  </el-form-item>	
-		  <el-form-item  v-if='permission.showAllPararms'>
-		  	<el-checkbox v-model="search.checked" @change='changeAllVal(search.checked)'>全部</el-checkbox>			 
+		  	<div style="width:300px">
+		  		<el-input v-model.trim="search.content" placeholder='请输入姓名、手机号或身份证号码精确查询' clearable></el-input>
+		  	</div>
 		  </el-form-item>
-		  <el-form-item  v-if='permission.showAllPararms'>			  
+		  <el-form-item  v-if='permission.showAllPararms'>
+		  	<el-checkbox v-model="search.checked" @change='changeAllVal(search.checked)'>全部</el-checkbox>
+		  </el-form-item>
+		  <el-form-item  v-if='permission.showAllPararms'>
 		  	<el-checkbox-group size="small" v-model="search.checkList" @change='changeVal(search.checkList)'>
 			    <!--<el-checkbox-button label="未实名" value='1'></el-checkbox-button>
 			    <el-checkbox-button label="已实名"></el-checkbox-button>
@@ -21,20 +21,20 @@
 			    <!--<el-select v-model="search.regType" placeholder="请选择">-->
 			      <el-checkbox v-for="(value,index) in checkListName" :label="value" :key="index" :value='value' >{{value}}</el-checkbox>
 			    <!--</el-select>-->
-			</el-checkbox-group>			    		  
+			</el-checkbox-group>
 		  </el-form-item>
 		   <el-form-item>
-		  	<el-checkbox v-model="search.onlyCheck">仅查看我的客户</el-checkbox>			 
+		  	<el-checkbox v-model="search.onlyCheck">仅查看我的客户</el-checkbox>
 		  </el-form-item>
-		  <el-form-item>			  
+		  <el-form-item>
 		    <el-button  icon="el-icon-search" @click='searchFn'>查询</el-button>
 		  </el-form-item>
-		   <el-form-item>			  
-		   	 <el-button type="primary" @click='showSeniorSearch'>展开高级搜索</el-button>			   			    			  
+		   <el-form-item>
+		   	 <el-button type="primary" @click='showSeniorSearch'>展开高级搜索</el-button>
 		  </el-form-item>
-		  <el-form-item v-if='permission.showDistribution'>			  
-		   	 <el-button type="success" @click='CustDistribution'>客户分配</el-button>   			    			  
-		  </el-form-item>			 
+		  <el-form-item v-if='permission.showDistribution'>
+		   	 <el-button type="success" @click='CustDistribution'>客户分配</el-button>
+		  </el-form-item>
 			<div class="seniorSearch" v-show='orShow'>
 				<div class="pad20">
 					<div class="custDistribution">
@@ -59,17 +59,17 @@
 						      <el-option label="区域一" value="shanghai"></el-option>
 						      <el-option label="区域二" value="beijing"></el-option>
 						    </el-select>-->
-						    <el-input	
-						    	 @focus='showTreeFn'						    	
+						    <el-input
+						    	 @focus='showTreeFn'
 						    	:readonly = 'true'
-						    	 style="width: 200px;"						    	
-						    	 v-model="search.partName" placeholder="请选择">						    	
+						    	 style="width: 200px;"
+						    	 v-model="search.partName" placeholder="请选择">
 						    	<el-button @click='clearFn' slot="append" icon="el-icon-delete" style='font-size: 20px;'></el-button>
 						    </el-input>
 						    <!--<div class="" id="tree" v-show='showTree'>
 						    	<el-dialog title="请选择" width='500px' :visible.sync="showTree">
-						    		<Tree :arrData='data' @handleNodeClick='handleNodeClick'></Tree>						    		
-						    	</el-dialog>						    	
+						    		<Tree :arrData='data' @handleNodeClick='handleNodeClick'></Tree>
+						    	</el-dialog>
 						    </div>-->
 						</el-form-item>
 						<el-form-item label="归属人" label-width='105px'>
@@ -80,7 +80,7 @@
 						<el-form-item label="申请省份" label-width='105px'>
 						    <el-select v-model="search.applyProvince" placeholder="请选择" @change='changeProvince' clearable>
 						      <!--<el-option label="区域一" value="shanghai"></el-option>-->
-						      <el-option v-for = '(val,ind) in applyProvince' :label='val.provinceName' :value="val.id" :key='ind'></el-option>						      
+						      <el-option v-for = '(val,ind) in applyProvince' :label='val.provinceName' :value="val.id" :key='ind'></el-option>
 						    </el-select>
 						</el-form-item>
 						<el-form-item label="申请城市" label-width='105px'>
@@ -88,19 +88,19 @@
 						      <el-option v-for = '(val,ind) in applyCity' :label='val.cityName' :value="val.id" :key='ind'></el-option>
 						      <!--<el-option label="区域二" value="beijing"></el-option>applyCity-->
 						    </el-select>
-						</el-form-item>							
+						</el-form-item>
 					</div>
 				</div>
 			</div>
-		</el-form> 	
+		</el-form>
 	</div>
 	<!--搜索条件中的组织架构弹框-->
 	<div class="" id="tree" v-show='showTree'>
 		<el-dialog title="请选择" width='500px' :visible.sync="showTree">
 			<div class="a1">
-				<Tree :arrData='data' @handleNodeClick='handleNodeClick'></Tree>	
-			</div>					    		
-		</el-dialog>						    	
+				<Tree :arrData='data' @handleNodeClick='handleNodeClick'></Tree>
+			</div>
+		</el-dialog>
 	</div>
 	<!--搜索条件中的组织架构弹框--END-->
 	<!--客户分配组织架构弹框--START-->
@@ -109,15 +109,15 @@
 			<el-col :span="11" >
 				<h3 class="titsheet">组织架构</h3>
 				<div class="mrtop20">
-					<el-input 
+					<el-input
 						clearable
-						placeholder="根据名称模糊查询" 
-						 v-model="ser_department" 						 
+						placeholder="根据名称模糊查询"
+						 v-model="ser_department"
 						>
 						 <el-button slot="append" icon="el-icon-search" @click='search_tree()'></el-button>
 					</el-input>
 				</div>
-				<div class="v-tree-wrap" style="border: 1px solid #dcdfe6;margin-top: 10px;border-radius: 5px;    height: 220px;overflow: auto;">					
+				<div class="v-tree-wrap" style="border: 1px solid #dcdfe6;margin-top: 10px;border-radius: 5px;    height: 220px;overflow: auto;">
 					<!--<Tree :arrData='data' :idArr='idArr' ref='tree' @handleNodeClick='handleNodeClickCustDis'></Tree>-->
 					<v-tree ref='tree' :data='data' :multiple='false'  :halfcheck='true' @node-click='handleNodeClickCustDis'/>
 				</div>
@@ -151,22 +151,22 @@
 				      prop="username"
 				      label="工号"
 				      width="180">
-				    </el-table-column>	
+				    </el-table-column>
 				  </el-table>
 				  <div style="width: 100%;overflow:auto">
-				  	<pagination 	
+				  	<pagination
 				  		:layout='layout'
 						:currentPage = 'currentPage'
 						:total = 'total'
 						@handleSizeChange = 'handleSizeChange'
 						@handleCurrentChange = 'handleCurrentChange'
-	 				> 				
+	 				>
  					</pagination>
 				  </div>
 				</div>
-				
+
 			</el-col>
-			
+
 		</el-row>
 		<div class="text-rt">
 			<el-button  type="info" @click='CustDistributionDialog = false'>取消</el-button>
@@ -191,7 +191,7 @@ export default {
   			default: function () {
   				return {
   					showAllPararms: false,//是否要展示'全部，未实名，已实名，已成交'条件
-  					showDistribution: false,//是否要展示‘客户分配’按钮
+					showDistribution: false,//是否要展示‘客户分配’按钮
   					showRealName: false,//是否要展示高级搜索的‘是否实名’的条件
   					showRegType: false //是否要展示高级搜索的‘注册类型’的条件
   				}
@@ -228,7 +228,7 @@ export default {
 	  		tableData: [],
 	  		title: '全部客户',
 	  		orShow: false,
-	  		showTree: false,  		
+	  		showTree: false,
 	  		search: {
 	  			content: '',
 	  			checked: false,
@@ -240,7 +240,7 @@ export default {
 	  			partName: '',
 	  			people: '',
 	  			applyProvince: '',
-	  			applyCity: ''  			
+	  			applyCity: ''
 	  		},
 	  		CustDistributionDialog:false ,//客户分配弹框可见性
 			ser_department:'',//搜索的部门
@@ -263,24 +263,46 @@ export default {
 	mounted() {
 		this.queryProvinceFn()
 	},
+	created(){
+		this.permissionBtnPowerFn(this.$route.query.menuId)
+	},
     methods: { 
+
+    	permissionBtnPowerFn(menuId){//按钮权限
+	  		let pararms = {
+	  			menuId:menuId
+	  		}
+	  		console.log(pararms,666666666)
+	  		var s=new Date()
+	  		api.permissionBtnPower(pararms).then(res => {
+	  			console.log(res.data,888888777777)
+	  			var d=new Date()
+	  			let flag = res.data.data.options.indexOf('assigningCustomers')
+				if (flag > -1) {
+					this.permission.showDistribution = true
+				} else {
+					this.permission.showDistribution = false
+				}
+				console.log(d-s)
+	  		})
+	  	},
     	saveDisCust() {
     		this.$confirm('此操作将是保存, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
 	          type: 'warning'
 	        }).then(() => {
-	        	this.cuntomerDistributionFn()	          
+	        	this.cuntomerDistributionFn()
 	        }).catch(() => {
 	          this.$message({
 	            type: 'info',
 	            message: '已取消保存'
-	          });          
+	          });
 	        });
     	},
     	handleCurrentSelect(val) {
     		if (val) {
-    			
+
     			this.employeeId = val.username
     		}
     		console.log(val,65656655)
@@ -305,7 +327,7 @@ export default {
     		console.log(this.treeData)
     	},
 //  	clear_department() {
-//  		
+//
 //  		console.log(this.deptId)
 //  	},
     	search_employee() {
@@ -323,7 +345,7 @@ export default {
     			this.orSaveDisCust = false
     			if(res.data.success){
     				this.CustDistributionDialog = false
-    				
+
     				console.log(res.data.data)
     			} else {
     				this.CustDistributionDialog = true
@@ -336,7 +358,7 @@ export default {
     		})
     	},
     	changeProvince(id){
-    		this.search.applyCity = '' 
+    		this.search.applyCity = ''
     		console.log(id,12313213)
     		this.queryCityByProvinceIdFn(id)
     	},
@@ -371,12 +393,12 @@ export default {
     	handleSizeChange(val) {
 			this.currentPage = 1
 			this.pageNo = 1
-			this.pageSize = val  
+			this.pageSize = val
 			this.queryCustDistributionByDeptIdFn()
 			console.log(val,777777777777)
 		},
 		handleCurrentChange(val) {
-			this.pageNo = val	
+			this.pageNo = val
 			this.queryCustDistributionByDeptIdFn()
 			console.log(val,88888888)
 		},
@@ -402,7 +424,7 @@ export default {
 	    	}
 	    	this.loadingTableShow = true
 	    	if(!this.deptId){
-	    		this.loadingTableShow = false 
+	    		this.loadingTableShow = false
 	    		this.$notify({
 		           title: '提示',
 		           message: '请选择组织架构',
@@ -410,16 +432,16 @@ export default {
 		        });
 	    		return
 	    	}
-	    	
+
 //	    	console.log(pararms)
 	    	api.queryCustDistributionByDeptId(pararms).then(res => {
 	    		console.log(res,'-=-=-=-=6666')
-	    		
+
 	    		this.loadingTableShow = false
 	    		if(res.data.success){
-	    			this.total = res.data.total	  		
+	    			this.total = res.data.total
 	  				this.tableData = res.data.data
-    				
+
     				console.log(res.data.data)
     			} else {
     				this.$notify({
@@ -431,7 +453,7 @@ export default {
 	    	})
 //	    	console.log(data)
 	    },
-	    showTreeFn() {	    	
+	    showTreeFn() {
 	    	this.showTree = true
 	    },
 //	    hideTreeFn() {
@@ -442,18 +464,18 @@ export default {
 	  			this.search.checkList = this.checkListName
 	  		} else {
 	  			this.search.checkList =[]
-	  		}	  
+	  		}
 //	  		this.returnCheckListParams(val,'====')
 //	  		console.log(val,this.search.checkList,'====')
 	  		this.search.checkListParams = this.returnCheckListParams(this.search.checkList)
 	  	},
 	  	changeVal(val){
-	  		
+
 			if(val.length != 0 && val.length != 3) {
 				this.search.checked = false
 			} else if (val.length == 3) {
 				this.search.checked = true
-			} 
+			}
 			this.search.checkListParams = this.returnCheckListParams(val)
 //			console.log(this.search.checkListParams)
 	   	},
@@ -461,7 +483,7 @@ export default {
 	   		let arr = []
 	  		for (var i=0;i < val.length; i++) {
 				if(val[i] == '未实名') {
-//					str += Number(i + 1) 
+//					str += Number(i + 1)
 					arr.push(1)
 				} else if(val[i] == '已实名') {
 //					str += Number(i + 1)
@@ -472,7 +494,7 @@ export default {
 				}
 			}
 	  		console.log(arr)
-//	  		var str = arr.join(',')	 
+//	  		var str = arr.join(',')
 //	  		console.log(str)
 	   		return arr
 	   	},
@@ -485,7 +507,7 @@ export default {
 	  			this.search.partName = ''
 	  			this.search.people = ''
 	  			this.search.applyProvince = ''
-	  			this.search.applyCity = '' 
+	  			this.search.applyCity = ''
 	   		}
 	   	},
 	   	clearFn() {
@@ -505,7 +527,7 @@ export default {
 			this.multipleSelectionIdList = arr.join(',')
 	//		console.log(this.$store.state.selectArr,66666)
 			console.log(this.multipleSelectionIdList,66666)
-			
+
 	   		console.log(this.multipleSelectionIdList,8888888)
 	   		if (this.multipleSelectionIdList.length == 0) {
 	   			this.$notify({
@@ -515,18 +537,18 @@ export default {
 		        });
 	   			return
 	   		}
-	   		
-	   		
+
+
 	   		this.CustDistributionDialog = true;
 	   		this.ser_department  = ''
 	   		this.ser_people  = ''
 	   		this.idArr = []
-	   		this.tableData = []	   		
-	   		
+	   		this.tableData = []
+
 //	   		this.showTree = true;
 	   		this.$emit('CustDistributionFn',this.search)
-	   		
-	   		
+
+
 
 	   	},
 	   	searchFn() {
@@ -540,13 +562,13 @@ export default {
     			console
     		}
     	}
-    	
+
     },
   components: {
   	Tree,
   	Pagination
   }
-  
+
  }
 </script>
 <style scoped lang="less">
@@ -563,7 +585,7 @@ export default {
 		    border-top: 0;
 		    background-color: #fff;
 		    /*.pad20 {
-		    	padding: 20px;		    	
+		    	padding: 20px;
 		    }*/
 		}
 		.custDistribution {
@@ -581,14 +603,14 @@ export default {
 		.hideSeniorSearch{
 			cursor: pointer;
 		}
-		#tree {			
+		#tree {
 			position: absolute;
 			z-index: 12111221;
-			border: 1px solid #ccc;			
+			border: 1px solid #ccc;
 			top: 40px;
 		    background-color: #ffff;
-		    border-radius: 5px;		
-		    width: 200px;   
+		    border-radius: 5px;
+		    width: 200px;
 		}
 		.a1 {
 			    margin-top: -40px;

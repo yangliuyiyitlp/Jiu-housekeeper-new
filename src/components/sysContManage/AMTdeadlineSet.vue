@@ -8,46 +8,46 @@
 			    	<div class="left_con">
 						  <el-form-item label="首页金额配置">
 						   <el-select v-model="formLabelAlign.amountUnit" placeholder="">
-						      <el-option label="单位：元" value="1"></el-option>					      
+						      <el-option label="单位：元" value="1"></el-option>
 						    </el-select>
 						  </el-form-item>
 						  <el-form-item label="最小值" prop="amountMin">
-						    <el-input v-model="formLabelAlign.amountMin"  @input='checkNumMin'></el-input>
+						    <el-input :maxlength='9' v-model="formLabelAlign.amountMin"  @input='checkNumMin'></el-input>
 						  </el-form-item>
 						  <el-form-item label="最大值" prop="amountMax">
-						    <el-input v-model="formLabelAlign.amountMax" @input='checkNumMax'></el-input>
+						    <el-input :maxlength='9' v-model="formLabelAlign.amountMax" @input='checkNumMax'></el-input>
 						  </el-form-item>
 						  <el-form-item label="刻度值" prop="amountScale">
-						    <el-input v-model="formLabelAlign.amountScale" @input='checkNumSpace'></el-input>
+						    <el-input :maxlength='9' v-model="formLabelAlign.amountScale" @input='checkNumSpace'></el-input>
 						  </el-form-item>
 						  <el-form-item label="初始值" prop="amountInitial">
-						    <el-input v-model="formLabelAlign.amountInitial" @input='checkNumInitial'></el-input>
+						    <el-input :maxlength='9' v-model="formLabelAlign.amountInitial" @input='checkNumInitial'></el-input>
 						  </el-form-item>
 						<!--</el-form>-->
 			  		</div>
 			  	   <div class="right_con">
 				  	   	<!--<el-form :label-position="labelPosition" label-width="120px" :model="formLabelAlign">-->
 						  <el-form-item label="首页期限配置">
-						    <el-select v-model="formLabelAlign.periodUnit" placeholder="">
-						      <el-option label="单位：月" value="1"></el-option>	
-						      <el-option label="单位：周" value="2"></el-option>	
-						      <el-option label="单位：日" value="3"></el-option>	
+						    <el-select v-model="formLabelAlign.periodUnit">
+						      <el-option label="单位：月" value="1"></el-option>
+						      <el-option label="单位：周" value="2"></el-option>
+						      <el-option label="单位：日" value="3"></el-option>
 						    </el-select>
 						  </el-form-item>
 						  <el-form-item label="最小值" prop="periodMin">
-						    <el-input v-model="formLabelAlign.periodMin" @input='checkDateMin'></el-input>
+						    <el-input :maxlength='3' v-model="formLabelAlign.periodMin" @input='checkDateMin'></el-input>
 						  </el-form-item>
 						  <el-form-item label="最大值" prop="periodMax">
-						    <el-input v-model="formLabelAlign.periodMax" @input='checkDateMax'></el-input>
+						    <el-input :maxlength='3' v-model="formLabelAlign.periodMax" @input='checkDateMax'></el-input>
 						  </el-form-item>
 						  <el-form-item label="刻度值" prop="periodScale">
-						    <el-input v-model="formLabelAlign.periodScale" @input='checkDateSpace'></el-input>
+						    <el-input :maxlength='3' v-model="formLabelAlign.periodScale" @input='checkDateSpace'></el-input>
 						  </el-form-item>
 						  <el-form-item label="初始值" prop="periodInitial">
-						    <el-input v-model="formLabelAlign.periodInitial" @input='checkDateInitial'></el-input>
+						    <el-input :maxlength='3' v-model="formLabelAlign.periodInitial" @input='checkDateInitial'></el-input>
 						  </el-form-item>
 						<!--</el-form>-->
-						<div class="saveBtn">							
+						<div class="saveBtn">
 							<el-button type="primary" @click="submitForm"  :loading="saveLoading">保存更新</el-button>
 						</div>
 			  	   </div>
@@ -63,7 +63,7 @@ import TitCommon from '@/components/common/TitCommon'
 import api from '@/api/index'
 export default {
   	name: 'AMTdeadlineSet',
-  	props: {	  		
+  	props: {
 //		tableData:{
 //			type: Array,
 //			default: function () {
@@ -71,7 +71,7 @@ export default {
 //			}
 //		}
   	},
-	data() {		
+	data() {
 		var validatorMin = (rule, value, callback) => {
 //	         if (!value) {
 //	          return callback(new Error('请输入最小值'));
@@ -80,86 +80,106 @@ export default {
 //	        if(/[^0-9$]/g.test(value)) {
 ////			  console.log(/[^0-9$]/g.test(value))
 //			  return callback(new Error('请输入数字值'));
-//	        } 
+//	        }
 //	        if (!/[^0-9$]/g.test(value)) {
 //	console.log(Number(value)%100 ,Number(value) >= Number(this.formLabelAlign.amountMax),66666)
-        	if(Number(value)%100 != 0) {
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(Number(value)%100 != 0) {
         		return callback(new Error('请输入100的倍数'));
         	} else if (Number(value) >= Number(this.formLabelAlign.amountMax)) {
 //	        		console.log(value , this.formLabelAlign.amountMax,1231)
-	          	return callback(new Error('输入的最小值必须小于最大值'));
+	          	return callback(new Error('必须小于金额最大值'));
 	        } else {
 	        	callback();
 	        }
         };
         var validatorMax = (rule, value, callback) => {
-        	if(value%100 != 0) {
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(value%100 != 0) {
     		  return callback(new Error('请输入100的倍数'));
         	} else if (Number(value) < Number(this.formLabelAlign.amountMin)) {
-	          	return callback(new Error('输入的最大值必须大于最小值'));
+	          	return callback(new Error('必须大于金额最小值'));
 	        } else {
 	        	callback();
 	        }
         };
         var validatorSpace = (rule, value, callback) => {
-        	 if(value%100 != 0) {
+        	 if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(value%100 != 0) {
         		return callback(new Error('请输入100的倍数'));
         	} else if (Number(value) > Number(this.formLabelAlign.amountMax)) {
-	          	return callback(new Error('输入的刻度值不能大于最大值'));
+	          	return callback(new Error('必须小于金额最大值'));
 	        } else {
 	        	callback();
 	        }
         };
-        var validatorInitial = (rule, value, callback) => {	        
-        	if(value%100 != 0) {
+        var validatorInitial = (rule, value, callback) => {
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(value%100 != 0) {
         		return callback(new Error('请输入100的倍数'));
         	} else if (Number(value) > Number(this.formLabelAlign.amountMax)) {
-	          	return callback(new Error('输入的初始值不能大于最大值'));
-	        } else {
+	          	return callback(new Error('必须在金额最大值（包含）和金额最小值（包含）之间'));
+	        } else if (Number(value) < Number(this.formLabelAlign.amountMin)) {
+	          	return callback(new Error('必须在金额最大值（包含）和金额最小值（包含）之间'));
+	        }  else {
 	        	callback();
 	        }
         };
         var validatorDateMin =  (rule, value, callback) => {
 //	        if (!/[^0-9$]/g.test(value)) {
 //	console.log(Number(value)%100 ,Number(value) >= Number(this.formLabelAlign.amountMax),66666)
-        	if(!value) {
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(!value) {
         		return callback(new Error('不能为空'));
         	} else if (Number(value) >= Number(this.formLabelAlign.periodMax)) {
 //	        		console.log(value , this.formLabelAlign.amountMax,1231)
-	          	return callback(new Error('输入的最小值必须小于最大值'));
+	          	return callback(new Error('必须小于期限最大值'));
 	        } else {
 	        	callback();
 	        }
         };
         var validatorDateMax =  (rule, value, callback) => {
-        	if(!value) {
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(!value) {
         		return callback(new Error('不能为空'));
         	} else if (Number(value) < Number(this.formLabelAlign.periodMax)) {
 //	        		console.log(value , this.formLabelAlign.amountMax,1231)
-	          	return callback(new Error('输入的最大值必须大于最小值'));
+	          	return callback(new Error('必须大于期限最小值'));
 	        } else {
 	        	callback();
 	        }
         };
         var validatorDateSpace = (rule, value, callback) => {
-        	 if(!value) {
+        	 if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(!value) {
         		return callback(new Error('不能为空'));
         	} else if (Number(value) > Number(this.formLabelAlign.periodMax)) {
-	          	return callback(new Error('输入的刻度值不能大于最大值'));
+	          	return callback(new Error('必须小于期限最大值'));
 	        } else {
 	        	callback();
 	        }
         };
         var validatorDateInitial = (rule, value, callback) => {
-        	 if(!value) {
+        	console.log(Number(value) > Number(this.formLabelAlign.periodMax) )
+//      	&& Number(value) < Number(this.formLabelAlign.periodMin)
+        	if(Number(value) <= 0) {
+        		return callback(new Error('必须是大于0的正整数'));
+        	} else if(!value) {
         		return callback(new Error('不能为空'));
-        	} else if (Number(value) > Number(this.formLabelAlign.periodMax)) {
-	          	return callback(new Error('输入的初始值不能大于最大值'));
+        	} else if (Number(value) > Number(this.formLabelAlign.periodMax) || Number(value) < Number(this.formLabelAlign.periodMin)) {
+	          	return callback(new Error('必须在期限最大值（包含）和期限最小值（包含）之间'));
 	        } else {
 	        	callback();
 	        }
         };
-	  	return {	  		
+	  	return {
 	  		title: '金额期限配置',
 	  		labelPosition: 'right',
 	  		saveLoading: false,
@@ -173,21 +193,21 @@ export default {
 	          periodMin: '',
 	          periodMax: '',
 	          periodScale: '',
-	          periodInitial: '',	         
+	          periodInitial: '',
 	        },
 	        id: '',
 	        rules: {
 	            amountMin: [
 	            	{ required: true, message: '请输入', trigger: 'blur' },
-		            { validator: validatorMin, trigger: 'blur' },	
+		            { validator: validatorMin, trigger: 'blur' },
 	           	],
 	           	amountMax: [
 	           		{ required: true, message: '请输入', trigger: 'blur' },
-		            { validator: validatorMax, trigger: 'blur' },	
+		            { validator: validatorMax, trigger: 'blur' },
 	           	],
 	           	amountScale: [
 	           	    { required: true, message: '请输入', trigger: 'blur' },
-		            { validator: validatorSpace, trigger: 'blur' },		            
+		            { validator: validatorSpace, trigger: 'blur' },
 	           	],
 	           	amountInitial: [
 		            { required: true, message: '请输入', trigger: 'blur' },
@@ -209,7 +229,7 @@ export default {
 	           	 	{ required: true, message: '请输入', trigger: 'blur' },
 		            { validator: validatorDateInitial, trigger: 'blur' },
 	           	],
-	           	
+
             }
 	  	}
 	},
@@ -222,14 +242,15 @@ export default {
     			if (res.data.success) {
     				const data = res.data.data
     				this.id = data.id
-    				this.formLabelAlign.amountMin = data.amountMin    				
+    				this.formLabelAlign.amountMin = data.amountMin
     				this.formLabelAlign.amountMax = data.amountMax
     				this.formLabelAlign.amountScale = data.amountScale
     				this.formLabelAlign.amountInitial = data.amountInitial
     				this.formLabelAlign.periodMin = data.periodMin
-    				this.formLabelAlign.periodMax = data.periodMax    				
+    				this.formLabelAlign.periodMax = data.periodMax
     				this.formLabelAlign.periodScale = data.periodScale
     				this.formLabelAlign.periodInitial = data.periodInitial
+    				this.formLabelAlign.periodUnit = data.periodUnit.toString()
 //  					console.log(res.data.data,this.id,456)
 				} else {
 					this.$notify({
@@ -237,7 +258,7 @@ export default {
 			          message: res.data.msg,
 			          duration: 1500
 			        });
-				}	
+				}
     		})
     	},
     	savePeriodUpdateData() {
@@ -251,7 +272,7 @@ export default {
 
     		console.log(parms,666666)
     		api.queryPeriodUpdateData(parms).then((res) => {
-    			this.saveLoading = false    		
+    			this.saveLoading = false
     			if(res.data.success) {
     				this.queryPeriodNewDataFn()
     			}
@@ -288,16 +309,16 @@ export default {
     	},
     	replceNumVal(keys,value) {// this.$refs.newForm.validateField('code');
 //  		console.log(keys,value)
-    		this.$nextTick(()=>{    	//^[0-9]*$			
+    		this.$nextTick(()=>{    	//^[0-9]*$
 				this.formLabelAlign[keys] = value.replace(/[^0-9$]/g,'')
 			},20)
     	},
-    	submitForm() {    	
-    		console.log(this.formLabelAlign,777777)    	
+    	submitForm() {
+    		console.log(this.formLabelAlign,777777)
 	        this.$refs.formLabelAlign.validate((valid) => {
-	  
+
 	        	console.log(valid,66666)
-	       
+
 	          if (valid) {
 //	            alert('submit!');
 				this.saveLoading = true
@@ -310,12 +331,12 @@ export default {
         },
     },
 	components: {
-	  	TitCommon	
+	  	TitCommon
 	}
  }
 </script>
 <style scoped lang="less">
-	
+
 	.limt_money_wrap {
 		.limt_money_con {
 			margin-top: 20px;
@@ -325,6 +346,7 @@ export default {
 		}
 		.saveBtn {
 			text-align: right;
+			    padding-top: 20px;
 		}
 		.el-input {
 	    	width: 160px;

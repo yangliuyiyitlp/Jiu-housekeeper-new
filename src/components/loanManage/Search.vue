@@ -4,7 +4,7 @@
 		<el-form :inline="true" :model="search" class="demo-form-inline">
 		  <el-form-item>
 		  	<div style="width:320px">
-		  		<el-input v-model="search.content" placeholder='请输入姓名、手机号或身份证号码精确查询' clearable></el-input>
+		  		<el-input v-model.trim="search.content" placeholder='请输入姓名、手机号或身份证号码精确查询' clearable></el-input>
 		  	</div>
 		  </el-form-item>
 		  <el-form-item  v-if='permission.showAllPararms'>

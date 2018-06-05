@@ -5,24 +5,37 @@
       <el-col  class="searchbox">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label-width='105px'>
+            <!--<el-date-picker-->
+              <!--v-model="formInline.time"-->
+              <!--type="datetimerange"-->
+              <!--range-separator="至"-->
+              <!--start-placeholder="开始时间"-->
+              <!--end-placeholder="结束时间"-->
+              <!--value-format="yyyy-MM-dd HH:mm:ss"-->
+              <!--:default-time="['00:00:00', '00:00:00']">-->
+            <!--</el-date-picker>-->
             <el-date-picker
-              v-model="formInline.applyDate"
-              type="datetimerange"
-              range-separator="至"
-              start-placeholder="开始时间"
-              end-placeholder="结束时间"
-              value-format="yyyy-MM-dd"
-              :default-time="['00:00:00', '24:00:00']"
-            >
+              v-model="formInline.beginTime"
+              type="datetime"
+              @change="timeChange"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="开始时间">
+            </el-date-picker> -
+            <el-date-picker
+              v-model="formInline.endTime"
+              type="datetime"
+              @change="timeChange"
+              value-format="yyyy-MM-dd HH:mm:ss"
+              placeholder="结束时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item >
-            <el-select v-model="formInline.state" placeholder="通知类型">
+            <el-select v-model="formInline.detailCode" placeholder="通知类型">
               <el-option
                 v-for="item in states"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
+                :key="item.id"
+                :label="item.name"
+                :value="item.detailCode">
               </el-option>
             </el-select>
           </el-form-item>
@@ -41,39 +54,33 @@
           :data="tableData"
           border
           style="width: 100%">
-          <el-table-column align='center' type="index"  width="100" label="序号" >
+          <el-table-column align='center' type="index"  width="60" label="序号" >
 
           </el-table-column>
           <el-table-column
             align='center'
             :show-overflow-tooltip="true"
-            prop="status"
+            prop="type"
             label="类型">
-            <template slot-scope="scope">
-              <span v-if='scope.row.channel==0'>手机站</span>
-              <span v-if='scope.row.channel==1'>APP</span>
-              <span v-if='scope.row.channel==2'>官网</span>
-
-            </template>
           </el-table-column>
           <el-table-column
             align='center'
             :show-overflow-tooltip="true"
-            prop="link"
+            prop="pushContent"
             label="发送内容">
           </el-table-column>
 
           <el-table-column
             align='center'
             :show-overflow-tooltip="true"
-            prop="reorder"
+            prop="createTime"
             label="发送时间">
           </el-table-column>
 
           <el-table-column
             align='center'
             :show-overflow-tooltip="true"
-            prop="reorder"
+            prop="operator"
             label="操作人">
           </el-table-column>
 
@@ -93,27 +100,33 @@
     <el-dialog title="消息推送" :visible.sync="banner_DialogVisible" width="35%"  center  @close="addDiaClose" :close-on-click-modal ='false' class="infoListDialog">
       <el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline infoListClass" :rules="addForm_rules" >
 
-        <el-form-item  prop="status"  >
-          <el-select v-model="addForm.status" placeholder="请选择通知类型" >
-            <el-option  label="有效" value="1" ></el-option>
-            <el-option  label="无效" value="0" ></el-option>
+        <el-form-item  prop="detailCode"  >
+          <el-select v-model="addForm.detailCode" placeholder="请选择通知类型">
+            <el-option
+              v-for="item in statesAdd"
+              :key="item.id"
+              :label="item.name"
+              :value="item.detailCode">
+            </el-option>
           </el-select>
           &nbsp;&nbsp;默认发送所有注册会员
         </el-form-item>
-        <el-form-item prop="textarea">
+        <el-form-item prop="pushContent">
         <el-input
           @input="descInput"
           type="textarea"
           :rows="5"
-          placeholder="请录入需发送消息，限制100个文字以内"
-          v-model="addForm.textarea">
+          placeholder="请录入需发送消息，限制200个文字以内"
+          v-model.trim="addForm.pushContent">
         </el-input>
+          <!--<div v-if="showTip" class="showTip">超过最大长度</div>-->
         </el-form-item>
-        <p>{{number}}/100</p>
+
+        <p>{{number}}/200</p>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel_addModify()">取消</el-button>
-        <el-button type="primary" :loading="buttonLoading" @click="confirm_add('addForm')">发送</el-button>
+        <el-button type="primary" :loading="buttonLoading" @click="confirm_add">发送</el-button>
       </div>
     </el-dialog>
 
@@ -142,63 +155,73 @@
         pageNo: 1,
         pageSize: 10,
         tableData: [],
-        formInline:{},
-        states:[
-          {
-            label:'全部',
-            value: null
-          },
-          {
-            label:'有效',
-            value:'1'
-          },
-          {
-            label:'无效',
-            value:'0'
-          }
-        ],
+        formInline:{
+          detailCode:null
+        },
+        states:[{
+          "id": "99999999",
+          "name": "全部",
+          "detailCode": null
+        }],
+        statesAdd:[{
+          "id": "99999999",
+          "name": "请选择通知类型",
+          "detailCode": null
+        }],
         addForm:{},
         addForm_rules:{
-          status:[
-            {required:true, max:50,message: '请选择通知类型', trigger: 'blur' }
+          detailCode:[
+            {required:true, max:50,message: '请选择通知类型', trigger: 'change' }
           ],
-          textarea:[
-            {required:true, max:200,message: '请录入发送信息', trigger: 'blur' }
+          pushContent:[
+            {required:true, message: '请录入发送消息', trigger: 'blur' },
+            { min: 1, max: 200, message: '超过最大长度', trigger: 'blur' }
           ]
         },
-        bannerId:'',
-        number:200
+        number:200,
+      sumLen:0,
+        showTip:false
       }
     },
     created() {
-
       if (JSON.parse(localStorage.getItem('myPageSize'))) {
-        this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_bannerList?JSON.parse(localStorage.getItem('myPageSize')).W_bannerList:10
-        console.log(JSON.parse(localStorage.getItem('myPageSize')).W_bannerList)
+        this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).infoList?JSON.parse(localStorage.getItem('myPageSize')).infoList:10
+        console.log(JSON.parse(localStorage.getItem('myPageSize')).infoList)
       } else {
         let obj = {}
         localStorage.setItem('myPageSize',JSON.stringify(obj))
       }
     },
     mounted(){
+      this.queryStatus()
       this.queryInfoList();
     },
     methods: {
       descInput(){ //校验字符或者文字
-        let len=0
-        let txtVal = this.addForm.textarea;
+        // let len=0
+        // let maxLen = 0
+        let txtVal = this.addForm.pushContent;
+        let len = 0
         for (let i = 0; i < txtVal.length; i++) {
-            let a = txtVal.charAt(i);
-            if (a.match(/[^\x00-\xff]/ig) != null)
-            {
+          //   let a = txtVal.charAt(i);
+          //   if (a.match(/[^\x00-\xff]/ig) != null)
+          //   {
               len += 1;
-            }
-            else
-            {
-              len += 0.5;
-            }
+          //   }
+          //   else
+          //   {
+          //     maxLen+=0.5;
+          //   }
+          // this.sumLen = len+maxLen
           }
-        this.number = parseInt(100 - len);
+        if(len>200){
+          len=200
+          // this.showTip = true
+        }
+        // else{
+        //   this.showTip = false
+        // }
+        this.number = parseInt(200 - len);
       },
       handleSizeChange(val) {
         let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
@@ -213,21 +236,18 @@
         this.currentPage = val
         this.queryInfoList();
       },
-      queryInfoList(){
-        const pararms = {
-          pageNo:this.pageNo,
-          pageSize:this.pageSize,
-          title:this.formInline.title,
-          status:this.formInline.state,
-          channel:this.formInline.channel
-        }
-        console.log('==============')
-        api.queryBannerList(pararms).then(res=>{
-          console.log(res)
-          if(res.data.code == 1){
-            this.total = res.data.total;
-            this.tableData = res.data.data
+      queryStatus(){
+        api.queryPageDictionaryDetail({dictionaryId:"d2fedd33679e11e8b5ed005056ae2979",status:1}).then(res=>{
+          console.log(111,res)
+          if(res.data.success){
+            for (var i=0; i < res.data.data.length;i++) {
 
+              this.statesAdd.push(res.data.data[i])
+              this.states.push( res.data.data[i])
+            }
+            // this.states.unshift()
+
+            console.log(8989,  this.statesAdd);
           } else {
             this.$notify({
               title: '提示',
@@ -237,59 +257,98 @@
           }
         })
       },
-      add(a){
+      timeChange(val){
+       if(this.formInline.beginTime && this.formInline.endTime){
+         if(this.formInline.beginTime>this.formInline.endTime){
+           this.$message.warning("开始时间需早于结束时间")
+           return false
+       }
+       }
+      },
+      queryInfoList(){
+        // if(this.formInline.time && this.formInline.time.length == 2){
+        //   this.formInline.beginTime=this.formInline.time[0]
+        //   this.formInline.endTime=this.formInline.time[1]
+        // }else{
+        //   this.formInline.beginTime=""
+        //   this.formInline.endTime=""
+        // }
+        if(this.formInline.beginTime && this.formInline.endTime){
+          if(this.formInline.beginTime>this.formInline.endTime){
+            this.$message.warning("开始时间需早于结束时间")
+            return false
+          }
+        }
+        const pararms = {
+          pageNo:this.pageNo,
+          pageSize:this.pageSize,
+          beginTime:this.formInline.beginTime,
+          endTime:this.formInline.endTime,
+          typeCode:this.formInline.detailCode
+        }
+        api.queryInfoList(pararms).then(res=>{
+          console.log(res)
+          if(res.data.code == 1){
+            this.total = res.data.total;
+            this.tableData = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
+          }
+        })
+      },
+      add(){
         this.buttonLoading = false;
         this.banner_DialogVisible = true;
-        this.bannerId='';
+        this.addForm={
+          pushContent:'',
+          detailCode:null
+        }
       },
-      confirm_add(addForm){
-        this.$refs[addForm].validate((valid) => {
+      confirm_add(){
+        // if(this.showTip){
+        //   return false
+        // }
+        this.$refs.addForm.validate((valid) => {
           if (valid) {
             console.log(666)
             this.buttonLoading = true;
-//          	this.updateSysBannerFn()
-            api.updateSysBanner({
-              id:this.bannerId,
-              title:this.addForm.title,
-              link:this.addForm.link,
-              status:this.addForm.status,
-              channel:this.addForm.channel,
-              reorder:this.addForm.reorder,
-              imgAddress:this.addForm.imgAddress,
-              describe:this.addForm.describe
+            api.infoListAddPushMsg({
+              pushContent:this.addForm.pushContent,
+              typeCode:this.addForm.detailCode,
             }).then(res=>{
               this.buttonLoading = false;
-              console.log(res)
-              if(res.data.code == 1){
+              if(res.data.success){
                 this.queryInfoList()
                 this.$message.success(res.data.msg);
                 this.banner_DialogVisible = false;
               }else{
                 this.$message.error(res.data.msg)
               }
-
-
             })
+          }else{
+            return false;
           }
         })
       },
       addDiaClose(){
-        // console.log("addDiaClose=====")
         Object.assign(this.addForm,{
-          title:'',
-          link:'',
-          status:'',
-          channel:'',
-          imgAddress:'',
-          describe:'',
-          reorder:''
+          pushContent:'',
+          detailCode:''
         })
+        // this.showTip = false
+        this.number=200
         this.$nextTick(()=>{
           this.$refs.addForm.clearValidate();
         })
       },
       cancel_addModify(){
+        // this.showTip = false
         this.banner_DialogVisible = false;
+        this.number=200
         this.$refs['addForm'].resetFields();
       }
     },
@@ -313,6 +372,15 @@
   }
   p{
     float:right;
+  }
+  .showTip{
+    color: #f56c6c;
+    font-size: 12px;
+    line-height: 1;
+    padding-top: 4px;
+    position: absolute;
+    top: 100%;
+    left: 0;
   }
 }
 </style>

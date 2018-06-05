@@ -256,7 +256,7 @@
 			  			<el-col :span="8" >{{observeObj.contactType ==0?'异常':'正常'}}</el-col>
 			  		</el-row>
 			  		<el-row>
-			  			<el-col :span="3" >备注：</el-col>
+			  			<el-col :span="3" >跟进内容：</el-col>
 			  			<!--disappearStatus (integer, optional): 是否失联0.否 1.是 ,-->
 			  			<el-col :span="21" >
 			  				{{beforeLoan_followCont}}
@@ -409,15 +409,15 @@ import Pagination from '@/components/common/Pagination'
 		}
 	  },
 	  mounted(){
-	  	console.log(this.$route,'mounted')
+//	  	console.log(this.$route,'mounted')
 	  },
 	  watch: {
-	  	rowFollowId(newVal) {
-	  		if(newVal){
-	  			//this.queryFollowList()
-	  		}
-	  		console.log(newVal,'-----')
-	  	}
+//	  	rowFollowId(newVal) {
+//	  		if(newVal){
+//	  			//this.queryFollowList()
+//	  		}
+////	  		console.log(newVal,'-----')
+//	  	}
 	  },
 	  components: {
 //	  	CommonTable

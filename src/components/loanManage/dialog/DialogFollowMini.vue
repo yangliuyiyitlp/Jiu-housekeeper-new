@@ -83,7 +83,7 @@
             <div class=" borBot1px dialogLoanEnd"></div>
           </el-form-item>
           <el-form-item label="是否失联：" :label-width="formLabelWidth" prop="disappearStatus">
-            <el-radio-group v-model="form.disappearStatus">
+            <el-radio-group v-model.trim="form.disappearStatus">
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
@@ -91,7 +91,7 @@
             <a href="#" class="dialogTip" v-if="isDisappearRemark"  >{{remarksInfo.isDisappearRemark}}</a>
           </el-form-item>
           <el-form-item label="是否异常：" :label-width="formLabelWidth" prop="expectionStatus">
-            <el-radio-group v-model="form.expectionStatus">
+            <el-radio-group v-model.trim="form.expectionStatus">
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
@@ -111,7 +111,7 @@
             <el-select v-model="form.homeDistrictId" class="proviceCity" placeholder="请选择" clearable :disabled="!isFamily">
             <el-option v-for = '(val,ind) in applyArea' :label='val.districtName' :value="val.id" :key='ind'></el-option>
             </el-select>
-            <el-input v-model="form.homeAddress" class="proviceInput" :disabled="!isFamily"></el-input>
+            <el-input v-model.trim="form.homeAddress" class="proviceInput" :disabled="!isFamily"></el-input>
             <a href="#" class="dialogTip" v-if="isHomeAddress">请填写全回访家庭地址</a>
           </el-form-item>
 
@@ -120,7 +120,7 @@
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
-            <el-input v-model="form.homeChangeRemark" class="miniInput" :disabled="!isFamily" :id="isHomeChangeRemark ? 'classTip':'classDefault'"></el-input>
+            <el-input v-model.trim="form.homeChangeRemark" class="miniInput" :disabled="!isFamily" :id="isHomeChangeRemark ? 'classTip':'classDefault'"></el-input>
             <a href="#" class="dialogTip" v-if="isHomeChangeRemark">{{remarksInfo.isHomeChangeRemark}}</a>
           </el-form-item>
 
@@ -130,7 +130,7 @@
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
-            <el-input v-model="form.homeExceptionRemark" class="miniInput" :disabled="!isFamily" :id="isHomeExceptionRemark ? 'classTip':'classDefault'"></el-input>
+            <el-input v-model.trim="form.homeExceptionRemark" class="miniInput" :disabled="!isFamily" :id="isHomeExceptionRemark ? 'classTip':'classDefault'"></el-input>
             <a href="#" class="dialogTip" v-if="isHomeExceptionRemark">{{remarksInfo.isHomeExceptionRemark}}</a>
           </el-form-item>
 
@@ -148,7 +148,7 @@
             <el-select v-model="form.comDistrictId" class="proviceCity" placeholder="请选择" clearable :disabled="!isCompany" @change='changeProviceCity'>
               <el-option v-for = '(val,ind) in companyArea' :label='val.districtName' :value="val.id" :key='ind'></el-option>
             </el-select>
-            <el-input v-model="form.comAddress" class="proviceInput" :disabled="!isCompany"></el-input>
+            <el-input v-model.trim="form.comAddress" class="proviceInput" :disabled="!isCompany"></el-input>
             <a href="#" class="dialogTip" v-if="isComAddress">请填写全回访公司地址</a>
           </el-form-item>
 
@@ -157,7 +157,7 @@
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
-            <el-input v-model="form.comChangeRemark" class="miniInput" :disabled="!isCompany" :id="isComChangeRemark ? 'classTip':'classDefault'"></el-input>
+            <el-input v-model.trim="form.comChangeRemark" class="miniInput" :disabled="!isCompany" :id="isComChangeRemark ? 'classTip':'classDefault'"></el-input>
             <a href="#" class="dialogTip" v-if="isComChangeRemark">{{remarksInfo.isComChangeRemark}}</a>
           </el-form-item>
 
@@ -166,7 +166,7 @@
               <el-radio  :label="0" >否</el-radio>
               <el-radio  :label="1" >是</el-radio>
             </el-radio-group>
-            <el-input v-model="form.comExceptionRemark" class="miniInput" :disabled="!isCompany" :id="isComExceptionRemark ? 'classTip':'classDefault'"></el-input>
+            <el-input v-model.trim="form.comExceptionRemark" class="miniInput" :disabled="!isCompany" :id="isComExceptionRemark ? 'classTip':'classDefault'"></el-input>
             <a href="#" class="dialogTip" v-if="isComExceptionRemark">{{remarksInfo.isComExceptionRemark}}</a>
           </el-form-item>
 
@@ -175,8 +175,7 @@
                 <el-radio  :label="0" >否</el-radio>
                 <el-radio  :label="1" >是</el-radio>
               </el-radio-group>
-               <!--todo 其他异常备注-->
-              <el-input v-model="form.otherExceptionRemark" class="miniInput" :id="isOtherExceptionRemark ? 'classTip':'classDefault'"></el-input>
+              <el-input v-model.trim="form.otherExceptionRemark" class="miniInput" :id="isOtherExceptionRemark ? 'classTip':'classDefault'"></el-input>
               <a href="#" class="dialogTip" v-if="isOtherExceptionRemark">{{remarksInfo.isOtherExceptionRemark}}</a>
             </el-form-item>
           <el-form-item>
@@ -192,7 +191,7 @@
             </el-radio-group>
           </el-form-item>
 			    <el-form-item label="回访意见：" :label-width="formLabelWidth" prop="visitOpinion">
-			       <el-input type="textarea" v-model="form.visitOpinion" class="miniTextarea"></el-input>
+			       <el-input type="textarea" v-model.trim="form.visitOpinion" class="miniTextarea"></el-input>
 			    </el-form-item>
 			  </el-form>
 

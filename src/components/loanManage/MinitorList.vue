@@ -156,6 +156,7 @@ export default {
       console.log('href:',routeData);
     },
     handleSizeChange(val) {
+      console.log(val);
       this.currentPage = 1
       let myPageSize = JSON.parse(localStorage.getItem('myPageSize'))
       myPageSize.MinitorList = val

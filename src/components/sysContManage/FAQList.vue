@@ -6,7 +6,7 @@
 	  		<el-form :inline="true" :model="formInline" class="demo-form-inline">
 	            <el-form-item label="问题">
 			    	<el-input
-					    placeholder="输入问题"
+					    placeholder=""
 					    v-model.trim="formInline.question" :maxlength="50">
 				    </el-input>
 			    </el-form-item>
@@ -34,14 +34,16 @@
 		      :data="tableData"
 		      border
 		      style="width: 100%">
-		      <el-table-column type="index"  width="60" label="序号" ></el-table-column>
+		      <el-table-column type="index"  width="60" label="序号" align='center'></el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="data"
 		        label="问题"
 		        width="300">
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="result"
 		        label="答案">
@@ -57,6 +59,7 @@
 		       </template>
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="status"
 		        label="状态">
@@ -65,21 +68,25 @@
 		         </template>
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="creator"
 		        label="发布人">
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="createTime"
 		        label="发布时间">
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="reorder"
 		        label="排序">
 		      </el-table-column>
 		      <el-table-column
+            align='center'
 		        :show-overflow-tooltip="true"
 		        prop="date"
 		        label="操作">
@@ -88,27 +95,27 @@
 	           		<el-button type="success" @click="delete_s(scope.row)" v-if='scope.row.status==1' size="mini">删除</el-button>
 		        </template>
 		      </el-table-column>
-		    </el-table>		
+		    </el-table>
  		</div>
  		<div class="pad20 alignCen">
- 			<pagination 				
+ 			<pagination
 				:currentPage = 'currentPage'
 				:myPageSizes = 'pageSize'
 				:total = 'total'
 				@handleSizeChange = 'handleSizeChange'
 				@handleCurrentChange = 'handleCurrentChange'
- 				> 				
+ 				>
  			</pagination>
  		</div>
  	</div>
  	<el-dialog :title="addModify_title" :visible.sync="question_DialogVisible" width="50%"   @close="addDiaClose" :close-on-click-modal ='false'>
  		<el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline" :rules="addForm_rules">
 	        <el-form-item label="问题" prop="data"  >
-	           <el-input  v-model="addForm.data" :maxlength="50" @input="activityNameFn"></el-input>
+	           <el-input  v-model.trim="addForm.data" :maxlength="50" @input="activityNameFn"></el-input>
 	        </el-form-item>
 	        <el-form-item label="答案" prop="result"  >
 	        	<div class="edit">
-	        		<editor 
+	        		<editor
 				ref='edit'
 				id="editor_id"  width="300px" :minHeight="100" :content="addForm.result"
 	            pluginsPath="static/kindEditor/plugins/"
@@ -117,15 +124,17 @@
 	            :uploadJson = 'uploadJson'
 	            @on-content-change="onContentChange"></editor>
 	        	</div>
-				
+
 	        </el-form-item>
 	        <el-form-item label="状态" prop="status"  >
-	           <el-select v-model="addForm.status" placeholder="选择状态" >
+	           <el-select v-model="addForm.status" placeholder="请选择" >
 	            	<el-option v-for="item in states2" :key="item.name" :label="item.label" :value="item.value" ></el-option>
 	           </el-select>
 	        </el-form-item>
 	        <el-form-item label="排序数字" prop="reorder"  >
-	            <el-input-number v-model="addForm.reorder"  :min="0" :max="999999999" label="描述文字"></el-input-number>
+
+            <el-input :maxlength='9' v-model.trim="addForm.reorder"  @input='checkNumMin' class="reorderClass"></el-input>
+	            <!--<el-input-number v-model="addForm.reorder"  :min="0" :max="999999999" label="描述文字"></el-input-number>-->
 	        </el-form-item>
 	    </el-form>
 	    <div slot="footer" class="dialog-footer">
@@ -145,7 +154,7 @@
 </template>
 
 <script>
-import api from '@/api/index.js'	
+import api from '@/api/index.js'
 import TitCommon from '@/components/common/TitCommon'
 import TableList from '@/components/custManage/TableList'
 import Pagination from '@/components/common/Pagination'
@@ -183,6 +192,10 @@ export default {
         ],
         states2:[
         	{
+        		label:'请选择',
+        		value:null
+        	},
+        	{
         		label:'有效',
         		value:'1'
         	},
@@ -201,9 +214,9 @@ export default {
         	data:[
 	        		{required:true, max:50,message: '请输入标题', trigger: 'blur' }
 	        	],
-			
+
 			status:[
-	        		{required:true, message: '请选择状态', trigger: 'blur' }
+	        		{required:true, message: '请选择状态', trigger: 'blur,change' }
 	        	],
 	        result:[
 	        	{required:true, message: '请填写答案', trigger: 'blur' }
@@ -221,7 +234,7 @@ export default {
   },
   created(){
 
-  	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+  	if (JSON.parse(localStorage.getItem('myPageSize'))) {
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_FAQList?JSON.parse(localStorage.getItem('myPageSize')).W_FAQList:10
  	} else {
  		let obj = {}
@@ -232,10 +245,35 @@ export default {
  mounted() {
  	this.queryQuestionList()
  },
- computed: {
- 	
- },
-  methods: {
+  watch:{
+      // 'addForm.reorder': function (val, oldVal) {
+      //   if(typeof(val) != Number){
+      //     this.addForm.reorder=parseInt(val)
+      //   }
+      // }
+    // addForm:{// 深度监视
+    //   deep:true,
+    //   handler:function(newV,oldV){
+    //     if(typeof(this.addForm.reorder) != Number){
+    //
+    //       // this.addForm.reorder=parseInt(this.addForm.reorder)
+    //     }
+    //   } }
+      },
+    methods: {
+      replceNumVal(keys,value) {
+        this.$nextTick(()=>{
+          this.addForm[keys] = value.replace(/[^0-9$]/g,'')
+        },20)
+      },
+      checkNumMin(value) {
+        this.replceNumVal('reorder',value)
+      },
+  	chenkNum(value) {
+		this.$nextTick(()=>{
+			this.addForm.reorder = value.replace(/[^0-9$]/g,'')
+		},20)
+	},
   	queryQuestionList(){
   		var params={
   			pageNo:this.pageNo,
@@ -290,13 +328,15 @@ export default {
     },
   	search(data) {
   		this.pageNo = 1
-  		this.pageSize = 10
+//		this.pageSize = 10
   		this.queryQuestionList()
   	},
   	add(a){
   		this.question_DialogVisible = true;
 		this.addModify_title = '新增问题';
 		this.questionId='';
+		this.addForm.reorder = ""
+		this.addForm.status = null
   	},
   	modify(a){
   		console.log(a)
@@ -317,14 +357,15 @@ export default {
   		this.imglink = '';
   	},
   	delete_s(row){
-  		this.$confirm('此操作将是删除, 是否继续?', '提示', {
+  		this.$confirm('确认删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          type: 'warning',
+          closeOnClickModal: false
         }).then(() => {
         	api.updateQuestion({
 	    		id:row.id,
-				status:0			
+				status:0
 	    	}).then(res=>{
 	// 			console.log(res)
 	 			if(res.data.code == 1){
@@ -335,12 +376,12 @@ export default {
 	 			}
 	// 			this.buttonLoading = true;
 	// 			this.banner_DialogVisible = false;
-	 		})	          
+	 		})
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
   	},
   	before_upload(files) {
@@ -354,7 +395,7 @@ export default {
     	console.log(files.name)
     },
   	activityNameFn(value){
-		this.$nextTick(()=>{    				
+		this.$nextTick(()=>{
 			this.addForm.bannerName = value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]{0,50}/g,'')
 		},20)
 	},
@@ -369,11 +410,11 @@ export default {
 		console.log(val,777777777777)
 	},
 	handleCurrentChange(val) {
-		this.pageNo = val	
+		this.pageNo = val
 		this.currentPage = val
 		this.queryQuestionList();
 //		console.log(val,88888888)
-	},	
+	},
 	handleAvatarSuccess(){
 
 	},
@@ -384,7 +425,7 @@ export default {
 		this.$refs[addForm].validate((valid) => {
             if (valid) {
             	console.log(666)
-            	
+
             	this.updateQuestion()
             }else {
 	            return false;
@@ -400,7 +441,7 @@ export default {
 			reorder:''
   		})
   		this.$nextTick(()=>{
-  			this.$refs.addForm.clearValidate();	
+  			this.$refs.addForm.clearValidate();
   		})
 	},
 	cancel_addModify(){
@@ -409,7 +450,7 @@ export default {
 	},
 	goNewPage(a){ //跳转页面
     	var newWin = window.open('loading page');
-    	 //newWin.location.href = baseURL + '/#/activity_mobile' 
+    	 //newWin.location.href = baseURL + '/#/activity_mobile'
     	 newWin.location.href = a;
     },
     copyLink(a){ //复制地址
@@ -431,10 +472,13 @@ export default {
   	TableList,
   	Pagination
   }
-  
+
  }
 </script>
 <style  lang="less" >
+  .reorderClass .el-input__inner{
+    width:206px;
+  }
   .my_upload{
   	.avatar-uploader .el-upload {
 	    border: 1px dashed #d9d9d9;

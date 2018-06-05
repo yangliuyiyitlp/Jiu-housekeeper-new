@@ -73,20 +73,39 @@ export default {
         
   	}
   },
+beforeCreate(){
+//	let pararms = {
+//		menuId:this.$route.query.menuId
+//	}
+//	this.$store.dispatch('SET_POWER_BTN_ARR', pararms).then(res=>{	
+//		//assigningCustomers:分配客户权限, "frozenCustomer：冻结按钮权限
+//		let flag = res.indexOf('assigningCustomers')
+//		if (flag > -1) {
+//			this.permission.showDistribution = true
+//		} else {
+//			this.permission.showDistribution = false
+//		}
+//		console.log(this.permission,'=====4544545=========')
+//		console.log(flag,'=====4544545=========')
+//	})
+
+},
  created() {
  	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_AllUserList?JSON.parse(localStorage.getItem('myPageSize')).W_AllUserList:10
- 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AllUserList)
+// 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_AllUserList)
  	} else {
  		let obj = {}
  		localStorage.setItem('myPageSize',JSON.stringify(obj))
  	}
+// 	this.permissionBtnPowerFn(this.$route.query.menuId)
+	
  },
  computed: {
  	permission () {
  		return {
  			showAllPararms: true,//是否要展示'全部，未实名，已实名，已成交'条件
-			showDistribution: true,//是否要展示‘客户分配’按钮
+//			showDistribution: false,//是否要展示‘客户分配’按钮
 			showRealName: true,
 			showRegType: true, //是否要展示高级搜索的‘注册类型’的条件			
  		}
@@ -97,7 +116,8 @@ export default {
  	this.queryCustInfoData()
  	
  },
-  methods: {  	
+  methods: {  
+  	
   	queryCustInfoData() {
   		this.loadingTable = true
   		
@@ -114,7 +134,7 @@ export default {
 			provId: this.serachPararms.applyProvince,
 			cityId: this.serachPararms.applyCity
   		}
-  		console.log(pararms)
+//		console.log(pararms)
   		api.queryCustInfoData(pararms).then(res => {
   			this.loadingTable = false
 			if(res.data.success) {

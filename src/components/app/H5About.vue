@@ -27,10 +27,10 @@ export default {
   
   methods: {
     queryAbout(){
-      api.queryAbout({
-
-      }).then(res=>{
+      api.queryAbout().then(res=>{
         this.html = res.data.data.data
+//		this.html = res.data
+//		console.log(res.data)
       })
     }
   },

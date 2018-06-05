@@ -6,12 +6,12 @@
 	  		<el-form :inline="true" :model="formInline" class="demo-form-inline">
 	            <el-form-item label="标题">
 			    	<el-input
-					    placeholder="输入标题"
+					    placeholder=""
 					    v-model.trim="formInline.title" :maxlength="50">
 				    </el-input>
 			    </el-form-item>
 			    <el-form-item label="状态">
-				    <el-select v-model="formInline.state" placeholder="请选择状态">
+				    <el-select v-model="formInline.state" placeholder="全部">
 				    <el-option
 				      v-for="item in states"
 				      :key="item.value"
@@ -21,7 +21,7 @@
 				  </el-select>
 			    </el-form-item>
 			    <el-form-item label="渠道">
-				    <el-select v-model="formInline.channel" placeholder="请选择渠道">
+				    <el-select v-model="formInline.channel" placeholder="全部">
 				    <el-option
 				      v-for="item in channels"
 				      :key="item.value"
@@ -32,7 +32,7 @@
 			    </el-form-item>
 			    <el-form-item>
 	    			<el-button type="primary" @click="search()">查询</el-button>
-	    			<el-button type="primary" @click="add('add')">新增</el-button>	    			
+	    			<el-button type="primary" @click="add('add')">新增</el-button>
 	  			</el-form-item>
 			</el-form>
 	  </el-col>
@@ -44,7 +44,7 @@
 		      border
 		      style="width: 100%">
 		      <el-table-column align='center' type="index"  width="60" label="序号" >
-		      	
+
 		      </el-table-column>
 		      <el-table-column
 		      	align='center'
@@ -58,7 +58,10 @@
 		        :show-overflow-tooltip="true"
 		        prop="link"
 		        label="链接">
-		        <template  slot-scope="scope"><span class="highLight_cursor" @click="openLink(scope.row.link)">查看</span></template>
+		        <template  slot-scope="scope">
+		        	<!--<span v-if='!scope.row.link' disabled>查看</span>-->
+		        	<span v-if='scope.row.link' class="highLight_cursor" @click="openLink(scope.row.link)">查看</span>
+		        </template>
 		      </el-table-column>
 		      <el-table-column
 		      	align='center'
@@ -67,7 +70,7 @@
 		        label="状态">
 		         <template slot-scope="scope">
 		         	{{ scope.row.status==1?'有效':'无效'}}
-		         
+
 		         </template>
 		      </el-table-column>
 		      <el-table-column
@@ -128,48 +131,59 @@
   					<el-button type="success"  @click="delete_s(scope.row)" v-if='scope.row.status==1' size="mini">删除</el-button>
 		        </template>
 		      </el-table-column>
-		    </el-table>		
+		    </el-table>
  		</div>
  		<div class="pad20 alignCen">
- 			<pagination 				
+ 			<pagination
 				:currentPage = 'currentPage'
 				:myPageSizes = 'pageSize'
 				:total = 'total'
 				@handleSizeChange = 'handleSizeChange'
 				@handleCurrentChange = 'handleCurrentChange'
- 				> 				
+ 				>
  			</pagination>
  		</div>
  	</div>
- 	<el-dialog :title="addModify_title" :visible.sync="banner_DialogVisible" width="35%"   @close="addDiaClose" :close-on-click-modal ='false'>
+ 	<el-dialog :title="addModify_title" :visible.sync="banner_DialogVisible" width="40%"   @close="addDiaClose" :close-on-click-modal ='false'>
  		<el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline" :rules="addForm_rules">
 	        <el-form-item label="标题" prop="title"  >
-	           <el-input  v-model="addForm.title" :maxlength="50" @input="activityNameFn"></el-input>
+	           <el-input  v-model.trim="addForm.title" :maxlength="50" @input="activityNameFn"></el-input>
 	        </el-form-item>
 	        <el-form-item label="链接地址" prop="link"  >
-	           <el-input  v-model="addForm.link" ></el-input>
+	           <el-input  v-model.trim="addForm.link" ></el-input>
 
 	           <!-- <el-select v-model="addForm.activityCompName" placeholder="活动归属" :readonly="orign_disabled">
 	            	<el-option v-for="item in BranchCompany" :key="item.name" :label="item.name" :value="item.name" @click.native = 'selectFn2(item)'></el-option>
 	           </el-select> -->
 	        </el-form-item>
 	        <el-form-item label="状态" prop="status"  >
-	           <el-select v-model="addForm.status" placeholder="选择状态" >
-	            	<el-option  label="有效" value="1" ></el-option>
-	            	<el-option  label="无效" value="0" ></el-option>
-	            	
+	           <el-select v-model="addForm.status" >
+               <el-option
+                 v-for="item in addFormStates"
+                 :key="item.value"
+                 :label="item.label"
+                 :value="item.value">
+               </el-option>
+
 	           </el-select>
 	        </el-form-item>
+
 	        <el-form-item label="渠道" prop="channel"  >
-	           <el-select v-model="addForm.channel" placeholder="选择渠道" >
-	            	<el-option  label="手机站" value="0" ></el-option>
-	            	<el-option  label="APP" value="1" ></el-option>
-	            	<el-option  label="官网" value="2" ></el-option>	            	
+
+	           <el-select v-model="addForm.channel" >
+               <el-option
+                 v-for="item in addFormChannels"
+                 :key="item.value"
+                 :label="item.label"
+                 :value="item.value">
+               </el-option>
+
 	           </el-select>
 	        </el-form-item>
 	        <el-form-item label="活动图片"  prop="imgAddress" class="my_upload">
 				<el-upload
-				  class="avatar-uploader"
+
+				  class="avatar-uploader wordDes"
 				  :action="uploadUrl"
 				  :show-file-list="false"
 				  :on-success="handleAvatarSuccess"
@@ -177,13 +191,18 @@
 				  <img v-if="addForm.imgAddress" :src="addForm.imgAddress" class="avatar">
 				  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
 				</el-upload>
+				<div style="margin-left: 200px;">
+					<p>尺寸比例：   长:宽  1.85  :  1</p>
+					<p>推荐图尺寸：      长*宽 750px*404px   分辨率72</p>
+					<p>文件大小：    3M以内</p>
+				</div>
 			</el-form-item>
 	        <el-form-item label="描述" prop="describe"  >
-	           <el-input  v-model="addForm.describe" :maxlength="50" @input="activityNameFn"></el-input>
+	           <el-input  v-model.trim="addForm.describe" :maxlength="50" ></el-input>
 	        </el-form-item>
 	        <el-form-item label="排序数字" prop="reorder"  >
-	           <!-- <el-input  v-model="addForm.sortNum" ></el-input> -->
-	            <el-input-number v-model="addForm.reorder"  :min="0" :max="999999999" label="描述文字"></el-input-number>
+	            <el-input  @input="chenkNum" v-model="addForm.reorder"  :min="0" :max="999999999" label="排序数字"></el-input>
+	            <!--<el-input-number ></el-input-number>-->
 	           <!-- <el-select v-model="addForm.activityCompName" placeholder="活动归属" :readonly="orign_disabled">
 	            	<el-option v-for="item in BranchCompany" :key="item.name" :label="item.name" :value="item.name" @click.native = 'selectFn2(item)'></el-option>
 	           </el-select> -->
@@ -194,7 +213,7 @@
 	    	<el-button @click="cancel_addModify()">取消</el-button>
     	</div>
  	</el-dialog>
- 	<el-dialog title="查看链接" :visible.sync="link_DialogVisible" width="35%" >
+ 	<el-dialog :close-on-click-modal = 'false' title="查看链接" :visible.sync="link_DialogVisible" width="35%" >
  		<p>链接地址：<a  class="highLight_cursor"  @click="goNewPage(imglink)" >{{imglink}}</a></p>
  		<input  class="hidden_input" type="text" id="imglink"  v-model="imglink" />
  		<el-button type="primary"  @click="copyLink('imglink')" class="mrtop20">复制链接</el-button>
@@ -206,7 +225,7 @@
 </template>
 
 <script>
-import api from '@/api/index.js'	
+import api from '@/api/index.js'
 import TitCommon from '@/components/common/TitCommon'
 import TableList from '@/components/custManage/TableList'
 import Pagination from '@/components/common/Pagination'
@@ -238,8 +257,8 @@ export default {
         ],
         formInline:{
         	title:'',
-        	state:'',
-        	channel:''
+        	state:null,
+        	channel:null
         },
         states:[
         	{
@@ -273,11 +292,43 @@ export default {
         		value:'2'
         	}
         ],
+      addFormStates:[
+        {
+          label:'请选择',
+          value: null
+        },
+        {
+          label:'有效',
+          value:'1'
+        },
+        {
+          label:'无效',
+          value:'0'
+        }
+      ],
+      addFormChannels:[
+        {
+          label:'请选择',
+          value: null
+        },
+        {
+          label:'手机站',
+          value:"0"
+        },
+        {
+          label:'APP',
+          value:'1'
+        },
+        {
+          label:'官网',
+          value:'2'
+        }
+      ],
         addForm:{
         	title:'',
 			link:'',
-			status:'',
-			channel:'',
+			status:null,
+			channel:null,
 			imgAddress:'',
 			describe:'',
 			reorder:''
@@ -287,20 +338,21 @@ export default {
 	        		{required:true, max:50,message: '请输入标题', trigger: 'blur' }
 	        	],
 			link:[
-		            { pattern: /(http|ftp|https):\/\/+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/, 
-		              trigger: 'blur', 
-		              message: '网址格式错误' 
+		            { pattern: /(http|ftp|https):\/\/+([\w\-\.,@?^=%&:/~\+#]*[\w\-\@?^=%&/~\+#])?/,
+		              trigger: 'blur',
+		              message: '网址格式错误'
 		            }
 	        	],
 			status:[
-	        		{required:true, message: '请选择状态', trigger: 'blur' }
+	        		{required:true, message: '请选择状态', trigger: 'blur,change' }
 	        	],
 			channel:[
-	        		{required:true, message: '请输入渠道', trigger: 'blur' }
+	        		{required:true, message: '请输入渠道', trigger: 'blur,change' }
 	        	],
 			imgAddress:[
+			 		{required:true, message: '请上传图片文件', trigger: 'change' },
 					{validator: validateImgAddress, trigger: 'blur,change'}
-	        		// {required:true, message: '请上传图片文件', trigger: 'change' }
+
 	        	],
 			reorder:[
 	        		{required:true, message: '请输入序号', trigger: 'blur' }
@@ -311,12 +363,12 @@ export default {
         imglink:'',
         addModify_title:'',
         bannerId:''
-//      pararmsObj:{} 
+//      pararmsObj:{}
   	}
   },
  created() {
 
- 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+ 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_bannerList?JSON.parse(localStorage.getItem('myPageSize')).W_bannerList:10
  		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_bannerList)
  	} else {
@@ -329,29 +381,29 @@ export default {
 		console.log('jjkkkk',this.pageSize)
   },
   methods: {
-    
+
   	search(data) {
   		console.log(778787878)
   		this.pageNo = 1
-  		this.pageSize = 10
-  		
+  		// this.pageSize = 10
+
   		this.queryBannerList()
   	},
   	queryBannerList(){
   		const pararms = {
  			pageNo:this.pageNo,
-			pageSize:this.pageSize,	
-			title:this.formInline.title,	
+			pageSize:this.pageSize,
+			title:this.formInline.title,
 			status:this.formInline.state,
 			channel:this.formInline.channel
- 		} 		
+ 		}
   		console.log('==============')
  		api.queryBannerList(pararms).then(res=>{
  			console.log(res)
  			if(res.data.code == 1){
  				this.total = res.data.total;
  				this.tableData = res.data.data
- 				
+
  			} else {
  				this.$notify({
 		           title: '提示',
@@ -361,12 +413,14 @@ export default {
  			}
  		})
   	},
-  	add(a){ 
+  	add(a){
   		this.buttonLoading = false;
 //		this.buttonLoading = true;
   		this.banner_DialogVisible = true;
   		this.addModify_title = '新增banner'
   		this.bannerId='';
+  		this.addForm.channel = null
+  		this.addForm.status = null
   	},
   	modify(a){
 
@@ -386,13 +440,13 @@ export default {
 //		} else if (a.status == 1) {
 //			a.status = '有效'
 //		}
-  		
+
   		this.banner_DialogVisible = true;
   		this.addModify_title = '修改banner'
   		this.bannerId = a.id;
 //		console.log(a,this.bannerId,'bannerId')
   		this.addForm = Object.assign(this.addForm,a)
-  		
+
 		console.log(this.addForm ,1231312313)
   	},
   	openLink(link){ //查看链接
@@ -404,33 +458,54 @@ export default {
   		this.imglink = '';
   	},
   	delete_s(row){
-  		this.$confirm('此操作将是删除, 是否继续?', '提示', {
+  		this.$confirm('确认删除吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          type: 'warning',
+          closeOnClickModal: false
         }).then(() => {
-        	this.updateSysBannerFn(row.id,0)	          
+        	this.updateSysBannerFn(row.id,0)
         }).catch(() => {
           this.$message({
             type: 'info',
             message: '已取消删除'
-          });          
+          });
         });
-		
+
   	},
   	before_upload(files) {
     	const isLt2M = files.size / 1024 / 1024 < 3;
-    	if (!isLt2M) {
-	        this.$message.error('单个文件不可超过3 MB!');
-	        return false
+    	const textArr = files.name.split('.')
+        const isPng = textArr[textArr.length-1]
+//  	if (!isLt2M) {
+//	        this.$message.error('单个文件不可超过3 MB!');
+//	        return false
+//	    }else if(isPng == 'png'){
+//	    	alert(1111111111)
+//	    }else{
+//	    	this.dataArr = files.name
+//	    }
+console.log(isPng,isLt2M,files.size / 1024 / 1024,'-------------')
+		if (isPng == 'jpg' || isPng == 'png' || isPng == 'jpeg') {
+			if (!isLt2M) {
+	            this.$message.error('单个文件不可超过3 MB!');
+	            return false
+	        }
 	    }else{
-	    	this.dataArr = files.name
+//	    	this.dataArr = files.name
+ 			this.$message("仅支持上传png、jpg、jpeg格式的文件");
+          	return false
 	    }
 //  	console.log(files)
     },
   	activityNameFn(value){
-		this.$nextTick(()=>{    				
-			this.addForm.bannerName = value.replace(/[^\u4e00-\u9fa5a-zA-Z0-9]{0,50}/g,'')
+		this.$nextTick(()=>{
+			this.addForm.title = value.replace(/[^\u4e00-\u9fa5a-zA-Z,.。，？?:：‘’!！''0-9]{0,50}/g,'')
+		},20)
+	},
+	chenkNum(value) {
+		this.$nextTick(()=>{
+			this.addForm.reorder = value.replace(/[^0-9$]/g,'')
 		},20)
 	},
   	handleSizeChange(val) {
@@ -444,14 +519,18 @@ export default {
 //		console.log(val,777777777777)
 	},
 	handleCurrentChange(val) {
-		this.pageNo = val	
+		this.pageNo = val
 		this.currentPage = val
 		this.queryBannerList();
 //		console.log(val,88888888)
-	},	
+	},
 	handleAvatarSuccess(a){
-//		console.log(a,'aaaaaaaaa')
-		this.addForm.imgAddress = a.data.url
+		console.log(a,'aaaaaaaaa')
+		if (a.success) {
+			this.addForm.imgAddress = a.data.url
+		} else {
+			 this.$message.error(a.msg);
+		}
 		this.$refs.addForm.validateField('imgAddress');
 	},
 	beforeAvatarUpload(){
@@ -466,24 +545,24 @@ export default {
             	api.updateSysBanner({
             		id:this.bannerId,
             		title:this.addForm.title,
-					link:this.addForm.link,	
-					status:this.addForm.status,	
-					channel:this.addForm.channel,	
-					reorder:this.addForm.reorder,	
-					imgAddress:this.addForm.imgAddress,		
-					describe:this.addForm.describe		
+					link:this.addForm.link,
+					status:this.addForm.status,
+					channel:this.addForm.channel,
+					reorder:this.addForm.reorder,
+					imgAddress:this.addForm.imgAddress,
+					describe:this.addForm.describe
             	}).then(res=>{
             		this.buttonLoading = false;
 		 			console.log(res)
 		 			if(res.data.code == 1){
-		 				this.queryBannerList() 
+		 				this.queryBannerList()
 		 				this.$message.success(res.data.msg);
 		 				this.banner_DialogVisible = false;
 		 			}else{
 		 				this.$message.error(res.data.msg)
 		 			}
-		 			
-		 			
+
+
 		 		})
             }
 		})
@@ -491,7 +570,7 @@ export default {
 	updateSysBannerFn(id,status){
 		api.updateSysBanner({
     		id:id,
-			status:status,				
+			status:status,
     	}).then(res=>{
 // 			console.log(res)
  			if(res.data.code == 1){
@@ -516,7 +595,7 @@ export default {
 			reorder:''
   		})
   		this.$nextTick(()=>{
-  			this.$refs.addForm.clearValidate();	
+  			this.$refs.addForm.clearValidate();
   		})
 	},
 	cancel_addModify(){
@@ -525,7 +604,7 @@ export default {
 	},
 	goNewPage(a){ //跳转页面
     	var newWin = window.open('loading page');
-    	 //newWin.location.href = baseURL + '/#/activity_mobile' 
+    	 //newWin.location.href = baseURL + '/#/activity_mobile'
     	 newWin.location.href = a;
     },
     copyLink(a){ //复制地址
@@ -542,10 +621,13 @@ export default {
   	TableList,
   	Pagination
   }
-  
+
  }
 </script>
 <style  lang="less" >
+.wordDes {
+	float: left;
+}
   .my_upload{
   	.avatar-uploader .el-upload {
 	    border: 1px dashed #d9d9d9;

@@ -1,7 +1,7 @@
 <template>
  <div class="app_about">
-	<div class="edit" style="width:500px;padding-top: 20px;">		
-	    <editor 
+	<div class="edit" style="width:500px;padding-top: 20px;">
+	    <editor
 			ref='edit'
 			id="editor_id" :minHeight="300" :content="editorText"
 	        pluginsPath="/static/kindEditor/plugins/"
@@ -12,7 +12,7 @@
 	    </editor>
 		<div class="btn">
 			<el-button  type="info" @click='viewH5'>预览H5</el-button>
-		    <el-button type="primary" @click='saveHtml'>保存</el-button> 		    
+		    <el-button type="primary" @click='saveHtml'>保存</el-button>
 		</div>
 	</div>
 </div>
@@ -22,7 +22,7 @@
 import api from "@/api/index"
 export default {
   	name: 'app_about',
-  	props: {	  		
+  	props: {
 //		tableData:{
 //			type: Array,
 //			default: function () {
@@ -30,7 +30,7 @@ export default {
 //			}
 //		}
   	},
-  	
+
 	data() {
 	  	return {
 	  		item: ['source', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste',
@@ -60,14 +60,14 @@ export default {
     methods: {
 		initialHtml(){
 			api.queryAppAbout().then(res => {
+				console.log(res,1212121)
+//				this.editorText = res.data
 				if(res.data.success) {
 //					const inHtml = '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" /><title></title></head><body><span style="color:#EE33EE;font-size:30px;">14</span><span style="color:#EE33EE;">4</span><span style="color:#EE33EE;">44</span>4</body></html>'
 					const inHtml = res.data.data.data
 					this.editorText = inHtml
 					this.id = res.data.data.id
 					this.src = inHtml
-//console.log(res.data.data)
-
 				} else {
 					this.$notify({
 			           title: '提示',
@@ -102,6 +102,15 @@ export default {
 	    saveHtml() {
 	    	// const html_con = this.htmlTop + this.editorText  + this.htmlBot
 	    	const html_con = this.editorText
+        // let html_nbsp = html_con.split(';')
+        // let htmlLen =html_nbsp.length
+        // let htmlStr =html_nbsp.join(',')
+
+
+        if(html_con.length<=0){
+	    	  this.$message.warning("内容不能为空")
+          return false;
+        }
 	    	const parm = {
 	    		id: this.id,
 	    		data: this.editorText
@@ -116,12 +125,12 @@ export default {
 	    		console.log(res.data)
 	    	})
 	    },
-    
+
     },
 	  components: {
-	
+
 	  }
-  
+
  }
 </script>
 <style  lang="less" scoped>

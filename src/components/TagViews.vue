@@ -81,11 +81,11 @@
 		    $route() {
 //		    	console.log(12)
 //	console.log(this.$route.query.menuId,56565656565)
-				api.queryOperatelist({
-					menuId:this.$route.query.menuId
-				}).then((res)=>{
-//					console.log('dddd')
-				})
+//				api.queryOperatelist({
+//					menuId:this.$route.query.menuId
+//				}).then((res)=>{
+////					console.log('dddd')
+//				})
 		        this.addViewTags()		      
 		        this.moveToCurrentTag()
 		        

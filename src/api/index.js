@@ -82,11 +82,14 @@ export default {
     // },
     upload: baseURL + '/api/upload/upload',
   fileUpLoad:baseURL + '/api/upload/fileUpload',
+  // fileUpLoad: 'http://192.168.21.178:8080/microcredit/api/upload/fileUpload',
     queryQuestionList(data, params) {
-        return _axios.post("/api/question/queryQuestionList",queryString.stringify(data), { params: params });
+    	return _axios.post("/api/question/queryQuestionList",queryString.stringify(data), { params: params });
+//      return _axios.post("/api/question/queryQuestionList",queryString.stringify(data), { params: params });
     },
     updateQuestion(data, params) {
-        return _axios.post("/api/question/updateQuestion",queryString.stringify(data), { params: params });
+    	return _axios.post("/api/question/updateQuestion",queryString.stringify(data), { params: params });
+//      return _axios.post("/api/question/updateQuestion",queryString.stringify(data), { params: params });
     },
     queryFollowList(data, params) { //查询客户跟进列表
         return _axios.post("/api/followUp/queryFollowList",queryString.stringify(data), { params: params });
@@ -134,9 +137,9 @@ export default {
         return _axios.post("/api/orderDetail/queryRepaymentPlan",queryString.stringify(data), { params: params });
     },
     queryAbout(data, params) { //h5app关于
-    	
-//      return _axios.get("/api/app/About/queryAbout",queryString.stringify(data), { params: params });
-		return _axios.get("/api/appAbout/queryAppAbout",queryString.stringify(data), { params: params });
+
+//      return _axios.get("/api/app/appAbout/queryAppAboutUs",queryString.stringify(data), { params: params });
+		return _axios.get("/api/app/appAbout/queryAppAbout",queryString.stringify(data), { params: params });
     },
     queryNodeListInfo(data, params) { //查询订单节点信息
         return _axios.post("/api/orderDetail/queryNodeListInfo",queryString.stringify(data), { params: params });
@@ -159,7 +162,7 @@ export default {
     // },
     queryOperatelist(params) {  // 案件追踪信息
         return _axios({
-            method: 'get',
+            method: 'post',
             url: '/auth/operate/list',
             params: params
         })
@@ -182,11 +185,11 @@ export default {
 
     //APP关于:默认值
     queryAppAbout(data, params) {
-    	return _axios.get("/api/appAbout/queryAppAbout",data, { params: params });
+    	return _axios.get("/api/app/appAbout/queryAppAbout",data, { params: params });
     },
     //APP关于：保存
     saveApp(data, params) {
-    	return _axios.post("/api/appAbout/updateAppAbout",queryString.stringify(data), { params: params });
+    	return _axios.post("/api/app/appAbout/updateAppAbout",queryString.stringify(data), { params: params });
     },
 
     etitorUpload(data, params) {
@@ -258,6 +261,9 @@ queryCityByCityId(data, params) {
   queryMiniList(data, params){
     return _axios.post("/api/allOrder/queryRepaymentOrders",queryString.stringify(data), { params: params });
   },
+  queryQueryOrderAmountt(data, params){//订单还款中当前应该还金额
+    return _axios.post("/api/orderDetail/QueryOrderAmount",queryString.stringify(data), { params: params });
+  },
   queryExamDataList(data, params){ //审核记录
     return _axios.post("/api/orderDetail/QueryTrackRecodList",queryString.stringify(data), { params: params });
   },
@@ -292,7 +298,23 @@ queryCityByCityId(data, params) {
   queryAllControlOrder(data, params) {
     return _axios.post("/api/allOrder/queryAllOrder",queryString.stringify(data), { params: params });
   },
-  
+
+  queryInfoList(data, params) { //消息推送
+    return _axios.post("/api/pushmsg/queryPushMsg",queryString.stringify(data), { params: params });
+  },
+  infoListAddPushMsg(data, params) { //消息推送新增
+    return _axios.post("/api/jpush/pushMessage",queryString.stringify(data), { params: params });
+  },
+   //查询电子账户余额
+   queryAccountBalance(data, params) {
+    return _axios.post("/api/orderDetail/queryAccountBalance",queryString.stringify(data), { params: params });
+  },
+	//按钮权限
+  permissionBtnPower(data, params) {
+    return _axios.post("/auth/operate/list",queryString.stringify(data), { params: params });
+  }
+	
+
 
 
 }

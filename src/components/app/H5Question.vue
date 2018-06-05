@@ -74,7 +74,7 @@ export default {
   			pageNo:this.pageNo,
   			pageSize:this.pageSize,
   			data:this.ques_key,
-  			status:1
+//			status:1
   		}
   		api.queryQuestionList(params).then(res=>{
  			console.log(res.data.data,123121231321)

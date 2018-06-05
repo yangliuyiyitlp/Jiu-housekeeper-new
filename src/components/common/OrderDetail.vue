@@ -7,9 +7,9 @@
           订单编号：<span>{{orderBaseInfo.orderNumber}}</span>
           姓名：<span>{{orderBaseInfo.empName}}</span>
           申请时间：<span>{{orderBaseInfo.createTime}}</span>
-          申请城市：<span>{{orderBaseInfo.provId  }}{{orderBaseInfo.cityId }}</span>
-          状态：<span>{{orderBaseInfo.status }}</span>
-          当前环节：<span>{{orderBaseInfo.nodeName }}</span>
+          申请城市：<span>{{orderBaseInfo.provId}} {{orderBaseInfo.cityId}}</span>
+          状态：<span>{{orderBaseInfo.status}}</span>
+          当前环节：<span>{{orderBaseInfo.nodeName}}</span>
           <span class="change-permission">
 					<el-popover
             trigger="click"
@@ -26,16 +26,16 @@
         </p>
       </div>
       <div class="params">
-        <p>意向借款金额：<span>{{orderBaseInfo.expectMomey }}元</span></p>
-        <p>意向借款期限：<span>{{orderBaseInfo.expectDuetime }}</span></p>
+        <p>意向借款金额：<span>{{orderBaseInfo.expectMomey}}元</span></p>
+        <p>意向借款期限：<span>{{orderBaseInfo.expectDuetime}}</span></p>
         <p>产品系列：<span>{{orderBaseInfo.cptName}}</span></p>
         <div v-if="!apply_state">
-          <p>产品名称：<span>{{orderBaseInfo.cpName }}</span></p>
-          <p>产品期数：<span>{{orderBaseInfo.periods }}期</span></p>
-          <p>合同金额：<span>{{orderBaseInfo.contractMoney }}元</span></p>
-          <p>产品利率：<span>{{orderBaseInfo.rate }}/年</span></p>
-          <p>还款方式：<span>{{orderBaseInfo.payment }}</span></p>
-          <p>授信范围：<span>{{orderBaseInfo.expectDuetime }}</span></p>
+          <p>产品名称：<span>{{orderBaseInfo.cpName}}</span></p>
+          <p>产品期数：<span>{{orderBaseInfo.periods}}期</span></p>
+          <p>合同金额：<span>{{orderBaseInfo.contractMoney}}元</span></p>
+          <p>产品利率：<span>{{orderBaseInfo.rate}}/年</span></p>
+          <p>还款方式：<span>{{orderBaseInfo.payment}}</span></p>
+          <p>授信范围：<span>{{orderBaseInfo.expectDuetime}}</span></p>
         </div>
       </div>
       <div class="steps" v-if="orderNodeList.length>=0?1:0">
@@ -79,11 +79,10 @@
               prop="inTime"
               label="进入环节时间">
             </el-table-column>
-            <!--todo 停留时间-->
             <el-table-column
               align='center'
               :show-overflow-tooltip="true"
-              prop="demo"
+              prop="residenceTime"
               label="停留时长">
             </el-table-column>
             <el-table-column
@@ -109,10 +108,10 @@
         </el-tab-pane>
         <el-tab-pane label="还款计划"  name="2" v-if="status==3">
           <p class="des">
-            当前应还总金额：<span>2278元</span>
-            当前应还本息：<span>2278元</span>
-            当前应还罚息：<span>0元</span>
-            提前结清总金额：<span>12342元</span>
+            当前应还总金额：<span>{{OrderAmountt.shouldAmount}}元</span>
+            当前应还本息：<span>{{OrderAmountt.principalInterest}}元</span>
+            当前应还罚息：<span>{{OrderAmountt.fine}}元</span>
+            提前结清总金额：<span>{{OrderAmountt.amount}}元</span>
           </p>
           <el-table
             :data="RepaymentPlan"
@@ -160,11 +159,13 @@
               prop="overdueMoney"
               label="逾期费用">
             </el-table-column>
-            <el-table-column
-              align='center'
-              :show-overflow-tooltip="true"
-              prop="status"
-              label="状态">
+            <!--0  待还，1 结清，2 逾期-->
+            <el-table-column prop="status" label="状态" align='center'>
+              <template slot-scope="scope">
+                <span v-if='scope.row.status == 0'>待还</span>
+                <span v-if='scope.row.status == 1'>结清</span>
+                <span v-if='scope.row.status == 2'>逾期</span>
+                </template>
             </el-table-column>
           </el-table>
           <pagination
@@ -177,10 +178,10 @@
         </el-tab-pane>
         <el-tab-pane label="还款记录" name="3" v-if="status==3">
           <p class="des">
-            当前应还总金额：<span>2278元</span>
-            当前应还本息：<span>2278元</span>
-            当前应还罚息：<span>0元</span>
-            提前结清总金额：<span>12342元</span>
+            当前应还总金额：<span>{{OrderAmountt.shouldAmount}}元</span>
+            当前应还本息：<span>{{OrderAmountt.principalInterest}}元</span>
+            当前应还罚息：<span>{{OrderAmountt.fine}}元</span>
+            提前结清总金额：<span>{{OrderAmountt.amount}}元</span>
           </p>
           <el-table
             :data="PaymentHistory"
@@ -220,31 +221,31 @@
           <table>
             <tr>
               <td>性别</td>
-              <td>{{userBaseInfo.icSexUdate}}</td>
+              <td>{{userBaseInfo.icSex}}</td>
               <td>发证机关</td>
-              <td>{{userBaseInfo.icOrganizationUpdata}}</td>
+              <td>{{userBaseInfo.icIssUingAuthority}}</td>
             </tr>
             <tr>
               <td>民族</td>
-              <td>{{userBaseInfo.icNationUpdate}}</td>
+              <td>{{userBaseInfo.icNation}}</td>
               <td>证件有效期</td>
-              <td>{{userBaseInfo.icLimittimeUpdate}}</td>
+              <td>{{userBaseInfo.icLimittime}}</td>
             </tr>
             <tr>
               <td>出生日期</td>
-              <td>{{userBaseInfo.icBirthUpdate}}</td>
+              <td>{{userBaseInfo.icBirth}}</td>
               <td>邮箱</td>
               <td>{{userBaseInfo.custEmail}}</td>
             </tr>
             <tr>
               <td>身份证地址</td>
-              <td>{{userBaseInfo.icAddressUpdate }}</td>
+              <td>{{userBaseInfo.icAddress}}</td>
               <td>婚属</td>
               <td>{{userBaseInfo.marital }}</td>
             </tr>
             <tr>
               <td>身份证号码</td>
-              <td>{{userBaseInfo.icNumberUpdate }}</td>
+              <td>{{userBaseInfo.icNumber }}</td>
               <td>学历</td>
               <td>{{userBaseInfo.hignestDegree }}</td>
             </tr>
@@ -348,7 +349,7 @@
             <tr>
               <td width="100">账户余额</td>
               <td>
-                <span v-if="!eye">2500</span>
+                <span v-if="!eye">{{accountMoney}}</span>
                 <span v-if="eye">*****</span>
                 元<i class="el-icon-view" @click="eyeToggle()" ></i>
               </td>
@@ -501,7 +502,9 @@
         currentPage3:1,
         orderNodeList:[],
         orderList:[],
+        OrderAmountt:{},
         currentStep:"",
+        accountMoney: null
       }
     },
     components:{
@@ -518,6 +521,15 @@
         this.queryBaseOrderInfo()
         await   this.queryNodeListInfo()
       },
+      queryAccountBalanceFn(){//账户余额
+				api.queryAccountBalance({
+					crmApplayId:this.$route.query.crmApplayId
+				}).then(res => {
+					if(res.data.success){
+						this.accountMoney = res.data.data.data
+					}
+				})
+			},
       queryNodeListInfo(){ // 查询订单节点信息
         api.queryNodeListInfo({
           crmApplayId:this.$route.query.crmApplayId,
@@ -598,6 +610,21 @@
           }
         })
       },
+      queryQueryOrderAmountt(){
+        api.queryQueryOrderAmountt({
+          crmApplayId:this.$route.query.crmApplayId
+        }).then((res) =>{
+          if(res.data.success) {
+            this.OrderAmountt = res.data.data
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
+          }
+        })
+      },
       queryBaseOrderInfo(){
         api.queryBaseOrderInfo({
           crmApplayId:this.$route.query.crmApplayId
@@ -610,7 +637,8 @@
               console.log(55555555,this.status);
               if(this.status == 3){
                 this.activeName = "2"
-                this.queryRepaymentPlan()//还款计划
+                this.queryRepaymentPlan()//还款计划a
+                this.queryQueryOrderAmountt()
               }else if(this.status == 2 || this.status == 5){
                 this.activeName = "1"
                 this.queryExamData() //审批记录
@@ -688,6 +716,7 @@
           this.queryExamData()
         }else if(tab.name=='2'){ // 还款计划
           this.queryRepaymentPlan()
+          this.queryQueryOrderAmountt()
         }else if(tab.name=='3'){ //还款记录
           this.queryPaymentHistory()
         }
@@ -701,6 +730,7 @@
           this.eye =true
         }else{
           this.eye=false
+          this.queryAccountBalanceFn()
         }
       },
       handleSizeChange(val){
