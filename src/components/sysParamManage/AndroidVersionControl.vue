@@ -13,7 +13,7 @@
             </el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="queryAndroidVersion">查询</el-button>
+            <el-button type="primary" @click="search">查询</el-button>
             <el-button type="primary" @click="add('add')">新增</el-button>
           </el-form-item>
         </el-form>
@@ -209,6 +209,11 @@
         this.ControlId=''
         this.fileList =[]
       },
+
+      search(data) {
+        this.pageNo = 1
+        this.queryAndroidVersion()
+      },
       queryAndroidVersion(){
         const pararms = {
           pageNo:this.pageNo,
@@ -305,7 +310,6 @@
         this.$message.error('文件上传失败!')
       },
       handleAvatarSuccess(response, file){ //上传成功后
-        console.log(99,response,file);
         this.addForm.url = file.url
         // this.addForm.urlName = file.name
         // this.urlName = file.name

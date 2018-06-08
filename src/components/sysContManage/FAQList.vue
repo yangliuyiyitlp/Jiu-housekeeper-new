@@ -119,6 +119,8 @@
 				ref='edit'
 				id="editor_id"  width="300px" :minHeight="100" :content="addForm.result"
 	            pluginsPath="static/kindEditor/plugins/"
+              :items= 'item'
+               :allowImageRemote=' false'
 	            :allowImageUpload='true'
 	            :loadStyleMode="false"
 	            :uploadJson = 'uploadJson'
@@ -162,6 +164,12 @@ export default {
   name: 'allList',
   data() {
   	return {
+      item: ['source', '|', 'undo', 'redo', '|', 'cut', 'copy', 'paste',
+        'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+        'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'clearhtml', 'selectall', '|', 'fullscreen', '/',
+        'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+        'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image',
+        'table', 'hr'],
   		buttonLoading:false,
   		title: '常见问题',
   		question_DialogVisible:false,

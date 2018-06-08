@@ -4,7 +4,7 @@
   	<div class="router-wrap">
 	  	<router-view></router-view>
   	</div>
-  	<div v-show='showHome' class="homeTit">
+  	<div v-if='showHome' class="homeTit">
   		欢迎您登录小贷后台管理系统
   	</div>
   </div>

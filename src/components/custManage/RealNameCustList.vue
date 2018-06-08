@@ -72,6 +72,7 @@ export default {
         
   	}
   },
+
  created() {
  	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
  		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_RealNameList?JSON.parse(localStorage.getItem('myPageSize')).W_RealNameList:10
@@ -85,7 +86,7 @@ export default {
  	permission () {
  		return {
  			showAllPararms: false,//是否要展示'全部，未实名，已实名，已成交'条件
-			showDistribution: true,//是否要展示‘客户分配’按钮
+//			showDistribution: false,//是否要展示‘客户分配’按钮
 			showRealName: true,
 			showRegType: true, //是否要展示高级搜索的‘注册类型’的条件			
  		}
@@ -98,8 +99,9 @@ export default {
   methods: {
   	queryCustInfoData() {
   		this.loadingTable = true
-  		
+  		this.tableData = []
   		const pararms = {
+  			currentModuleId: this.$route.query.menuId,
   			pageNo: this.pageNo,
   			pageSize: this.pageSize,
 			queryParam: this.serachPararms.content,
@@ -176,7 +178,8 @@ export default {
         	query: {
         		crmCustInfoId:row.crmCustInfoId,
         		bgCustomerId: row.bgCustomerId,
-        		bgCustInfoId: row.bgCustInfoId  
+        		bgCustInfoId: row.bgCustInfoId,
+        		menuId: this.$route.query.menuId
         	}
       	});
       	console.log(this.$router)

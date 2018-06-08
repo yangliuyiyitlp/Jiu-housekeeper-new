@@ -194,7 +194,7 @@ export default [
             {
                 path:'sysContent/bannerList',
                 component: BannerList,
-                name:'banner管理',
+                name:'Banner管理',
                 meta: {
                     istoken: true
                 }
@@ -330,7 +330,7 @@ export default [
         path: '/appAbout',
         component: H5About,
         //component: LayoutA,
-        name: "app关于", 
+        name: "app关于",
         meta: {
             istoken: true
         },

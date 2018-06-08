@@ -40,7 +40,7 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <el-button  icon="el-icon-search" @click='queryInfoList'>查询</el-button>
+            <el-button  icon="el-icon-search" @click='search'>查询</el-button>
           </el-form-item>
           <el-form-item>
             <el-button type="primary" @click='add'>新增推送</el-button>
@@ -237,7 +237,25 @@
         this.queryInfoList();
       },
       queryStatus(){
-        api.queryPageDictionaryDetail({dictionaryId:"d2fedd33679e11e8b5ed005056ae2979",status:1}).then(res=>{
+        api.queryPageDictionary().then(res=>{
+          if(res.data.success && res.data.data){
+            for (var i=0; i < res.data.data.length;i++) {
+               if(res.data.data[i].name=='通知类型'){
+                 let code= res.data.data[i].code
+                 this.queryDictionary(code)
+               }
+            }
+          } else {
+            this.$notify({
+              title: '提示',
+              message: res.data.msg,
+              duration: 1500
+            });
+          }
+        })
+      },
+      queryDictionary(code){
+        api.queryPageDictionaryDetail({code:code,status:1}).then(res=>{
           console.log(111,res)
           if(res.data.success){
             for (var i=0; i < res.data.data.length;i++) {
@@ -265,6 +283,14 @@
        }
        }
       },
+      search(data) {
+        console.log(778787878)
+        this.pageNo = 1
+        this.currentPage =1
+        // this.pageSize = 10
+
+        this.queryInfoList()
+      },
       queryInfoList(){
         // if(this.formInline.time && this.formInline.time.length == 2){
         //   this.formInline.beginTime=this.formInline.time[0]
@@ -275,9 +301,17 @@
         // }
         if(this.formInline.beginTime && this.formInline.endTime){
           if(this.formInline.beginTime>this.formInline.endTime){
-            this.$message.warning("开始时间需早于结束时间")
+            this.$message.warning("开始时间必须小于等于结束时间")
             return false
           }
+        }
+        if(this.formInline.beginTime && !this.formInline.endTime){
+            this.$message.warning("开始时间和结束时间需都选择")
+            return false
+        }
+        if(!this.formInline.beginTime && this.formInline.endTime){
+          this.$message.warning("开始时间和结束时间需都选择")
+          return false
         }
         const pararms = {
           pageNo:this.pageNo,

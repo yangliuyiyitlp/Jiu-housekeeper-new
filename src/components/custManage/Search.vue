@@ -1,7 +1,7 @@
 <template>
  <div>
  	<div class="search borBot1px">
-		<el-form :inline="true" :model="search" class="demo-form-inline">
+		<el-form :inline="true" :model="search" class="demo-form-inline" v-if = 'true'>
 		  <el-form-item>
 		  	<div style="width:300px">
 		  		<el-input v-model.trim="search.content" placeholder='请输入姓名、手机号或身份证号码精确查询' clearable></el-input>
@@ -63,7 +63,7 @@
 						    	 @focus='showTreeFn'
 						    	:readonly = 'true'
 						    	 style="width: 200px;"
-						    	 v-model="search.partName" placeholder="请选择">
+						    	 v-model="partName_s" placeholder="请选择">
 						    	<el-button @click='clearFn' slot="append" icon="el-icon-delete" style='font-size: 20px;'></el-button>
 						    </el-input>
 						    <!--<div class="" id="tree" v-show='showTree'>
@@ -73,12 +73,12 @@
 						    </div>-->
 						</el-form-item>
 						<el-form-item label="归属人" label-width='105px'>
-							<el-input  :maxlength='20' style="width: 200px;" v-model="search.people" placeholder='请输入姓名模糊查询' ></el-input>
+							<el-input  :maxlength='20' style="width: 200px;" v-model="search.people" placeholder='请输入姓名、工号模糊查询' ></el-input>
 						</el-form-item>
 					</div>
 					<div>
 						<el-form-item label="申请省份" label-width='105px'>
-						    <el-select v-model="search.applyProvince" placeholder="请选择" @change='changeProvince' clearable>
+						    <el-select v-model="search.applyProvince" placeholder="请选择" @change='changeProvince' clearable @clear="clearProvince">
 						      <!--<el-option label="区域一" value="shanghai"></el-option>-->
 						      <el-option v-for = '(val,ind) in applyProvince' :label='val.provinceName' :value="val.id" :key='ind'></el-option>
 						    </el-select>
@@ -96,7 +96,7 @@
 	</div>
 	<!--搜索条件中的组织架构弹框-->
 	<div class="" id="tree" v-show='showTree'>
-		<el-dialog title="请选择" width='500px' :visible.sync="showTree">
+		<el-dialog title="请选择" width='500px' :visible.sync="showTree" :close-on-click-modal="false">
 			<div class="a1">
 				<Tree :arrData='data' @handleNodeClick='handleNodeClick'></Tree>
 			</div>
@@ -229,6 +229,7 @@ export default {
 	  		title: '全部客户',
 	  		orShow: false,
 	  		showTree: false,
+	  		partName_s: '',
 	  		search: {
 	  			content: '',
 	  			checked: false,
@@ -238,6 +239,7 @@ export default {
 //	  			realName: '',
 	  			regType: '',
 	  			partName: '',
+
 	  			people: '',
 	  			applyProvince: '',
 	  			applyCity: ''
@@ -260,37 +262,37 @@ export default {
 	        multipleSelectionIdList: ''
 	  	}
 	},
-	mounted() {
-		this.queryProvinceFn()
-	},
-	created(){
-		this.permissionBtnPowerFn(this.$route.query.menuId)
-	},
-    methods: { 
-
-    	permissionBtnPowerFn(menuId){//按钮权限
-	  		let pararms = {
-	  			menuId:menuId
-	  		}
-	  		console.log(pararms,666666666)
-	  		var s=new Date()
-	  		api.permissionBtnPower(pararms).then(res => {
-	  			console.log(res.data,888888777777)
-	  			var d=new Date()
-	  			let flag = res.data.data.options.indexOf('assigningCustomers')
+	beforeCreate(){
+		let pararms = {
+			menuId:this.$route.query.menuId
+		}
+		var s=new Date()
+		this.$store.dispatch('SET_POWER_BTN_ARR', pararms).then(res=>{
+			//assigningCustomers:分配客户权限, "frozenCustomer：冻结按钮权限
+			var d=new Date()
+			if (res) {
+				const flag = res.indexOf('assigningCustomers')
 				if (flag > -1) {
 					this.permission.showDistribution = true
 				} else {
 					this.permission.showDistribution = false
 				}
-				console.log(d-s)
-	  		})
-	  	},
+			}
+			console.log(d-s)
+		})
+	},
+	mounted() {
+		this.queryProvinceFn()
+	},
+	created(){
+	},
+    methods: {
     	saveDisCust() {
     		this.$confirm('此操作将是保存, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
 	          cancelButtonText: '取消',
-	          type: 'warning'
+	          type: 'warning',
+	          closeOnClickModal: false
 	        }).then(() => {
 	        	this.cuntomerDistributionFn()
 	        }).catch(() => {
@@ -357,8 +359,11 @@ export default {
 		        });
     		})
     	},
+      clearProvince(){
+    	  this.applyCity = []
+      },
     	changeProvince(id){
-    		this.search.applyCity = ''
+        this.search.applyCity = ''
     		console.log(id,12313213)
     		this.queryCityByProvinceIdFn(id)
     	},
@@ -404,7 +409,8 @@ export default {
 		},
     	handleNodeClick(data) {
     		console.log(data,'ssssddddd')
-    		this.search.partName = data.title
+    		this.search.partName = data.id
+    		this.partName_s = data.title
     		this.showTree = false
 //	        console.log(data,6664444455555);
 	    },
@@ -501,21 +507,23 @@ export default {
 	   	showSeniorSearch() {
 	   		this.showTree = false
 	   		this.orShow = !this.orShow
-	   		if(this.orShow) {//清空数据
-//	   			this.search.realName = ''
-	  			this.search.regType = ''
-	  			this.search.partName = ''
-	  			this.search.people = ''
-	  			this.search.applyProvince = ''
-	  			this.search.applyCity = ''
-	   		}
+//	   		if(this.orShow) {//清空数据
+////	   			this.search.realName = ''
+////	  			this.search.regType = ''
+////	  			this.search.partName = ''
+////	  			this.search.people = ''
+////	  			this.search.applyProvince = ''
+////	  			this.search.applyCity = ''
+//	   		}
 	   	},
 	   	clearFn() {
 	   		this.search.partName = ''
+	   		this.partName_s = ''
 	   	},
 	   	hideSeniorSearch(){
 	   		this.orShow = false
 	   		this.showTree = false
+        this.applyCity =[]
 	   	},
 	   	CustDistribution(){
 	   		console.log(66666)
@@ -542,13 +550,14 @@ export default {
 	   		this.CustDistributionDialog = true;
 	   		this.ser_department  = ''
 	   		this.ser_people  = ''
+        this.total=0
 	   		this.idArr = []
 	   		this.tableData = []
 
 //	   		this.showTree = true;
 	   		this.$emit('CustDistributionFn',this.search)
 
-
+console.log(this.total)
 
 	   	},
 	   	searchFn() {
@@ -561,7 +570,20 @@ export default {
     			this.deptId = ''
     			console
     		}
+    	},
+    	orShow(val) {
+    		if (!val) {
+    			this.search.regType = ''
+	  			this.search.partName = ''
+	  			this.partName_s = ''
+	  			this.search.people = ''
+	  			this.search.applyProvince = ''
+	  			this.search.applyCity = ''
+//	  			console.log(!val,'---------')
+    		}
+//  		console.log(this.search)
     	}
+
 
     },
   components: {

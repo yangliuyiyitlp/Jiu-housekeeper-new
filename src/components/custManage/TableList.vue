@@ -14,11 +14,12 @@
       type="selection"
       width="55">
     </el-table-column>
-    <!--<el-table-column
+    <el-table-column
+      v-if="0"
     	 label="序号"
       type="index"
-      width="50">
-    </el-table-column>-->
+      width="55">
+    </el-table-column>
     <el-table-column
     	:show-overflow-tooltip="true"
 		align='center'
@@ -39,12 +40,12 @@
       label="身份证号"
       width="120">
     </el-table-column>
-    <el-table-column
+    <!--<el-table-column
     	:show-overflow-tooltip="true"
 		align='center'
       prop="riskLevel"
       label="风险等级">
-    </el-table-column>
+    </el-table-column>-->
     <el-table-column
     	:show-overflow-tooltip="true"
 		align='center'
@@ -84,12 +85,14 @@
     <el-table-column
     	:show-overflow-tooltip="true"
 		align='center'
-      prop="name"
+      prop="custStatus"
       label="状态">
-       <template slot-scope="scope">
-        <span>{{scope.row.custStatusCode == '1' ? '未实名':'已实名'}}</span>
+       <!--<template slot-scope="scope">-->
+        <!--<span>{{scope.row.custStatusCode}}</span>-->
+          <!--<span v-if='scope.row.custStatusCode == 1'>{{ 未实名}}</span>
+        <span v-if='scope.row.custStatusCode == 2'>{{ 已实名}}</span>-->
         <!--<el-button type="text" size="small">编辑</el-button>-->
-      </template>
+      <!--</template>-->
     </el-table-column>
     <el-table-column
     	:show-overflow-tooltip="true"

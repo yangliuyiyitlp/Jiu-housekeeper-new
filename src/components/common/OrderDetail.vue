@@ -10,7 +10,7 @@
           申请城市：<span>{{orderBaseInfo.provId}} {{orderBaseInfo.cityId}}</span>
           状态：<span>{{orderBaseInfo.status}}</span>
           当前环节：<span>{{orderBaseInfo.nodeName}}</span>
-          <span class="change-permission">
+          <span class="change-permission" v-if='changePermission'>
 					<el-popover
             trigger="click"
             placement="bottom"
@@ -504,12 +504,35 @@
         orderList:[],
         OrderAmountt:{},
         currentStep:"",
-        accountMoney: null
+        accountMoney: null,
+        changePermission: false
       }
     },
     components:{
       Pagination
     },
+    beforeCreate(){
+			let pararms = {
+				menuId:this.$route.query.menuId
+			}
+//			var s=new Date()
+			this.$store.dispatch('SET_POWER_BTN_ARR', pararms).then(res=>{
+				//注意：assigningCustomers，frozenCustomer，updateOrderAttachEmp写死的，前端不可以轻易变更
+				//assigningCustomers:分配客户权限, "frozenCustomer：冻结按钮权限,//updateOrderAttachEmp:变更业务员权限按钮
+//				var d=new Date()
+				if (res) {
+					const flag = res.indexOf('updateOrderAttachEmp')
+					if (flag > -1) {
+						this.changePermission = true
+					} else {
+						this.changePermission = false
+					}
+				}
+	//			console.log(d-s)
+	//			console.log(this.permission,'=====4544545=========')
+	//			console.log(flag,'=====4544545=========')
+			})
+		},
     mounted(){
       // this.addViewTags()
       this.queryBaseOrderInfo()
@@ -517,10 +540,10 @@
       // this.queryNodeListInfo()  后请求
     },
     methods:{
-      async addViewTags() {
-        this.queryBaseOrderInfo()
-        await   this.queryNodeListInfo()
-      },
+//    async addViewTags() {
+//      this.queryBaseOrderInfo()
+//      await   this.queryNodeListInfo()
+//    },
       queryAccountBalanceFn(){//账户余额
 				api.queryAccountBalance({
 					crmApplayId:this.$route.query.crmApplayId

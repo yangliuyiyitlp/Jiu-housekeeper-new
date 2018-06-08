@@ -36,14 +36,14 @@
 						        <span v-if='scope.row.followType == 3'>活动</span>
 					      </template>
 					    </el-table-column>
-					    <el-table-column prop="createTime" label="跟进时间" align='center'>
+					    <el-table-column prop="followTime" label="跟进时间" align='center'>
 					    </el-table-column>
 					    <el-table-column prop="followContent" label="跟进内容" align='center'>
 					    	<template slot-scope="scope">
 						        <span class="btn-color" @click="showDifferDialog(scope.row,scope.row.followNode)">查看</span>
 					      </template>
 					    </el-table-column>
-					    <el-table-column prop="followTime" label="操作日期" align='center'>
+					    <el-table-column prop="createTime" label="操作日期" align='center'>
 					    </el-table-column>
 					    <el-table-column prop="realName" label="操作人" align='center'>
 					    </el-table-column>
@@ -61,7 +61,7 @@
 		</el-dialog>
 		<div class="follow-wrap">
 			<!--①新增跟进’贷前‘弹框--START-->
-			<el-dialog title="新增跟进" width='360px' center :visible.sync="dialogFormVisible">
+			<el-dialog title="新增跟进" width='360px'  center :visible.sync="dialogFormVisible" :close-on-click-modal="false">
 			  <el-form :model="form" ref="form" :rules="form_rules">
 			    <el-form-item label="跟进日期" :label-width="formLabelWidth" prop="date">
 			       <el-date-picker
@@ -80,7 +80,7 @@
 			      </el-select>
 			    </el-form-item>
 			    <el-form-item label="跟进内容" :label-width="formLabelWidth" prop="content">
-			       <el-input type="textarea" v-model="form.content" :maxlength='200'></el-input>
+			       <el-input type="textarea" v-model.trim="form.content" :maxlength='200'></el-input>
 			    </el-form-item>
 			  </el-form>
 
@@ -95,13 +95,13 @@
 
       <!--增跟进’放款监测--END-->
 			<!--贷前弹框--START-->
-			<el-dialog title="查看跟进" width='360px' center :visible.sync="dialogLoan">
+			<el-dialog title="查看跟进内容" width='360px' center :visible.sync="dialogLoan" :close-on-click-modal="false">
 			  <p>{{beforeLoan_followCont}}</p>
         <div class ='miniList' v-if="dialogFollow.dialogButton" @click="dialogLoan = false"><el-button type="info" class="cancel" >取消</el-button><el-button type="primary" class="modify">确定</el-button></div>
 			</el-dialog>
 			<!--贷前弹框--END-->
 			<!--//检测弹框--START-->
-			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogObserve">
+			<el-dialog title="查看跟进内容" width='700px' center :visible.sync="dialogObserve" :close-on-click-modal="false">
 			  <p class="observe">
 			  	监测时间：{{observeObj.followTime}}
 			  	<!--monitorType (integer, optional): 监测方式 ：1.常规监测 2.上门回访-->
@@ -183,7 +183,7 @@
 			<!--检测弹框--END-->
 
 			<!--贷后弹框--START-->
-			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogLoanEnd">
+			<el-dialog title="查看跟进内容" width='700px' center :visible.sync="dialogLoanEnd" :close-on-click-modal="false">
 			  <div class="dialogLoanEnd" style='margin-top: -25px;'>
 			  	<el-row>
 			  		<div>
@@ -222,7 +222,7 @@
 			</el-dialog>
 			<!--贷后弹框--END-->
 			<!--erp贷后弹框--START-->
-			<el-dialog title="查看跟进" width='700px' center :visible.sync="dialogErp">
+			<el-dialog title="查看跟进内容" width='700px' center :visible.sync="dialogErp" :close-on-click-modal="false">
 			  <div class="padTop20" style='margin-top: -25px;'>
 			  		<el-row>
 			  			<el-col :span="3" >跟进时间：</el-col>

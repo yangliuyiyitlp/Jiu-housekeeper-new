@@ -6,4 +6,7 @@ export default {
 	GetPowerBtnArr(state){	
 		return state.powerBtnArr;
 	},
+//	GetMenuId(state){	
+//		return state.menuId;
+//	},
 }

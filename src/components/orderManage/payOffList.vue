@@ -1,5 +1,5 @@
 <template>
- <div class="allCustList">
+ <div class="payOffList">
  	<TitCommon :title='title'></TitCommon>
  	<div class="custListWrap">
  		<search  
@@ -81,13 +81,14 @@ export default {
 			showOrderState: false, //是否要展示高级搜索的‘订单状态’的条件
 			showOrderNode: false, //是否要展示高级搜索的‘订单环节’的条件
 			onlyOrderNode: false, //true是申请中页面控制的订单环节，fasle是审批中页面控制的订单环节
+			showOnlyCheck: true
  		}
  	}
  },
  mounted() {
  	this.getDepartmentZtreeFn()
  	this.queryApplyOrderInfoFn()
- 	this.$refs.search.checkOrderNodeFn()
+// 	this.$refs.search.checkOrderNodeFn()
  },
  created() {
  	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
@@ -110,6 +111,7 @@ export default {
   			e_time = ''
   		}
   		const pararms = {
+  			currentModuleId: this.$route.query.menuId,
   			pageNo: this.pageNo,
   			pageSize: this.pageSize,
 			queryParam: this.serachPararms.content,
@@ -154,7 +156,8 @@ export default {
 		var routeData = this.$router.resolve({
         	path: '/detail/orderDetail',
         	query: {
-        		crmApplayId: row.applyId
+        		crmApplayId: row.applyId,
+        		menuId: this.$route.query.menuId
         	}
       	});
       	window.open(routeData.href);
@@ -171,6 +174,8 @@ export default {
   	CustDistributionFn(data) {//分配客户
   	},
   	searchFn(data) {
+  		this.pageNo = 1
+  		this.currentPage = 1
 		this.serachPararms = Object.assign(this.serachPararms,data)
 		if(!this.serachPararms.checkListParams){
 			this.serachPararms.checkListParams = ''
@@ -288,14 +293,14 @@ export default {
  }
 </script>
 <style lang="less">
-	.allCustList {		
+	.payOffList {		
 		.table-wrap {
 			padding-top: 20px;
 			.el-table th {
 				padding: 9px 0;
 			} 
 			.el-table td{
-				padding: 3px 0;
+				padding: 6px 0;
 			}
 		}
 		

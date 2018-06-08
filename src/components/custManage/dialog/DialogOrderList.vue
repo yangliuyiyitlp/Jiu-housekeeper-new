@@ -1,26 +1,27 @@
 <template>
   <div class="order-list">
-		<el-dialog 
+		<el-dialog
+			:close-on-click-modal ='false'
 			width='60%'
-			title="" 
+			title=""
 			:visible.sync="visibleObj.dialogTableVisible"
 		>
-			  <common-table :arrData = 'gridData' :total = 'total' @showRefuse='showRefuseDialog'></common-table>			  
+			  <common-table :arrData = 'gridData' :total = 'total' @showRefuse='showRefuseDialog'></common-table>
 			  <div class="pagWrap">
-			  	<pagination 				
+			  	<pagination
 					:currentPage = 'currentPage'
 					:total = 'total'
 					@handleSizeChange = 'handleSizeChange'
 					@handleCurrentChange = 'handleCurrentChange'
-	 				> 				
+	 				>
 	 			</pagination>
 			</div>
 		</el-dialog>
 		<div class="refruse-wrap">
-			<el-dialog 
+			<el-dialog
 				center
 	  		width='400px'
-	  		title="拒单原因" :visible.sync="innerVisible" top='35vh'>
+	  		title="拒单原因" :visible.sync="innerVisible" top='35vh' :close-on-click-modal="false">
 					<div style="margin-top: -20px;">
 						<el-row>
 						  <el-col :span="5">订单编号：</el-col>
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-	import api from "@/api/index"	 	
+	import api from "@/api/index"
 	import CommonTable from '@/components/custManage/dialog/CommonTable'
 	import Pagination from '@/components/common/Pagination'
 	export default {
@@ -73,10 +74,10 @@
     		let pararms = {
     			crmApplayId: crmApplayId
     		}
-    		api.queryRefusalReason({crmApplayId}).then(res => {			
+    		api.queryRefusalReason({crmApplayId}).then(res => {
 					if(res.data.success) {
 						this.subcategories = res.data.data.subcategories
-		//				this.tableData = res.data.data 
+		//				this.tableData = res.data.data
 					} else {
 						this.$notify({
 				           title: '提示',
@@ -110,15 +111,15 @@
 	  	handleSizeChange(val) {
 				this.currentPage = 1
 				this.pageNo = 1
-				this.pageSize = val  
+				this.pageSize = val
 				this.queryOrderList(this.crmCustInfoId)
 //				console.log(val,777777777777)
 			},
 			handleCurrentChange(val) {
-				this.pageNo = val	
+				this.pageNo = val
 				this.queryOrderList(this.crmCustInfoId)
 //				console.log(val,88888888)
-			},	
+			},
 	  },
 	  components: {
 	  	CommonTable,

@@ -33,11 +33,7 @@
     	</div> 
     	<div class="rt head-rt">
     		<span class="admin-wrap">    			
-    			<!--<el-tooltip placement="top" effect="light">
-					  <div slot="content" @click='repairPass'>多行信息<br/>第二行信息</div>
-					  <i class=""></i>
-					</el-tooltip>-->
-					<el-popover
+					<!--<el-popover
 					  placement="bottom"
 					  width="160"
 					  v-model="visiblePassWord">
@@ -45,7 +41,8 @@
 					    <el-button size="mini" type="text" @click="showModifyPassWord" style="font-size: 15px">修改密码</el-button>					    
 					  </div>
 					  <i class="" slot="reference"></i>
-					</el-popover>
+					</el-popover>-->
+					<i class=""></i>
     			管理员，您好！
     		</span>
     		<span class="login-out">

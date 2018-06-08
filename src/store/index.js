@@ -13,7 +13,8 @@ Vue.use(Vuex);
 var state={
 	//选中表格数据的某几条数据
   selectArr: [],
-  powerBtnArr:[] //按钮权限
+  powerBtnArr:[], //按钮权限
+//menuId: null
 }
 
 var store= new Vuex.Store({

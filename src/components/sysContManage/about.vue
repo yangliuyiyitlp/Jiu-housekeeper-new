@@ -5,6 +5,7 @@
 			ref='edit'
 			id="editor_id" :minHeight="300" :content="editorText"
 	        pluginsPath="/static/kindEditor/plugins/"
+	        :allowImageRemote=' false'
 	        :items= 'item'
 	        :loadStyleMode="false"
 	        :uploadJson = 'uploadJson'

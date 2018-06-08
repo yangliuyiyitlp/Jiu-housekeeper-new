@@ -40,44 +40,49 @@ import Pagination from '@/components/common/Pagination'
 import TableList from '@/components/orderManage/TableList'
 import Search from '@/components/orderManage/OrderSearch'
 export default {
-  name: 'allList',
-  data() {
-  	return {
-  		title: '订单管理',
-  		currentPage:1,
-  		total: 0,
-  		pageNo: 1,
-        pageSize: 10,
-        serachPararms:{},
-        rowFollowId: null,
-//      visibleObj: {
-//			dialogTableVisible: false,
-//		},
-//		dialogFollow: {
-//			dialogFollowVisible: false,
-//		},
-        tableData: [],
-        zTreeData: [],
-        treeData: [],
-        loadingTable: false,
-//      multipleSelectionIdList: '',
+	name: 'allList',
+	data() {
+	  	return {
+	  		title: '订单管理',
+	  		currentPage:1,
+	  		total: 0,
+	  		pageNo: 1,
+	        pageSize: 10,
+	        serachPararms:{},
+	        rowFollowId: null,
+	//      visibleObj: {
+	//			dialogTableVisible: false,
+	//		},
+	//		dialogFollow: {
+	//			dialogFollowVisible: false,
+	//		},
+	        tableData: [],
+	        zTreeData: [],
+	        treeData: [],
+	        loadingTable: false,
+	//      multipleSelectionIdList: '',
 
-  	}
-  },
- computed: {
- 	permission () {
- 		return {
- 			showAllPararms: true,//'申请中','审批中','还款中','已结清'
-			showOrderState: true, //是否要展示高级搜索的‘订单状态’的条件
-			showOrderNode: true, //是否要展示高级搜索的‘订单环节’的条件
-			onlyOrderNode: true, //true是申请中页面控制的订单环节，fasle是审批中页面控制的订单环节
- 		}
- 	}
- },
+	  	}
+    },
+
+	computed: {
+	 	permission () {
+	 		return {
+	 			showAllPararms: true,//'申请中','审批中','还款中','已结清'
+				showOrderState: true, //是否要展示高级搜索的‘订单状态’的条件
+				showOrderNode: true, //是否要展示高级搜索的‘订单环节’的条件
+				onlyOrderNode: true, //true是申请中页面控制的订单环节，fasle是审批中页面控制的订单环节
+				showOnlyCheck:true,
+				showUp:true,
+				
+	 		}
+	 	}
+	 },
+
  mounted() {
  	this.getDepartmentZtreeFn()
  	this.queryApplyOrderInfoFn()
- 	this.$refs.search.checkOrderNodeFn()
+// 	this.$refs.search.checkOrderNodeFn()
  },
  created() {
  	if (JSON.parse(localStorage.getItem('myPageSize'))){
@@ -90,6 +95,7 @@ export default {
  },
   methods: {
   	queryApplyOrderInfoFn() {
+  		this.tableData = []
   		this.loadingTable = true
   		let s_time,e_time
   		if (this.serachPararms.applyDate) {
@@ -100,13 +106,14 @@ export default {
   			e_time = ''
   		}
   		const pararms = {
+  			currentModuleId: this.$route.query.menuId,
   			pageNo: this.pageNo,
   			pageSize: this.pageSize,
 			queryParam: this.serachPararms.content,
 			orderStatus: this.serachPararms.checkListParams,//订单状态：1申请中,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件
 //			custStatus: [1,2],//客户状态:1未实名,2已实名,3已成交[1,2]
 			applyTimeBegin: s_time,
-			applyTimeEnd: e_time,
+			applyTimeEnd: e_time,			
 			proTypeId:  this.serachPararms.productList,
 			proId: this.serachPararms.productName,
 			department: this.serachPararms.partName,
@@ -134,6 +141,33 @@ export default {
 			console.log(res.data.data,6666)
 		})
   	},
+  	queryPageDictionaryDetailFn(code,type) {
+		let pararms = {
+			code: code,
+			pageSize: 10000
+		}
+		
+		api.queryPageDictionaryDetail(pararms).then(res => {
+			if (res.data.success) {
+				if (type == 'add') {
+					this.orderNode = this.orderNode.concat(res.data.data)
+				}else if (type == 'del') {
+    				res.data.data.forEach((value, index)=>{
+    					let indexCur = this.orderNode.findIndex((val, ind)=>{	    						
+    						return val.id == res.data.data[index].id
+    					})
+    					this.orderNode.splice(indexCur,1)
+    				})
+				}
+//  				console.log(res.data.data,'78778====78787878')
+//					console.log(this.orderNode,'78778====78787878')
+				
+			} else {
+//  				this.orderNode = []
+			}
+//  			this.showOrderNodeChild = this.orderNode.length > 0 ? false:true
+		})
+	},
   	showDialogTableVisible(row,orShow) {
 //		this.visibleObj.dialogTableVisible = orShow
   		console.log(row,orShow)
@@ -143,6 +177,7 @@ export default {
         	path: '/detail/orderDetail',
         	query: {
         		crmApplayId: row.applyId,
+        		menuId: this.$route.query.menuId
             // orderStatus:row.orderStatus
         	}
       	});
@@ -160,14 +195,17 @@ export default {
   	CustDistributionFn(data) {//分配客户
   	},
   	searchFn(data) {
+  		this.pageNo = 1
+  		this.currentPage = 1
+
 		this.serachPararms = Object.assign(this.serachPararms,data)
-		if(!this.serachPararms.checkListParams){
-			this.serachPararms.checkListParams = ''
+		if(!this.serachPararms.orderStatus){
+			this.serachPararms.orderStatus = ''
 		}
 		this.queryApplyOrderInfoFn()
 
 //		console.log(this.serachPararms.checkListParams,'-=-=-=--')
-		console.log(data)
+		console.log(data,'-=-=-=--')
 
   	},
   	handleSizeChange(val) {

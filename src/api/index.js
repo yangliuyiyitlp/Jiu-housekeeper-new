@@ -312,9 +312,23 @@ queryCityByCityId(data, params) {
 	//按钮权限
   permissionBtnPower(data, params) {
     return _axios.post("/auth/operate/list",queryString.stringify(data), { params: params });
-  }
-	
+  },
+  	//总控管理-全部订单-复活
 
-
+	reviveOrderFn(data, params) {
+	    return _axios.post("/api/allOrder/reviveOrder",queryString.stringify(data), { params: params });
+	},
+	//数据字典明细
+	queryPageDictionaryDetail(data, params) {
+	    return _axios.post("/api/app/appDictionaryDetail/queryPageDictionaryDetail",queryString.stringify(data), { params: params });
+	},
+	//数据字典明细(全部)
+	queryAllDetailOrder(data, params) {
+	    return _axios.post("/api/dictionaryDetail/queryDetailOrder",queryString.stringify(data), { params: params });
+	},
+  //总控拒单
+  queryRefuseOrder(data, params) {
+    return _axios.post("/api/allOrder/refuseOrder",queryString.stringify(data), { params: params });
+  },
 
 }

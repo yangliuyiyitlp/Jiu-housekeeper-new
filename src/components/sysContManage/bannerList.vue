@@ -144,7 +144,7 @@
  			</pagination>
  		</div>
  	</div>
- 	<el-dialog :title="addModify_title" :visible.sync="banner_DialogVisible" width="40%"   @close="addDiaClose" :close-on-click-modal ='false'>
+ 	<el-dialog :title="addModify_title" :visible.sync="banner_DialogVisible" width="700px"   @close="addDiaClose" :close-on-click-modal ='false'>
  		<el-form label-width="130px" ref="addForm" :model="addForm" class="demo-form-inline" :rules="addForm_rules">
 	        <el-form-item label="标题" prop="title"  >
 	           <el-input  v-model.trim="addForm.title" :maxlength="50" @input="activityNameFn"></el-input>
@@ -180,7 +180,7 @@
 
 	           </el-select>
 	        </el-form-item>
-	        <el-form-item label="活动图片"  prop="imgAddress" class="my_upload">
+	        <el-form-item label="图片"  prop="imgAddress" class="my_upload">
 				<el-upload
 
 				  class="avatar-uploader wordDes"
@@ -241,7 +241,7 @@ export default {
     }
   	return {
   		buttonLoading:false,
-  		title: 'banner管理',
+  		title: 'Banner管理',
   		banner_DialogVisible:false,
   		link_DialogVisible:false,
   		uploadUrl:api.upload,
@@ -417,7 +417,7 @@ export default {
   		this.buttonLoading = false;
 //		this.buttonLoading = true;
   		this.banner_DialogVisible = true;
-  		this.addModify_title = '新增banner'
+  		this.addModify_title = '新增Banner'
   		this.bannerId='';
   		this.addForm.channel = null
   		this.addForm.status = null
@@ -442,7 +442,7 @@ export default {
 //		}
 
   		this.banner_DialogVisible = true;
-  		this.addModify_title = '修改banner'
+  		this.addModify_title = '修改Banner'
   		this.bannerId = a.id;
 //		console.log(a,this.bannerId,'bannerId')
   		this.addForm = Object.assign(this.addForm,a)

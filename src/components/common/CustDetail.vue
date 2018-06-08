@@ -3,7 +3,7 @@
 <div>
 	<div class="top"><img src="../../assets/images/logo.png"></div>
 	<div class="detail">
-		<div class="sheet">
+		<div class="sheet" >
 			<p>
 			 	注册手机号：<span>{{userInfo.cust_mobile}}</span>
 			 	用户姓名：<span>{{userInfo.cust_name}}</span>
@@ -11,6 +11,7 @@
 			 	申请城市：<span>{{userInfo.house_province}} {{userInfo.house_city}}</span>
 			 	注册时间：<span>{{userInfo.create_time}}</span>
 			 	<el-popover
+			 		v-if='showPermission'
 				  placement="bottom"
 
 				  trigger="click"
@@ -220,6 +221,11 @@
 			        :show-overflow-tooltip="true"
 			        prop="loanChannel"
 			        label="借款渠道">
+              <!--借款渠道：1是安卓  2 是ios-->
+         <tempalte slot-scope="scope">
+           <span v-if="scope.row.loanChannel==1">安卓</span>
+           <span v-if="scope.row.loanChannel==2">IOS</span>
+         </tempalte>
 			      </el-table-column>
 			      <el-table-column
 			      	align='center'
@@ -233,11 +239,23 @@
 			        prop="periods"
 			        label="借款期限">
 			      </el-table-column>
+            <!--1申请中,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件-->
+            <!--订单状态：申请中、还款中、审批中、已结清、已拒单（可点击查看拒单一类原因）-->
 			      <el-table-column
 			      	align='center'
 			        :show-overflow-tooltip="true"
 			        prop="status"
 			        label="订单状态">
+              <template slot-scope="scope">
+                <span v-if='scope.row.status == 1'>申请中</span>
+                <span v-if='(scope.row.status == 2) || (scope.row.status == 6) || (scope.row.status == 7) || (scope.row.status == 8) || (scope.row.status == 9)'>审批中</span>
+                <span v-if='scope.row.status == 3'>还款中</span>
+                <span v-if='scope.row.status == 4'>已结清</span>
+                <span
+                  v-if='scope.row.status == 5 || scope.row.status == 10'
+                  @click="showDialog(scope.row)" class='disAgree' size="mini">已拒单</span>
+
+              </template>
 			      </el-table-column>
 			      <el-table-column
 			      	align='center'
@@ -249,9 +267,12 @@
 			      	align='center'
 			        :show-overflow-tooltip="true"
 			        label="操作">
-			        <template slot-scope="scope">
-				        <span class="highLight_cursor" @click="lookOrderDetail(scope.row)">查看详情</span>
-			      </template>
+              <template slot-scope="scope">
+                <span  class="highLight_cursor" v-if='scope.row.status != 5 && scope.row.status != 10 && scope.row.status != 4'
+                  @click='lookOrderDetail(scope.row)'
+                >查看详情</span>
+              </template>
+
 			      </el-table-column>
 			    </el-table>
 			    <div class="pad20 alignCen">
@@ -266,11 +287,11 @@
 		  </el-tab-pane>
 		</el-tabs>
 		<div>
-			<el-dialog title="重置密码" width='416px' center :visible.sync="resetPsd" top='20%'>
+			<el-dialog title="重置密码" width='416px' center :visible.sync="resetPsd" top='20%' :close-on-click-modal="false">
 			  	<div class="diaPsd" style=''>
 				  	<div>6位随机密码将发送至用户注册手机号，确认重置密码吗？</div>
 				  	<div>
-				  		注：此密码为用户登录贝尔在线的密码，确认修改后用户需要重新登录网站。
+				  		注：此密码为用户登录贝尔在线和快捷易贷的密码，确认修改后用户需要重新登录。
 				  	</div>
 				</div>
 				<div slot="footer" class="text-rt">
@@ -278,11 +299,11 @@
 			      <el-button type="primary" @click="confirmResetPsd" :loading='resetPsdBtnLoading'>确定</el-button>
 			    </div>
 			</el-dialog>
-			<el-dialog title="修改手机号" width='416px' center :visible.sync="resetMobile" top='20%'>
+			<el-dialog title="修改手机号" width='416px' center :visible.sync="resetMobile" top='20%' :close-on-click-modal="false">
 			  	<div class=" ">
 				  	<el-form :model="ruleForm2" :rules="rules" ref="ruleForm2" label-width="110px">
 					  <el-form-item label="原手机号码：" >
-					    <p>{{userInfo.cust_mobile}}</p>
+					    <p>{{userInfo.custMobile}}</p>
 					  </el-form-item>
 					  <el-form-item label="新手机号码：" prop="newMobile">
 					    <el-input type="text" v-model="ruleForm2.newMobile" auto-complete="off"></el-input>
@@ -294,7 +315,7 @@
 			      <el-button type="primary" @click="submitForm('ruleForm2')" :loading='resetMobileBtnLoading'>确定</el-button>
 			    </div>
 			</el-dialog>
-			<el-dialog :title="title" width='416px' center :visible.sync="lockCust" top='20%'>
+			<el-dialog :title="title" width='416px' center :visible.sync="lockCust" top='20%' :close-on-click-modal="false">
 			  	<div class="diaPsd" style=''>
 				  	<p v-if="lockCustType == 1">确认冻结该客户吗？冻结后用户将无法登录APP</p>
 				  	<p v-if="lockCustType == 0">确认解冻该客户吗？</p>
@@ -304,6 +325,8 @@
 			      <el-button type="primary" @click="confirmLockCust" :loading='lockCustBtnLoading'>确定</el-button>
 			    </div>
 			</el-dialog>
+      <!--拒单弹框-->
+      <dialog-order-list ref='dialogOrderList' :visibleObj='visibleObj'></dialog-order-list>
 		</div>
 	</div>
 </div>
@@ -313,10 +336,14 @@ import api from '@/api/index.js'
 import TitCommon from '@/components/common/TitCommon'
 import TableList from '@/components/custManage/TableList'
 import Pagination from '@/components/common/Pagination'
+import DialogOrderList from '@/components/custManage/dialog/DialogOrderList'
 export default {
   name: 'allList',
   data() {
   	return {
+      visibleObj: {
+        dialogTableVisible: false,
+      },
   			userInfo:{
   				// cust_mobile:'',
   				// create_time:'',
@@ -361,20 +388,47 @@ export default {
 	  		total: 0,
 	  		pageNo: 1,
 	        pageSize: 10,
-	        accountMoney: null
+	        accountMoney: null,
+	        showPermission: false,
+      innerVisible:false
 	  	}
   	},
+  	beforeCreate(){
+		let pararms = {
+			menuId:this.$route.query.menuId
+		}
+		if (this.$route.query.menuId) {
+			this.$store.dispatch('SET_POWER_BTN_ARR', pararms).then(res=>{
+				//assigningCustomers:分配客户权限, "frozenCustomer：冻结按钮权限
+				if (res) {
+					let flag = res.indexOf('frozenCustomer')
+					if (flag > -1) {
+						this.showPermission = true
+					} else {
+						this.showPermission = false
+					}
+				}
+
+			})
+		}
+	},
   	created() {
   		this.queryStatusLock()
   	},
   	mounted(){
-		console.log(this.$route)
+//		console.log(this.$route)
   		this.getCustDetailBase()
   		this.queryEssentialInfo()
   		//this.queryLinkManInfo()
   		// console.log(this.userInfo.gjg)
   	},
   	methods:{
+      showDialog(row){ //查看拒单原因
+        if(row.status == 5 || row.status == 10) {
+          this.innerVisible = true
+          this.$emit('showRefuse',row,true)
+        }
+      },
 		queryAccountBalanceFn(){//账户余额
 			api.queryAccountBalance({
 				crmCustInfoId:this.$route.query.crmCustInfoId
@@ -390,7 +444,7 @@ export default {
   			}).then((res) =>{
 				if (res.data.code==1) {
 					this.userInfo = res.data.data
-					console.log(res.data.data)
+					console.log(res.data.data,99999999999)
 				}
 			})
   		},
@@ -479,7 +533,8 @@ export default {
 			this.$confirm('此操作将重置密码, 是否继续?', '提示', {
 	            confirmButtonText: '确定',
 	            cancelButtonText: '取消',
-	            type: 'warning'
+	            type: 'warning',
+        closeOnClickModal:false
 	        }).then(() => {
 	        	this.resetPsdBtnLoading = true
 	        	api.updateDetailCustPwd({custId: this.$route.query.bgCustomerId}).then(res => {
@@ -501,16 +556,17 @@ export default {
   		submitForm(formName) {//2：修改注册手机号，
 	        this.$refs[formName].validate((valid) => {
 	          if (valid) {
-	            	this.$confirm('此操作将重置密码, 是否继续?', '提示', {
+	            	this.$confirm('此操作将修改手机号, 是否继续?', '提示', {
 			          confirmButtonText: '确定',
 			          cancelButtonText: '取消',
-			          type: 'warning'
+			          type: 'warning',
+			          closeOnClickModal: false
 			        }).then(() => {
 			        	this.updateDetailRegisterPwdFn()
 			        }).catch(() => {
 			          this.$message({
 			            type: 'info',
-			            message: '已取消重更换手机号码'
+			            message: '已取消修改手机号'
 			          });
 			        });
 	          	} else {
@@ -538,12 +594,18 @@ export default {
       		console.log(pararms)
       		api.updateDetailRegisterPwd(pararms).then(res => {
       			this.resetMobileBtnLoading = false
-        		this.resetMobile = false
-//	        		console.log(res)
-	          	this.$message({
-	            	type: 'success',
-	            	message: res.data.msg
-	          	});
+
+        		if (res.data.success) {
+        			this.getCustDetailBase()
+        			this.resetMobile = false
+        		} else {
+        			this.$message({
+		            	type: 'success',
+		            	message: res.data.msg
+		          	});
+        		}
+	        		console.log(res,111111111111)
+
         	})
       	},
       	confirmLockCust() {//3：冻结客户
@@ -552,7 +614,8 @@ export default {
   			this.$confirm('此操作将 '+ textTit +', 是否继续?', '提示', {
 	            confirmButtonText: '确定',
 	            cancelButtonText: '取消',
-	            type: 'warning'
+	            type: 'warning',
+          closeOnClickModal:false
 	        }).then(() => {
 	        	this.saveCustStatusLock()
 	        }).catch(() => {
@@ -611,12 +674,16 @@ export default {
   	},
   	components: {
 	  	TitCommon,
-	  	Pagination
+	  	Pagination,
+      DialogOrderList
     }
 
 }
 </script>
 <style lang="less" scoped>
+  .disAgree{
+    color:red;
+  }
 	.top{
 		width: 100%;
 		height: 60px;

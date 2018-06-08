@@ -69,17 +69,20 @@ export default {
  computed: {
  	permission () {
  		return {
- 			showAllPararms: true,//'申请中','审批中','还款中','已结清'
+ 			showAllPararms: false,//'申请中','审批中','还款中','已结清'
 			showOrderState: false, //是否要展示高级搜索的‘订单状态’的条件
 			showOrderNode: true, //是否要展示高级搜索的‘订单环节’的条件
 			onlyOrderNode: true, //true是申请中页面控制的订单环节，fasle是审批中页面控制的订单环节
+			detailCode: '000001',//申请中
+			showUp:true,
+			showOnlyCheck: true
  		}
  	}
  },
  mounted() {
  	this.getDepartmentZtreeFn()
  	this.queryApplyOrderInfoFn()
- 	this.$refs.search.checkOrderNodeFn()
+// 	this.$refs.search.checkOrderNodeFn()
  },
  created() {
  	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
@@ -102,6 +105,7 @@ export default {
   			e_time = ''
   		}
   		const pararms = {
+  			currentModuleId: this.$route.query.menuId,
   			pageNo: this.pageNo,
   			pageSize: this.pageSize,
 			queryParam: this.serachPararms.content,
@@ -144,7 +148,8 @@ export default {
 		var routeData = this.$router.resolve({
         	path: '/detail/orderDetail',
         	query: {
-        		crmApplayId: row.applyId
+        		crmApplayId: row.applyId,
+        		menuId: this.$route.query.menuId
         	}
       	});
       	window.open(routeData.href);
@@ -161,6 +166,8 @@ export default {
   	CustDistributionFn(data) {//分配客户
   	},
   	searchFn(data) {
+  		this.pageNo = 1
+  		this.currentPage = 1
 		this.serachPararms = Object.assign(this.serachPararms,data)
 		if(!this.serachPararms.checkListParams){
 			this.serachPararms.checkListParams = ''
