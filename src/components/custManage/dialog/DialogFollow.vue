@@ -75,7 +75,7 @@
 			    <el-form-item label="跟进形式" :label-width="formLabelWidth" prop="format">
 			      <el-select v-model="form.format" placeholder="请选择">
 			        <el-option label="电话" value="1"></el-option>
-			        <el-option label="拜访" value="2"></el-option>
+			        <el-option label="外访" value="2"></el-option>
 			        <el-option label="活动" value="3"></el-option>
 			      </el-select>
 			    </el-form-item>

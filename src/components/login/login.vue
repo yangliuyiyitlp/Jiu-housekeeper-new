@@ -1,34 +1,34 @@
 <template>
 <div class="login">
-  <!--<div class="login-ti">
-      <div class="login-titile">
-                         营销中心管理平台
-      </div>
+  <!--<div class="login-ti">-->
+      <!--<div class="login-titile">-->
+                         <!--营销中心管理平台-->
+      <!--</div>-->
 
-  </div>
-  <div class="login-main">
-      <div class="login-left left">
+  <!--</div>-->
+  <!--<div class="login-main">-->
+      <!--<div class="login-left left">-->
 
-      </div>
-      <div class="login-right left" >
-          <p class="logname">用户登录</p>
-          <p>
-            <input type="text" placeholder="用户名" class="loginname" v-model.trim="loginname" @keyup.enter="loginbtn">
-          </p>
-          <p>
-           <input type="password" placeholder="密码" @keyup.enter="loginbtn" class="loginpwd" v-model="password" />
-          </p>
-          <p>
-            <input type="text" @keyup.enter="loginbtn" placeholder="验证码" class="loginyzm" v-model="logpwd"><img  :src="codeurl"><i @click="getuuid" class="fa fa-refresh" style="color:#3d94ff" aria-hidden="true"></i>
-          </p>
-          <p class="loginmsg">
-              {{errmsg}}
-          </p>
-          <p>
-           <input type="button" value="登录" class="loginbtn" @click="loginbtn"  />
-          </p>
-      </div>
-  </div>-->
+      <!--</div>-->
+      <!--<div class="login-right left" >-->
+          <!--<p class="logname">用户登录</p>-->
+          <!--<p>-->
+            <!--<input type="text" placeholder="用户名" class="loginname" v-model.trim="loginname" @keyup.enter="loginbtn">-->
+          <!--</p>-->
+          <!--<p>-->
+           <!--<input type="password" placeholder="密码" @keyup.enter="loginbtn" class="loginpwd" v-model="password" />-->
+          <!--</p>-->
+          <!--<p>-->
+            <!--<input type="text" @keyup.enter="loginbtn" placeholder="验证码" class="loginyzm" v-model="logpwd"><img  :src="codeurl"><i @click="getuuid" class="fa fa-refresh" style="color:#3d94ff" aria-hidden="true"></i>-->
+          <!--</p>-->
+          <!--<p class="loginmsg">-->
+              <!--{{errmsg}}-->
+          <!--</p>-->
+          <!--<p>-->
+           <!--<input type="button" value="登录" class="loginbtn" @click="loginbtn"  />-->
+          <!--</p>-->
+      <!--</div>-->
+  <!--</div>-->
 
 </div>
 </template>
@@ -83,8 +83,8 @@ export default {
 //              this.errmsg='';
 //              //router.push({ path: 'home'})
 ////              router.push({ path: '/work/activity'})
-//              
-//              
+//
+//
 //              let activityUrl = ''
 //								if (res.data.data.mudules) {
 //									activityUrl = res.data.data.mudules[0]['url']

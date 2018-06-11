@@ -11,18 +11,20 @@
 	    	</el-table-column>
 		    <el-table-column prop="cptName" label="产品系列" align='center'>
 		    </el-table-column>
-		    <el-table-column prop="loanChannel" label="借款渠道" align='center'>
+
+		    <el-table-column  label="借款渠道" align='center'>
           <!--借款渠道：1是安卓  2 是ios-->
-          <tempalte slot-scope="scope">
+          <template slot-scope="scope">
             <span v-if="scope.row.loanChannel==1">安卓</span>
             <span v-if="scope.row.loanChannel==2">IOS</span>
-          </tempalte>
+          </template>
 		    </el-table-column>
+
 		    <el-table-column prop="amount" label="借款金额(元)" align='center'>
 		    </el-table-column>
 		    <el-table-column prop="periods" label="借款期限" align='center'>
 		    </el-table-column>
-		    <el-table-column prop="address" label="订单状态" align='center'>
+		    <el-table-column prop="status" label="订单状态" align='center'>
 		    	<template slot-scope="scope">
 		    		<span v-if='scope.row.status == 1'>申请中</span>
 			      <span v-if='(scope.row.status == 2) || (scope.row.status == 6) || (scope.row.status == 7) || (scope.row.status == 8) || (scope.row.status == 9)'>审批中</span>
@@ -31,13 +33,11 @@
 			      <span
 			      	v-if='scope.row.status == 5 || scope.row.status == 10'
 			      	@click="showDialog(scope.row)" class='disAgree' size="mini">已拒单</span>
-
-			        <!--<el-button type="text" size="small">编辑</el-button>-->
 		      </template>
 		    </el-table-column>
 		     <el-table-column prop="createTime" label="申请时间" align='center' width='160px'>
 		    </el-table-column>
-		     <el-table-column prop="address" label="操作" align='center'>
+		     <el-table-column label="操作" align='center'>
 		     	<template slot-scope="scope">
 			        <el-button
 			        	v-if='scope.row.status != 5 && scope.row.status != 10 && scope.row.status != 4'
@@ -53,6 +53,8 @@
 <script>
 
 export default {
+
+	name:'commonTable',
 	props: {
   		arrData:{
 	  		type: Array,
@@ -76,10 +78,10 @@ export default {
         innerVisible: false
 	    }
   	},
-
     methods: {
 	  	showDialog(row){
-	  		if(row.status == 5 || row.status == 10) {
+        console.log(22222,row);
+        if(row.status == 5 || row.status == 10) {
 	  			this.innerVisible = true
 	  			this.$emit('showRefuse',row,true)
 	  		}

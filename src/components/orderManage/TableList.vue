@@ -27,10 +27,18 @@
     width="55">
     </el-table-column>
     <el-table-column
+      v-if = 'tablePermisson.applyTime'
     	:show-overflow-tooltip="true"
 		align='center'
       	prop="applyTime"
       	label="申请时间">
+    </el-table-column>
+    <el-table-column
+      v-if = 'tablePermisson.applicationTime'
+      :show-overflow-tooltip="true"
+      align='center'
+      prop="applicationTime"
+      label="申请时间">
     </el-table-column>
     <el-table-column
     	v-if = 'tablePermisson.systemResidenceTime'
@@ -94,15 +102,31 @@
       </template>
     </el-table-column>-->
     <el-table-column
+      v-if = 'tablePermisson.applyTime'
     	:show-overflow-tooltip="true"
 		align='center'
       prop="proTypeName"
       label="产品系列">
     </el-table-column>
     <el-table-column
+      v-if = 'tablePermisson.applicationTime'
+      :show-overflow-tooltip="true"
+      align='center'
+      prop="cptName"
+      label="产品系列">
+    </el-table-column>
+    <el-table-column
+      v-if = 'tablePermisson.applyTime'
     	:show-overflow-tooltip="true"
 		align='center'
       prop="proName"
+      label="产品名称">
+    </el-table-column>
+    <el-table-column
+      v-if = 'tablePermisson.applicationTime'
+      :show-overflow-tooltip="true"
+      align='center'
+      prop="cpName"
       label="产品名称">
     </el-table-column>
     <el-table-column
@@ -140,7 +164,7 @@
     </el-table-column>
 
     <el-table-column
-    	
+
     	v-if='tablePermisson.orderStatus'
     	:show-overflow-tooltip="true"
 		align='center'
@@ -149,7 +173,7 @@
       width="100px">
 	    <template slot-scope="scope">
 	    	<!--1申请中,2审批中,3还款中,4已结清,5拒绝,    (6线上筹 资中,7满标,8满标以放款,9流标,) 审批中 10退件 （拒绝）-->
-	    	<span v-if='scope.row.orderStatus == 1 && (scope.row.hangStatus != 1 && scope.row.hangStatus != 2)'>申请中</span>
+	    	<span 	@click="openDialogOrder(scope.row)" v-if='scope.row.orderStatus == 1 && (scope.row.hangStatus != 1 && scope.row.hangStatus != 2)'>申请中</span>
 	    	<span
 	    		@click="openDialogOrder(scope.row)"
 	    		v-if='(scope.row.orderStatus == 1) && (scope.row.hangStatus == 1 || scope.row.hangStatus == 2)'>
@@ -178,10 +202,47 @@
 
     </el-table-column>
     <el-table-column
-    	v-if='tablePermisson.nodeName'
-    	:show-overflow-tooltip="true"
-		align='center'
-      prop="nodeName"
+
+      v-if='tablePermisson.orderStatusControl'
+      :show-overflow-tooltip="true"
+      align='center'
+      prop="custIc"
+      label="状态"
+      width="100px">
+      <template slot-scope="scope">
+        <!--1申请中,2审批中,3还款中,4已结清,5拒绝,    (6线上筹 资中,7满标,8满标以放款,9流标,) 审批中 10退件 （拒绝）-->
+        <span 	@click="openDialogOrder(scope.row)" v-if='scope.row.orderStatus == 1 && (scope.row.hangStatus != 1 && scope.row.hangStatus != 2)'>申请中</span>
+
+        <span
+          v-if='(scope.row.orderStatus == 2 || scope.row.orderStatus == 6 || scope.row.orderStatus == 7 || scope.row.orderStatus == 8 || scope.row.orderStatus == 9) && (scope.row.hangStatus != 1 && scope.row.hangStatus != 2)'
+        >
+	    		审批中
+	    	</span>
+
+        <span v-if='scope.row.orderStatus == 3'>还款中</span>
+        <span v-if='scope.row.orderStatus == 4'>已结清</span>
+        <span
+          v-if='(scope.row.orderStatus == 5 || scope.row.orderStatus == 10)'
+          style="color: red;"
+          @click="openDialogOrder(scope.row)">
+	    		拒绝
+	    	</span>
+      </template>
+
+    </el-table-column>
+    <el-table-column
+    v-if='tablePermisson.nodeName'
+    :show-overflow-tooltip="true"
+    align='center'
+    prop="nodeName"
+    label="环节"
+    width="100px">
+  </el-table-column>
+    <el-table-column
+      v-if='tablePermisson.segment'
+      :show-overflow-tooltip="true"
+      align='center'
+      prop="segment"
       label="环节"
       width="100px">
     </el-table-column>
@@ -224,7 +285,7 @@
   </el-table-column>
     <el-table-column
       v-if='tablePermisson.rejectBtn'
-     
+
       fixed="right"
       :show-overflow-tooltip="true"
       align='center'
@@ -235,21 +296,24 @@
       </template>
     </el-table-column>
   </el-table>
-	<el-dialog title="挂起原因" width='400px' center :visible.sync="dialogApply"  top='20%'>
+	<el-dialog title="挂起原因" width='400px' center :visible.sync="dialogApply"  top='20%' :close-on-click-modal ='false'>
 	  <div class="" style='margin-top: -25px;'>
 		  	<el-row>
 		  		<el-row>
 		  			<el-col :span="5" >订单编号：</el-col>
 		  			<el-col :span="19" >{{hangUpObj.orderNum}}</el-col>
 		  		</el-row>
+          <br>
 				<el-row>
 					<el-col :span="5" >挂起原因：</el-col>
 					<el-col :span="19" >{{hangUpObj.hangReason}}</el-col>
 				</el-row>
+          <br>
 				<el-row>
 					<el-col :span="5" >环节：</el-col>
 					<el-col :span="19" >{{hangUpObj.nodeName}}</el-col>
 				</el-row>
+          <br>
 				<el-row>
 					<el-col :span="5" >操作人：</el-col>
 					<el-col :span="19" >{{hangUpObj.creator}} </el-col>
@@ -257,24 +321,27 @@
 			</el-row>
 		</div>
 	</el-dialog>
-	<el-dialog title="拒单原因" width='400px' center :visible.sync="dialogRefused" top='20%'>
+	<el-dialog title="拒单原因" width='400px' center :visible.sync="dialogRefused" top='20%' :close-on-click-modal ='false'>
 	  	<div class="" style='margin-top: -25px;'>
 		  	<el-row>
 		  		<el-row>
 		  			<el-col :span="5" >订单编号：</el-col>
 		  			<el-col :span="19" >{{objRefresed.orderId}}</el-col>
 		  		</el-row>
+          <br>
 				<el-row>
 					<el-col :span="5" >拒单原因：</el-col>
 					<el-col :span="19" >{{objRefresed.refusalReason}}</el-col>
 				</el-row>
-				<el-row>
-					<el-col :span="5" >拒单时间：</el-col>
-					<el-col :span="19" >{{objRefresed.createTime}}</el-col>
-				</el-row>
+          <br>
 				<el-row>
 					<el-col :span="5" >操作人：</el-col>
 					<el-col :span="19" >{{objRefresed.creator}} </el-col>
+				</el-row>
+          <br>
+				<el-row>
+					<el-col :span="5" >操作日期：</el-col>
+					<el-col :span="19" >{{objRefresed.createTime}}</el-col>
 				</el-row>
 			</el-row>
 		</div>
@@ -295,15 +362,19 @@ export default {
   				return {
   					systemResidenceTime: true,//系统停留时间
 		  			orderStatus: true, //订单状态
+            orderStatusControl:false,//订单状态2
 		  			nodeName: true, //环节
-		  			hangTime: true, //挂起时间
+            segment:false,//环节2
+            hangTime: true, //挂起时间
 		  			detailBtn: true, //订单详情的‘查看’按钮
 		  			endOrderTime: false,//结清时间
             remainTime:false,//停留时间
             hangStatus:false, //挂起状态
             rejectBtn:false, //拒绝
-            showSelection:false
-  				}
+            showSelection:false,
+            applicationTime:false,//申请时间2
+            applyTime:true //申请时间
+          }
   			}
   		},
   		tableData:{
@@ -435,5 +506,8 @@ export default {
  }
 </script>
 <style scoped lang="less">
-
+.tableList .el-row {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
 </style>

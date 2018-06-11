@@ -106,6 +106,10 @@ export default {
     queryPageDictionaryDetail(data, params) { //数据字典小类列表
         return _axios.post("/api/dictionaryDetail/queryPageDictionaryDetail",queryString.stringify(data), { params: params });
     },
+  //数据字典明细
+  queryPageDictionaryDetail(data, params) {
+    return _axios.post("/api/app/appDictionaryDetail/queryPageDictionaryDetail",queryString.stringify(data), { params: params });
+  },
     updateDictionaryDetail(data, params) { //数据字典小类列表
         return _axios.post("/api/dictionaryDetail/updateDictionaryDetail",queryString.stringify(data), { params: params });
     },
@@ -235,7 +239,7 @@ queryCityByCityId(data, params) {
     },
     //客户分配：保存
 	cuntomerDistribution(data, params) {
-    	return _axios.post("/api/distribution/cuntomerDistribution",queryString.stringify(data), { params: params });
+    	return _axios.post("/api/distribution/customerDistribution",queryString.stringify(data), { params: params });
     },
 	//全部订单:查询全部订单列表
     queryApplyOrderInfo(data, params) {
@@ -318,10 +322,7 @@ queryCityByCityId(data, params) {
 	reviveOrderFn(data, params) {
 	    return _axios.post("/api/allOrder/reviveOrder",queryString.stringify(data), { params: params });
 	},
-	//数据字典明细
-	queryPageDictionaryDetail(data, params) {
-	    return _axios.post("/api/app/appDictionaryDetail/queryPageDictionaryDetail",queryString.stringify(data), { params: params });
-	},
+
 	//数据字典明细(全部)
 	queryAllDetailOrder(data, params) {
 	    return _axios.post("/api/dictionaryDetail/queryDetailOrder",queryString.stringify(data), { params: params });
@@ -329,6 +330,10 @@ queryCityByCityId(data, params) {
   //总控拒单
   queryRefuseOrder(data, params) {
     return _axios.post("/api/allOrder/refuseOrder",queryString.stringify(data), { params: params });
+  },
+  //退出
+  queryMyLogout(data, params) {
+    return _axios.get("/mylogout",queryString.stringify(data));
   },
 
 }

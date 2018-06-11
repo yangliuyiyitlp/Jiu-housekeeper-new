@@ -303,7 +303,7 @@ export default [
 //      path: '/login',
 //      component: Login,
 //      //component: LayoutA,
-////      name: "登录",
+// //      name: "登录",
 //      meta: {
 //          istoken: true
 //      },

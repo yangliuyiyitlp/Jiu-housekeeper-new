@@ -75,7 +75,7 @@
 			    <el-form-item label="监测方式：" :label-width="formLabelWidth" class="miniHeader"  prop="monitorType" >
 			      <el-select v-model="form.monitorType" placeholder="请选择"  @change="changeType">
 			        <el-option label="常规监测" value="1"></el-option>
-			        <el-option label="上门拜访" value="2"></el-option>
+			        <el-option label="上门回访" value="2"></el-option>
 			      </el-select>
 			    </el-form-item>
           <el-form-item> </el-form-item>

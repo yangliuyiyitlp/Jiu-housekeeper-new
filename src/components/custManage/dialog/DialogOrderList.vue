@@ -6,7 +6,7 @@
 			title=""
 			:visible.sync="visibleObj.dialogTableVisible"
 		>
-			  <common-table :arrData = 'gridData' :total = 'total' @showRefuse='showRefuseDialog'></common-table>
+			  <CommonTable :arrData = 'gridData' :total = 'total' @showRefuse='showRefuseDialog'></CommonTable>
 			  <div class="pagWrap">
 			  	<pagination
 					:currentPage = 'currentPage'
@@ -21,16 +21,18 @@
 			<el-dialog
 				center
 	  		width='400px'
-	  		title="拒单原因" :visible.sync="innerVisible" top='35vh' :close-on-click-modal="false">
+	  		title="拒单原因" :visible.sync="visibleObj.innerVisible" top='35vh' :close-on-click-modal="false">
 					<div style="margin-top: -20px;">
 						<el-row>
 						  <el-col :span="5">订单编号：</el-col>
 						  <el-col :span="19">{{refrusedApplyId}}</el-col>
 						</el-row>
+            <br>
 						<el-row>
 						  <el-col :span="5">拒单原因：</el-col>
 						  <el-col :span="19">{{subcategories}}</el-col>
 						</el-row>
+            <br>
 						<el-row>
 						  <el-col :span="5">操作人：</el-col>
 						  <el-col :span="19">系统自动</el-col>
@@ -46,15 +48,20 @@
 	import CommonTable from '@/components/custManage/dialog/CommonTable'
 	import Pagination from '@/components/common/Pagination'
 	export default {
+
+		name:'DialogOrdreList',
+
 		props: {
 	  	visibleObj: {
 	  		type: Object,
 	  		default: function () {
 	        return {
 	        	dialogTableVisible: false,
+            innerVisible:false
 	        }
 	      }
-	  	}
+	  	},
+
 	  },
 	  data () {
 	    return {
@@ -62,9 +69,9 @@
 	  		total: 0,
 	  		pageNo: 1,
         pageSize: 10,
-        innerVisible: false,
+        // innerVisible: false,
 	    	gridData: [],
-        crmCustInfoId: '',
+       crmCustInfoId: '',
         refrusedApplyId: '',
         subcategories:''
 	    }
@@ -77,6 +84,7 @@
     		api.queryRefusalReason({crmApplayId}).then(res => {
 					if(res.data.success) {
 						this.subcategories = res.data.data.subcategories
+							this.refrusedApplyId = res.data.data.orderId
 		//				this.tableData = res.data.data
 					} else {
 						this.$notify({
@@ -89,21 +97,24 @@
 				})
     	},
 	  	queryOrderList(crmCustInfoId){
-	  			this.crmCustInfoId = crmCustInfoId
+        console.log(888888,crmCustInfoId);
+        this.crmCustInfoId = crmCustInfoId
 	  			api.queryOrderList({
 	  				pageSize:this.pageSize,
 	  				pageNo:this.pageNo,
-	  				crmCustInfo:crmCustInfoId,
+//	  				crmCustInfo:crmCustInfoId,
+						crmCustInfo:crmCustInfoId,
 	  			}).then((res) =>{
 					if (res.data.code==1) {
-						this.gridData = res.data.data
+            console.log(3333,res.data.data);
+            this.gridData = res.data.data
 						this.total = res.data.total
 					}
 				})
   		},
 	  	showRefuseDialog(row,orShow) {
-	  		this.innerVisible = true
-	  		this.refrusedApplyId = row.crmApplayId
+	  		this.visibleObj.innerVisible = true
+//	  		this.refrusedApplyId = row.crmApplayId
 	  		this.queryRefusalReasonFn(row.crmApplayId)
 	  		console.log(row,orShow,1236666666)
 	  		console.log(row.date,1236666666)

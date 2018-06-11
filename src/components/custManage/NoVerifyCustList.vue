@@ -2,32 +2,32 @@
  <div class="allCustList">
  	<TitCommon :title='title'></TitCommon>
  	<div class="custListWrap">
- 		<search  
+ 		<search
  			:treeData = 'treeData'
- 			:data = 'zTreeData' 		
- 			@CustDistributionFn='CustDistributionFn' 
- 			@searchFn='searchFn' 
- 			:permission ='permission'> 			
+ 			:data = 'zTreeData'
+ 			@CustDistributionFn='CustDistributionFn'
+ 			@searchFn='searchFn'
+ 			:permission ='permission'>
  		</search>
  		<div class="table-wrap">
- 			<table-list 
+ 			<table-list
  				:showOrderNumber = 'showOrderNumber'
  				:loadingTable = 'loadingTable'
- 				:tableData='tableData' 
+ 				:tableData='tableData'
  				@intoDetail = 'intoDetail'
  				@showDialogTableVisible = 'showDialogTableVisible'
  				@showDialogFollow = 'showDialogFollow'
- 				> 				
- 			</table-list> 			
+ 				>
+ 			</table-list>
  		</div>
  		<div class="pad20 alignCen">
- 			<pagination 				
+ 			<pagination
 				:currentPage = 'currentPage'
 				:total = 'total'
 				:myPageSizes = 'pageSize'
 				@handleSizeChange = 'handleSizeChange'
 				@handleCurrentChange = 'handleCurrentChange'
- 				> 				
+ 				>
  			</pagination>
  		</div>
  		<div>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import api from "@/api/index"	
+import api from "@/api/index"
 import TitCommon from '@/components/common/TitCommon'
 import Pagination from '@/components/common/Pagination'
 import Search from '@/components/custManage/Search'
@@ -71,12 +71,12 @@ export default {
         treeData: [],
         loadingTable: false,
         multipleSelectionIdList: '',
-        
+
   	}
   },
 
 	 created() {
-	 	if (JSON.parse(localStorage.getItem('myPageSize'))) { 	
+	 	if (JSON.parse(localStorage.getItem('myPageSize'))) {
 	 		this.pageSize = JSON.parse(localStorage.getItem('myPageSize')).W_NoVerifyList?JSON.parse(localStorage.getItem('myPageSize')).W_NoVerifyList:10
 	 		console.log(JSON.parse(localStorage.getItem('myPageSize')).W_NoVerifyList)
 	 	} else {
@@ -90,7 +90,7 @@ export default {
  			showAllPararms: false,//是否要展示'全部，未实名，已实名，已成交'条件
 //			showDistribution: false,//是否要展示‘客户分配’按钮
 			showRealName: true,
-			showRegType: true, //是否要展示高级搜索的‘注册类型’的条件			
+			showRegType: true, //是否要展示高级搜索的‘注册类型’的条件
  		}
  	}
  },
@@ -109,10 +109,10 @@ export default {
 			queryParam: this.serachPararms.content,
 			custStatus: [1],//客户状态:1未实名,2已实名,3已成交[1,2]
 //			custStatus: [1,2],//客户状态:1未实名,2已实名,3已成交[1,2]
-			pushType:  this.serachPararms.regType, //注册类型:1 自由注册 2 业务员推广 3 邀请好友 
+			pushType:  this.serachPararms.regType, //注册类型:1 自由注册 2 业务员推广 3 邀请好友
 			oneSelf: this.serachPararms.onlyCheck,
 			department: this.serachPararms.partName,
-			empName: this.serachPararms.people,
+        empQueryParam: this.serachPararms.people,
 			provId: this.serachPararms.applyProvince,
 			cityId: this.serachPararms.applyCity
   		}
@@ -121,7 +121,7 @@ export default {
   			this.loadingTable = false
 			if(res.data.success) {
 				this.total = res.data.total
-				this.tableData = res.data.data 
+				this.tableData = res.data.data
 			} else {
 				this.$notify({
 		           title: '提示',
@@ -133,10 +133,10 @@ export default {
 		})
   	},
   	showDialogTableVisible(row,orShow) {
-  		this.visibleObj.dialogTableVisible = orShow	  	
+  		this.visibleObj.dialogTableVisible = orShow
   		console.log(row,orShow)
   	},
-  	showDialogFollow(row,orShow) {  		
+  	showDialogFollow(row,orShow) {
   		this.dialogFollow.dialogFollowVisible = orShow
   		console.log(row,orShow,'/api/upload/upload')
   		this.rowFollowId = row.crmCustInfoId
@@ -145,7 +145,7 @@ export default {
    			this.$refs.childDialogFollow.queryFollowList() // 方法2 父组件调用子组件方法
 
   		})
-  		
+
 
 //		console.log(this.rowFollowId,8888888)
 //		console.log(row,orShow,8888888)
@@ -163,15 +163,14 @@ export default {
 //		console.log(this.multipleSelectionIdList,66666)
   	},
   	searchFn(data) {
+  	  this.pageNo=1
+      this.currentPage=1
   		this.serachPararms = Object.assign(this.serachPararms,data)
 //		let arrCheckList = this.serachPararms.checkList
 		if(!this.serachPararms.checkListParams){
 			this.serachPararms.checkListParams = ''
 		}
 		this.queryCustInfoData()
-
-//		console.log(this.serachPararms.checkListParams,'-=-=-=--')
-//		console.log(this.serachPararms)
 
   	},
   	intoDetail(row) {
@@ -194,18 +193,18 @@ export default {
   		myPageSize.W_NoVerifyList = val
 	 	localStorage.setItem('myPageSize',JSON.stringify(myPageSize))
 		this.pageNo = 1
-		this.pageSize = val  
+		this.pageSize = val
 		this.queryCustInfoData()
 //		console.log(val,777777777777)
 	},
 	handleCurrentChange(val) {
-		this.pageNo = val	
+		this.pageNo = val
 		this.queryCustInfoData()
 //		console.log(val,88888888)
 	},
 	getDepartmentZtreeFn() {
 		api.getDepartmentZtree({groupId:''}).then(res => {
-			if(res.data.status == 1) {		
+			if(res.data.status == 1) {
 				this.treeData = res.data.ztree
 				this.zTreeData = this.toTree(res.data.ztree)
 			} else {
@@ -225,7 +224,7 @@ export default {
 			var idList = [];
 			ary.forEach(function(item) {
 				idList.push(item.id)
-			});					
+			});
 			for(var i = 0, len = ary.length; i < len; i++) {
 				if(ary[i].pId == undefined || (ary[i].pId != undefined && _this.debFn(ary[i].pId, idList))) {
 					var obj = {
@@ -287,7 +286,7 @@ export default {
 //			var idList = [];
 //			ary.forEach(function(item) {
 //				idList.push(item.id)
-//			});					
+//			});
 //			for(var i = 0, len = ary.length; i < len; i++) {
 //				if(ary[i].pId == undefined || (ary[i].pId != undefined && _this.debFn(ary[i].pId, idList))) {
 //					var obj = {
@@ -342,7 +341,7 @@ export default {
 //		}
 //		return flag;
 //	},
-	
+
   },
   components: {
   	TitCommon,
@@ -353,20 +352,20 @@ export default {
   	DialogFollow,
   	DialogFollow
   }
-  
+
  }
 </script>
 <style lang="less">
-	.allCustList {		
+	.allCustList {
 		.table-wrap {
 			padding-top: 20px;
 			.el-table th {
 				padding: 9px 0;
-			} 
+			}
 			.el-table td{
 				padding: 3px 0;
 			}
 		}
-		
+
 	}
 </style>

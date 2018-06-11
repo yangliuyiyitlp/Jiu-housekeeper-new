@@ -37,7 +37,7 @@
         <el-dialog title="拒单" width='450px'  center :visible.sync="dialogFollow.dialogFollowVisible" :close-on-click-modal="false">
           <el-form :model="form" ref="form" :rules="form_rules">
             <el-form-item label="订单编号：">
-              <div  class="line-limit-length">{{multipleSelectionIdList}}</div >
+              <div  class="line-limit-length">{{orderNumber}}</div >
             </el-form-item>
             <el-form-item label="拒单原因：" prop="rejectReasonNumber" class="rejectInfo">
               <el-select v-model="form.a" class="proviceCity" placeholder="请选择" @change='changeHead' clearable >
@@ -92,6 +92,7 @@
         treeData: [],
         loadingTable: false,
         multipleSelectionIdList:"",
+        orderNumber:'',
         dialogFollow: {
           dialogFollowVisible: false
 
@@ -132,14 +133,18 @@
       tablePermisson(){
         return{
           systemResidenceTime: true,//系统停留时间
-          orderStatus: true, //订单状态
+          orderStatus: false, //订单状态
+          orderStatusControl:true,//订单状态2
           hangTime: false, //挂起时间
-          nodeName: true, //环节
+          nodeName: false, //环节
+          segment:true,//环节2
           detailBtn: true, //订单详情的‘查看’按钮
           remainTime:true,//停留时间
           hangStatus:true, //挂起状态
           rejectBtn:true,
-          showSelection:true
+          showSelection:true,
+          applicationTime:true,
+          applyTime:false
         }
       },
     },
@@ -256,6 +261,7 @@
       modifyReject(row){ // todo 拒单
         this.dialogFollow.dialogFollowVisible=true
         this.multipleSelectionIdList = row.crmApplayId
+        this.orderNumber  = row.orderNumber // 订单编号
         this.form= {
           crmApplayId: '',
             remark: '',
@@ -278,10 +284,13 @@
           return false
         }
         const arr  = []
+        const arrOrderNumber  = []
         this.$store.state.controlArr.forEach((value, index)=>{
           arr.push(value.crmApplayId)
+          arrOrderNumber.push(value.orderNumber)
         })
         this.multipleSelectionIdList = arr.join(',')
+        this.orderNumber = arrOrderNumber.join(',')
         this.dialogFollow.dialogFollowVisible=true
         this.form= {
           crmApplayId: '',

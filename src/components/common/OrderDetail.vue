@@ -3,13 +3,25 @@
     <div class="top"><img src="../../assets/images/logo.png"></div>
     <div class="detail">
       <div class="sheet">
+        <!--1待命,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件-->
         <p>
           订单编号：<span>{{orderBaseInfo.orderNumber}}</span>
-          姓名：<span>{{orderBaseInfo.empName}}</span>
+          姓名：<span>{{orderBaseInfo.custName}}</span>
           申请时间：<span>{{orderBaseInfo.createTime}}</span>
           申请城市：<span>{{orderBaseInfo.provId}} {{orderBaseInfo.cityId}}</span>
-          状态：<span>{{orderBaseInfo.status}}</span>
-          当前环节：<span>{{orderBaseInfo.nodeName}}</span>
+          状态：<span v-if="orderBaseInfo.status == 1">待命</span>
+             <span v-if="orderBaseInfo.status == 2">审批中</span>
+             <span v-if="orderBaseInfo.status == 3">还款中</span>
+             <span v-if="orderBaseInfo.status == 4">已结清</span>
+             <span v-if="orderBaseInfo.status == 5">拒绝</span>
+             <span v-if="orderBaseInfo.status == 6">线上筹资中</span>
+             <span v-if="orderBaseInfo.status == 7">满标</span>
+             <span v-if="orderBaseInfo.status == 8">满标以放款</span>
+             <span v-if="orderBaseInfo.status == 9">流标</span>
+             <span v-if="orderBaseInfo.status == 10">退件</span>
+
+          <span v-if="orderBaseInfo.status==3?0:1">当前环节：<span>{{orderBaseInfo.nodeName}}</span></span>
+          订单归属业务员：<span>{{orderBaseInfo.empName}}</span>
           <span class="change-permission" v-if='changePermission'>
 					<el-popover
             trigger="click"
@@ -29,28 +41,18 @@
         <p>意向借款金额：<span>{{orderBaseInfo.expectMomey}}元</span></p>
         <p>意向借款期限：<span>{{orderBaseInfo.expectDuetime}}</span></p>
         <p>产品系列：<span>{{orderBaseInfo.cptName}}</span></p>
-        <div v-if="!apply_state">
+        <div v-if="status ==1?false:true">
           <p>产品名称：<span>{{orderBaseInfo.cpName}}</span></p>
           <p>产品期数：<span>{{orderBaseInfo.periods}}期</span></p>
           <p>合同金额：<span>{{orderBaseInfo.contractMoney}}元</span></p>
           <p>产品利率：<span>{{orderBaseInfo.rate}}/年</span></p>
           <p>还款方式：<span>{{orderBaseInfo.payment}}</span></p>
-          <p>授信范围：<span>{{orderBaseInfo.expectDuetime}}</span></p>
+          <p>授信范围：<span>{{orderBaseInfo.actualLowerLimit}}-{{orderBaseInfo.actualUpperLimit}}元</span></p>
         </div>
       </div>
       <div class="steps" v-if="orderNodeList.length>=0?1:0">
         <el-steps :active="+currentStep" align-center  finish-status="success">
-          <el-step v-for ="(val,index) in orderNodeList" :title="val.nodeName" :description="val.createTime" :key="index"></el-step>
-          <!--<el-step title="身份证上传" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="肖像认证" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="手持身份证" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="完善信息(申请城市)" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="工作信息" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="联系人信息" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="手机认证" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="基本信息" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="产品选择/材料授权" description="2018-03-02 18:00:00"></el-step>-->
-          <!--<el-step title="提交成功" description="2018-03-02 18:00:00"></el-step>-->
+          <el-step v-for ="(val,index) in orderNodeList" :title="val.nodeName" :description="val.outTime" :key="index"></el-step>
         </el-steps>
       </div>
       <el-tabs type="border-card" style="margin-top:35px" @tab-click="tabClick" v-model="activeName">
@@ -375,7 +377,7 @@
         </el-tab-pane>
       </el-tabs>
       <!--客户分配组织架构弹框--START-->
-      <el-dialog title="客户分配" width='800px' :visible.sync="CustDistributionDialog">
+      <el-dialog title="客户分配" width='800px' :visible.sync="CustDistributionDialog" :close-on-click-modal ='false'>
         <el-row  type="flex" style='margin-top: -25px;'>
           <el-col :span="11" >
             <h3 class="titsheet">组织架构</h3>
@@ -479,7 +481,7 @@
         PaymentHistory:[], //还款记录列表
         RepaymentPlan:[], //还款计划列表
         buttonLoading:false,
-        apply_state:false,
+        // apply_state:true,
         eye:true,
         money:'2500',
         status:'',
@@ -576,6 +578,16 @@
                 }
               })
             }
+
+            for(let i=0;i<this.orderNodeList.length;i++){
+              for(let j=0;j<this.orderList.length;j++){
+                if(this.orderNodeList[i].nodeCode == this.orderList[j].nodeCode ){
+                  this.orderNodeList[i].outTime =this.orderList[j].outTime
+                }
+              }
+
+            }
+
           }
         })
       },
@@ -652,12 +664,13 @@
         api.queryBaseOrderInfo({
           crmApplayId:this.$route.query.crmApplayId
         }).then((res) =>{
+          console.log(res.data.data,888888888888)
           if(res.data.success) {
             if (res.data.code==1 && res.data.data != null) {
-              this.orderBaseInfo = res.data.data
+              this.orderBaseInfo = Object.assign(this.orderBaseInfo,res.data.data)
               this.status = res.data.data.status
               this.queryNodeListInfo()
-              console.log(55555555,this.status);
+              console.log(55555555,res.data);
               if(this.status == 3){
                 this.activeName = "2"
                 this.queryRepaymentPlan()//还款计划a
@@ -669,7 +682,7 @@
                 this.activeName = "4"
                 this.queryEssentialInfo()//基本信息
               }
-              this.crmCustInfoId_s = res.data.crmCustInfoId
+              this.crmCustInfoId_s = res.data.data.crmCustInfoId
           } else {
             this.$notify({
               title: '提示',
@@ -809,7 +822,6 @@
           this.orSaveDisCust = false
           if(res.data.success){
             this.CustDistributionDialog = false
-
             console.log(res.data.data)
           } else {
             this.CustDistributionDialog = true

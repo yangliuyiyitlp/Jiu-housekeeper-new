@@ -50,7 +50,7 @@
 						    </el-select>
 						</el-form-item>
 						<!--<el-form-item label="订单状态" label-width='105px' v-if='permission.showOrderState'>
-						    <el-select value-key="id" v-model="search.orderStatus" placeholder="请选择" @change='changeOrderState'>						    	
+						    <el-select value-key="id" v-model="search.orderStatus" placeholder="请选择" @change='changeOrderState'>
                   				<el-option v-for = 'item in productState'
                              :label='item.name' :value="item" :key='item.id' ></el-option>
 						    </el-select>
@@ -72,7 +72,7 @@
 						    </el-input>
 						</el-form-item>
 						<el-form-item label="归属人" label-width='105px'>
-							<el-input :maxlength='20' style="width: 200px;" v-model="search.people" placeholder='请输入姓名模糊查询' ></el-input>
+							<el-input :maxlength='20' style="width: 200px;" v-model="search.people" placeholder='请输入姓名、工号模糊查询' ></el-input>
 						</el-form-item>
 						<el-form-item label="订单环节" label-width='105px' v-if='permission.showOrderNode' >
 						    <el-select v-model="search.orderNode" placeholder="请选择" @change='f1' :disabled = 'showOrderNodeChild'>
@@ -197,7 +197,7 @@ export default {
   	},
 	data() {
 	  	return {
-        
+
 	  		number_s: 5,
 	  		showOrderNodeChild: false,
 	  		title: '全部客户',
@@ -296,7 +296,7 @@ export default {
 //	    		console.log(this.search.orderState,val,1200000)
 //  		}
     	},
-    	
+
 //  	checkOrderNodeFn() {
 //  		if (!this.permission.showOrderState && this.permission.showOrderNode) {//当订单状态不存，只有订单环节存在时
 //  			if (this.permission.onlyOrderNode) {//订单状态的'申请中'对应的订单环节
@@ -317,7 +317,7 @@ export default {
     			if(res.data.success){
     				this.productList = res.data.data
 //  				this.productList.unshift({id:'',name:'请选择'})
-//  				console.log(this.productList,'-=-==-=-=-=-=-=-=-=-')
+ 				console.log(this.productList,'productList')
     			} else {
 //  			console.log(res.data,'-=-==-=-=-=-=-=-=-=-')
     			}
@@ -413,7 +413,7 @@ export default {
 	  			if (res.data.success){
 	  				this.orderNode = res.data.data
 	  				this.orderNode.unshift({name:'请选择',id:''})
-	  			} 
+	  			}
 	  			console.log(res.data.data,'==++++++++++++==')
 	  		})
 	  	},
@@ -423,12 +423,12 @@ export default {
 			} else {
 				this.search.checked = false
 			}
-//			if (val.length != 0) {				
+//			if (val.length != 0) {
 //				this.queryPageDictionaryDetailFn(val.detailCode)
-//				
+//
 //			}
 			this.search.checkListParams = this.returnCheckListParams(val)
-			
+
 	   	},
 	   	changeRadio(index,val) {
 	   		if (!this.$refs['checkbox' + index][0].isChecked) {//选中其中的一个
@@ -438,7 +438,7 @@ export default {
 				this.queryPageDictionaryDetailFn(val.detailCode,'del')
 				console.log('===================')
 	   		}
-	   		
+
 //	   		console.log(this.$refs['checkbox' + index][0].isChecked)
 //	   		console.log(val,index,4555555555555)
 	   	},
@@ -472,14 +472,14 @@ export default {
     			code: code,
     			pageSize: 10000
     		}
-    		
+
     		api.queryPageDictionaryDetail(pararms).then(res => {
     			if (res.data.success) {
     				if (type == 'add') {
     					this.orderNode = this.orderNode.concat(res.data.data)
     				}else if (type == 'del') {
 	    				res.data.data.forEach((value, index)=>{
-	    					let indexCur = this.orderNode.findIndex((val, ind)=>{	    						
+	    					let indexCur = this.orderNode.findIndex((val, ind)=>{
 	    						return val.id == res.data.data[index].id
 	    					})
 	    					this.orderNode.splice(indexCur,1)
@@ -489,7 +489,7 @@ export default {
     				}
 //  				console.log(res.data.data,'78778====78787878')
 //					console.log(this.orderNode,'78778====78787878')
-					
+
     			} else {
 //  				this.orderNode = []
     			}
@@ -501,10 +501,10 @@ export default {
     			code: code,
     			pageSize: 10000
     		}
-    		
+
     		api.queryPageDictionaryDetail(pararms).then(res => {
     			if (res.data.success) {
-    				this.orderNode = res.data.data	
+    				this.orderNode = res.data.data
     				this.orderNode.unshift({name:'请选择',id:''})
     				alert(11212)
     			} else {
@@ -538,6 +538,8 @@ export default {
 	   	hideSeniorSearch(){
 	   		this.orShow = false
 	   		this.showTree = false
+        this.applyCity=[]
+        this.productList_s=[]
 	   	},
 	   	searchFn() {
 	        if(this.search.remainTimeBegin && this.search.remainTimeEnd){
@@ -597,7 +599,7 @@ export default {
 ////		  			orderState: '',//订单状态
 		  			orderNode: null,//订单环节
 		  			partName: '',
-            		orderStatus:null,//订单状态	
+            		orderStatus:null,//订单状态
 		  			people: '',
 		  			applyProvince: '',
 		  			applyCity: '',
@@ -606,7 +608,7 @@ export default {
 	  			}
     			this.partName_s = ''
 	  			this.search = Object.assign(this.search,clearObj)
-    			
+
 	  			console.log(this.search,'---------')
     		}
 //  		console.log(this.search)

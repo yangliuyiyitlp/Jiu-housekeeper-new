@@ -12,13 +12,7 @@
       	v-if='showSelection'
       	align='center'
       type="selection"
-      width="55">
-    </el-table-column>
-    <el-table-column
-      v-if="0"
-    	 label="序号"
-      type="index"
-      width="55">
+     >
     </el-table-column>
     <el-table-column
     	:show-overflow-tooltip="true"
@@ -31,14 +25,14 @@
 		align='center'
       prop="custMobile"
       label="注册手机号"
-      width="120">
+     >
     </el-table-column>
     <el-table-column
     	:show-overflow-tooltip="true"
 		align='center'
       prop="custIc"
       label="身份证号"
-      width="120">
+     >
     </el-table-column>
     <!--<el-table-column
     	:show-overflow-tooltip="true"
@@ -118,7 +112,7 @@
       </template>
     </el-table-column>
     <el-table-column
-    	width='120'
+
     	fixed="right"
     	:show-overflow-tooltip="true"
 		align='center'

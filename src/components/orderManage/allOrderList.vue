@@ -74,7 +74,7 @@ export default {
 				onlyOrderNode: true, //true是申请中页面控制的订单环节，fasle是审批中页面控制的订单环节
 				showOnlyCheck:true,
 				showUp:true,
-				
+
 	 		}
 	 	}
 	 },
@@ -113,7 +113,7 @@ export default {
 			orderStatus: this.serachPararms.checkListParams,//订单状态：1申请中,2审批中,3还款中,4已结清,5拒绝,6线上筹资中,7满标,8满标以放款,9流标,10退件
 //			custStatus: [1,2],//客户状态:1未实名,2已实名,3已成交[1,2]
 			applyTimeBegin: s_time,
-			applyTimeEnd: e_time,			
+			applyTimeEnd: e_time,
 			proTypeId:  this.serachPararms.productList,
 			proId: this.serachPararms.productName,
 			department: this.serachPararms.partName,
@@ -146,14 +146,14 @@ export default {
 			code: code,
 			pageSize: 10000
 		}
-		
+
 		api.queryPageDictionaryDetail(pararms).then(res => {
 			if (res.data.success) {
 				if (type == 'add') {
 					this.orderNode = this.orderNode.concat(res.data.data)
 				}else if (type == 'del') {
     				res.data.data.forEach((value, index)=>{
-    					let indexCur = this.orderNode.findIndex((val, ind)=>{	    						
+    					let indexCur = this.orderNode.findIndex((val, ind)=>{
     						return val.id == res.data.data[index].id
     					})
     					this.orderNode.splice(indexCur,1)
@@ -161,7 +161,7 @@ export default {
 				}
 //  				console.log(res.data.data,'78778====78787878')
 //					console.log(this.orderNode,'78778====78787878')
-				
+
 			} else {
 //  				this.orderNode = []
 			}
@@ -173,7 +173,8 @@ export default {
   		console.log(row,orShow)
   	},
   	showOrderDetail(row,orShow) {
-		var routeData = this.$router.resolve({
+      console.log(565656,row);
+      var routeData = this.$router.resolve({
         	path: '/detail/orderDetail',
         	query: {
         		crmApplayId: row.applyId,

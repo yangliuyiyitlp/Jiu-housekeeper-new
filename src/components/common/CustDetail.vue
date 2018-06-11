@@ -5,11 +5,11 @@
 	<div class="detail">
 		<div class="sheet" >
 			<p>
-			 	注册手机号：<span>{{userInfo.cust_mobile}}</span>
-			 	用户姓名：<span>{{userInfo.cust_name}}</span>
-			 	身份证号：<span>{{userInfo.cust_ic}}</span>
-			 	申请城市：<span>{{userInfo.house_province}} {{userInfo.house_city}}</span>
-			 	注册时间：<span>{{userInfo.create_time}}</span>
+			 	注册手机号：<span>{{userInfo.custMobile}}</span>
+			 	用户姓名：<span>{{userInfo.custName}}</span>
+			 	身份证号：<span>{{userInfo.custIc}}</span>
+			 	申请城市：<span>{{userInfo.procName}} {{userInfo.cityName}}</span>
+			 	注册时间：<span>{{userInfo.regTime}}</span>
 			 	<el-popover
 			 		v-if='showPermission'
 				  placement="bottom"
@@ -65,13 +65,24 @@
 		  				{{userBaseInfo.nativeAddress}}
 		  			</td>
 		  			<td>婚属</td>
-		  			<td>{{userBaseInfo.marital}}</td>
+		  			<!--婚姻状况，1已婚 2未婚 3离异 4丧偶-->
+					<td v-if = 'userBaseInfo.marital == 1'>已婚</td>
+		  			<td v-if = 'userBaseInfo.marital == 2'>未婚</td>
+		  			<td v-if = 'userBaseInfo.marital == 3'>离异</td>
+		  			<td v-if = 'userBaseInfo.marital == 4'>丧偶</td>
 		  		</tr>
 		  		<tr>
 		  			<td>身份证号码</td>
 		  			<td>{{userBaseInfo.icNumber}}</td>
 		  			<td>学历</td>
-		  			<td>{{userBaseInfo.hignestDegree}}</td>
+		  			<!--教育程度:1硕士及以上2本科3大专4高中5中专/技校6初中及以下-->
+					<td v-if = 'userBaseInfo.hignestDegree == 1'>硕士及以上</td>
+					<td v-if = 'userBaseInfo.hignestDegree == 2'>本科</td>
+					<td v-if = 'userBaseInfo.hignestDegree == 3'>大专</td>
+					<td v-if = 'userBaseInfo.hignestDegree == 4'>高中</td>
+					<td v-if = 'userBaseInfo.hignestDegree == 5'>中专/技校</td>
+					<td v-if = 'userBaseInfo.hignestDegree == 6'>初中及以下</td>
+		  			<!--<td>{{userBaseInfo.hignestDegree}}</td>-->
 		  		</tr>
 		  		<tr>
 		  			<td>居住地址</td>
@@ -84,7 +95,7 @@
 		  			<td>{{userBaseInfo.deptName}}</td>
 		  		</tr>
 		  	</table>
-		  	<h3>工作信息</h3>
+		  	<h3 v-if="jobNature">工作信息</h3>
 		  	<table v-if="jobNature ==1">
 		  		<tr>
 		  			<th colspan="4">单位信息</th>
@@ -222,10 +233,10 @@
 			        prop="loanChannel"
 			        label="借款渠道">
               <!--借款渠道：1是安卓  2 是ios-->
-         <tempalte slot-scope="scope">
+         <template slot-scope="scope">
            <span v-if="scope.row.loanChannel==1">安卓</span>
            <span v-if="scope.row.loanChannel==2">IOS</span>
-         </tempalte>
+         </template>
 			      </el-table-column>
 			      <el-table-column
 			      	align='center'
@@ -343,6 +354,7 @@ export default {
   	return {
       visibleObj: {
         dialogTableVisible: false,
+        innerVisible:false
       },
   			userInfo:{
   				// cust_mobile:'',
@@ -377,7 +389,7 @@ export default {
 		        oldMobile: '',
 		        newMobile: ''
 	        },
-	        jobNature:1,
+	        jobNature:null,
 	        rules: {
 	            newMobile: [
 	            	{ required: true, message: '请输入手机号', trigger: 'blur' },
@@ -390,7 +402,7 @@ export default {
 	        pageSize: 10,
 	        accountMoney: null,
 	        showPermission: false,
-      innerVisible:false
+      // innerVisible:false
 	  	}
   	},
   	beforeCreate(){
@@ -425,7 +437,7 @@ export default {
   	methods:{
       showDialog(row){ //查看拒单原因
         if(row.status == 5 || row.status == 10) {
-          this.innerVisible = true
+          this.visibleObj.innerVisible = true
           this.$emit('showRefuse',row,true)
         }
       },
@@ -452,9 +464,9 @@ export default {
   			api.queryEssentialInfo({
   				crmCustInfo:this.$route.query.crmCustInfoId
   			}).then((res) =>{
-  				console.log('jobType',res.data.data)
+  				console.log('jobType',res)
+  				this.userBaseInfo = res.data.data
 				if (res.data.code==1) {
-					this.userBaseInfo = res.data.data
   					this.jobNature  = res.data.data.jobNature
 				}
 			})

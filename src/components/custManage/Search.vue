@@ -343,14 +343,22 @@ export default {
     			customerIdList: customerIdList,
     			employeeId: this.employeeId
     		}
+    		console.log(666666666)
     		api.cuntomerDistribution(parsrms).then(res => {
     			this.orSaveDisCust = false
+          this.CustDistributionDialog = true
+          console.log(res)
     			if(res.data.success){
     				this.CustDistributionDialog = false
+    				//注意：客户分配保存成功后，刷新父级列表。调用父组件的列表方法：页面有全部客户，未实名客户，已成交客户，已实名客户四个页面
+    				//页面有全部客户，未实名客户，已成交客户，已实名客户四个页面列表方法同名===》queryCustInfoData
+    				if (this.permission.showDistribution) {
 
-    				console.log(res.data.data)
+    					this.$parent.queryCustInfoData()
+    				}
+
     			} else {
-    				this.CustDistributionDialog = true
+
     			}
 				this.$notify({
 		           title: '提示',
@@ -553,6 +561,7 @@ export default {
         this.total=0
 	   		this.idArr = []
 	   		this.tableData = []
+        this.employeeId=''
 
 //	   		this.showTree = true;
 	   		this.$emit('CustDistributionFn',this.search)

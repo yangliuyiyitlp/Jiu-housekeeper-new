@@ -3,7 +3,7 @@
     <div class="con-wrap clearfix">
     	<div class="logo">
     		<img src="../../assets/images/logo.png"/>
-    	</div>    	
+    	</div>
     	<div class="ulList">
     		<ul class="clearfix router-wrap" v-if='muneList.length != 0'>
     			<li @click="showManger(item,index)" v-for ='(item,index) in muneList' :key='index'>
@@ -16,36 +16,36 @@
 			    						<div class="tit"><i :class="val.icon"></i>{{val.name}}</div>
 			    						<div v-if='val.list.length != 0' class="clearfix">
 			    							<div class="routerItem"
-			    								v-for = "(valChild,indChild) in val.list" :key='indChild'>			    								
-			    							
+			    								v-for = "(valChild,indChild) in val.list" :key='indChild'>
+
 			    								<!--<router-link :to="valChild.url" @click.native.stop='showTag(valChild)'>{{valChild.name}}</router-link>-->
 			    								<router-link :to="{ path: valChild.url, query: { menuId: valChild.id }}" @click.native.stop='showTag(valChild)'>{{valChild.name}}</router-link>
-			    								<!--<router-link :to="valChild.url + '/' + valChild.id" @click.native.stop.prevent='showTag(valChild)'>{{valChild.name}}</router-link>-->			    								
+			    								<!--<router-link :to="valChild.url + '/' + valChild.id" @click.native.stop.prevent='showTag(valChild)'>{{valChild.name}}</router-link>-->
 			    							</div>
 			    						</div>
-			    					</li>			    					
+			    					</li>
 			    				</ul>
 			    			</div>
 			    		</div>
     			</transition-group>
     			</li>
-    		</ul>    		
-    	</div> 
+    		</ul>
+    	</div>
     	<div class="rt head-rt">
-    		<span class="admin-wrap">    			
+    		<span class="admin-wrap">
 					<!--<el-popover
 					  placement="bottom"
 					  width="160"
 					  v-model="visiblePassWord">
 					  <div style="text-align: center;font-size: 16px;">
-					    <el-button size="mini" type="text" @click="showModifyPassWord" style="font-size: 15px">修改密码</el-button>					    
+					    <el-button size="mini" type="text" @click="showModifyPassWord" style="font-size: 15px">修改密码</el-button>
 					  </div>
 					  <i class="" slot="reference"></i>
 					</el-popover>-->
 					<i class=""></i>
     			管理员，您好！
     		</span>
-    		<span class="login-out">
+    		<span class="login-out" @click="loginOut">
     			<i class=""></i>
     			退出登录
     		</span>
@@ -61,7 +61,9 @@
 <script>
 	import TagViews from '@/components/TagViews'
 	import ModifyPassWord from '@/components/header/ModifyPassWord'
-	export default {
+  import api from "@/api/index"
+
+  export default {
 	  data () {
 	    return {
 	    	visiblePassWord: false,
@@ -88,7 +90,13 @@
 	  	}
 	  },
 	  methods: {
-	  	showModifyPassWord() {	  		
+	    // todo 退出
+      loginOut(){
+        api.queryMyLogout().then(res => {
+         // this.$router.push({path:'/login'})
+        })
+      },
+	  	showModifyPassWord() {
 	  		this.visiblePassWord = false
 	  		this.dialogPassVisible.outerVisible = true
 //	        		innerVisible: false
@@ -117,9 +125,9 @@
 	      this.showObj.show2 = false
 	  	},
 	  	showTag(valChild) {
-//	  		this.$route.query.menuId =valChild.id 
+//	  		this.$route.query.menuId =valChild.id
 	  		console.log(this.$route,'12313123132132132131@@',valChild.url)
-	  		for (var i=1; i <= this.muneList.length; i++) {	 
+	  		for (var i=1; i <= this.muneList.length; i++) {
 	  				this.showObj['show' + i] = false
 	  		}
 //	  		this.showObj.show1 = false
@@ -144,7 +152,7 @@
 			position: relative;
 			.logo {
         width: 173px;
-				height: 48px;			    
+				height: 48px;
 		    margin-top: 6px;
 		    margin-left: 11px;
 		    margin-right: 70px;
@@ -158,7 +166,7 @@
 					display: inline-block;
 				}
 				.admin-wrap {
-					margin-right: 20px;	
+					margin-right: 20px;
 					i {
 						display: inline-block;
 						background: url('../../assets/images/admin.png') no-repeat 0 0;
@@ -170,6 +178,9 @@
 
 					}
 				}
+        .login-out{
+          cursor:pointer;
+        }
 				.login-out i {
 					  display: inline-block;
 						background: url('../../assets/images/loginOut.png') no-repeat 0 0;
@@ -194,12 +205,12 @@
 					}
 					/*&:hover {
 						color: red;
-						
+
 					}*/
 				}
 			}
 		}
-		.router_list {			
+		.router_list {
 			position: absolute;
 			top: 65px;
 			left: 0;
@@ -226,8 +237,8 @@
 				    height: 118px;
 				    margin-bottom: 30px;
  			    &:first-child {
- 			    	margin-left: 10%; 
-						
+ 			    	margin-left: 10%;
+
  			    }
 					&:last-child {
 						border-right: none;

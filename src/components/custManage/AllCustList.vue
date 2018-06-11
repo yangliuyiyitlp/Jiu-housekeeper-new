@@ -31,7 +31,7 @@
  		</div>
  		<div>
  			<!--订单弹框-->
- 			<dialog-order-list ref='dialogOrderList' :visibleObj='visibleObj'></dialog-order-list>
+ 			<DialogOrderList ref='dialogOrderList' :visibleObj='visibleObj'></DialogOrderList>
  			<!--跟进弹框-->
  			<dialog-follow :dialogFollow='dialogFollow' :rowFollowId = 'rowFollowId' ref="childDialogFollow"></dialog-follow>
  		</div>
@@ -153,9 +153,11 @@ export default {
 		})
   	},
   	showDialogTableVisible(row,orShow) {
-  		this.visibleObj.dialogTableVisible = orShow
+  		this.visibleObj.dialogTableVisible=true
+		this.crmCustInfoId = row.crmCustInfoId
 		this.$nextTick(function () {
    			this.$refs.dialogOrderList.queryOrderList(row.crmCustInfoId)
+   			console.log(this.$refs.dialogOrderList)
   		})
 
   	},
