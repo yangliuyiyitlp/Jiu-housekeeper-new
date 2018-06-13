@@ -32,7 +32,7 @@
 		   <el-form-item>
 		   	 <el-button type="primary" @click='showSeniorSearch'>展开高级搜索</el-button>
 		  </el-form-item>
-		  <el-form-item v-if='permission.showDistribution'>
+		  <el-form-item v-show="hasPermission('assigningCustomers')">
 		   	 <el-button type="success" @click='CustDistribution'>客户分配</el-button>
 		  </el-form-item>
 			<div class="seniorSearch" v-show='orShow'>
@@ -191,7 +191,7 @@ export default {
   			default: function () {
   				return {
   					showAllPararms: false,//是否要展示'全部，未实名，已实名，已成交'条件
-					showDistribution: false,//是否要展示‘客户分配’按钮
+					// showDistribution: false,//是否要展示‘客户分配’按钮
   					showRealName: false,//是否要展示高级搜索的‘是否实名’的条件
   					showRegType: false //是否要展示高级搜索的‘注册类型’的条件
   				}
@@ -259,26 +259,25 @@ export default {
 	        applyProvince: [],
 	        applyCity: [],
 	        employeeId: '',
-	        multipleSelectionIdList: ''
+	        multipleSelectionIdList: '',
+        permissionList:[]
 	  	}
 	},
 	beforeCreate(){
 		let pararms = {
 			menuId:this.$route.query.menuId
 		}
-		var s=new Date()
 		this.$store.dispatch('SET_POWER_BTN_ARR', pararms).then(res=>{
 			//assigningCustomers:分配客户权限, "frozenCustomer：冻结按钮权限
-			var d=new Date()
 			if (res) {
-				const flag = res.indexOf('assigningCustomers')
-				if (flag > -1) {
-					this.permission.showDistribution = true
-				} else {
-					this.permission.showDistribution = false
-				}
+        this.permissionList = res
+				// const flag = res.indexOf('assigningCustomers')
+				// if (flag > -1) {
+				// 	this.permission.showDistribution = true
+				// } else {
+				// 	this.permission.showDistribution = false
+				// }
 			}
-			console.log(d-s)
 		})
 	},
 	mounted() {
@@ -287,6 +286,12 @@ export default {
 	created(){
 	},
     methods: {
+      hasPermission (data) {
+        if (this.permissionList && this.permissionList.length && this.permissionList.includes(data)) {
+          return true
+        }
+        return false
+      },
     	saveDisCust() {
     		this.$confirm('此操作将是保存, 是否继续?', '提示', {
 	          confirmButtonText: '确定',
@@ -557,13 +562,22 @@ export default {
 
 	   		this.CustDistributionDialog = true;
 	   		this.ser_department  = ''
+        this.deptId = ''
 	   		this.ser_people  = ''
         this.total=0
 	   		this.idArr = []
 	   		this.tableData = []
         this.employeeId=''
 
+
+        console.log(this.data,"=================");
+        console.log(this.$refs.tree,"***********");
+        if(this.$refs.tree){
+
+          this.$refs.tree.searchNodes(this.ser_department) // 再次点开 重新搜索空 获取tree
+          // this.search_tree() // 再次点开 重新搜索空 获取tree
 //	   		this.showTree = true;
+        }
 	   		this.$emit('CustDistributionFn',this.search)
 
 console.log(this.total)
@@ -577,7 +591,6 @@ console.log(this.total)
     	ser_department(val){
     		if(!val) {
     			this.deptId = ''
-    			console
     		}
     	},
     	orShow(val) {

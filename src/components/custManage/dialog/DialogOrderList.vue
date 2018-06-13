@@ -18,24 +18,21 @@
 			</div>
 		</el-dialog>
 		<div class="refruse-wrap">
-			<el-dialog
-				center
-	  		width='400px'
-	  		title="拒单原因" :visible.sync="visibleObj.innerVisible" top='35vh' :close-on-click-modal="false">
+        <el-dialog title="拒单原因" width='400px' center :visible.sync="innerVisibleWrap" top='20%' :close-on-click-modal ='false' @close="closeFn">
 					<div style="margin-top: -20px;">
 						<el-row>
 						  <el-col :span="5">订单编号：</el-col>
-						  <el-col :span="19">{{refrusedApplyId}}</el-col>
+						  <el-col :span="19">{{orderId}}</el-col>
 						</el-row>
             <br>
 						<el-row>
 						  <el-col :span="5">拒单原因：</el-col>
-						  <el-col :span="19">{{subcategories}}</el-col>
+						  <el-col :span="19">{{refusalReason}}</el-col>
 						</el-row>
             <br>
 						<el-row>
 						  <el-col :span="5">操作人：</el-col>
-						  <el-col :span="19">系统自动</el-col>
+						  <el-col :span="19">{{creator}}</el-col>
 						</el-row>
 					</div>
 			</el-dialog>
@@ -57,11 +54,15 @@
 	  		default: function () {
 	        return {
 	        	dialogTableVisible: false,
-            innerVisible:false
+            innerVisible: false,
 	        }
 	      }
 	  	},
-
+      // innerVisible: {
+      //   type: Boolean,
+      //   default: false
+      //
+      // },
 	  },
 	  data () {
 	    return {
@@ -72,20 +73,30 @@
         // innerVisible: false,
 	    	gridData: [],
        crmCustInfoId: '',
-        refrusedApplyId: '',
-        subcategories:''
+        refusalReason: '',
+        orderId:'',
+        creator:'',
+        innerVisibleWrap: this.visibleObj.innerVisible
 	    }
 	  },
+    mounted() {
+		  console.log(this.visibleObj,this.innerVisibleWrap,'============')
+    },
 	  methods: {
+      closeFn() {
+        this.innerVisibleWrap = false
+        this.visibleObj.innerVisible = false
+        console.log( this.visibleObj,4555555555555)
+      },
 	  	queryRefusalReasonFn(crmApplayId) {
     		let pararms = {
-    			crmApplayId: crmApplayId
+          crmApplayId: crmApplayId
     		}
-    		api.queryRefusalReason({crmApplayId}).then(res => {
+    		api.queryRefusalReason(pararms).then(res => {
 					if(res.data.success) {
-						this.subcategories = res.data.data.subcategories
-							this.refrusedApplyId = res.data.data.orderId
-		//				this.tableData = res.data.data
+						this.creator = res.data.data.creator
+						this.orderId = res.data.data.orderId
+							this.refusalReason = res.data.data.refusalReason
 					} else {
 						this.$notify({
 				           title: '提示',
@@ -93,7 +104,6 @@
 				           duration: 1500
 				        });
 					}
-					console.log(res.data.data,6666)
 				})
     	},
 	  	queryOrderList(crmCustInfoId){
@@ -113,7 +123,8 @@
 				})
   		},
 	  	showRefuseDialog(row,orShow) {
-	  		this.visibleObj.innerVisible = true
+	  		// this.visibleObj.innerVisible = true
+        this.innerVisibleWrap = true
 //	  		this.refrusedApplyId = row.crmApplayId
 	  		this.queryRefusalReasonFn(row.crmApplayId)
 	  		console.log(row,orShow,1236666666)
@@ -135,7 +146,23 @@
 	  components: {
 	  	CommonTable,
 	  	Pagination
-	  }
+	  },
+    watch: {
+		//   'visibleObj.innerVisible'(val) {
+		//
+      //   console.log(this.innerVisibleWrap,666666666666668888888888888)
+      // },
+      visibleObj:{//深度监听，可监听到对象、数组的变化
+       handler(val, oldVal){
+         console.log(val,88888888888888);
+         if (val.innerVisible) {
+           this.innerVisibleWrap = true
+         }
+         console.log("b.c: "+val.innerVisible, oldVal.c);//但是这两个值打印出来却都是一样的
+       },
+       deep:true
+     }
+    }
 }
 </script>
 <style scoped lang="less">

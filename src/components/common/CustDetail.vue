@@ -59,10 +59,7 @@
 		  		<tr>
 		  			<td>身份证地址</td>
 		  			<td>
-		  				{{userBaseInfo.nativeProvince }}
-		  				{{userBaseInfo.nativeCity}}
-		  				{{userBaseInfo.nativeArea}}
-		  				{{userBaseInfo.nativeAddress}}
+		  				{{userBaseInfo.nativeProvince }}{{userBaseInfo.nativeCity}}{{userBaseInfo.nativeArea}}{{userBaseInfo.nativeAddress}}
 		  			</td>
 		  			<td>婚属</td>
 		  			<!--婚姻状况，1已婚 2未婚 3离异 4丧偶-->
@@ -111,7 +108,7 @@
 		  		</tr>
 		  		<tr>
 		  			<td>座机</td>
-		  			<td>{{userBaseInfo.companyTelArea}}-{{userBaseInfo.companyTelNo}}-{{userBaseInfo.companyTelExt}}</td>
+		  			<td>{{userBaseInfo.companyTelArea}}<a href="#" v-if="userBaseInfo.companyTelArea">-</a>{{userBaseInfo.companyTelNo}}<a href="#" v-if="userBaseInfo.companyTelExt">-</a>{{userBaseInfo.companyTelExt}}</td>
 		  			<td>手机</td>
 		  			<td>{{userBaseInfo.companyMobile }}</td>
 		  		</tr>
@@ -150,7 +147,7 @@
 			      :data="linkInfo"
 			      border
 			      style="width: 100%">
-			      <el-table-column align='center' type="index"  width="160" label="序号" :index="indexMethod">
+			      <el-table-column align='center' type="index"  width="160" label=" " :index="indexMethod">
 			      </el-table-column>
 			      <el-table-column
 			      	align='center'
@@ -354,8 +351,9 @@ export default {
   	return {
       visibleObj: {
         dialogTableVisible: false,
-        innerVisible:false
+        innerVisible:false,
       },
+
   			userInfo:{
   				// cust_mobile:'',
   				// create_time:'',
@@ -401,7 +399,7 @@ export default {
 	  		pageNo: 1,
 	        pageSize: 10,
 	        accountMoney: null,
-	        showPermission: false,
+	        showPermission: false
       // innerVisible:false
 	  	}
   	},
@@ -438,6 +436,7 @@ export default {
       showDialog(row){ //查看拒单原因
         if(row.status == 5 || row.status == 10) {
           this.visibleObj.innerVisible = true
+          console.log(this.visibleObj.innerVisible ,'---------------55555555555')
           this.$emit('showRefuse',row,true)
         }
       },

@@ -170,7 +170,7 @@ export default {
 		          {name:"审批中",detailCode: '000002',id:"2"},
 		          {name:"还款中",detailCode: '000003',id:"3"},
 		          {name:"已结清",detailCode: '000004',id:"4"},
-//		          {name:"拒绝",detailCode: '000005',id:"5"}
+		          {name:"拒单",detailCode: '000005',id:"5"}
  			   ]
 			}
 		},
@@ -253,6 +253,8 @@ export default {
     			this.queryPageDictionaryDetailFn_s('000003')
     		}else if (this.permission.detailCode == '000004') {//
     			this.queryPageDictionaryDetailFn_s('000004')
+    		}else if (this.permission.detailCode == '000005') {//
+    			this.queryPageDictionaryDetailFn_s('000005')
     		}
     	},
       	replceNumVal(keys,value) {

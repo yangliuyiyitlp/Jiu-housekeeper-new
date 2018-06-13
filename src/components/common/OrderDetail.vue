@@ -252,9 +252,16 @@
               <td>{{userBaseInfo.hignestDegree }}</td>
             </tr>
             <tr>
-              <td>居住地址</td>
-              <td>{{userBaseInfo.houseProvince }}{{userBaseInfo.houseCity }}{{userBaseInfo.houseArea }}{{userBaseInfo.houseAddress }}</td>
+            <td>居住地址</td>
+            <td>{{userBaseInfo.houseProvince }}{{userBaseInfo.houseCity }}{{userBaseInfo.houseArea }}{{userBaseInfo.houseAddress }}</td>
+          </tr>
+            <tr>
+              <td>客户归属人</td>
+              <td>{{userBaseInfo.empName }}</td>
+              <td>归属团队</td>
+              <td>{{userBaseInfo.deptName}}</td>
             </tr>
+
           </table>
           <h3>工作信息</h3>
           <table v-if="jobType==1">

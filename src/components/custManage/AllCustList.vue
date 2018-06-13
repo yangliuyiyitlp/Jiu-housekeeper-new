@@ -3,7 +3,7 @@
  	<TitCommon :title='title'></TitCommon>
  	<div class="custListWrap">
  		<search
- 			:treeData = 'treeData'
+
  			:data = 'zTreeData'
  			@CustDistributionFn='CustDistributionFn'
  			@searchFn='searchFn'
